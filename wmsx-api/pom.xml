@@ -1,0 +1,12 @@
+<?xml version="1.0"?><project>
+    <parent>
+        <artifactId>wmsx</artifactId>
+        <groupId>hu.kfki.grid</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>hu.kfki.grid</groupId>
+    <artifactId>wmsx-api</artifactId>
+    <name>WMS-X API</name>
+    <version>1.0-SNAPSHOT</version>
+</project>

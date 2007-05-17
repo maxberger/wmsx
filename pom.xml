@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>hu.kfki.grid</groupId>
+    <artifactId>wmsx</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>WMS-X</name>
+    <url>http://www.myorganization.org</url>
+    <modules>
+        <module>wmsx-api</module>
+        <module>wmsx-provider</module>
+        <module>wmsx-requestor</module>
+        <module>wmsx-old</module>
+    </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.4</source>
+                    <target>1.4</target>
+                    <!--          <debug>false</debug>
+          <optimize>true</optimize>
+-->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
