@@ -2,6 +2,7 @@ package hu.kfki.grid.wmsx.requestor;
 
 import hu.kfki.grid.wmsx.Wmsx;
 
+import java.io.FileNotFoundException;
 import java.rmi.RMISecurityManager;
 
 import net.jini.core.lookup.ServiceRegistrar;
@@ -67,7 +68,11 @@ public class App implements DiscoveryListener {
 				continue;
 			}
 			LOGGER.info(myService.hello());
-			myService.submitJdl("/bla/jdl");
+			try {
+				myService.submitJdl("testjob.jdl");
+			} catch (FileNotFoundException e) {
+				LOGGER.warn(e);
+			}
 			System.exit(0);
 		}
 	}

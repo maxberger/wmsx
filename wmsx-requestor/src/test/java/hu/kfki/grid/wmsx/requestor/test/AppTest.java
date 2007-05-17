@@ -1,4 +1,4 @@
-package hu.kfki.grid;
+package hu.kfki.grid.wmsx.requestor.test;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

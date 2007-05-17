@@ -2,6 +2,8 @@ package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.Wmsx;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -34,9 +36,12 @@ public class WmsxProviderProxy implements Serializable, Wmsx {
 		}
 	}
 
-	public void submitJdl(String jdlFile) {
+	public void submitJdl(String jdlFile) throws FileNotFoundException {
 		try {
-			remoteService.submitJdl(jdlFile);
+			final File f = new File(jdlFile);
+			if (!f.exists())
+				throw new FileNotFoundException(jdlFile);
+			remoteService.submitJdl(f.getAbsolutePath());
 		} catch (RemoteException re) {
 			LOGGER.warn(re);
 		}
