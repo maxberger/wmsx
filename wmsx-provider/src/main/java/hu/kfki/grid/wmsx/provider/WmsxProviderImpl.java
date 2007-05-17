@@ -1,5 +1,8 @@
 package hu.kfki.grid.wmsx.provider;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * My Jini Service Implementation!
  *
@@ -7,7 +10,8 @@ package hu.kfki.grid.wmsx.provider;
 public class WmsxProviderImpl implements IRemoteWmsxProvider {
     
     private static final long serialVersionUID = 2L;
-    
+        private static final Log LOGGER =LogFactory.getLog(WmsxProviderImpl.class);
+
     public WmsxProviderImpl() {
         // default constructor
     }
@@ -16,7 +20,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider {
     }
     
     public void submitJdl(String jdlFile) {
-        System.out.println("Submitting "+jdlFile);
+    LOGGER.info("Submitting "+jdlFile);
     }
     
 }

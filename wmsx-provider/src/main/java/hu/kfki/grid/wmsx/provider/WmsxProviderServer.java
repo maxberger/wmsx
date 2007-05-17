@@ -18,9 +18,12 @@ import net.jini.export.*;
 import java.io.*;
 import java.rmi.Remote;
 import net.jini.core.entry.Entry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
-    
+        private static final Log LOGGER =LogFactory.getLog(WmsxProviderServer.class);
+
     protected LeaseRenewalManager leaseManager = new LeaseRenewalManager();
     protected ServiceID serviceID = null;
     protected WmsxProviderProxy smartProxy = null;
@@ -31,7 +34,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
         try {
             new WmsxProviderServer(ConfigurationProvider.getInstance(argv));
         } catch (ConfigurationException e) {
-            e.printStackTrace();
+            LOGGER.fatal(e);
             System.exit(1);
         }
         
@@ -70,8 +73,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
             // export an object of this class
             this.rmiProxy = (IRemoteWmsxProvider) exporter.export(impl);
         } catch(Exception e) {
-            System.err.println(e.toString());
-            e.printStackTrace();
+            LOGGER.fatal(e);
             System.exit(1);
         }
         
@@ -86,7 +88,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
         try {
             discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
         } catch(Exception e) {
-            System.err.println("Discovery failed " + e.toString());
+            LOGGER.fatal("Discovery failed",e);
             System.exit(1);
         }
         
@@ -109,11 +111,11 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
             try {
                 reg = registrar.register(item, Lease.FOREVER);
             } catch(java.rmi.RemoteException e) {
-                System.err.println("Register exception: " + e.toString());
+                LOGGER.warn("Register exception: ",e);
                 continue;
             }
             
-            System.out.println("Service registered with id " + reg.getServiceID());
+            LOGGER.info("Service registered with id " + reg.getServiceID());
             
             // set lease renewal in place
             leaseManager.renewUntil(reg.getLease(), Lease.FOREVER, this);
@@ -136,7 +138,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
     }
     
     public void notify(LeaseRenewalEvent evt) {
-        System.out.println("Lease expired " + evt.toString());
+        LOGGER.debug("Lease expired " + evt.toString());
     }
     
     public void discarded(DiscoveryEvent arg0) {

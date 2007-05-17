@@ -7,13 +7,18 @@ import net.jini.discovery.DiscoveryListener;
 import net.jini.discovery.DiscoveryEvent;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Hello world!
  *
  */
 public class App implements DiscoveryListener {
-    public static void main( String[] args ) {
+
+        private static final Log LOGGER =LogFactory.getLog(App.class);
+    
+public static void main( String[] args ) {
         new App();
         
         // stay around long enough to receive replies
@@ -31,7 +36,7 @@ public class App implements DiscoveryListener {
         try {
             discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
         } catch(Exception e) {
-            System.err.println(e.toString());
+            LOGGER.fatal(e);
             System.exit(1);
         }
         
@@ -57,10 +62,11 @@ public class App implements DiscoveryListener {
                 continue;
             }
             if (myService == null) {
-                System.out.println("Classifier null");
+                LOGGER.debug("Classifier null");
                 continue;
             }
-            System.out.println(myService.hello());
+            LOGGER.info(myService.hello());
+myService.submitJdl("/bla/jdl");
             System.exit(0);
         }
     }
