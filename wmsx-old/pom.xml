@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>hu.kfki.grid</groupId>
+  <artifactId>wmsx-old</artifactId>
+  <version>0.0.1</version>
+  <name>WMS-X Old</name>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>
+          <target>1.4</target>
+          <debug>false</debug>
+          <optimize>true</optimize>
+        </configuration>
+      </plugin>
+<!--<plugin>
+        <groupId>net.java.dev.maven-classdep-plugin</groupId>
+        <artifactId>maven-classdep-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>wmsx</id>
+            <phase>package</phase>
+            <goals>
+              <goal>class-dep-and-jar</goal>
+            </goals>
+	    <configuration>
+	      <jarFile>target/wmsx-complete.jar</jarFile>
+	      <files>true</files>
+	      <in>
+	        <param>hu.kfki</param>
+	      </in>
+	      <out>
+	        <param>java</param>
+	        <param>javax</param>
+	        <param>com</param>
+	      </out>
+	      <topClass>
+	        <param>hu.kfki.grid.wmsx.Main</param>
+	      </topClass>
+	    </configuration>
+          </execution>
+        </executions>
+      </plugin> 
+-->
+     <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>appassembler-maven-plugin</artifactId>
+        <version>1.0-alpha-2</version>
+        <configuration>
+          <programs>
+            <program>
+              <mainClass>hu.kfki.grid.wmsx.Main</mainClass>
+              <name>wmsx</name>
+            </program>
+         </programs>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>create-repository</goal>
+              <goal>assemble</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+<!--<extensions>
+<extension>
+      <groupId>com.sun.jini</groupId>
+      <artifactId>tools</artifactId>
+      <version>2.1</version>
+    </extension>
+</extensions>-->
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>bouncycastle</groupId>
+      <artifactId>bcprov-jdk14</artifactId>
+      <version>136</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>hu.kfki.grid</groupId>
+      <artifactId>cog-jglobus</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>hu.kfki.grid</groupId>
+      <artifactId>edg_wl_userinterface_jclient</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>hu.kfki.grid</groupId>
+      <artifactId>edg_wl_common_jrequestad</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+<!--<pluginRepositories>
+     <pluginRepository>
+        <id>classdep-repo</id>
+        <name>Maven ClassDep Plugin repository</name>
+        <url>http://maven-classdep-plugin.dev.java.net/maven2</url>
+     </pluginRepository>
+  </pluginRepositories>-->
+</project>

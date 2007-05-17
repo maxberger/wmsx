@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=cog-jglobus.jar -DgroupId=hu.kfki.grid -DartifactId=cog-jglobus -Dversion=1.0 -Dpackaging=jar
