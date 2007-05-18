@@ -11,6 +11,6 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
 	String hello() throws RemoteException;
 
-	String submitJdl(String jdlFile) throws RemoteException;
+	String submitJdl(String jdlFile, String output) throws RemoteException;
 
 }

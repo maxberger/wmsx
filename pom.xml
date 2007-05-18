@@ -11,7 +11,7 @@
         <module>wmsx-api</module>
         <module>wmsx-provider</module>
         <module>wmsx-requestor</module>
-        <module>wmsx-old</module>
+<!--        <module>wmsx-old</module>-->
     </modules>
     <build>
         <plugins>

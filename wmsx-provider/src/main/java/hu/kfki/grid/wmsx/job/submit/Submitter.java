@@ -2,6 +2,8 @@ package hu.kfki.grid.wmsx.job.submit;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.List;
+import java.util.Vector;
 
 public class Submitter {
 
@@ -18,8 +20,13 @@ public class Submitter {
 	}
 
 	public ParseResult submitJdl(final String jdlFile) throws IOException {
+		List commandLine = new Vector();
+		commandLine.add("/opt/edg/bin/edg-job-submit");
+		commandLine.add("--nolisten");
+		commandLine.add(jdlFile);
 		final Process p = Runtime.getRuntime().exec(
-				new String[] { "/opt/edg/bin/edg-job-submit", jdlFile });
+				(String[]) commandLine.toArray());
+
 		// final PrintStream parserOutput = new PrintStream(
 		// new ByteArrayOutputStream());
 		final PrintStream parserOutput = System.out;

@@ -2,7 +2,6 @@ package hu.kfki.grid.wmsx.requestor;
 
 import hu.kfki.grid.wmsx.Wmsx;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
@@ -23,8 +22,16 @@ public class App implements DiscoveryListener {
 
 	private static final Logger LOGGER = Logger.getLogger(App.class.toString());
 
+	final String jdl, output;
+
 	public static void main(final String[] args) {
-		new App();
+		final String output;
+		if (args.length < 2) {
+			output = null;
+		} else {
+			output = args[1];
+		}
+		new App(args[0], output);
 
 		// stay around long enough to receive replies
 		try {
@@ -34,7 +41,9 @@ public class App implements DiscoveryListener {
 		}
 	}
 
-	public App() {
+	public App(String jdlFile, String outputFile) {
+		this.jdl = jdlFile;
+		this.output = outputFile;
 		System.setSecurityManager(new RMISecurityManager());
 
 		try {
@@ -87,11 +96,11 @@ public class App implements DiscoveryListener {
 			App.LOGGER.fine("Classifier null");
 			return;
 		}
-		App.LOGGER.info(myService.hello());
+		// App.LOGGER.info(myService.hello());
 		try {
-			final String s = myService.submitJdl("testjob.jdl");
-			System.out.println("JobId: " + s);
-		} catch (final FileNotFoundException e) {
+			final String s = myService.submitJdl(jdl, output);
+			System.out.println("" + s);
+		} catch (final IOException e) {
 			App.LOGGER.warning(e.getMessage());
 		}
 		System.exit(0);
