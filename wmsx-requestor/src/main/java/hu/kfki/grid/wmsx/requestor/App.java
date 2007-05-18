@@ -1,6 +1,7 @@
 package hu.kfki.grid.wmsx.requestor;
 
 import hu.kfki.grid.wmsx.Wmsx;
+import hu.kfki.grid.wmsx.WmsxEntry;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -8,6 +9,7 @@ import java.rmi.RMISecurityManager;
 import java.util.logging.Logger;
 
 import net.jini.core.discovery.LookupLocator;
+import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.discovery.DiscoveryEvent;
@@ -85,7 +87,7 @@ public class App implements DiscoveryListener {
 		Wmsx myService = null;
 		final Class[] classes = new Class[] { Wmsx.class };
 		final ServiceTemplate template = new ServiceTemplate(null, classes,
-				null);
+				new Entry[] { new WmsxEntry(System.getProperty("user.name")) });
 		try {
 			myService = (Wmsx) registrar.lookup(template);
 		} catch (final java.rmi.RemoteException e) {
