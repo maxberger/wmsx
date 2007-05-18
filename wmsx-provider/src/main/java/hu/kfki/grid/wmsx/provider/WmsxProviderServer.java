@@ -4,12 +4,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
 
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
 import net.jini.config.ConfigurationProvider;
+import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lease.Lease;
 import net.jini.core.lookup.ServiceID;
@@ -98,6 +101,18 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 		// proxy primed with impl
 		smartProxy = new WmsxProviderProxy(rmiProxy);
 
+		try {
+			LookupLocator localLocator = new LookupLocator("jini://127.0.0.1/");
+			ServiceRegistrar reg = localLocator.getRegistrar();
+			register(reg);
+		} catch (MalformedURLException e1) {
+			LOGGER.warn(e1);
+		} catch (IOException e) {
+			LOGGER.debug(e);
+		} catch (ClassNotFoundException e) {
+			LOGGER.warn(e);
+		}
+
 		LookupDiscovery discover = null;
 
 		try {
@@ -119,40 +134,43 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 
 		for (int n = 0; n < registrars.length; n++) {
 			ServiceRegistrar registrar = registrars[n];
+			register(registrar);
+		}
+	}
 
-			ServiceItem item = new ServiceItem(serviceID, smartProxy,
-					getTypes());
-			ServiceRegistration reg = null;
+	public void register(ServiceRegistrar registrar) {
+		ServiceItem item = new ServiceItem(serviceID, smartProxy, getTypes());
+		ServiceRegistration reg = null;
 
+		try {
+			reg = registrar.register(item, Lease.FOREVER);
+		} catch (java.rmi.RemoteException e) {
+			LOGGER.warn("Register exception: ", e);
+			return;
+		}
+
+		LOGGER.info("Service registered with id " + reg.getServiceID());
+
+		// set lease renewal in place
+		leaseManager.renewUntil(reg.getLease(), Lease.FOREVER, this);
+
+		// set the serviceID if necessary
+		if (serviceID == null) {
+			serviceID = reg.getServiceID();
+
+			// try to save the service ID in a file
+			DataOutputStream dout = null;
 			try {
-				reg = registrar.register(item, Lease.FOREVER);
-			} catch (java.rmi.RemoteException e) {
-				LOGGER.warn("Register exception: ", e);
-				continue;
-			}
-
-			LOGGER.info("Service registered with id " + reg.getServiceID());
-
-			// set lease renewal in place
-			leaseManager.renewUntil(reg.getLease(), Lease.FOREVER, this);
-
-			// set the serviceID if necessary
-			if (serviceID == null) {
-				serviceID = reg.getServiceID();
-
-				// try to save the service ID in a file
-				DataOutputStream dout = null;
-				try {
-					dout = new DataOutputStream(new FileOutputStream(this
-							.getClass().getName()
-							+ ".id"));
-					serviceID.writeBytes(dout);
-					dout.flush();
-				} catch (Exception e) {
-					// ignore
-				}
+				dout = new DataOutputStream(new FileOutputStream(this
+						.getClass().getName()
+						+ ".id"));
+				serviceID.writeBytes(dout);
+				dout.flush();
+			} catch (Exception e) {
+				// ignore
 			}
 		}
+
 	}
 
 	public void notify(LeaseRenewalEvent evt) {
