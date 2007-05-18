@@ -12,34 +12,35 @@ public class PipeInputChannel implements ReadableByteChannel {
 
 	private ReadableByteChannel channel;
 
-	public PipeInputChannel(String fileName) {
+	public PipeInputChannel(final String fileName) {
 		this(new File(fileName));
 	}
 
-	public PipeInputChannel(File file) {
+	public PipeInputChannel(final File file) {
 		this.file = file;
-		channel = null;
+		this.channel = null;
 	}
 
-	public int read(ByteBuffer arg0) throws IOException {
-		if (channel == null) {
-			channel = new FileInputStream(file).getChannel();
+	public int read(final ByteBuffer arg0) throws IOException {
+		if (this.channel == null) {
+			this.channel = new FileInputStream(this.file).getChannel();
 		}
-		return channel.read(arg0);
+		return this.channel.read(arg0);
 	}
 
 	public void close() throws IOException {
-		if (channel != null) {
-			channel.close();
+		if (this.channel != null) {
+			this.channel.close();
 		}
-		file = null;
+		this.file = null;
 	}
 
 	public boolean isOpen() {
-		if (channel == null) {
+		if (this.channel == null) {
 			return true;
-		} else
-			return channel.isOpen();
+		} else {
+			return this.channel.isOpen();
+		}
 	}
 
 }

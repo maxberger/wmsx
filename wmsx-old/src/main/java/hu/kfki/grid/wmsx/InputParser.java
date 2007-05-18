@@ -8,7 +8,8 @@ import java.io.PrintStream;
 
 public class InputParser {
 
-	public static ParseResult parse(InputStream inStream, PrintStream outStream) {
+	public static ParseResult parse(final InputStream inStream,
+			final PrintStream outStream) {
 
 		String jobId = null;
 		String iStream = null;
@@ -17,8 +18,8 @@ public class InputParser {
 		int shadowpid = 0;
 		try {
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					inStream));
+			final BufferedReader reader = new BufferedReader(
+					new InputStreamReader(inStream));
 			String line = reader.readLine();
 
 			int have = 0;
@@ -42,14 +43,14 @@ public class InputParser {
 						eStream = line.substring(25).trim();
 						have |= 0x10;
 					}
-				} catch (NumberFormatException nfe) {
+				} catch (final NumberFormatException nfe) {
 					// Ignore
-				} catch (StringIndexOutOfBoundsException obe) {
+				} catch (final StringIndexOutOfBoundsException obe) {
 					// Ignore
 				}
 				line = reader.readLine();
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		return new ParseResult(jobId, iStream, oStream, eStream, shadowpid);

@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 public class AllTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test for hu.kfki.grid.wmsx.test");
+		final TestSuite suite = new TestSuite("Test for hu.kfki.grid.wmsx.test");
 		// $JUnit-BEGIN$
 		suite.addTestSuite(ShadowListenerTest.class);
 		suite.addTestSuite(InputParserTest.class);

@@ -34,28 +34,29 @@ public class JobWatcher implements Runnable {
 	private static final int STATE_NONE = 0;
 
 	private JobWatcher() {
-		isRunning = false;
+		this.isRunning = false;
 	}
 
 	private synchronized void doStart() {
-		if (!isRunning) {
-			isRunning = true;
+		if (!this.isRunning) {
+			this.isRunning = true;
 			new Thread(this).start();
 		}
 	}
 
 	public static synchronized JobWatcher getWatcher() {
-		if (jobWatcher == null) {
-			jobWatcher = new JobWatcher();
+		if (JobWatcher.jobWatcher == null) {
+			JobWatcher.jobWatcher = new JobWatcher();
 		}
-		return jobWatcher;
+		return JobWatcher.jobWatcher;
 	}
 
-	public synchronized void addWatch(JobId jobId, JobListener listener) {
-		Set listeners = (Set) joblisteners.get(jobId);
+	public synchronized void addWatch(final JobId jobId,
+			final JobListener listener) {
+		Set listeners = (Set) this.joblisteners.get(jobId);
 		if (listeners == null) {
 			listeners = new HashSet();
-			joblisteners.put(jobId, listeners);
+			this.joblisteners.put(jobId, listeners);
 		}
 		listeners.add(listener);
 		this.doStart();
@@ -68,40 +69,42 @@ public class JobWatcher implements Runnable {
 		while (!done) {
 			try {
 				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				LOGGER.debug(e);
+			} catch (final InterruptedException e) {
+				JobWatcher.LOGGER.debug(e);
 			}
 
 			Set jobs;
 			synchronized (this) {
-				jobs = new HashSet(joblisteners.keySet());
+				jobs = new HashSet(this.joblisteners.keySet());
 			}
 
-			Iterator it = jobs.iterator();
+			final Iterator it = jobs.iterator();
 			while (it.hasNext()) {
-				JobId jobId = (JobId) it.next();
+				final JobId jobId = (JobId) it.next();
 
-				int stateNow = getState(new Job(jobId));
+				final int stateNow = JobWatcher.getState(new Job(jobId));
 				boolean differs;
-				synchronized (jobstate) {
-					Integer oldState = (Integer) jobstate.get(jobId);
-					if (oldState == null)
-						oldState = new Integer(STATE_NONE);
+				synchronized (this.jobstate) {
+					Integer oldState = (Integer) this.jobstate.get(jobId);
+					if (oldState == null) {
+						oldState = new Integer(JobWatcher.STATE_NONE);
+					}
 					differs = oldState.intValue() != stateNow;
 					if (differs) {
-						jobstate.put(jobId, new Integer(stateNow));
+						this.jobstate.put(jobId, new Integer(stateNow));
 					}
 				}
 
 				if (differs) {
 					Set listeners;
 					synchronized (this) {
-						listeners = new HashSet((Set) joblisteners.get(jobId));
+						listeners = new HashSet((Set) this.joblisteners
+								.get(jobId));
 					}
 
-					Iterator li = listeners.iterator();
+					final Iterator li = listeners.iterator();
 					while (li.hasNext()) {
-						JobListener listener = (JobListener) li.next();
+						final JobListener listener = (JobListener) li.next();
 						switch (stateNow) {
 						case STATE_STARTUP:
 							listener.startup();
@@ -114,17 +117,17 @@ public class JobWatcher implements Runnable {
 							break;
 						}
 					}
-					if (stateNow == STATE_DONE) {
+					if (stateNow == JobWatcher.STATE_DONE) {
 						synchronized (this) {
-							joblisteners.remove(jobId);
+							this.joblisteners.remove(jobId);
 						}
 					}
 				}
 			}
 			synchronized (this) {
-				if (joblisteners.isEmpty()) {
+				if (this.joblisteners.isEmpty()) {
 					done = true;
-					isRunning = false;
+					this.isRunning = false;
 				}
 			}
 
@@ -132,36 +135,37 @@ public class JobWatcher implements Runnable {
 		System.gc();
 	}
 
-	private static int getState(Job job) {
-		int retVal = STATE_DONE;
+	private static int getState(final Job job) {
+		int retVal = JobWatcher.STATE_DONE;
 		try {
 
-			Result result = job.getStatus(false);
+			final Result result = job.getStatus(false);
 
-			JobStatus status = (JobStatus) result.getResult();
+			final JobStatus status = (JobStatus) result.getResult();
 
-			int statusInt = status.code();
+			final int statusInt = status.code();
 
-			boolean startupPhase = (statusInt == JobStatus.SUBMITTED)
+			final boolean startupPhase = (statusInt == JobStatus.SUBMITTED)
 					|| ((statusInt == JobStatus.WAITING))
 					|| (statusInt == JobStatus.READY)
 					|| (statusInt == JobStatus.SCHEDULED);
 
-			boolean active = (statusInt == JobStatus.RUNNING);
+			final boolean active = (statusInt == JobStatus.RUNNING);
 
 			// boolean done = (statusInt == JobStatus.DONE)
 			// || (statusInt == JobStatus.CLEARED)
 			// || (statusInt == JobStatus.ABORTED)
 			// || (statusInt == JobStatus.CANCELLED);
 
-			if (startupPhase)
-				retVal = STATE_STARTUP;
-			else if (active)
-				retVal = STATE_RUNNING;
+			if (startupPhase) {
+				retVal = JobWatcher.STATE_STARTUP;
+			} else if (active) {
+				retVal = JobWatcher.STATE_RUNNING;
+			}
 
-		} catch (Exception e) {
-			LOGGER.warn(e);
-			retVal = STATE_DONE;
+		} catch (final Exception e) {
+			JobWatcher.LOGGER.warn(e);
+			retVal = JobWatcher.STATE_DONE;
 		}
 		return retVal;
 	}

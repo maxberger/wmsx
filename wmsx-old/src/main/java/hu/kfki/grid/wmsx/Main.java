@@ -12,7 +12,7 @@ public class Main {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 
 		PrintStream parserOutput = null;
 		WritableByteChannel appOutput = null;
@@ -22,7 +22,7 @@ public class Main {
 				parserOutput = System.out;
 				appOutput = new FileOutputStream(args[0]).getChannel();
 				init = true;
-			} catch (IOException io) {
+			} catch (final IOException io) {
 				init = false;
 			}
 		}
@@ -30,7 +30,7 @@ public class Main {
 			parserOutput = new PrintStream(new ByteArrayOutputStream());
 			appOutput = Channels.newChannel(System.out);
 		}
-		ParseResult pr = InputParser.parse(System.in, parserOutput);
+		final ParseResult pr = InputParser.parse(System.in, parserOutput);
 		ShadowListener listener = ShadowListener.listen(pr, appOutput);
 		JobWatcher.watch(pr.jobId, listener);
 		listener = null;

@@ -10,20 +10,20 @@ public class LogListener implements JobListener {
 
 	final JobId jobId;
 
-	public LogListener(JobId id) {
+	public LogListener(final JobId id) {
 		this.jobId = id;
 	}
 
 	public void done() {
-		LOGGER.info("DONE: " + jobId);
+		LogListener.LOGGER.info("DONE: " + this.jobId);
 	}
 
 	public void running() {
-		LOGGER.info("RUNNING: " + jobId);
+		LogListener.LOGGER.info("RUNNING: " + this.jobId);
 	}
 
 	public void startup() {
-		LOGGER.info("STARTUP: " + jobId);
+		LogListener.LOGGER.info("STARTUP: " + this.jobId);
 	}
 
 }

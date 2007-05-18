@@ -27,66 +27,70 @@ public class ShadowListener implements Runnable {
 
 	final WritableByteChannel appOutput;
 
-	private ShadowListener(ParseResult result, WritableByteChannel outputStream) {
-		appOutput = outputStream;
-		Runtime.runFinalizersOnExit(true);
+	private ShadowListener(final ParseResult result,
+			final WritableByteChannel outputStream) {
+		this.appOutput = outputStream;
+		// Runtime.runFinalizersOnExit(true);
 
-		oFile = new File(result.getOStream());
-		eFile = new File(result.getEStream());
-		iFile = new File(result.getIStream());
-		oChannel = new PipeInputChannel(oFile);
-		eChannel = new PipeInputChannel(eFile);
-		listenerPid = result.getShadowpid();
-		termination = false;
+		this.oFile = new File(result.getOStream());
+		this.eFile = new File(result.getEStream());
+		this.iFile = new File(result.getIStream());
+		this.oChannel = new PipeInputChannel(this.oFile);
+		this.eChannel = new PipeInputChannel(this.eFile);
+		this.listenerPid = result.getShadowpid();
+		this.termination = false;
 
-		runThread = new Thread(this);
-		runThread.start();
+		this.runThread = new Thread(this);
+		this.runThread.start();
 
 	}
 
-	public static ShadowListener listen(ParseResult result,
-			WritableByteChannel outputStream) {
-		ShadowListener l = new ShadowListener(result, outputStream);
+	public static ShadowListener listen(final ParseResult result,
+			final WritableByteChannel outputStream) {
+		final ShadowListener l = new ShadowListener(result, outputStream);
 		return l;
 	}
 
 	protected void finalize() {
-		if (listenerPid != 0)
-			runtimeExec(new String[] { "kill", Integer.toString(listenerPid) });
-		closeChannel(oChannel);
-		closeChannel(eChannel);
-		if (listenerPid != 0)
-			runtimeExec(new String[] { "kill", "-9",
-					Integer.toString(listenerPid) });
-		deleteFile(oFile);
-		deleteFile(iFile);
-		deleteFile(eFile);
+		if (this.listenerPid != 0) {
+			this.runtimeExec(new String[] { "kill",
+					Integer.toString(this.listenerPid) });
+		}
+		this.closeChannel(this.oChannel);
+		this.closeChannel(this.eChannel);
+		if (this.listenerPid != 0) {
+			this.runtimeExec(new String[] { "kill", "-9",
+					Integer.toString(this.listenerPid) });
+		}
+		this.deleteFile(this.oFile);
+		this.deleteFile(this.iFile);
+		this.deleteFile(this.eFile);
 	}
 
-	private void deleteFile(File file) {
+	private void deleteFile(final File file) {
 		try {
 			file.delete();
-		} catch (SecurityException e) {
+		} catch (final SecurityException e) {
 			// ignore
 		}
 
 	}
 
-	private void runtimeExec(String[] args) {
+	private void runtimeExec(final String[] args) {
 		try {
-			Process p = Runtime.getRuntime().exec(args);
+			final Process p = Runtime.getRuntime().exec(args);
 			p.waitFor();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// Ignore
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			// Ignore
 		}
 	}
 
-	private void closeChannel(Channel c) {
+	private void closeChannel(final Channel c) {
 		try {
 			c.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// Ignore
 		}
 	}
@@ -94,17 +98,17 @@ public class ShadowListener implements Runnable {
 	public void run() {
 		// System.out.println("I am listening...");
 		try {
-			ByteBuffer buf = ByteBuffer.allocateDirect(4096);
-			while (!termination) {
+			final ByteBuffer buf = ByteBuffer.allocateDirect(4096);
+			while (!this.termination) {
 				buf.rewind();
 				// appOutput.flush();
-				oChannel.read(buf);
+				this.oChannel.read(buf);
 				buf.flip();
 				while (buf.remaining() > 0) {
-					appOutput.write(buf);
+					this.appOutput.write(buf);
 				}
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// System.out.println("Exceptional!");
 			// Ignore, the end is near!
 		}
@@ -113,7 +117,7 @@ public class ShadowListener implements Runnable {
 
 	public void terminate() {
 		// System.out.println("Terminator called!");
-		termination = true;
-		runThread.interrupt();
+		this.termination = true;
+		this.runThread.interrupt();
 	}
 }

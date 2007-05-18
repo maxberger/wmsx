@@ -30,18 +30,18 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider {
 		return "Hello, World!";
 	}
 
-	public void submitJdl(String jdlFile) {
-		LOGGER.info("Submitting " + jdlFile);
+	public void submitJdl(final String jdlFile) {
+		WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
 		ParseResult result;
 		try {
 			result = Submitter.getSubmitter().submitJdl(jdlFile);
-			JobId id = new JobId(result.getJobId());
-			LOGGER.info("Job id is: " + id);
+			final JobId id = new JobId(result.getJobId());
+			WmsxProviderImpl.LOGGER.info("Job id is: " + id);
 			JobWatcher.getWatcher().addWatch(id, new LogListener(id));
-		} catch (IOException e) {
-			LOGGER.warn(e);
-		} catch (NullPointerException e) {
-			LOGGER.warn(e);
+		} catch (final IOException e) {
+			WmsxProviderImpl.LOGGER.warn(e);
+		} catch (final NullPointerException e) {
+			WmsxProviderImpl.LOGGER.warn(e);
 		}
 	}
 
