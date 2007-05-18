@@ -20,7 +20,7 @@ public class Submitter {
 	}
 
 	public ParseResult submitJdl(final String jdlFile) throws IOException {
-		List commandLine = new Vector();
+		final List commandLine = new Vector();
 		commandLine.add("/opt/edg/bin/edg-job-submit");
 		commandLine.add("--nolisten");
 		commandLine.add(jdlFile);

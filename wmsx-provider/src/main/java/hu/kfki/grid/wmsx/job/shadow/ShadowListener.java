@@ -35,14 +35,14 @@ public class ShadowListener implements Runnable, JobListener {
 		this.appOutput = outputStream;
 		// Runtime.runFinalizersOnExit(true);
 
-		this.oFile = fileFromResult(result.getOStream());
-		this.eFile = fileFromResult(result.getEStream());
-		this.iFile = fileFromResult(result.getIStream());
+		this.oFile = this.fileFromResult(result.getOStream());
+		this.eFile = this.fileFromResult(result.getEStream());
+		this.iFile = this.fileFromResult(result.getIStream());
 		this.oChannel = new PipeInputChannel(this.oFile);
 		this.eChannel = new PipeInputChannel(this.eFile);
 		this.listenerPid = result.getShadowpid();
 
-		if ((outputStream != null) && (oFile != null)) {
+		if ((outputStream != null) && (this.oFile != null)) {
 			this.termination = false;
 			this.runThread = new Thread(this);
 			this.runThread.start();
@@ -52,9 +52,10 @@ public class ShadowListener implements Runnable, JobListener {
 
 	}
 
-	private File fileFromResult(String stream) {
-		if (stream == null)
+	private File fileFromResult(final String stream) {
+		if (stream == null) {
 			return null;
+		}
 		return new File(stream);
 	}
 

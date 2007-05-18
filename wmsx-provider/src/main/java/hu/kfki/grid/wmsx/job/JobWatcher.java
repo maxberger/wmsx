@@ -38,7 +38,7 @@ public class JobWatcher implements Runnable {
 
 	private synchronized void doStart() {
 		if (!this.isRunning) {
-			LOGGER.info("Starting new Listener");
+			JobWatcher.LOGGER.info("Starting new Listener");
 			this.isRunning = true;
 			new Thread(this).start();
 		}
@@ -128,7 +128,7 @@ public class JobWatcher implements Runnable {
 				if (this.joblisteners.isEmpty()) {
 					done = true;
 					this.isRunning = false;
-					LOGGER.info("No more jobs to listen to.");
+					JobWatcher.LOGGER.info("No more jobs to listen to.");
 				}
 			}
 		}

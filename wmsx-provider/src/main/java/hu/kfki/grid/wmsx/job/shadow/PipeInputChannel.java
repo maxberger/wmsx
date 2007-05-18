@@ -25,7 +25,7 @@ public class PipeInputChannel implements ReadableByteChannel {
 		if (this.channel == null) {
 			try {
 				this.channel = new FileInputStream(this.file).getChannel();
-			} catch (NullPointerException npe) {
+			} catch (final NullPointerException npe) {
 				throw new IOException("File was null");
 			}
 		}
