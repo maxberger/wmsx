@@ -11,14 +11,18 @@ public class ParseResult {
 
 	final int shadowpid;
 
+	final int port;
+
 	public ParseResult(final String jobId, final String stream,
-			final String stream2, final String stream3, final int shadowpid) {
+			final String stream2, final String stream3, final int pid,
+			final int portNum) {
 		super();
 		this.jobId = jobId;
 		this.iStream = stream;
 		this.oStream = stream2;
 		this.eStream = stream3;
-		this.shadowpid = shadowpid;
+		this.shadowpid = pid;
+		this.port = portNum;
 	}
 
 	public String getEStream() {
@@ -39,6 +43,10 @@ public class ParseResult {
 
 	public int getShadowpid() {
 		return this.shadowpid;
+	}
+
+	public int getPort() {
+		return this.port;
 	}
 
 }
