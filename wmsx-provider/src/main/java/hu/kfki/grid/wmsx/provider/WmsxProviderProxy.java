@@ -4,6 +4,7 @@ import hu.kfki.grid.wmsx.Wmsx;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -34,13 +35,19 @@ public class WmsxProviderProxy implements Serializable, Wmsx {
 		}
 	}
 
-	public String submitJdl(final String jdlFile) throws FileNotFoundException {
+	public String submitJdl(final String jdlFile, String output)
+			throws IOException {
 		try {
 			final File f = new File(jdlFile);
 			if (!f.exists()) {
 				throw new FileNotFoundException(jdlFile);
 			}
-			return this.remoteService.submitJdl(f.getAbsolutePath());
+			final File f2 = new File(output);
+			if (f2.exists()) {
+				throw new IOException("File exists: " + output);
+			}
+			return this.remoteService.submitJdl(f.getAbsolutePath(), f2
+					.getAbsolutePath());
 		} catch (final RemoteException re) {
 			WmsxProviderProxy.LOGGER.warning(re.getMessage());
 			return null;

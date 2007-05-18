@@ -2,10 +2,13 @@ package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.LogListener;
+import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.job.submit.ParseResult;
 import hu.kfki.grid.wmsx.job.submit.Submitter;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.WritableByteChannel;
 import java.util.logging.Logger;
 
 import edg.workload.userinterface.jclient.JobId;
@@ -29,7 +32,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider {
 		return "Hello, World!";
 	}
 
-	public String submitJdl(final String jdlFile) {
+	public String submitJdl(final String jdlFile, String output) {
 		WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
 		ParseResult result;
 		try {
@@ -38,6 +41,14 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider {
 			final JobId id = new JobId(jobStr);
 			WmsxProviderImpl.LOGGER.info("Job id is: " + id);
 			JobWatcher.getWatcher().addWatch(id, new LogListener(id));
+			final WritableByteChannel oChannel;
+			if (output != null) {
+				oChannel = new FileOutputStream(output).getChannel();
+			} else {
+				oChannel = null;
+			}
+			JobWatcher.getWatcher().addWatch(id,
+					ShadowListener.listen(result, oChannel));
 			return jobStr;
 		} catch (final IOException e) {
 			WmsxProviderImpl.LOGGER.warning(e.getMessage());
