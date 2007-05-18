@@ -5,9 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.logging.Logger;
 
 import edg.workload.userinterface.jclient.Job;
 import edg.workload.userinterface.jclient.JobId;
@@ -15,7 +13,8 @@ import edg.workload.userinterface.jclient.JobStatus;
 import edg.workload.userinterface.jclient.Result;
 
 public class JobWatcher implements Runnable {
-	private static final Log LOGGER = LogFactory.getLog(JobWatcher.class);
+	private static final Logger LOGGER = Logger.getLogger(JobWatcher.class
+			.toString());
 
 	private final Map joblisteners = new HashMap();
 
@@ -70,7 +69,7 @@ public class JobWatcher implements Runnable {
 			try {
 				Thread.sleep(10000);
 			} catch (final InterruptedException e) {
-				JobWatcher.LOGGER.debug(e);
+				JobWatcher.LOGGER.fine(e.getMessage());
 			}
 
 			Set jobs;
@@ -164,7 +163,7 @@ public class JobWatcher implements Runnable {
 			}
 
 		} catch (final Exception e) {
-			JobWatcher.LOGGER.warn(e);
+			JobWatcher.LOGGER.warning(e.getMessage());
 			retVal = JobWatcher.STATE_DONE;
 		}
 		return retVal;

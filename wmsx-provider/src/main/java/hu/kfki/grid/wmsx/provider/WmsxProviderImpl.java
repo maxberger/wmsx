@@ -6,9 +6,7 @@ import hu.kfki.grid.wmsx.job.submit.ParseResult;
 import hu.kfki.grid.wmsx.job.submit.Submitter;
 
 import java.io.IOException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.logging.Logger;
 
 import edg.workload.userinterface.jclient.JobId;
 
@@ -20,7 +18,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider {
 
 	private static final long serialVersionUID = 2L;
 
-	private static final Log LOGGER = LogFactory.getLog(WmsxProviderImpl.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(WmsxProviderImpl.class.toString());
 
 	public WmsxProviderImpl() {
 		// default constructor
@@ -30,19 +29,22 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider {
 		return "Hello, World!";
 	}
 
-	public void submitJdl(final String jdlFile) {
+	public String submitJdl(final String jdlFile) {
 		WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
 		ParseResult result;
 		try {
 			result = Submitter.getSubmitter().submitJdl(jdlFile);
-			final JobId id = new JobId(result.getJobId());
+			final String jobStr = result.getJobId();
+			final JobId id = new JobId(jobStr);
 			WmsxProviderImpl.LOGGER.info("Job id is: " + id);
 			JobWatcher.getWatcher().addWatch(id, new LogListener(id));
+			return jobStr;
 		} catch (final IOException e) {
-			WmsxProviderImpl.LOGGER.warn(e);
+			WmsxProviderImpl.LOGGER.warning(e.getMessage());
 		} catch (final NullPointerException e) {
-			WmsxProviderImpl.LOGGER.warn(e);
+			WmsxProviderImpl.LOGGER.warning(e.getMessage());
 		}
+		return null;
 	}
 
 }

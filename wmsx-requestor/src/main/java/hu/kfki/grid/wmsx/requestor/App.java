@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
+import java.util.logging.Logger;
 
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.lookup.ServiceRegistrar;
@@ -14,16 +15,13 @@ import net.jini.discovery.DiscoveryEvent;
 import net.jini.discovery.DiscoveryListener;
 import net.jini.discovery.LookupDiscovery;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Hello world!
  * 
  */
 public class App implements DiscoveryListener {
 
-	private static final Log LOGGER = LogFactory.getLog(App.class);
+	private static final Logger LOGGER = Logger.getLogger(App.class.toString());
 
 	public static void main(final String[] args) {
 		new App();
@@ -45,18 +43,18 @@ public class App implements DiscoveryListener {
 			final ServiceRegistrar reg = localLocator.getRegistrar();
 			this.haveReg(reg);
 		} catch (final MalformedURLException e1) {
-			App.LOGGER.warn(e1);
+			App.LOGGER.warning(e1.getMessage());
 		} catch (final IOException e) {
-			App.LOGGER.debug(e);
+			App.LOGGER.fine(e.getMessage());
 		} catch (final ClassNotFoundException e) {
-			App.LOGGER.warn(e);
+			App.LOGGER.fine(e.getMessage());
 		}
 
 		LookupDiscovery discover = null;
 		try {
 			discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
 		} catch (final Exception e) {
-			App.LOGGER.fatal(e);
+			App.LOGGER.severe(e.getMessage());
 			System.exit(1);
 		}
 
@@ -86,14 +84,15 @@ public class App implements DiscoveryListener {
 			return;
 		}
 		if (myService == null) {
-			App.LOGGER.debug("Classifier null");
+			App.LOGGER.fine("Classifier null");
 			return;
 		}
 		App.LOGGER.info(myService.hello());
 		try {
-			myService.submitJdl("testjob.jdl");
+			final String s = myService.submitJdl("testjob.jdl");
+			System.out.println("JobId: " + s);
 		} catch (final FileNotFoundException e) {
-			App.LOGGER.warn(e);
+			App.LOGGER.warning(e.getMessage());
 		}
 		System.exit(0);
 	}
