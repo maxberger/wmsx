@@ -32,7 +32,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider {
 		return "Hello, World!";
 	}
 
-	public String submitJdl(final String jdlFile, String output) {
+	public String submitJdl(final String jdlFile, final String output) {
 		WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
 		ParseResult result;
 		try {

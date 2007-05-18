@@ -35,19 +35,25 @@ public class WmsxProviderProxy implements Serializable, Wmsx {
 		}
 	}
 
-	public String submitJdl(final String jdlFile, String output)
+	public String submitJdl(final String jdlFile, final String output)
 			throws IOException {
 		try {
 			final File f = new File(jdlFile);
 			if (!f.exists()) {
 				throw new FileNotFoundException(jdlFile);
 			}
-			final File f2 = new File(output);
-			if (f2.exists()) {
-				throw new IOException("File exists: " + output);
+			final String outputPath;
+			if (output != null) {
+				final File f2 = new File(output);
+				if (f2.exists()) {
+					throw new IOException("File exists: " + output);
+				}
+				outputPath = f2.getAbsolutePath();
+			} else {
+				outputPath = null;
 			}
-			return this.remoteService.submitJdl(f.getAbsolutePath(), f2
-					.getAbsolutePath());
+			return this.remoteService
+					.submitJdl(f.getAbsolutePath(), outputPath);
 		} catch (final RemoteException re) {
 			WmsxProviderProxy.LOGGER.warning(re.getMessage());
 			return null;

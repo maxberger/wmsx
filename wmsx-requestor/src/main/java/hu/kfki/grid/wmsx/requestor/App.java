@@ -41,7 +41,7 @@ public class App implements DiscoveryListener {
 		}
 	}
 
-	public App(String jdlFile, String outputFile) {
+	public App(final String jdlFile, final String outputFile) {
 		this.jdl = jdlFile;
 		this.output = outputFile;
 		System.setSecurityManager(new RMISecurityManager());
@@ -98,7 +98,7 @@ public class App implements DiscoveryListener {
 		}
 		// App.LOGGER.info(myService.hello());
 		try {
-			final String s = myService.submitJdl(jdl, output);
+			final String s = myService.submitJdl(this.jdl, this.output);
 			System.out.println("" + s);
 		} catch (final IOException e) {
 			App.LOGGER.warning(e.getMessage());
