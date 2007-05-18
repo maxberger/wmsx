@@ -25,7 +25,7 @@ public class Submitter {
 		commandLine.add("--nolisten");
 		commandLine.add(jdlFile);
 		final Process p = Runtime.getRuntime().exec(
-				(String[]) commandLine.toArray());
+				(String[]) commandLine.toArray(new String[commandLine.size()]));
 
 		// final PrintStream parserOutput = new PrintStream(
 		// new ByteArrayOutputStream());
