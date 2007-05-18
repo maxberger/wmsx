@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
+import java.util.logging.Logger;
 
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
@@ -27,14 +28,11 @@ import net.jini.lease.LeaseListener;
 import net.jini.lease.LeaseRenewalEvent;
 import net.jini.lease.LeaseRenewalManager;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.sun.jini.lookup.entry.BasicServiceType;
 
 public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
-	private static final Log LOGGER = LogFactory
-			.getLog(WmsxProviderServer.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(WmsxProviderServer.class.toString());
 
 	protected LeaseRenewalManager leaseManager = new LeaseRenewalManager();
 
@@ -50,7 +48,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 		try {
 			new WmsxProviderServer(ConfigurationProvider.getInstance(argv));
 		} catch (final ConfigurationException e) {
-			WmsxProviderServer.LOGGER.fatal(e);
+			WmsxProviderServer.LOGGER.severe(e.getMessage());
 			System.exit(1);
 		}
 
@@ -92,7 +90,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 			// export an object of this class
 			this.rmiProxy = exporter.export(this.impl);
 		} catch (final Exception e) {
-			WmsxProviderServer.LOGGER.fatal(e);
+			WmsxProviderServer.LOGGER.severe(e.getMessage());
 			System.exit(1);
 		}
 
@@ -107,11 +105,11 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 			final ServiceRegistrar reg = localLocator.getRegistrar();
 			this.register(reg);
 		} catch (final MalformedURLException e1) {
-			WmsxProviderServer.LOGGER.warn(e1);
+			WmsxProviderServer.LOGGER.warning(e1.getMessage());
 		} catch (final IOException e) {
-			WmsxProviderServer.LOGGER.debug(e);
+			WmsxProviderServer.LOGGER.fine(e.getMessage());
 		} catch (final ClassNotFoundException e) {
-			WmsxProviderServer.LOGGER.warn(e);
+			WmsxProviderServer.LOGGER.warning(e.getMessage());
 		}
 
 		LookupDiscovery discover = null;
@@ -119,7 +117,8 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 		try {
 			discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
 		} catch (final Exception e) {
-			WmsxProviderServer.LOGGER.fatal("Discovery failed", e);
+			WmsxProviderServer.LOGGER.severe("Discovery failed: "
+					+ e.getMessage());
 			System.exit(1);
 		}
 
@@ -147,7 +146,8 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 		try {
 			reg = registrar.register(item, Lease.FOREVER);
 		} catch (final java.rmi.RemoteException e) {
-			WmsxProviderServer.LOGGER.warn("Register exception: ", e);
+			WmsxProviderServer.LOGGER.warning("Register exception: "
+					+ e.getMessage());
 			return;
 		}
 
@@ -177,7 +177,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 	}
 
 	public void notify(final LeaseRenewalEvent evt) {
-		WmsxProviderServer.LOGGER.debug("Lease expired " + evt.toString());
+		WmsxProviderServer.LOGGER.fine("Lease expired " + evt.toString());
 	}
 
 	public void discarded(final DiscoveryEvent arg0) {

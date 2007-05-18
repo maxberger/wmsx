@@ -10,5 +10,5 @@ public interface Wmsx {
 
 	String hello();
 
-	void submitJdl(String jdlFile) throws FileNotFoundException;
+	String submitJdl(String jdlFile) throws FileNotFoundException;
 }

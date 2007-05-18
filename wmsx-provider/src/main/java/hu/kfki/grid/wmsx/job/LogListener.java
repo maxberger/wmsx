@@ -1,12 +1,12 @@
 package hu.kfki.grid.wmsx.job;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.logging.Logger;
 
 import edg.workload.userinterface.jclient.JobId;
 
 public class LogListener implements JobListener {
-	private static final Log LOGGER = LogFactory.getLog(LogListener.class);
+	private static final Logger LOGGER = Logger.getLogger(LogListener.class
+			.toString());
 
 	final JobId jobId;
 
