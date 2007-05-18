@@ -1,1 +1,1 @@
-mvn package && sh target/appassembler/bin/wmsx-requestor
+mvn package && sh target/appassembler/bin/wmsx-requestor testjob.jdl

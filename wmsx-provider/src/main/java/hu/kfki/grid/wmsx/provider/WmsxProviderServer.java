@@ -1,5 +1,7 @@
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.WmsxEntry;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
@@ -126,7 +128,8 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 	}
 
 	public Entry[] getTypes() {
-		return new Entry[] { new BasicServiceType("AService") };
+		return new Entry[] { new BasicServiceType("WMS-X"),
+				new WmsxEntry(System.getProperty("user.name")) };
 	}
 
 	public void discovered(final DiscoveryEvent evt) {
