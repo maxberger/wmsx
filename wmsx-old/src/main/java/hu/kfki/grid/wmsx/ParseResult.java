@@ -15,30 +15,30 @@ public class ParseResult {
 			final String stream2, final String stream3, final int shadowpid) {
 		super();
 		this.jobId = jobId;
-		iStream = stream;
-		oStream = stream2;
-		eStream = stream3;
+		this.iStream = stream;
+		this.oStream = stream2;
+		this.eStream = stream3;
 		this.shadowpid = shadowpid;
 	}
 
 	public String getEStream() {
-		return eStream;
+		return this.eStream;
 	}
 
 	public String getIStream() {
-		return iStream;
+		return this.iStream;
 	}
 
 	public String getJobId() {
-		return jobId;
+		return this.jobId;
 	}
 
 	public String getOStream() {
-		return oStream;
+		return this.oStream;
 	}
 
 	public int getShadowpid() {
-		return shadowpid;
+		return this.shadowpid;
 	}
 
 }

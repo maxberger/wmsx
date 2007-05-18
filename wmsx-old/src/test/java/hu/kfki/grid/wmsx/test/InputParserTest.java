@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class InputParserTest extends TestCase {
@@ -17,7 +18,7 @@ public class InputParserTest extends TestCase {
 	 * @param testName
 	 *            name of the test case
 	 */
-	public InputParserTest(String testName) {
+	public InputParserTest(final String testName) {
 		super(testName);
 	}
 
@@ -25,19 +26,19 @@ public class InputParserTest extends TestCase {
 	 * Rigourous Test :-)
 	 */
 	public void testApp() {
-		InputStream is = InputParserTest.class
+		final InputStream is = InputParserTest.class
 				.getResourceAsStream("/submit_output");
-		PrintStream ps = new PrintStream(new ByteArrayOutputStream());
-		ParseResult result = InputParser.parse(is, ps);
-		assertEquals(result.getJobId(),
+		final PrintStream ps = new PrintStream(new ByteArrayOutputStream());
+		final ParseResult result = InputParser.parse(is, ps);
+		Assert.assertEquals(result.getJobId(),
 				"https://grid151.kfki.hu:9000/AGDbJ6UIDaRsDJk44AfReA");
-		assertEquals(result.getIStream(),
+		Assert.assertEquals(result.getIStream(),
 				"/tmp/listener-AGDbJ6UIDaRsDJk44AfReA.in");
-		assertEquals(result.getOStream(),
+		Assert.assertEquals(result.getOStream(),
 				"/tmp/listener-AGDbJ6UIDaRsDJk44AfReA.out");
-		assertEquals(result.getEStream(),
+		Assert.assertEquals(result.getEStream(),
 				"/tmp/listener-AGDbJ6UIDaRsDJk44AfReA.err");
-		assertEquals(result.getShadowpid(), 12893);
+		Assert.assertEquals(result.getShadowpid(), 12893);
 	}
 
 }

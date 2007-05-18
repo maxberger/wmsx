@@ -23,27 +23,28 @@ public class WmsxProviderProxy implements Serializable, Wmsx {
 	private static final Log LOGGER = LogFactory
 			.getLog(WmsxProviderProxy.class);
 
-	public WmsxProviderProxy(Remote remote) {
+	public WmsxProviderProxy(final Remote remote) {
 		this.remoteService = (IRemoteWmsxProvider) remote;
 	}
 
 	public String hello() {
 		try {
-			return remoteService.hello();
-		} catch (RemoteException re) {
-			LOGGER.debug(re);
+			return this.remoteService.hello();
+		} catch (final RemoteException re) {
+			WmsxProviderProxy.LOGGER.debug(re);
 			return "No answer";
 		}
 	}
 
-	public void submitJdl(String jdlFile) throws FileNotFoundException {
+	public void submitJdl(final String jdlFile) throws FileNotFoundException {
 		try {
 			final File f = new File(jdlFile);
-			if (!f.exists())
+			if (!f.exists()) {
 				throw new FileNotFoundException(jdlFile);
-			remoteService.submitJdl(f.getAbsolutePath());
-		} catch (RemoteException re) {
-			LOGGER.warn(re);
+			}
+			this.remoteService.submitJdl(f.getAbsolutePath());
+		} catch (final RemoteException re) {
+			WmsxProviderProxy.LOGGER.warn(re);
 		}
 	}
 

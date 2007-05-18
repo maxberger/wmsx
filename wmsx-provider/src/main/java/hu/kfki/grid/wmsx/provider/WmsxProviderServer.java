@@ -46,30 +46,30 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 
 	protected WmsxProviderImpl impl = null;
 
-	public static void main(String argv[]) {
+	public static void main(final String argv[]) {
 		try {
 			new WmsxProviderServer(ConfigurationProvider.getInstance(argv));
-		} catch (ConfigurationException e) {
-			LOGGER.fatal(e);
+		} catch (final ConfigurationException e) {
+			WmsxProviderServer.LOGGER.fatal(e);
 			System.exit(1);
 		}
 
 		// keep server running forever to
 		// - allow time for locator discovery and
 		// - keep re-registering the lease
-		Object keepAlive = new Object();
+		final Object keepAlive = new Object();
 		synchronized (keepAlive) {
 			try {
 				keepAlive.wait();
-			} catch (java.lang.InterruptedException e) {
+			} catch (final java.lang.InterruptedException e) {
 				// do nothing
 			}
 		}
 	}
 
-	public WmsxProviderServer(Configuration config) {
+	public WmsxProviderServer(final Configuration config) {
 		// Create the service
-		impl = new WmsxProviderImpl();
+		this.impl = new WmsxProviderImpl();
 
 		// Try to load the service ID from file.
 		// It isn't an error if we can't load it, because
@@ -80,45 +80,46 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 			din = new DataInputStream(new FileInputStream(this.getClass()
 					.getName()
 					+ ".id"));
-			serviceID = new ServiceID(din);
-		} catch (Exception e) {
+			this.serviceID = new ServiceID(din);
+		} catch (final Exception e) {
 			// ignore
 		}
 
 		try {
 			// and use this to construct an exporter
-			Exporter exporter = (Exporter) config.getEntry("JiniServiceServer",
-					"exporter", Exporter.class);
+			final Exporter exporter = (Exporter) config.getEntry(
+					"JiniServiceServer", "exporter", Exporter.class);
 			// export an object of this class
-			this.rmiProxy = (IRemoteWmsxProvider) exporter.export(impl);
-		} catch (Exception e) {
-			LOGGER.fatal(e);
+			this.rmiProxy = exporter.export(this.impl);
+		} catch (final Exception e) {
+			WmsxProviderServer.LOGGER.fatal(e);
 			System.exit(1);
 		}
 
 		System.setSecurityManager(new RMISecurityManager());
 
 		// proxy primed with impl
-		smartProxy = new WmsxProviderProxy(rmiProxy);
+		this.smartProxy = new WmsxProviderProxy(this.rmiProxy);
 
 		try {
-			LookupLocator localLocator = new LookupLocator("jini://127.0.0.1/");
-			ServiceRegistrar reg = localLocator.getRegistrar();
-			register(reg);
-		} catch (MalformedURLException e1) {
-			LOGGER.warn(e1);
-		} catch (IOException e) {
-			LOGGER.debug(e);
-		} catch (ClassNotFoundException e) {
-			LOGGER.warn(e);
+			final LookupLocator localLocator = new LookupLocator(
+					"jini://127.0.0.1/");
+			final ServiceRegistrar reg = localLocator.getRegistrar();
+			this.register(reg);
+		} catch (final MalformedURLException e1) {
+			WmsxProviderServer.LOGGER.warn(e1);
+		} catch (final IOException e) {
+			WmsxProviderServer.LOGGER.debug(e);
+		} catch (final ClassNotFoundException e) {
+			WmsxProviderServer.LOGGER.warn(e);
 		}
 
 		LookupDiscovery discover = null;
 
 		try {
 			discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
-		} catch (Exception e) {
-			LOGGER.fatal("Discovery failed", e);
+		} catch (final Exception e) {
+			WmsxProviderServer.LOGGER.fatal("Discovery failed", e);
 			System.exit(1);
 		}
 
@@ -129,34 +130,36 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 		return new Entry[] { new BasicServiceType("AService") };
 	}
 
-	public void discovered(DiscoveryEvent evt) {
-		ServiceRegistrar[] registrars = evt.getRegistrars();
+	public void discovered(final DiscoveryEvent evt) {
+		final ServiceRegistrar[] registrars = evt.getRegistrars();
 
 		for (int n = 0; n < registrars.length; n++) {
-			ServiceRegistrar registrar = registrars[n];
-			register(registrar);
+			final ServiceRegistrar registrar = registrars[n];
+			this.register(registrar);
 		}
 	}
 
-	public void register(ServiceRegistrar registrar) {
-		ServiceItem item = new ServiceItem(serviceID, smartProxy, getTypes());
+	public void register(final ServiceRegistrar registrar) {
+		final ServiceItem item = new ServiceItem(this.serviceID,
+				this.smartProxy, this.getTypes());
 		ServiceRegistration reg = null;
 
 		try {
 			reg = registrar.register(item, Lease.FOREVER);
-		} catch (java.rmi.RemoteException e) {
-			LOGGER.warn("Register exception: ", e);
+		} catch (final java.rmi.RemoteException e) {
+			WmsxProviderServer.LOGGER.warn("Register exception: ", e);
 			return;
 		}
 
-		LOGGER.info("Service registered with id " + reg.getServiceID());
+		WmsxProviderServer.LOGGER.info("Service registered with id "
+				+ reg.getServiceID());
 
 		// set lease renewal in place
-		leaseManager.renewUntil(reg.getLease(), Lease.FOREVER, this);
+		this.leaseManager.renewUntil(reg.getLease(), Lease.FOREVER, this);
 
 		// set the serviceID if necessary
-		if (serviceID == null) {
-			serviceID = reg.getServiceID();
+		if (this.serviceID == null) {
+			this.serviceID = reg.getServiceID();
 
 			// try to save the service ID in a file
 			DataOutputStream dout = null;
@@ -164,20 +167,20 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 				dout = new DataOutputStream(new FileOutputStream(this
 						.getClass().getName()
 						+ ".id"));
-				serviceID.writeBytes(dout);
+				this.serviceID.writeBytes(dout);
 				dout.flush();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				// ignore
 			}
 		}
 
 	}
 
-	public void notify(LeaseRenewalEvent evt) {
-		LOGGER.debug("Lease expired " + evt.toString());
+	public void notify(final LeaseRenewalEvent evt) {
+		WmsxProviderServer.LOGGER.debug("Lease expired " + evt.toString());
 	}
 
-	public void discarded(DiscoveryEvent arg0) {
+	public void discarded(final DiscoveryEvent arg0) {
 		// do nothing
 	}
 

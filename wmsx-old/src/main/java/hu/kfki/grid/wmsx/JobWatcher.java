@@ -11,9 +11,9 @@ public class JobWatcher implements Runnable {
 
 	private ShadowListener listener;
 
-	private JobWatcher(JobId id, ShadowListener shadowListener) {
-		jobId = id;
-		listener = shadowListener;
+	private JobWatcher(final JobId id, final ShadowListener shadowListener) {
+		this.jobId = id;
+		this.listener = shadowListener;
 
 	}
 
@@ -25,26 +25,26 @@ public class JobWatcher implements Runnable {
 			while (!done) {
 				// System.out.println("Still watching");
 				Thread.sleep(15000);
-				if (!isActive(new Job(jobId))) {
+				if (!JobWatcher.isActive(new Job(this.jobId))) {
 					done = true;
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		// System.out.println("Job is done " + jobId);
-		listener.terminate();
-		listener = null;
+		this.listener.terminate();
+		this.listener = null;
 		System.gc();
 	}
 
-	public static boolean isActive(Job job) {
+	public static boolean isActive(final Job job) {
 		try {
-			Result result = job.getStatus(false);
+			final Result result = job.getStatus(false);
 
-			JobStatus status = (JobStatus) result.getResult();
+			final JobStatus status = (JobStatus) result.getResult();
 
-			int statusInt = status.code();
+			final int statusInt = status.code();
 
 			boolean startupPhase = (statusInt == JobStatus.SUBMITTED)
 					|| ((statusInt == JobStatus.WAITING))
@@ -58,20 +58,21 @@ public class JobWatcher implements Runnable {
 					|| (statusInt == JobStatus.ABORTED)
 					|| (statusInt == JobStatus.CANCELLED);
 
-			if ((!startupPhase) && (!active))
+			if ((!startupPhase) && (!active)) {
 				done = true;
+			}
 
 			// System.out
 			// .println("S-A-D: " + startupPhase + " " + active + " " + done);
 
 			return !done;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
 
-	public static void watch(String jobId, ShadowListener listener) {
+	public static void watch(final String jobId, final ShadowListener listener) {
 		new Thread(new JobWatcher(new JobId(jobId), listener)).start();
 	}
 
