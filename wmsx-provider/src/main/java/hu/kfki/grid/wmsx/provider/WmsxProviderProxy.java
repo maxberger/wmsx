@@ -40,7 +40,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx {
 		try {
 			final File f = new File(jdlFile);
 			if (!f.exists()) {
-				throw new FileNotFoundException(jdlFile);
+				throw new FileNotFoundException("File not Found: " + jdlFile);
 			}
 			final String outputPath;
 			if (output != null) {
