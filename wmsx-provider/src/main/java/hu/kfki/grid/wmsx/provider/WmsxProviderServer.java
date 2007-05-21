@@ -2,10 +2,6 @@ package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.WmsxEntry;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
@@ -74,16 +70,16 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 		// Try to load the service ID from file.
 		// It isn't an error if we can't load it, because
 		// maybe this is the first time this service has run
-		DataInputStream din = null;
-
-		try {
-			din = new DataInputStream(new FileInputStream(this.getClass()
-					.getName()
-					+ ".id"));
-			this.serviceID = new ServiceID(din);
-		} catch (final Exception e) {
-			// ignore
-		}
+//		DataInputStream din = null;
+//
+//		try {
+//			din = new DataInputStream(new FileInputStream(this.getClass()
+//					.getName()
+//					+ ".id"));
+//			this.serviceID = new ServiceID(din);
+//		} catch (final Exception e) {
+//			// ignore
+//		}
 
 		try {
 			// and use this to construct an exporter
@@ -165,16 +161,16 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 			this.serviceID = reg.getServiceID();
 
 			// try to save the service ID in a file
-			DataOutputStream dout = null;
-			try {
-				dout = new DataOutputStream(new FileOutputStream(this
-						.getClass().getName()
-						+ ".id"));
-				this.serviceID.writeBytes(dout);
-				dout.flush();
-			} catch (final Exception e) {
-				// ignore
-			}
+			// DataOutputStream dout = null;
+			// try {
+			// dout = new DataOutputStream(new FileOutputStream(this
+			// .getClass().getName()
+			// + ".id"));
+			// this.serviceID.writeBytes(dout);
+			// dout.flush();
+			// } catch (final Exception e) {
+			//				// ignore
+			//			}
 		}
 
 	}

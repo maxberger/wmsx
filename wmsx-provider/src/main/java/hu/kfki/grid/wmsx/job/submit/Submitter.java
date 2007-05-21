@@ -1,5 +1,6 @@
 package hu.kfki.grid.wmsx.job.submit;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
@@ -25,7 +26,8 @@ public class Submitter {
 		commandLine.add("--nolisten");
 		commandLine.add(jdlFile);
 		final Process p = Runtime.getRuntime().exec(
-				(String[]) commandLine.toArray(new String[commandLine.size()]));
+				(String[]) commandLine.toArray(new String[commandLine.size()]),
+				null, new File(jdlFile).getParentFile());
 
 		// final PrintStream parserOutput = new PrintStream(
 		// new ByteArrayOutputStream());

@@ -103,7 +103,7 @@ public class App implements DiscoveryListener {
 			final String s = myService.submitJdl(this.jdl, this.output);
 			System.out.println("" + s);
 		} catch (final IOException e) {
-			App.LOGGER.warning(e.getMessage());
+			App.LOGGER.warning(e.getMessage() + " " + e.getStackTrace());
 		}
 		System.exit(0);
 	}
