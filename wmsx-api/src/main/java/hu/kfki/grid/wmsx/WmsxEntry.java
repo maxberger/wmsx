@@ -14,8 +14,8 @@ public class WmsxEntry implements Entry {
 	public WmsxEntry() {
 	};
 
-	public WmsxEntry(String uName) {
-		userName = uName;
+	public WmsxEntry(final String uName) {
+		this.userName = uName;
 	};
 
 }

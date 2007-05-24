@@ -52,14 +52,14 @@ public class InputParser {
 						have |= 0x10;
 					}
 				} catch (final NumberFormatException nfe) {
-					LOGGER.fine(nfe.getMessage());
+					InputParser.LOGGER.fine(nfe.getMessage());
 				} catch (final StringIndexOutOfBoundsException obe) {
-					LOGGER.fine(obe.getMessage());
+					InputParser.LOGGER.fine(obe.getMessage());
 				}
 				line = reader.readLine();
 			}
 		} catch (final IOException e) {
-			LOGGER.fine(e.getMessage());
+			InputParser.LOGGER.fine(e.getMessage());
 		}
 		return new ParseResult(jobId, iStream, oStream, eStream, shadowpid,
 				port);

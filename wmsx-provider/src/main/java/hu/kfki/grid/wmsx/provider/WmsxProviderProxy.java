@@ -10,10 +10,12 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
+import net.jini.admin.Administrable;
+
 /**
  * A smart proxy which wraps the remote Jini service calls.
  */
-public class WmsxProviderProxy implements Serializable, Wmsx {
+public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
 
 	private static final long serialVersionUID = 2L;
 
@@ -57,6 +59,18 @@ public class WmsxProviderProxy implements Serializable, Wmsx {
 		} catch (final RemoteException re) {
 			WmsxProviderProxy.LOGGER.warning(re.getMessage());
 			return null;
+		}
+	}
+
+	public Object getAdmin() throws RemoteException {
+		return this.remoteService;
+	}
+
+	public void setMaxJobs(final int maxJobs) {
+		try {
+			this.remoteService.setMaxJobs(maxJobs);
+		} catch (final RemoteException re) {
+			WmsxProviderProxy.LOGGER.warning(re.getMessage());
 		}
 	}
 

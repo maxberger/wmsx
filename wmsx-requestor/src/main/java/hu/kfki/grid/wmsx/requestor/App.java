@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
 import java.util.logging.Logger;
 
+import net.jini.admin.Administrable;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceRegistrar;
@@ -15,6 +16,17 @@ import net.jini.core.lookup.ServiceTemplate;
 import net.jini.discovery.DiscoveryEvent;
 import net.jini.discovery.DiscoveryListener;
 import net.jini.discovery.LookupDiscovery;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
+
+import com.sun.jini.admin.DestroyAdmin;
 
 /**
  * Hello world!
@@ -24,16 +36,58 @@ public class App implements DiscoveryListener {
 
 	private static final Logger LOGGER = Logger.getLogger(App.class.toString());
 
-	final String jdl, output;
+	private static final int CMD_SHUTDOWN = 0;
+
+	private static final int CMD_NUMBER = 1;
+
+	private static final int CMD_JDL = 2;
+
+	private final int command;
+
+	private final String cmdarg;
+
+	private final String output;
 
 	public static void main(final String[] args) {
-		final String output;
-		if (args.length < 2) {
-			output = null;
-		} else {
-			output = args[1];
+
+		final Options options = new Options();
+
+		final OptionGroup commands = new OptionGroup();
+		commands.setRequired(true);
+		commands
+				.addOption(new Option("h", "help", false, "print this message"));
+		commands.addOption(new Option("k", "kill", false,
+				"shutdown the service provider"));
+		commands.addOption(new Option("j", "jdl", true, "submit a JDL file"));
+		commands.addOption(new Option("n", "number", true,
+				"set number of active jobs"));
+		options.addOptionGroup(commands);
+		options.addOption(new Option("o", "output", true,
+				"redirect interactive output to file"));
+
+		final CommandLineParser parser = new PosixParser();
+		try {
+			final CommandLine cmd = parser.parse(options, args);
+
+			if (cmd.hasOption('h')) {
+				new HelpFormatter().printHelp("wmsx-requestor", options);
+			} else if (cmd.hasOption('k')) {
+				App.dispatch(App.CMD_SHUTDOWN, null, null);
+			} else if (cmd.hasOption('n')) {
+				App.dispatch(App.CMD_NUMBER, cmd.getOptionValue('n'), null);
+			} else if (cmd.hasOption('j')) {
+				App.dispatch(App.CMD_JDL, cmd.getOptionValue('j'), cmd
+						.getOptionValue('o'));
+			}
+		} catch (final ParseException e1) {
+			System.out.println("Invalid command line:" + e1.getMessage());
+			new HelpFormatter().printHelp("wmsx-requestor", options);
 		}
-		new App(args[0], output);
+	}
+
+	private static void dispatch(final int cmd, final String arg,
+			final String out) {
+		new App(cmd, arg, out);
 
 		// stay around long enough to receive replies
 		try {
@@ -43,8 +97,9 @@ public class App implements DiscoveryListener {
 		}
 	}
 
-	public App(final String jdlFile, final String outputFile) {
-		this.jdl = jdlFile;
+	public App(final int cmd, final String arg, final String outputFile) {
+		this.command = cmd;
+		this.cmdarg = arg;
 		this.output = outputFile;
 		System.setSecurityManager(new RMISecurityManager());
 
@@ -100,8 +155,27 @@ public class App implements DiscoveryListener {
 		}
 		// App.LOGGER.info(myService.hello());
 		try {
-			final String s = myService.submitJdl(this.jdl, this.output);
-			System.out.println("" + s);
+			switch (this.command) {
+			case CMD_SHUTDOWN:
+				try {
+					final Administrable mys = (Administrable) myService;
+					final Object adm = mys.getAdmin();
+					final DestroyAdmin dadm = (DestroyAdmin) adm;
+					dadm.destroy();
+				} catch (final ClassCastException cc) {
+					App.LOGGER.info(cc.getMessage());
+				} catch (final NullPointerException npe) {
+					App.LOGGER.info(npe.getMessage());
+				}
+				break;
+			case CMD_NUMBER:
+				myService.setMaxJobs(Integer.parseInt(this.cmdarg));
+				break;
+			case CMD_JDL:
+				final String s = myService.submitJdl(this.cmdarg, this.output);
+				System.out.println("" + s);
+				break;
+			}
 		} catch (final IOException e) {
 			App.LOGGER.warning(e.getMessage() + " " + e.getStackTrace());
 		}

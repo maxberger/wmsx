@@ -9,7 +9,11 @@ import hu.kfki.grid.wmsx.job.submit.Submitter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.logging.Logger;
+
+import com.sun.jini.admin.DestroyAdmin;
 
 import edg.workload.userinterface.jclient.JobId;
 
@@ -17,7 +21,8 @@ import edg.workload.userinterface.jclient.JobId;
  * My Jini Service Implementation!
  * 
  */
-public class WmsxProviderImpl implements IRemoteWmsxProvider {
+public class WmsxProviderImpl implements IRemoteWmsxProvider, DestroyAdmin,
+		Remote {
 
 	private static final long serialVersionUID = 2L;
 
@@ -56,6 +61,15 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider {
 			WmsxProviderImpl.LOGGER.warning(e.getMessage());
 		}
 		return null;
+	}
+
+	public void destroy() throws RemoteException {
+		JobWatcher.getWatcher().shutdown();
+	}
+
+	public void setMaxJobs(final int maxJobs) throws RemoteException {
+		// TODO Auto-generated method stub
+
 	}
 
 }
