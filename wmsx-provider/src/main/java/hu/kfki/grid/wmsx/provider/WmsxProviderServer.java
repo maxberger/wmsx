@@ -53,6 +53,10 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
 	static final Object keepAlive = new Object();
 
+	private LookupDiscovery discover = null;
+
+	private Exporter exporter = null;
+
 	public static void main(final String argv[]) {
 		try {
 			new WmsxProviderServer(ConfigurationProvider.getInstance(argv));
@@ -71,6 +75,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 				// do nothing
 			}
 		}
+		LOGGER.info("Terminated.");
 	}
 
 	public WmsxProviderServer(final Configuration config) {
@@ -93,8 +98,8 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
 		try {
 			// and use this to construct an exporter
-			final Exporter exporter = (Exporter) config.getEntry(
-					"JiniServiceServer", "exporter", Exporter.class);
+			exporter = (Exporter) config.getEntry("JiniServiceServer",
+					"exporter", Exporter.class);
 			// export an object of this class
 			this.rmiProxy = exporter.export(this.impl);
 		} catch (final Exception e) {
@@ -119,8 +124,6 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 		} catch (final ClassNotFoundException e) {
 			WmsxProviderServer.LOGGER.warning(e.getMessage());
 		}
-
-		LookupDiscovery discover = null;
 
 		try {
 			discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
@@ -198,6 +201,10 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
 	public void destroy() throws RemoteException {
 		final List regs;
+		if (discover != null) {
+			discover.terminate();
+		}
+		discover = null;
 		synchronized (activeRegistrations) {
 			regs = new Vector(activeRegistrations);
 		}
@@ -205,12 +212,23 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 		while (it.hasNext()) {
 			final ServiceRegistration reg = (ServiceRegistration) it.next();
 			try {
-				leaseManager.cancel(reg.getLease());
+				if (leaseManager != null) {
+					leaseManager.cancel(reg.getLease());
+				} else {
+					reg.getLease().cancel();
+				}
 			} catch (UnknownLeaseException e) {
 				// ignore
 			}
 		}
-		WmsxProviderServer.keepAlive.notify();
+		leaseManager = null;
+		if (this.exporter != null) {
+			exporter.unexport(true);
+		}
+		this.exporter = null;
+		synchronized (WmsxProviderServer.keepAlive) {
+			WmsxProviderServer.keepAlive.notifyAll();
+		}
 	}
 
 } // JiniServiceServer

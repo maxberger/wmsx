@@ -48,6 +48,12 @@ public class App implements DiscoveryListener {
 
 	private final String output;
 
+	private static LookupDiscovery discover = null;
+
+	private static boolean found = false;
+
+	private static final Object foundLock = new Object();
+
 	public static void main(final String[] args) {
 
 		final Options options = new Options();
@@ -93,16 +99,36 @@ public class App implements DiscoveryListener {
 
 	private static void dispatch(final int cmd, final String arg,
 			final String out) {
+		try {
+			discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
+		} catch (final Exception e) {
+			App.LOGGER.severe(e.getMessage());
+			System.exit(1);
+		}
 		new App(cmd, arg, out);
 
 		// stay around long enough to receive replies
-		try {
-			Thread.sleep(100000L);
-		} catch (final java.lang.InterruptedException e) {
-			// do nothing
+		// try {
+		// Thread.sleep(100000L);
+		// } catch (final java.lang.InterruptedException e) {
+		// // do nothing
+		// }
+		// App.LOGGER
+		// .info("Failed to connect to provider. Please check if its running.");
+
+		synchronized (foundLock) {
+			try {
+				foundLock.wait(3000);
+			} catch (InterruptedException e) {
+				// ignore
+			}
 		}
-		App.LOGGER
-				.info("Failed to connect to provider. Please check if its running.");
+		if (!found) {
+			App.LOGGER
+					.info("Failed to connect to provider. Please check if its running.");
+		}
+		discover.terminate();
+		discover = null;
 	}
 
 	public App(final int cmd, final String arg, final String outputFile) {
@@ -124,23 +150,20 @@ public class App implements DiscoveryListener {
 			App.LOGGER.fine(e.getMessage());
 		}
 
-		LookupDiscovery discover = null;
-		try {
-			discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
-		} catch (final Exception e) {
-			App.LOGGER.severe(e.getMessage());
-			System.exit(1);
-		}
-
 		discover.addDiscoveryListener(this);
+		this.addAllRegistrars(discover.getRegistrars());
 
 	}
 
 	public void discovered(final DiscoveryEvent evt) {
 		final ServiceRegistrar[] registrars = evt.getRegistrars();
 
+		addAllRegistrars(registrars);
+	}
+
+	private void addAllRegistrars(final ServiceRegistrar[] registrars) {
 		for (int n = 0; n < registrars.length; n++) {
-			System.out.println("Lookup service found");
+			// System.out.println("Lookup service found");
 			final ServiceRegistrar registrar = registrars[n];
 			this.haveReg(registrar);
 		}
@@ -161,6 +184,11 @@ public class App implements DiscoveryListener {
 			App.LOGGER.fine("Classifier null");
 			return;
 		}
+		synchronized (foundLock) {
+			found = true;
+			foundLock.notifyAll();
+		}
+
 		// App.LOGGER.info(myService.hello());
 		try {
 			switch (this.command) {
