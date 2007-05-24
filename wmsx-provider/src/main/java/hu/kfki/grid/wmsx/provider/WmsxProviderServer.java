@@ -70,16 +70,16 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 		// Try to load the service ID from file.
 		// It isn't an error if we can't load it, because
 		// maybe this is the first time this service has run
-//		DataInputStream din = null;
-//
-//		try {
-//			din = new DataInputStream(new FileInputStream(this.getClass()
-//					.getName()
-//					+ ".id"));
-//			this.serviceID = new ServiceID(din);
-//		} catch (final Exception e) {
-//			// ignore
-//		}
+		// DataInputStream din = null;
+		//
+		// try {
+		// din = new DataInputStream(new FileInputStream(this.getClass()
+		// .getName()
+		// + ".id"));
+		// this.serviceID = new ServiceID(din);
+		// } catch (final Exception e) {
+		// // ignore
+		// }
 
 		try {
 			// and use this to construct an exporter
@@ -169,8 +169,8 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 			// this.serviceID.writeBytes(dout);
 			// dout.flush();
 			// } catch (final Exception e) {
-			//				// ignore
-			//			}
+			// // ignore
+			// }
 		}
 
 	}

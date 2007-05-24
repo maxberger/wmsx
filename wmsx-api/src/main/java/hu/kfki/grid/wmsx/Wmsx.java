@@ -11,4 +11,7 @@ public interface Wmsx {
 	String hello();
 
 	String submitJdl(String jdlFile, String outputFile) throws IOException;
+
+	void setMaxJobs(int maxJobs);
+
 }

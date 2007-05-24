@@ -13,4 +13,5 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
 	String submitJdl(String jdlFile, String output) throws RemoteException;
 
+	void setMaxJobs(int maxJobs) throws RemoteException;
 }

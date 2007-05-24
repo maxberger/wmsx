@@ -20,7 +20,7 @@ public class JobWatcher implements Runnable {
 
 	private final Map jobstate = new HashMap();
 
-	private boolean isRunning;
+	private Thread runThread;
 
 	private static JobWatcher jobWatcher;
 
@@ -32,15 +32,18 @@ public class JobWatcher implements Runnable {
 
 	private static final int STATE_NONE = 0;
 
+	private boolean shutdown;
+
 	private JobWatcher() {
-		this.isRunning = false;
+		this.runThread = null;
+		this.shutdown = false;
 	}
 
 	private synchronized void doStart() {
-		if (!this.isRunning) {
+		if (this.runThread == null) {
 			JobWatcher.LOGGER.info("Starting new Listener");
-			this.isRunning = true;
-			new Thread(this).start();
+			this.runThread = new Thread(this);
+			this.runThread.start();
 		}
 	}
 
@@ -53,13 +56,22 @@ public class JobWatcher implements Runnable {
 
 	public synchronized void addWatch(final JobId jobId,
 			final JobListener listener) {
-		Set listeners = (Set) this.joblisteners.get(jobId);
-		if (listeners == null) {
-			listeners = new HashSet();
-			this.joblisteners.put(jobId, listeners);
+		if (!this.shutdown) {
+			Set listeners = (Set) this.joblisteners.get(jobId);
+			if (listeners == null) {
+				listeners = new HashSet();
+				this.joblisteners.put(jobId, listeners);
+			}
+			listeners.add(listener);
+			this.doStart();
 		}
-		listeners.add(listener);
-		this.doStart();
+	}
+
+	public synchronized void shutdown() {
+		this.shutdown = true;
+		if (this.runThread != null) {
+			this.runThread.interrupt();
+		}
 	}
 
 	public void run() {
@@ -82,7 +94,12 @@ public class JobWatcher implements Runnable {
 			while (it.hasNext()) {
 				final JobId jobId = (JobId) it.next();
 
-				final int stateNow = JobWatcher.getState(new Job(jobId));
+				final int stateNow;
+				if (!this.shutdown) {
+					stateNow = JobWatcher.getState(new Job(jobId));
+				} else {
+					stateNow = JobWatcher.STATE_DONE;
+				}
 				boolean differs;
 				synchronized (this.jobstate) {
 					Integer oldState = (Integer) this.jobstate.get(jobId);
@@ -127,7 +144,7 @@ public class JobWatcher implements Runnable {
 			synchronized (this) {
 				if (this.joblisteners.isEmpty()) {
 					done = true;
-					this.isRunning = false;
+					this.runThread = null;
 					JobWatcher.LOGGER.info("No more jobs to listen to.");
 				}
 			}
