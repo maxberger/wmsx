@@ -9,7 +9,6 @@ import hu.kfki.grid.wmsx.job.submit.Submitter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
@@ -21,16 +20,17 @@ import edg.workload.userinterface.jclient.JobId;
  * My Jini Service Implementation!
  * 
  */
-public class WmsxProviderImpl implements IRemoteWmsxProvider, DestroyAdmin,
-		Remote {
+public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy {
 
 	private static final long serialVersionUID = 2L;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(WmsxProviderImpl.class.toString());
 
-	public WmsxProviderImpl() {
-		// default constructor
+	private final DestroyAdmin destroyAdmin;
+
+	public WmsxProviderImpl(DestroyAdmin dadm) {
+		this.destroyAdmin = dadm;
 	}
 
 	public String hello() {
@@ -65,9 +65,11 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, DestroyAdmin,
 
 	public void destroy() throws RemoteException {
 		JobWatcher.getWatcher().shutdown();
+		destroyAdmin.destroy();
 	}
 
 	public void setMaxJobs(final int maxJobs) throws RemoteException {
+		WmsxProviderImpl.LOGGER.info("Faking setNum: " + maxJobs);
 		// TODO Auto-generated method stub
 
 	}
