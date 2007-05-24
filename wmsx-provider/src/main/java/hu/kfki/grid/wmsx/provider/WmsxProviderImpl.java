@@ -64,8 +64,20 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy {
 	}
 
 	public void destroy() throws RemoteException {
-		JobWatcher.getWatcher().shutdown();
-		destroyAdmin.destroy();
+		new Thread(new Runnable() {
+
+			public void run() {
+				try {
+					JobWatcher.getWatcher().shutdown();
+					Thread.sleep(1000);
+					destroyAdmin.destroy();
+				} catch (RemoteException e) {
+					// ignore
+				} catch (InterruptedException e) {
+					// ignore
+				}
+			}
+		}).start();
 	}
 
 	public void setMaxJobs(final int maxJobs) throws RemoteException {
