@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import net.jini.config.Configuration;
@@ -14,6 +18,7 @@ import net.jini.config.ConfigurationProvider;
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lease.Lease;
+import net.jini.core.lease.UnknownLeaseException;
 import net.jini.core.lookup.ServiceID;
 import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceRegistrar;
@@ -26,9 +31,11 @@ import net.jini.lease.LeaseListener;
 import net.jini.lease.LeaseRenewalEvent;
 import net.jini.lease.LeaseRenewalManager;
 
+import com.sun.jini.admin.DestroyAdmin;
 import com.sun.jini.lookup.entry.BasicServiceType;
 
-public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
+public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
+		DestroyAdmin {
 	private static final Logger LOGGER = Logger
 			.getLogger(WmsxProviderServer.class.toString());
 
@@ -42,6 +49,10 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 
 	protected WmsxProviderImpl impl = null;
 
+	private List activeRegistrations = new Vector();
+
+	static final Object keepAlive = new Object();
+
 	public static void main(final String argv[]) {
 		try {
 			new WmsxProviderServer(ConfigurationProvider.getInstance(argv));
@@ -53,7 +64,6 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 		// keep server running forever to
 		// - allow time for locator discovery and
 		// - keep re-registering the lease
-		final Object keepAlive = new Object();
 		synchronized (keepAlive) {
 			try {
 				keepAlive.wait();
@@ -65,7 +75,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 
 	public WmsxProviderServer(final Configuration config) {
 		// Create the service
-		this.impl = new WmsxProviderImpl();
+		this.impl = new WmsxProviderImpl(this);
 
 		// Try to load the service ID from file.
 		// It isn't an error if we can't load it, because
@@ -149,6 +159,9 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 					+ e.getMessage());
 			return;
 		}
+		synchronized (this.activeRegistrations) {
+			this.activeRegistrations.add(reg);
+		}
 
 		WmsxProviderServer.LOGGER.info("Service registered with id "
 				+ reg.getServiceID());
@@ -179,8 +192,25 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener {
 		WmsxProviderServer.LOGGER.fine("Lease expired " + evt.toString());
 	}
 
-	public void discarded(final DiscoveryEvent arg0) {
-		// do nothing
+	public void discarded(final DiscoveryEvent evt) {
+		// ignore
+	}
+
+	public void destroy() throws RemoteException {
+		final List regs;
+		synchronized (activeRegistrations) {
+			regs = new Vector(activeRegistrations);
+		}
+		Iterator it = regs.iterator();
+		while (it.hasNext()) {
+			final ServiceRegistration reg = (ServiceRegistration) it.next();
+			try {
+				leaseManager.cancel(reg.getLease());
+			} catch (UnknownLeaseException e) {
+				// ignore
+			}
+		}
+		WmsxProviderServer.keepAlive.notify();
 	}
 
 } // JiniServiceServer

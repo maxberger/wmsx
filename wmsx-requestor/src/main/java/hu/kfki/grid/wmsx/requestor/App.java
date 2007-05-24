@@ -70,7 +70,7 @@ public class App implements DiscoveryListener {
 			final CommandLine cmd = parser.parse(options, args);
 
 			if (cmd.hasOption('h')) {
-				new HelpFormatter().printHelp("wmsx-requestor", options);
+				printHelp(options);
 			} else if (cmd.hasOption('k')) {
 				App.dispatch(App.CMD_SHUTDOWN, null, null);
 			} else if (cmd.hasOption('n')) {
@@ -81,8 +81,14 @@ public class App implements DiscoveryListener {
 			}
 		} catch (final ParseException e1) {
 			System.out.println("Invalid command line:" + e1.getMessage());
-			new HelpFormatter().printHelp("wmsx-requestor", options);
+			printHelp(options);
 		}
+	}
+
+	private static void printHelp(final Options options) {
+		new HelpFormatter().printHelp(
+				"wmsx-requestor (-h|-k|-n num|-j jdlFile [-o outFile])",
+				options);
 	}
 
 	private static void dispatch(final int cmd, final String arg,
@@ -95,6 +101,8 @@ public class App implements DiscoveryListener {
 		} catch (final java.lang.InterruptedException e) {
 			// do nothing
 		}
+		App.LOGGER
+				.info("Failed to connect to provider. Please check if its running.");
 	}
 
 	public App(final int cmd, final String arg, final String outputFile) {
@@ -163,9 +171,10 @@ public class App implements DiscoveryListener {
 					final DestroyAdmin dadm = (DestroyAdmin) adm;
 					dadm.destroy();
 				} catch (final ClassCastException cc) {
-					App.LOGGER.info(cc.getMessage());
+					App.LOGGER.info("ClassCast Exception: " + cc.getMessage());
 				} catch (final NullPointerException npe) {
-					App.LOGGER.info(npe.getMessage());
+					App.LOGGER
+							.info("NullPointerException: " + npe.getMessage());
 				}
 				break;
 			case CMD_NUMBER:
