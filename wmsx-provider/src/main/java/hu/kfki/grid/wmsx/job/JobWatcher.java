@@ -187,4 +187,8 @@ public class JobWatcher implements Runnable {
 		return retVal;
 	}
 
+	public synchronized int getNumJobsRunning() {
+		return joblisteners.size();
+	}
+
 }
