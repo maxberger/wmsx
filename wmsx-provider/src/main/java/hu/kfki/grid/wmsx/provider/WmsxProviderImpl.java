@@ -1,5 +1,6 @@
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.LogListener;
 import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
@@ -10,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
 import java.rmi.RemoteException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.sun.jini.admin.DestroyAdmin;
@@ -20,7 +23,8 @@ import edg.workload.userinterface.jclient.JobId;
  * My Jini Service Implementation!
  * 
  */
-public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy {
+public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
+		JobListener {
 
 	private static final long serialVersionUID = 2L;
 
@@ -28,6 +32,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy {
 			.getLogger(WmsxProviderImpl.class.toString());
 
 	private final DestroyAdmin destroyAdmin;
+
+	private int maxJobs = Integer.MAX_VALUE;
+
+	private List pendingJobs = new LinkedList();
 
 	public WmsxProviderImpl(DestroyAdmin dadm) {
 		this.destroyAdmin = dadm;
@@ -37,7 +45,38 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy {
 		return "Hello, World!";
 	}
 
-	public String submitJdl(final String jdlFile, final String output) {
+	static class JobDesc {
+		final String jdlFile;
+
+		final String output;
+
+		public JobDesc(final String jdlFile, final String output) {
+			this.jdlFile = jdlFile;
+			this.output = output;
+		}
+
+		public String getJdlFile() {
+			return jdlFile;
+		}
+
+		public String getOutput() {
+			return output;
+		}
+	}
+
+	synchronized public String submitJdl(final String jdlFile,
+			final String output) {
+		final int current = JobWatcher.getWatcher().getNumJobsRunning();
+		int avail = (this.maxJobs - current);
+		if (avail > 0) {
+			return reallySubmitJdl(jdlFile, output);
+		} else {
+			pendingJobs.add(new JobDesc(jdlFile, output));
+			return "pending";
+		}
+	}
+
+	private String reallySubmitJdl(final String jdlFile, final String output) {
 		WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
 		ParseResult result;
 		try {
@@ -46,6 +85,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy {
 			final JobId id = new JobId(jobStr);
 			WmsxProviderImpl.LOGGER.info("Job id is: " + id);
 			JobWatcher.getWatcher().addWatch(id, new LogListener(id));
+			JobWatcher.getWatcher().addWatch(id, this);
 			final WritableByteChannel oChannel;
 			if (output != null) {
 				oChannel = new FileOutputStream(output).getChannel();
@@ -80,10 +120,35 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy {
 		}).start();
 	}
 
-	public void setMaxJobs(final int maxJobs) throws RemoteException {
-		WmsxProviderImpl.LOGGER.info("Faking setNum: " + maxJobs);
-		// TODO Auto-generated method stub
+	public void setMaxJobs(final int maxj) throws RemoteException {
+		WmsxProviderImpl.LOGGER.info("setMaxJobs to " + maxj);
+		this.maxJobs = maxj;
+		this.investigateNumJobs();
+	}
 
+	private synchronized void investigateNumJobs() {
+		while (((this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning()) > 0)
+				&& (!pendingJobs.isEmpty())) {
+			JobDesc jd = (JobDesc) pendingJobs.remove(0);
+			this.reallySubmitJdl(jd.getJdlFile(), jd.getOutput());
+			try {
+				this.wait(1);
+			} catch (InterruptedException e) {
+				// Ignore
+			}
+		}
+	}
+
+	public void done() {
+		this.investigateNumJobs();
+	}
+
+	public void running() {
+		// ignore
+	}
+
+	public void startup() {
+		// ignore
 	}
 
 }
