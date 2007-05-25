@@ -127,12 +127,12 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 	}
 
 	private synchronized void investigateNumJobs() {
-		while (((this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning()) > 0)
-				&& (!pendingJobs.isEmpty())) {
+		while ((!pendingJobs.isEmpty())
+				&& ((this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning()) > 0)) {
 			JobDesc jd = (JobDesc) pendingJobs.remove(0);
 			this.reallySubmitJdl(jd.getJdlFile(), jd.getOutput());
 			try {
-				this.wait(1);
+				this.wait(100);
 			} catch (InterruptedException e) {
 				// Ignore
 			}
