@@ -131,7 +131,7 @@ public class App implements DiscoveryListener {
 
 		synchronized (foundLock) {
 			try {
-				foundLock.wait(3000);
+				foundLock.wait(30000);
 			} catch (InterruptedException e) {
 				// ignore
 			}
@@ -150,7 +150,8 @@ public class App implements DiscoveryListener {
 		this.cmdarg = arg;
 		this.output = outputFile;
 		System.setSecurityManager(new RMISecurityManager());
-
+		discover.addDiscoveryListener(this);
+		this.addAllRegistrars(discover.getRegistrars());
 		try {
 			final LookupLocator localLocator = new LookupLocator(
 					"jini://127.0.0.1/");
@@ -163,10 +164,6 @@ public class App implements DiscoveryListener {
 		} catch (final ClassNotFoundException e) {
 			App.LOGGER.fine(e.getMessage());
 		}
-
-		discover.addDiscoveryListener(this);
-		this.addAllRegistrars(discover.getRegistrars());
-
 	}
 
 	public void discovered(final DiscoveryEvent evt) {
@@ -183,7 +180,7 @@ public class App implements DiscoveryListener {
 		}
 	}
 
-	private void haveReg(final ServiceRegistrar registrar) {
+	private synchronized void haveReg(final ServiceRegistrar registrar) {
 		Wmsx myService = null;
 		final Class[] classes = new Class[] { Wmsx.class };
 		final ServiceTemplate template = new ServiceTemplate(null, classes,
@@ -242,4 +239,5 @@ public class App implements DiscoveryListener {
 	public void discarded(final DiscoveryEvent arg0) {
 		// do nothing
 	}
+
 }
