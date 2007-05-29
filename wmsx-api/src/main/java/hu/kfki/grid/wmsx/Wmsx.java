@@ -8,8 +8,8 @@ import java.io.IOException;
  */
 public interface Wmsx {
 
-	String hello();
-
+	boolean ping(boolean remote);
+	
 	String submitJdl(String jdlFile, String outputFile) throws IOException;
 
 	void setMaxJobs(int maxJobs);

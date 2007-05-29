@@ -41,10 +41,6 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 		this.destroyAdmin = dadm;
 	}
 
-	public String hello() {
-		return "Hello, World!";
-	}
-
 	static class JobDesc {
 		final String jdlFile;
 
@@ -149,6 +145,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
 	public void startup() {
 		// ignore
+	}
+
+	public void ping() throws RemoteException {
+		// Empty on purpose.
 	}
 
 }

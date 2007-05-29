@@ -42,6 +42,10 @@ public class App implements DiscoveryListener {
 
 	private static final int CMD_JDL = 2;
 
+	private static final int CMD_PING = 3;
+
+	private static final int CMD_FULLPING = 4;
+
 	private final int command;
 
 	private final String cmdarg;
@@ -64,6 +68,10 @@ public class App implements DiscoveryListener {
 				.addOption(new Option("h", "help", false, "print this message"));
 		commands.addOption(new Option("k", "kill", false,
 				"shutdown the service provider"));
+		commands.addOption(new Option("p", "ping", false,
+				"quick check if provider is running"));
+		commands.addOption(new Option("f", "full-ping", false,
+				"full check if provider is running"));
 		commands.addOption(new Option("j", "jdl", true, "submit a JDL file"));
 		commands.addOption(new Option("n", "number", true,
 				"set number of active jobs"));
@@ -79,6 +87,10 @@ public class App implements DiscoveryListener {
 				printHelp(options);
 			} else if (cmd.hasOption('k')) {
 				App.dispatch(App.CMD_SHUTDOWN, null, null);
+			} else if (cmd.hasOption('p')) {
+				App.dispatch(App.CMD_PING, null, null);
+			} else if (cmd.hasOption('f')) {
+				App.dispatch(App.CMD_FULLPING, null, null);
 			} else if (cmd.hasOption('n')) {
 				App.dispatch(App.CMD_NUMBER, cmd.getOptionValue('n'), null);
 			} else if (cmd.hasOption('j')) {
@@ -126,6 +138,7 @@ public class App implements DiscoveryListener {
 		if (!found) {
 			App.LOGGER
 					.info("Failed to connect to provider. Please check if its running.");
+			System.exit(2);
 		}
 		discover.terminate();
 		discover = null;
@@ -204,6 +217,12 @@ public class App implements DiscoveryListener {
 					App.LOGGER
 							.info("NullPointerException: " + npe.getMessage());
 				}
+				break;
+			case CMD_PING:
+				myService.ping(false);
+				break;
+			case CMD_FULLPING:
+				myService.ping(true);
 				break;
 			case CMD_NUMBER:
 				myService.setMaxJobs(Integer.parseInt(this.cmdarg));
