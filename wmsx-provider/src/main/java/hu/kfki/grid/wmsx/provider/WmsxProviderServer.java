@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import net.jini.config.Configuration;
-import net.jini.config.ConfigurationException;
-import net.jini.config.ConfigurationProvider;
 import net.jini.core.entry.Entry;
 import net.jini.core.lease.Lease;
 import net.jini.core.lease.UnknownLeaseException;
@@ -27,6 +24,11 @@ import net.jini.discovery.DiscoveryEvent;
 import net.jini.discovery.DiscoveryListener;
 import net.jini.discovery.LookupDiscovery;
 import net.jini.export.Exporter;
+import net.jini.jeri.BasicILFactory;
+import net.jini.jeri.BasicJeriExporter;
+import net.jini.jeri.InvocationLayerFactory;
+import net.jini.jeri.ServerEndpoint;
+import net.jini.jeri.tcp.TcpServerEndpoint;
 import net.jini.lease.LeaseListener;
 import net.jini.lease.LeaseRenewalEvent;
 import net.jini.lease.LeaseRenewalManager;
@@ -58,12 +60,8 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 	private Exporter exporter = null;
 
 	public static void main(final String argv[]) {
-		try {
-			new WmsxProviderServer(ConfigurationProvider.getInstance(argv));
-		} catch (final ConfigurationException e) {
-			WmsxProviderServer.LOGGER.severe(e.getMessage());
-			System.exit(1);
-		}
+
+		new WmsxProviderServer();
 
 		// keep server running forever to
 		// - allow time for locator discovery and
@@ -78,7 +76,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 		WmsxProviderServer.LOGGER.info("Terminated.");
 	}
 
-	public WmsxProviderServer(final Configuration config) {
+	public WmsxProviderServer() {
 		// Create the service
 		this.impl = new WmsxProviderImpl(this);
 
@@ -97,10 +95,14 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 		// }
 
 		try {
-			// and use this to construct an exporter
-			this.exporter = (Exporter) config.getEntry("JiniServiceServer",
-					"exporter", Exporter.class);
-			// export an object of this class
+
+			InvocationLayerFactory invocationLayerFactory = new BasicILFactory();
+			// ServerEndpoint endpoint = TcpServerEndpoint.getInstance(0);
+			ServerEndpoint endpoint = TcpServerEndpoint.getInstance(
+					"127.0.0.1", 0);
+			this.exporter = new BasicJeriExporter(endpoint,
+					invocationLayerFactory, false, true);
+
 			this.rmiProxy = this.exporter.export(this.impl);
 		} catch (final Exception e) {
 			WmsxProviderServer.LOGGER.severe(e.getMessage());
@@ -119,11 +121,13 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
 	private void registerTmp() {
 		try {
-			final FileOutputStream fos = new FileOutputStream("/tmp/wmsx-"
-					+ System.getProperty("user.name"));
+			final String proxyFile = "/tmp/wmsx-"
+					+ System.getProperty("user.name");
+			final FileOutputStream fos = new FileOutputStream(proxyFile);
 			final ObjectOutputStream out = new ObjectOutputStream(fos);
 			out.writeObject(this.smartProxy);
 			out.close();
+			LOGGER.info("Written Proxy to " + proxyFile);
 		} catch (final IOException io) {
 			WmsxProviderServer.LOGGER.warning(io.getMessage());
 		}
