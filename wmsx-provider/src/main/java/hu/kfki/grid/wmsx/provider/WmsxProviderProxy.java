@@ -28,15 +28,6 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
 		this.remoteService = (IRemoteWmsxProvider) remote;
 	}
 
-	public String hello() {
-		try {
-			return this.remoteService.hello();
-		} catch (final RemoteException re) {
-			WmsxProviderProxy.LOGGER.fine(re.getMessage());
-			return "No answer";
-		}
-	}
-
 	public String submitJdl(final String jdlFile, final String output)
 			throws IOException {
 		try {
@@ -72,6 +63,18 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
 		} catch (final RemoteException re) {
 			WmsxProviderProxy.LOGGER.warning(re.getMessage());
 		}
+	}
+
+	public boolean ping(boolean remote) {
+		if (remote) {
+			try {
+				this.remoteService.ping();
+			} catch (final RemoteException re) {
+				WmsxProviderProxy.LOGGER.fine(re.getMessage());
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

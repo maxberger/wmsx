@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
  */
 public interface IRemoteWmsxProvider extends Serializable, Remote {
 
-	String hello() throws RemoteException;
+	void ping() throws RemoteException;
 
 	String submitJdl(String jdlFile, String output) throws RemoteException;
 
