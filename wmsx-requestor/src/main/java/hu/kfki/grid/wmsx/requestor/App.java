@@ -100,6 +100,7 @@ public class App implements DiscoveryListener {
 		} catch (final ParseException e1) {
 			System.out.println("Invalid command line:" + e1.getMessage());
 			printHelp(options);
+			System.exit(2);
 		}
 	}
 
@@ -138,7 +139,7 @@ public class App implements DiscoveryListener {
 		if (!found) {
 			App.LOGGER
 					.info("Failed to connect to provider. Please check if its running.");
-			System.exit(2);
+			System.exit(1);
 		}
 		discover.terminate();
 		discover = null;
