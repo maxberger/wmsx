@@ -96,10 +96,12 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
 		try {
 
-			InvocationLayerFactory invocationLayerFactory = new BasicILFactory();
+			final InvocationLayerFactory invocationLayerFactory = new BasicILFactory();
 			// ServerEndpoint endpoint = TcpServerEndpoint.getInstance(0);
-			ServerEndpoint endpoint = TcpServerEndpoint.getInstance(
+			final ServerEndpoint endpoint = TcpServerEndpoint.getInstance(
 					"127.0.0.1", 0);
+			// ServerEndpoint endpoint = TcpServerEndpoint.getInstance(
+			// "::1", 0);
 			this.exporter = new BasicJeriExporter(endpoint,
 					invocationLayerFactory, false, true);
 
