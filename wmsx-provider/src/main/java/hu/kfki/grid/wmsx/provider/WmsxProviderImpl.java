@@ -35,9 +35,9 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
 	private int maxJobs = Integer.MAX_VALUE;
 
-	private List pendingJobs = new LinkedList();
+	private final List pendingJobs = new LinkedList();
 
-	public WmsxProviderImpl(DestroyAdmin dadm) {
+	public WmsxProviderImpl(final DestroyAdmin dadm) {
 		this.destroyAdmin = dadm;
 	}
 
@@ -52,22 +52,22 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 		}
 
 		public String getJdlFile() {
-			return jdlFile;
+			return this.jdlFile;
 		}
 
 		public String getOutput() {
-			return output;
+			return this.output;
 		}
 	}
 
 	synchronized public String submitJdl(final String jdlFile,
 			final String output) {
 		final int current = JobWatcher.getWatcher().getNumJobsRunning();
-		int avail = (this.maxJobs - current);
+		final int avail = (this.maxJobs - current);
 		if (avail > 0) {
-			return reallySubmitJdl(jdlFile, output);
+			return this.reallySubmitJdl(jdlFile, output);
 		} else {
-			pendingJobs.add(new JobDesc(jdlFile, output));
+			this.pendingJobs.add(new JobDesc(jdlFile, output));
 			return "pending";
 		}
 	}
@@ -106,10 +106,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 				try {
 					JobWatcher.getWatcher().shutdown();
 					Thread.sleep(1000);
-					destroyAdmin.destroy();
-				} catch (RemoteException e) {
+					WmsxProviderImpl.this.destroyAdmin.destroy();
+				} catch (final RemoteException e) {
 					// ignore
-				} catch (InterruptedException e) {
+				} catch (final InterruptedException e) {
 					// ignore
 				}
 			}
@@ -123,13 +123,13 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 	}
 
 	private synchronized void investigateNumJobs() {
-		while ((!pendingJobs.isEmpty())
+		while ((!this.pendingJobs.isEmpty())
 				&& ((this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning()) > 0)) {
-			JobDesc jd = (JobDesc) pendingJobs.remove(0);
+			final JobDesc jd = (JobDesc) this.pendingJobs.remove(0);
 			this.reallySubmitJdl(jd.getJdlFile(), jd.getOutput());
 			try {
 				this.wait(100);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				// Ignore
 			}
 		}

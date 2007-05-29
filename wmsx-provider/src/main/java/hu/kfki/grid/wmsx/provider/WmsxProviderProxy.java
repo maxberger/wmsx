@@ -65,7 +65,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
 		}
 	}
 
-	public boolean ping(boolean remote) {
+	public boolean ping(final boolean remote) {
 		if (remote) {
 			try {
 				this.remoteService.ping();

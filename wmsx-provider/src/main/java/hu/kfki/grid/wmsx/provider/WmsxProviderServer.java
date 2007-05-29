@@ -2,7 +2,9 @@ package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.WmsxEntry;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
@@ -49,7 +51,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
 	protected WmsxProviderImpl impl = null;
 
-	private List activeRegistrations = new Vector();
+	private final List activeRegistrations = new Vector();
 
 	static final Object keepAlive = new Object();
 
@@ -68,14 +70,14 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 		// keep server running forever to
 		// - allow time for locator discovery and
 		// - keep re-registering the lease
-		synchronized (keepAlive) {
+		synchronized (WmsxProviderServer.keepAlive) {
 			try {
-				keepAlive.wait();
+				WmsxProviderServer.keepAlive.wait();
 			} catch (final java.lang.InterruptedException e) {
 				// do nothing
 			}
 		}
-		LOGGER.info("Terminated.");
+		WmsxProviderServer.LOGGER.info("Terminated.");
 	}
 
 	public WmsxProviderServer(final Configuration config) {
@@ -98,10 +100,10 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
 		try {
 			// and use this to construct an exporter
-			exporter = (Exporter) config.getEntry("JiniServiceServer",
+			this.exporter = (Exporter) config.getEntry("JiniServiceServer",
 					"exporter", Exporter.class);
 			// export an object of this class
-			this.rmiProxy = exporter.export(this.impl);
+			this.rmiProxy = this.exporter.export(this.impl);
 		} catch (final Exception e) {
 			WmsxProviderServer.LOGGER.severe(e.getMessage());
 			System.exit(1);
@@ -111,6 +113,16 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
 		// proxy primed with impl
 		this.smartProxy = new WmsxProviderProxy(this.rmiProxy);
+
+		try {
+			final FileOutputStream fos = new FileOutputStream("/tmp/wmsx-"
+					+ System.getProperty("user.name"));
+			final ObjectOutputStream out = new ObjectOutputStream(fos);
+			out.writeObject(this.smartProxy);
+			out.close();
+		} catch (final IOException io) {
+			WmsxProviderServer.LOGGER.warning(io.getMessage());
+		}
 
 		try {
 			final LookupLocator localLocator = new LookupLocator(
@@ -126,14 +138,14 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 		}
 
 		try {
-			discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
+			this.discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
 		} catch (final Exception e) {
 			WmsxProviderServer.LOGGER.severe("Discovery failed: "
 					+ e.getMessage());
 			System.exit(1);
 		}
 
-		discover.addDiscoveryListener(this);
+		this.discover.addDiscoveryListener(this);
 	}
 
 	public Entry[] getTypes() {
@@ -201,29 +213,29 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
 	public void destroy() throws RemoteException {
 		final List regs;
-		if (discover != null) {
-			discover.terminate();
+		if (this.discover != null) {
+			this.discover.terminate();
 		}
-		discover = null;
-		synchronized (activeRegistrations) {
-			regs = new Vector(activeRegistrations);
+		this.discover = null;
+		synchronized (this.activeRegistrations) {
+			regs = new Vector(this.activeRegistrations);
 		}
-		Iterator it = regs.iterator();
+		final Iterator it = regs.iterator();
 		while (it.hasNext()) {
 			final ServiceRegistration reg = (ServiceRegistration) it.next();
 			try {
-				if (leaseManager != null) {
-					leaseManager.cancel(reg.getLease());
+				if (this.leaseManager != null) {
+					this.leaseManager.cancel(reg.getLease());
 				} else {
 					reg.getLease().cancel();
 				}
-			} catch (UnknownLeaseException e) {
+			} catch (final UnknownLeaseException e) {
 				// ignore
 			}
 		}
-		leaseManager = null;
+		this.leaseManager = null;
 		if (this.exporter != null) {
-			exporter.unexport(true);
+			this.exporter.unexport(true);
 		}
 		this.exporter = null;
 		synchronized (WmsxProviderServer.keepAlive) {
