@@ -3,7 +3,9 @@ package hu.kfki.grid.wmsx.requestor;
 import hu.kfki.grid.wmsx.Wmsx;
 import hu.kfki.grid.wmsx.WmsxEntry;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
 import java.util.logging.Logger;
@@ -84,7 +86,7 @@ public class App implements DiscoveryListener {
 			final CommandLine cmd = parser.parse(options, args);
 
 			if (cmd.hasOption('h')) {
-				printHelp(options);
+				App.printHelp(options);
 			} else if (cmd.hasOption('k')) {
 				App.dispatch(App.CMD_SHUTDOWN, null, null);
 			} else if (cmd.hasOption('p')) {
@@ -99,7 +101,7 @@ public class App implements DiscoveryListener {
 			}
 		} catch (final ParseException e1) {
 			System.out.println("Invalid command line:" + e1.getMessage());
-			printHelp(options);
+			App.printHelp(options);
 			System.exit(2);
 		}
 	}
@@ -113,7 +115,7 @@ public class App implements DiscoveryListener {
 	private static void dispatch(final int cmd, final String arg,
 			final String out) {
 		try {
-			discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
+			App.discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
 		} catch (final Exception e) {
 			App.LOGGER.severe(e.getMessage());
 			System.exit(1);
@@ -129,20 +131,20 @@ public class App implements DiscoveryListener {
 		// App.LOGGER
 		// .info("Failed to connect to provider. Please check if its running.");
 
-		synchronized (foundLock) {
+		synchronized (App.foundLock) {
 			try {
-				foundLock.wait(30000);
-			} catch (InterruptedException e) {
+				App.foundLock.wait(30000);
+			} catch (final InterruptedException e) {
 				// ignore
 			}
 		}
-		if (!found) {
+		if (!App.found) {
 			App.LOGGER
 					.info("Failed to connect to provider. Please check if its running.");
 			System.exit(1);
 		}
-		discover.terminate();
-		discover = null;
+		App.discover.terminate();
+		App.discover = null;
 	}
 
 	public App(final int cmd, final String arg, final String outputFile) {
@@ -150,8 +152,23 @@ public class App implements DiscoveryListener {
 		this.cmdarg = arg;
 		this.output = outputFile;
 		System.setSecurityManager(new RMISecurityManager());
-		discover.addDiscoveryListener(this);
-		this.addAllRegistrars(discover.getRegistrars());
+		App.discover.addDiscoveryListener(this);
+		this.addAllRegistrars(App.discover.getRegistrars());
+
+		try {
+			final FileInputStream fis = new FileInputStream("/tmp/wmsx-"
+					+ System.getProperty("user.name"));
+			final ObjectInputStream in = new ObjectInputStream(fis);
+
+			final Wmsx wmsx = (Wmsx) in.readObject();
+			in.close();
+			this.haveProxy(wmsx);
+		} catch (final IOException io) {
+			App.LOGGER.warning(io.getMessage());
+		} catch (final ClassNotFoundException e) {
+			App.LOGGER.warning(e.getMessage());
+		}
+
 		try {
 			final LookupLocator localLocator = new LookupLocator(
 					"jini://127.0.0.1/");
@@ -169,7 +186,7 @@ public class App implements DiscoveryListener {
 	public void discovered(final DiscoveryEvent evt) {
 		final ServiceRegistrar[] registrars = evt.getRegistrars();
 
-		addAllRegistrars(registrars);
+		this.addAllRegistrars(registrars);
 	}
 
 	private void addAllRegistrars(final ServiceRegistrar[] registrars) {
@@ -180,7 +197,7 @@ public class App implements DiscoveryListener {
 		}
 	}
 
-	private synchronized void haveReg(final ServiceRegistrar registrar) {
+	private void haveReg(final ServiceRegistrar registrar) {
 		Wmsx myService = null;
 		final Class[] classes = new Class[] { Wmsx.class };
 		final ServiceTemplate template = new ServiceTemplate(null, classes,
@@ -191,13 +208,17 @@ public class App implements DiscoveryListener {
 			e.printStackTrace();
 			return;
 		}
+		this.haveProxy(myService);
+	}
+
+	private synchronized void haveProxy(final Wmsx myService) {
 		if (myService == null) {
 			App.LOGGER.fine("Classifier null");
 			return;
 		}
-		synchronized (foundLock) {
-			found = true;
-			foundLock.notifyAll();
+		synchronized (App.foundLock) {
+			App.found = true;
+			App.foundLock.notifyAll();
 		}
 
 		// App.LOGGER.info(myService.hello());
