@@ -6,12 +6,10 @@ import hu.kfki.grid.wmsx.WmsxEntry;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
 import java.util.logging.Logger;
 
 import net.jini.admin.Administrable;
-import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
@@ -114,12 +112,6 @@ public class App implements DiscoveryListener {
 
 	private static void dispatch(final int cmd, final String arg,
 			final String out) {
-		try {
-			App.discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
-		} catch (final Exception e) {
-			App.LOGGER.severe(e.getMessage());
-			System.exit(1);
-		}
 		new App(cmd, arg, out);
 
 		// stay around long enough to receive replies
@@ -143,8 +135,10 @@ public class App implements DiscoveryListener {
 					.info("Failed to connect to provider. Please check if its running.");
 			System.exit(1);
 		}
-		App.discover.terminate();
-		App.discover = null;
+		if (App.discover != null) {
+			App.discover.terminate();
+			App.discover = null;
+		}
 	}
 
 	public App(final int cmd, final String arg, final String outputFile) {
@@ -152,9 +146,39 @@ public class App implements DiscoveryListener {
 		this.cmdarg = arg;
 		this.output = outputFile;
 		System.setSecurityManager(new RMISecurityManager());
-		App.discover.addDiscoveryListener(this);
-		this.addAllRegistrars(App.discover.getRegistrars());
 
+		// this.discoverLookup();
+		this.discoverTmp();
+		// this.discoverLocally();
+	}
+
+	// private void discoverLookup() {
+	// try {
+	// App.discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
+	// App.discover.addDiscoveryListener(this);
+	// this.addAllRegistrars(App.discover.getRegistrars());
+	// } catch (final IOException e) {
+	// App.LOGGER.severe(e.getMessage());
+	// System.exit(1);
+	// }
+	// }
+
+	// private void discoverLocally() {
+	// try {
+	// final LookupLocator localLocator = new LookupLocator(
+	// "jini://127.0.0.1/");
+	// final ServiceRegistrar reg = localLocator.getRegistrar();
+	// this.haveReg(reg);
+	// } catch (final MalformedURLException e1) {
+	// App.LOGGER.warning(e1.getMessage());
+	// } catch (final IOException e) {
+	// App.LOGGER.fine(e.getMessage());
+	// } catch (final ClassNotFoundException e) {
+	// App.LOGGER.fine(e.getMessage());
+	// }
+	// }
+
+	private void discoverTmp() {
 		try {
 			final FileInputStream fis = new FileInputStream("/tmp/wmsx-"
 					+ System.getProperty("user.name"));
@@ -167,19 +191,6 @@ public class App implements DiscoveryListener {
 			App.LOGGER.warning("IOException: " + io.getMessage());
 		} catch (final ClassNotFoundException e) {
 			App.LOGGER.warning("ClassNotFound: " + e.getMessage());
-		}
-
-		try {
-			final LookupLocator localLocator = new LookupLocator(
-					"jini://127.0.0.1/");
-			final ServiceRegistrar reg = localLocator.getRegistrar();
-			this.haveReg(reg);
-		} catch (final MalformedURLException e1) {
-			App.LOGGER.warning(e1.getMessage());
-		} catch (final IOException e) {
-			App.LOGGER.fine(e.getMessage());
-		} catch (final ClassNotFoundException e) {
-			App.LOGGER.fine(e.getMessage());
 		}
 	}
 

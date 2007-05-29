@@ -5,7 +5,6 @@ import hu.kfki.grid.wmsx.WmsxEntry;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.MalformedURLException;
 import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -17,7 +16,6 @@ import java.util.logging.Logger;
 import net.jini.config.Configuration;
 import net.jini.config.ConfigurationException;
 import net.jini.config.ConfigurationProvider;
-import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
 import net.jini.core.lease.Lease;
 import net.jini.core.lease.UnknownLeaseException;
@@ -114,6 +112,12 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 		// proxy primed with impl
 		this.smartProxy = new WmsxProviderProxy(this.rmiProxy);
 
+		this.registerTmp();
+		// this.registerLocally();
+		// this.registerThroughLookup();
+	}
+
+	private void registerTmp() {
 		try {
 			final FileOutputStream fos = new FileOutputStream("/tmp/wmsx-"
 					+ System.getProperty("user.name"));
@@ -123,30 +127,34 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 		} catch (final IOException io) {
 			WmsxProviderServer.LOGGER.warning(io.getMessage());
 		}
-
-		try {
-			final LookupLocator localLocator = new LookupLocator(
-					"jini://127.0.0.1/");
-			final ServiceRegistrar reg = localLocator.getRegistrar();
-			this.register(reg);
-		} catch (final MalformedURLException e1) {
-			WmsxProviderServer.LOGGER.warning(e1.getMessage());
-		} catch (final IOException e) {
-			WmsxProviderServer.LOGGER.fine(e.getMessage());
-		} catch (final ClassNotFoundException e) {
-			WmsxProviderServer.LOGGER.warning(e.getMessage());
-		}
-
-		try {
-			this.discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
-		} catch (final Exception e) {
-			WmsxProviderServer.LOGGER.severe("Discovery failed: "
-					+ e.getMessage());
-			System.exit(1);
-		}
-
-		this.discover.addDiscoveryListener(this);
 	}
+
+	// private void registerThroughLookup() {
+	// try {
+	// this.discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
+	// } catch (final Exception e) {
+	// WmsxProviderServer.LOGGER.severe("Discovery failed: "
+	// + e.getMessage());
+	// System.exit(1);
+	// }
+	//
+	// this.discover.addDiscoveryListener(this);
+	// }
+
+	// private void registerLocally() {
+	// try {
+	// final LookupLocator localLocator = new LookupLocator(
+	// "jini://127.0.0.1/");
+	// final ServiceRegistrar reg = localLocator.getRegistrar();
+	// this.register(reg);
+	// } catch (final MalformedURLException e1) {
+	// WmsxProviderServer.LOGGER.warning(e1.getMessage());
+	// } catch (final IOException e) {
+	// WmsxProviderServer.LOGGER.fine(e.getMessage());
+	// } catch (final ClassNotFoundException e) {
+	// WmsxProviderServer.LOGGER.warning(e.getMessage());
+	// }
+	// }
 
 	public Entry[] getTypes() {
 		return new Entry[] { new BasicServiceType("WMS-X"),
