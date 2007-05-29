@@ -117,6 +117,9 @@ public class JobWatcher implements Runnable {
 					synchronized (this) {
 						listeners = new HashSet((Set) this.joblisteners
 								.get(jobId));
+						if (stateNow == JobWatcher.STATE_DONE) {
+							this.joblisteners.remove(jobId);
+						}
 					}
 
 					final Iterator li = listeners.iterator();
@@ -132,11 +135,6 @@ public class JobWatcher implements Runnable {
 						case STATE_DONE:
 							listener.done();
 							break;
-						}
-					}
-					if (stateNow == JobWatcher.STATE_DONE) {
-						synchronized (this) {
-							this.joblisteners.remove(jobId);
 						}
 					}
 				}
