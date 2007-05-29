@@ -20,6 +20,7 @@
   </build>
   <modules>
     <module>wmsx-api</module>
+    <module>wmsx-dl</module>
     <module>wmsx-provider</module>
     <module>wmsx-requestor</module>
   </modules>
