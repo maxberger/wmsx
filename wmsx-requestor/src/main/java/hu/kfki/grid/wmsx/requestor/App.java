@@ -164,9 +164,9 @@ public class App implements DiscoveryListener {
 			in.close();
 			this.haveProxy(wmsx);
 		} catch (final IOException io) {
-			App.LOGGER.warning(io.getMessage());
+			App.LOGGER.warning("IOException: " + io.getMessage());
 		} catch (final ClassNotFoundException e) {
-			App.LOGGER.warning(e.getMessage());
+			App.LOGGER.warning("ClassNotFound: " + e.getMessage());
 		}
 
 		try {

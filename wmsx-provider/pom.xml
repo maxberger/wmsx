@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>hu.kfki.grid</groupId>
-            <artifactId>wmsx-api</artifactId>
+            <artifactId>wmsx-dl</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
