@@ -2,8 +2,8 @@ package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.Wmsx;
 import hu.kfki.grid.wmsx.util.Pair;
-import java.io.BufferedReader;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,95 +21,100 @@ import net.jini.admin.Administrable;
  * A smart proxy which wraps the remote Jini service calls.
  */
 public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
-    
+
     private static final long serialVersionUID = 2L;
-    
+
     private IRemoteWmsxProvider remoteService = null;
-    
+
     private static final Logger LOGGER = Logger
-            .getLogger (WmsxProviderProxy.class.toString ());
-    
-    public WmsxProviderProxy (final Remote remote) {
+            .getLogger(WmsxProviderProxy.class.toString());
+
+    public WmsxProviderProxy(final Remote remote) {
         this.remoteService = (IRemoteWmsxProvider) remote;
     }
-    
-    public String submitJdl (final String jdlFile, final String output)
+
+    public String submitJdl(final String jdlFile, final String output)
             throws IOException {
         try {
-            final File f = new File (jdlFile);
-            if (!f.exists ()) {
-                throw new FileNotFoundException ("File not Found: " + jdlFile);
+            final File f = new File(jdlFile);
+            if (!f.exists()) {
+                throw new FileNotFoundException("File not Found: " + jdlFile);
             }
             final String outputPath;
             if (output != null) {
-                final File f2 = new File (output);
-                if (f2.exists ()) {
-                    throw new IOException ("File exists: " + output);
+                final File f2 = new File(output);
+                if (f2.exists()) {
+                    throw new IOException("File exists: " + output);
                 }
-                outputPath = f2.getAbsolutePath ();
+                outputPath = f2.getAbsolutePath();
             } else {
                 outputPath = null;
             }
             return this.remoteService
-                    .submitJdl (f.getAbsolutePath (), outputPath);
+                    .submitJdl(f.getAbsolutePath(), outputPath);
         } catch (final RemoteException re) {
-            WmsxProviderProxy.LOGGER.warning (re.getMessage ());
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
             return null;
         }
     }
-    
-    public Object getAdmin () throws RemoteException {
+
+    public Object getAdmin() throws RemoteException {
         return this.remoteService;
     }
-    
-    public void setMaxJobs (final int maxJobs) {
+
+    public void setMaxJobs(final int maxJobs) {
         try {
-            this.remoteService.setMaxJobs (maxJobs);
+            this.remoteService.setMaxJobs(maxJobs);
         } catch (final RemoteException re) {
-            WmsxProviderProxy.LOGGER.warning (re.getMessage ());
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
         }
     }
-    
-    public boolean ping (final boolean remote) {
+
+    public boolean ping(final boolean remote) {
         if (remote) {
             try {
-                this.remoteService.ping ();
+                this.remoteService.ping();
             } catch (final RemoteException re) {
-                WmsxProviderProxy.LOGGER.fine (re.getMessage ());
+                WmsxProviderProxy.LOGGER.fine(re.getMessage());
                 return false;
             }
         }
         return true;
     }
-    
-    public void submitLaszlo (final String argFile) throws IOException {
-        final File f = new File (argFile);
-        if (!f.exists ()) {
-            throw new FileNotFoundException ("File not Found: " + argFile);
+
+    public void submitLaszlo(final String argFile) throws IOException {
+        final File f = new File(argFile);
+        if (!f.exists()) {
+            throw new FileNotFoundException("File not Found: " + argFile);
         }
-        final List commands = new Vector ();
-        final FileReader freader = new FileReader (f);
-        final BufferedReader reader = new BufferedReader (freader);
-        String line = reader.readLine ();
-        while (line!=null) {
-            line = line.trim ();
-            if (line.length ()>0) {
-                if (line.charAt (0)!='#') {
-                    int spacePos = line.indexOf (" ");
-                    final String command = line.substring (0, spacePos);
-                    final String args = line.substring (spacePos+1).trim ();
-                    commands.add (new Pair (command,args));
+        final File srcPath = new File(f.getParentFile().getParentFile(), "src");
+        final List commands = new Vector();
+        final FileReader freader = new FileReader(f);
+        final BufferedReader reader = new BufferedReader(freader);
+        String line = reader.readLine();
+        while (line != null) {
+            line = line.trim();
+            if (line.length() > 0) {
+                if (line.charAt(0) != '#') {
+                    int spacePos = line.indexOf(" ");
+                    final String command = line.substring(0, spacePos);
+                    final File cmdFile = new File(srcPath, command + ".tar.gz");
+                    if (cmdFile.exists()) {
+                        final String args = line.substring(spacePos + 1).trim();
+                        commands.add(new Pair(cmdFile.getAbsolutePath(), args));
+                    } else {
+                        LOGGER.warning("File does not exist: "
+                                + cmdFile.getAbsolutePath());
+                    }
                 }
             }
-            line = reader.readLine ();
+            line = reader.readLine();
         }
-        if (commands.isEmpty ()) {
-            LOGGER.warning ("List of commands is empty!");
+        if (commands.isEmpty()) {
+            LOGGER.warning("List of commands is empty!");
         } else {
             this.remoteService.submitLaszlo(commands);
         }
     }
-    
-    
-    
+
 }

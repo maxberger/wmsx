@@ -6,7 +6,7 @@
 	<classpathentry excluding="**" kind="src" output="wmsx-provider/src/main/resources" path="wmsx-provider/src/main/resources"/>
 	<classpathentry kind="src" path="wmsx-requestor/src/main/java"/>
 	<classpathentry kind="src" path="wmsx-requestor/src/test/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/1.4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.4"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
