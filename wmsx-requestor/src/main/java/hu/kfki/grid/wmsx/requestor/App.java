@@ -145,7 +145,7 @@ public class App implements DiscoveryListener {
 		this.command = cmd;
 		this.cmdarg = arg;
 		this.output = outputFile;
-		System.setSecurityManager(new RMISecurityManager());
+		// System.setSecurityManager(new RMISecurityManager());
 
 		// this.discoverLookup();
 		this.discoverTmp();
