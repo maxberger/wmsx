@@ -10,11 +10,45 @@ import java.util.List;
  */
 public interface IRemoteWmsxProvider extends Serializable, Remote {
 
-	void ping() throws RemoteException;
+    static class LaszloCommand implements Serializable {
 
-	String submitJdl(String jdlFile, String output) throws RemoteException;
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
 
-        void submitLaszlo(List commands) throws RemoteException;
-        
-	void setMaxJobs(int maxJobs) throws RemoteException;
+        private final String command;
+
+        private final String args;
+
+        private final String inputFile;
+
+        public LaszloCommand(final String _command, final String _args,
+                final String _inputFile) {
+            this.command = _command;
+            this.args = _args;
+            this.inputFile = _inputFile;
+        }
+
+        public String getArgs() {
+            return args;
+        }
+
+        public String getCommand() {
+            return command;
+        }
+
+        public String getInputFile() {
+            return inputFile;
+        }
+
+    }
+
+    void ping() throws RemoteException;
+
+    String submitJdl(String jdlFile, String output) throws RemoteException;
+
+    void submitLaszlo(List commands) throws RemoteException;
+
+    void setMaxJobs(int maxJobs) throws RemoteException;
 }

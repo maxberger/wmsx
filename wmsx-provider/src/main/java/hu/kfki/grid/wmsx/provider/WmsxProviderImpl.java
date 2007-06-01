@@ -6,18 +6,19 @@ import hu.kfki.grid.wmsx.job.LogListener;
 import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.job.submit.ParseResult;
 import hu.kfki.grid.wmsx.job.submit.Submitter;
-import hu.kfki.grid.wmsx.util.Pair;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.WritableByteChannel;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import com.sun.jini.admin.DestroyAdmin;
@@ -29,7 +30,7 @@ import edg.workload.userinterface.jclient.JobId;
  * 
  */
 public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
-        JobListener {
+        JobListener, Runnable {
 
     private static final long serialVersionUID = 2L;
 
@@ -40,6 +41,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private final File workDir;
 
+    private final File outDir;
+
+    private final File debugDir;
+
     private int maxJobs = Integer.MAX_VALUE;
 
     private final List pendingJobs = new LinkedList();
@@ -47,24 +52,29 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     public WmsxProviderImpl(final DestroyAdmin dadm, final File workdir) {
         this.destroyAdmin = dadm;
         this.workDir = workdir;
-    }
 
-    static class JobDesc {
-        final String jdlFile;
-
-        final String output;
-
-        public JobDesc(final String jdlFile, final String output) {
-            this.jdlFile = jdlFile;
-            this.output = output;
-        }
-
-        public String getJdlFile() {
-            return this.jdlFile;
-        }
-
-        public String getOutput() {
-            return this.output;
+        this.outDir = new File(workdir, "out");
+        if (!outDir.exists())
+            outDir.mkdirs();
+        this.debugDir = new File(workdir, "debug");
+        if (!debugDir.exists())
+            debugDir.mkdirs();
+        try {
+            final File jobFile = new File(debugDir, "job.sh");
+            FileOutputStream fo = new FileOutputStream(jobFile);
+            InputStream in = ClassLoader.getSystemResourceAsStream("job.sh");
+            final byte[] b = new byte[4096];
+            int read = in.read(b);
+            while (read > 0) {
+                fo.write(b, 0, read);
+                read = in.read(b);
+            }
+            in.close();
+            fo.close();
+            Runtime.getRuntime().exec(
+                    new String[] { "chmod", "+x", jobFile.getAbsolutePath() });
+        } catch (IOException e) {
+            LOGGER.warning("Error copying job.sh: " + e.getMessage());
         }
     }
 
@@ -75,7 +85,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         if (avail > 0) {
             return this.reallySubmitJdl(jdlFile, output);
         } else {
-            this.pendingJobs.add(new JobDesc(jdlFile, output));
+            this.pendingJobs.add(new JdlJob(jdlFile, output));
             return "pending";
         }
     }
@@ -98,14 +108,15 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             }
             JobWatcher.getWatcher().addWatch(id,
                     ShadowListener.listen(result, oChannel));
-            synchronized (workDir) {
+            synchronized (this.workDir) {
                 try {
-                    BufferedWriter out = new BufferedWriter(new FileWriter(
-                            new File(workDir, "jobids"), true));
+                    final BufferedWriter out = new BufferedWriter(
+                            new FileWriter(new File(this.workDir, "jobids"),
+                                    true));
                     out.write(jobStr);
                     out.newLine();
                     out.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     WmsxProviderImpl.LOGGER.warning(e.getMessage());
                 }
             }
@@ -113,7 +124,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         } catch (final IOException e) {
             WmsxProviderImpl.LOGGER.warning(e.getMessage());
         } catch (final NullPointerException e) {
-            WmsxProviderImpl.LOGGER.warning(e.getMessage());
+            WmsxProviderImpl.LOGGER.warning(e.getMessage() + " at "
+                    + e.getStackTrace()[0].toString());
         }
         return null;
     }
@@ -138,7 +150,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     public void setMaxJobs(final int maxj) throws RemoteException {
         WmsxProviderImpl.LOGGER.info("setMaxJobs to " + maxj);
         this.maxJobs = maxj;
-        this.investigateNumJobs();
+        this.investigateLater();
     }
 
     private synchronized void investigateNumJobs() {
@@ -155,7 +167,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     public void done() {
-        this.investigateNumJobs();
+        this.investigateLater();
     }
 
     public void running() {
@@ -171,14 +183,34 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     public void submitLaszlo(final List commands) throws RemoteException {
-        LOGGER.info("Adding " + commands.size() + " Commands.");
-        Iterator it = commands.iterator();
+        WmsxProviderImpl.LOGGER
+                .info("Adding " + commands.size() + " Commands.");
+        final List jobs = new Vector(commands.size());
+        final Iterator it = commands.iterator();
+        int line = 1;
         while (it.hasNext()) {
-            Pair p = (Pair) it.next();
-            final String cmd = (String) p.getKey();
-            final String args = (String) p.getValue();
-            LOGGER.info("C: " + cmd + ", A:" + args);
+            final IRemoteWmsxProvider.LaszloCommand lcmd = (IRemoteWmsxProvider.LaszloCommand) it
+                    .next();
+            jobs.add(new LaszloJob(lcmd.getCommand(), lcmd.getArgs(), lcmd
+                    .getInputFile(), this.outDir, this.debugDir, line));
+            line++;
+            // final String cmd = lcmd.getCommand();
+            // final String args = lcmd.getArgs();
+            // WmsxProviderImpl.LOGGER.info("C: " + cmd + ", A:" + args);
+
         }
+        synchronized (this) {
+            this.pendingJobs.addAll(jobs);
+        }
+        this.investigateLater();
+    }
+
+    private void investigateLater() {
+        new Thread(this).start();
+    }
+
+    public void run() {
+        this.investigateNumJobs();
     }
 
 }
