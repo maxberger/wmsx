@@ -8,12 +8,12 @@ import java.io.IOException;
  */
 public interface Wmsx {
 
-	boolean ping(boolean remote);
+    boolean ping(boolean remote);
 
-	String submitJdl(String jdlFile, String outputFile) throws IOException;
-        
-        void submitLaszlo(String argFile) throws IOException;
+    String submitJdl(String jdlFile, String outputFile) throws IOException;
 
-	void setMaxJobs(int maxJobs);
+    void submitLaszlo(String argFile) throws IOException;
+
+    void setMaxJobs(int maxJobs);
 
 }

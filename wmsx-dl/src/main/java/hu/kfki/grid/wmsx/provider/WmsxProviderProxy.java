@@ -1,7 +1,6 @@
 package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.Wmsx;
-import hu.kfki.grid.wmsx.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -96,22 +95,24 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
             line = line.trim();
             if (line.length() > 0) {
                 if (line.charAt(0) != '#') {
-                    int spacePos = line.indexOf(" ");
+                    final int spacePos = line.indexOf(" ");
                     final String command = line.substring(0, spacePos);
                     final File cmdFile = new File(srcPath, command + ".tar.gz");
                     if (cmdFile.exists()) {
                         final String args = line.substring(spacePos + 1).trim();
-                        commands.add(new Pair(cmdFile.getAbsolutePath(), args));
+                        commands.add(new IRemoteWmsxProvider.LaszloCommand(
+                                command, args, cmdFile.getAbsolutePath()));
                     } else {
-                        LOGGER.warning("File does not exist: "
-                                + cmdFile.getAbsolutePath());
+                        WmsxProviderProxy.LOGGER
+                                .warning("File does not exist: "
+                                        + cmdFile.getAbsolutePath());
                     }
                 }
             }
             line = reader.readLine();
         }
         if (commands.isEmpty()) {
-            LOGGER.warning("List of commands is empty!");
+            WmsxProviderProxy.LOGGER.warning("List of commands is empty!");
         } else {
             this.remoteService.submitLaszlo(commands);
         }

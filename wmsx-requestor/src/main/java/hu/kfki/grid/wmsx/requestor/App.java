@@ -6,7 +6,6 @@ import hu.kfki.grid.wmsx.WmsxEntry;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.rmi.RMISecurityManager;
 import java.util.logging.Logger;
 
 import net.jini.admin.Administrable;
@@ -30,40 +29,40 @@ import com.sun.jini.admin.DestroyAdmin;
 
 /**
  * Hello world!
- *
+ * 
  */
 public class App implements DiscoveryListener {
-    
+
     private static final Logger LOGGER = Logger.getLogger(App.class.toString());
-    
+
     private static final int CMD_SHUTDOWN = 0;
-    
+
     private static final int CMD_NUMBER = 1;
-    
+
     private static final int CMD_JDL = 2;
-    
+
     private static final int CMD_PING = 3;
-    
+
     private static final int CMD_FULLPING = 4;
-    
+
     private static final int CMD_LASZLO = 5;
-    
+
     private final int command;
-    
+
     private final String cmdarg;
-    
+
     private final String output;
-    
+
     private static LookupDiscovery discover = null;
-    
+
     private static boolean found = false;
-    
+
     private static final Object foundLock = new Object();
-    
+
     public static void main(final String[] args) {
-        
+
         final Options options = new Options();
-        
+
         final OptionGroup commands = new OptionGroup();
         commands.setRequired(true);
         commands
@@ -75,17 +74,18 @@ public class App implements DiscoveryListener {
         commands.addOption(new Option("f", "full-ping", false,
                 "full check if provider is running"));
         commands.addOption(new Option("j", "jdl", true, "submit a JDL file"));
-        commands.addOption(new Option("a", "args", true, "submit a Laszlo-style args file"));
+        commands.addOption(new Option("a", "args", true,
+                "submit a Laszlo-style args file"));
         commands.addOption(new Option("n", "number", true,
                 "set number of active jobs"));
         options.addOptionGroup(commands);
         options.addOption(new Option("o", "output", true,
                 "redirect interactive output to file"));
-        
+
         final CommandLineParser parser = new PosixParser();
         try {
             final CommandLine cmd = parser.parse(options, args);
-            
+
             if (cmd.hasOption('h')) {
                 App.printHelp(options);
             } else if (cmd.hasOption('k')) {
@@ -108,17 +108,18 @@ public class App implements DiscoveryListener {
             System.exit(2);
         }
     }
-    
+
     private static void printHelp(final Options options) {
-        new HelpFormatter().printHelp(
-                "wmsx-requestor (-h|-k|-n num|-j jdlFile [-o outFile]|-a argsFile)",
-                options);
+        new HelpFormatter()
+                .printHelp(
+                        "wmsx-requestor (-h|-k|-n num|-j jdlFile [-o outFile]|-a argsFile)",
+                        options);
     }
-    
+
     private static void dispatch(final int cmd, final String arg,
             final String out) {
         new App(cmd, arg, out);
-        
+
         // stay around long enough to receive replies
         // try {
         // Thread.sleep(100000L);
@@ -127,7 +128,7 @@ public class App implements DiscoveryListener {
         // }
         // App.LOGGER
         // .info("Failed to connect to provider. Please check if its running.");
-        
+
         synchronized (App.foundLock) {
             try {
                 App.foundLock.wait(30000);
@@ -145,18 +146,18 @@ public class App implements DiscoveryListener {
             App.discover = null;
         }
     }
-    
+
     public App(final int cmd, final String arg, final String outputFile) {
         this.command = cmd;
         this.cmdarg = arg;
         this.output = outputFile;
         // System.setSecurityManager(new RMISecurityManager());
-        
+
         // this.discoverLookup();
         this.discoverTmp();
         // this.discoverLocally();
     }
-    
+
     // private void discoverLookup() {
     // try {
     // App.discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
@@ -167,7 +168,7 @@ public class App implements DiscoveryListener {
     // System.exit(1);
     // }
     // }
-    
+
     // private void discoverLocally() {
     // try {
     // final LookupLocator localLocator = new LookupLocator(
@@ -182,13 +183,13 @@ public class App implements DiscoveryListener {
     // App.LOGGER.fine(e.getMessage());
     // }
     // }
-    
+
     private void discoverTmp() {
         try {
             final FileInputStream fis = new FileInputStream("/tmp/wmsx-"
                     + System.getProperty("user.name"));
             final ObjectInputStream in = new ObjectInputStream(fis);
-            
+
             final Wmsx wmsx = (Wmsx) in.readObject();
             in.close();
             this.haveProxy(wmsx);
@@ -198,13 +199,13 @@ public class App implements DiscoveryListener {
             App.LOGGER.warning("ClassNotFound: " + e.getMessage());
         }
     }
-    
+
     public void discovered(final DiscoveryEvent evt) {
         final ServiceRegistrar[] registrars = evt.getRegistrars();
-        
+
         this.addAllRegistrars(registrars);
     }
-    
+
     private void addAllRegistrars(final ServiceRegistrar[] registrars) {
         for (int n = 0; n < registrars.length; n++) {
             // System.out.println("Lookup service found");
@@ -212,7 +213,7 @@ public class App implements DiscoveryListener {
             this.haveReg(registrar);
         }
     }
-    
+
     private void haveReg(final ServiceRegistrar registrar) {
         Wmsx myService = null;
         final Class[] classes = new Class[] { Wmsx.class };
@@ -226,7 +227,7 @@ public class App implements DiscoveryListener {
         }
         this.haveProxy(myService);
     }
-    
+
     private synchronized void haveProxy(final Wmsx myService) {
         if (myService == null) {
             App.LOGGER.fine("Classifier null");
@@ -236,7 +237,7 @@ public class App implements DiscoveryListener {
             App.found = true;
             App.foundLock.notifyAll();
         }
-        
+
         // App.LOGGER.info(myService.hello());
         try {
             switch (this.command) {
@@ -275,9 +276,9 @@ public class App implements DiscoveryListener {
         }
         System.exit(0);
     }
-    
+
     public void discarded(final DiscoveryEvent arg0) {
         // do nothing
     }
-    
+
 }

@@ -2,6 +2,7 @@ package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.WmsxEntry;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -32,9 +33,6 @@ import net.jini.lease.LeaseListener;
 import net.jini.lease.LeaseRenewalEvent;
 import net.jini.lease.LeaseRenewalManager;
 
-import com.sun.jini.admin.DestroyAdmin;
-import com.sun.jini.lookup.entry.BasicServiceType;
-import java.io.File;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -43,62 +41,67 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
+import com.sun.jini.admin.DestroyAdmin;
+import com.sun.jini.lookup.entry.BasicServiceType;
+
 public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         DestroyAdmin {
     private static final Logger LOGGER = Logger
             .getLogger(WmsxProviderServer.class.toString());
-    
+
     protected LeaseRenewalManager leaseManager = new LeaseRenewalManager();
-    
+
     protected ServiceID serviceID = null;
-    
+
     protected WmsxProviderProxy smartProxy = null;
-    
+
     protected Remote rmiProxy = null;
-    
+
     protected WmsxProviderImpl impl = null;
-    
+
     private final List activeRegistrations = new Vector();
-    
+
     static final Object keepAlive = new Object();
-    
+
     private LookupDiscovery discover = null;
-    
+
     private Exporter exporter = null;
-    
+
     private static void printHelp(final Options options) {
-        new HelpFormatter().printHelp(
-                "wmsx-provider (-h|workdir)",
-                options);
+        new HelpFormatter().printHelp("wmsx-provider (-h|workdir)", options);
     }
-    
+
     public static void main(final String args[]) {
-        
+
         final Options options = new Options();
         final CommandLineParser parser = new PosixParser();
-        options
-                .addOption(new Option("h", "help", false, "print this message"));
+        options.addOption(new Option("h", "help", false, "print this message"));
         File workdir = new File("/tmp");
         try {
             final CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption('h')) {
-                printHelp(options);
+                WmsxProviderServer.printHelp(options);
                 System.exit(0);
             }
             final List largs = cmd.getArgList();
-            if (largs.size()!=1) throw new ParseException("Need workdir!");
-            workdir = new File((String)largs.get(0));
-            if (!workdir.exists()) workdir.mkdirs();
-            if ((!workdir.exists())||(!workdir.isDirectory())) 
-                throw new ParseException("Invalid Directory: "+workdir);
+            if (largs.size() != 1) {
+                throw new ParseException("Need workdir!");
+            }
+            workdir = new File((String) largs.get(0));
+            if (!workdir.exists()) {
+                workdir.mkdirs();
+            }
+            if ((!workdir.exists()) || (!workdir.isDirectory())) {
+                throw new ParseException("Invalid Directory: " + workdir);
+            }
         } catch (final ParseException e1) {
             System.out.println("Invalid command line: " + e1.getMessage());
-            printHelp(options);
+            WmsxProviderServer.printHelp(options);
             System.exit(2);
         }
-        
+
         new WmsxProviderServer(workdir);
-        
+
         // keep server running forever to
         // - allow time for locator discovery and
         // - keep re-registering the lease
@@ -111,14 +114,15 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         }
         WmsxProviderServer.LOGGER.info("Terminated.");
     }
-    
+
     public WmsxProviderServer(final File workDir) {
-        
-        LOGGER.info("Using workdir: "+workDir.getAbsolutePath());
-        
+
+        WmsxProviderServer.LOGGER.info("Using workdir: "
+                + workDir.getAbsolutePath());
+
         // Create the service
         this.impl = new WmsxProviderImpl(this, workDir);
-        
+
         // Try to load the service ID from file.
         // It isn't an error if we can't load it, because
         // maybe this is the first time this service has run
@@ -132,9 +136,9 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         // } catch (final Exception e) {
         // // ignore
         // }
-        
+
         try {
-            
+
             final InvocationLayerFactory invocationLayerFactory = new BasicILFactory();
             // ServerEndpoint endpoint = TcpServerEndpoint.getInstance(0);
             final ServerEndpoint endpoint = TcpServerEndpoint.getInstance(
@@ -143,23 +147,23 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             // "::1", 0);
             this.exporter = new BasicJeriExporter(endpoint,
                     invocationLayerFactory, false, true);
-            
+
             this.rmiProxy = this.exporter.export(this.impl);
         } catch (final Exception e) {
             WmsxProviderServer.LOGGER.severe(e.getMessage());
             System.exit(1);
         }
-        
+
         // System.setSecurityManager(new RMISecurityManager());
-        
+
         // proxy primed with impl
         this.smartProxy = new WmsxProviderProxy(this.rmiProxy);
-        
+
         this.registerTmp();
         // this.registerLocally();
         // this.registerThroughLookup();
     }
-    
+
     private void registerTmp() {
         try {
             final String proxyFile = "/tmp/wmsx-"
@@ -168,12 +172,12 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             final ObjectOutputStream out = new ObjectOutputStream(fos);
             out.writeObject(this.smartProxy);
             out.close();
-            LOGGER.info("Written Proxy to " + proxyFile);
+            WmsxProviderServer.LOGGER.info("Written Proxy to " + proxyFile);
         } catch (final IOException io) {
             WmsxProviderServer.LOGGER.warning(io.getMessage());
         }
     }
-    
+
     // private void registerThroughLookup() {
     // try {
     // this.discover = new LookupDiscovery(LookupDiscovery.ALL_GROUPS);
@@ -185,7 +189,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
     //
     // this.discover.addDiscoveryListener(this);
     // }
-    
+
     // private void registerLocally() {
     // try {
     // final LookupLocator localLocator = new LookupLocator(
@@ -200,26 +204,26 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
     // WmsxProviderServer.LOGGER.warning(e.getMessage());
     // }
     // }
-    
+
     public Entry[] getTypes() {
         return new Entry[] { new BasicServiceType("WMS-X"),
-        new WmsxEntry(System.getProperty("user.name")) };
+                new WmsxEntry(System.getProperty("user.name")) };
     }
-    
+
     public void discovered(final DiscoveryEvent evt) {
         final ServiceRegistrar[] registrars = evt.getRegistrars();
-        
+
         for (int n = 0; n < registrars.length; n++) {
             final ServiceRegistrar registrar = registrars[n];
             this.register(registrar);
         }
     }
-    
+
     public void register(final ServiceRegistrar registrar) {
         final ServiceItem item = new ServiceItem(this.serviceID,
                 this.smartProxy, this.getTypes());
         ServiceRegistration reg = null;
-        
+
         try {
             reg = registrar.register(item, Lease.FOREVER);
         } catch (final java.rmi.RemoteException e) {
@@ -230,17 +234,17 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         synchronized (this.activeRegistrations) {
             this.activeRegistrations.add(reg);
         }
-        
+
         WmsxProviderServer.LOGGER.info("Service registered with id "
                 + reg.getServiceID());
-        
+
         // set lease renewal in place
         this.leaseManager.renewUntil(reg.getLease(), Lease.FOREVER, this);
-        
+
         // set the serviceID if necessary
         if (this.serviceID == null) {
             this.serviceID = reg.getServiceID();
-            
+
             // try to save the service ID in a file
             // DataOutputStream dout = null;
             // try {
@@ -253,17 +257,17 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             // // ignore
             // }
         }
-        
+
     }
-    
+
     public void notify(final LeaseRenewalEvent evt) {
         WmsxProviderServer.LOGGER.fine("Lease expired " + evt.toString());
     }
-    
+
     public void discarded(final DiscoveryEvent evt) {
         // ignore
     }
-    
+
     public void destroy() throws RemoteException {
         final List regs;
         if (this.discover != null) {
@@ -295,5 +299,5 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             WmsxProviderServer.keepAlive.notifyAll();
         }
     }
-    
+
 } // JiniServiceServer
