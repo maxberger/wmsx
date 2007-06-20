@@ -10,7 +10,8 @@ public interface Wmsx {
 
     boolean ping(boolean remote);
 
-    String submitJdl(String jdlFile, String outputFile) throws IOException;
+    String submitJdl(String jdlFile, String outputFile, String resultDir)
+            throws IOException;
 
     void submitLaszlo(String argFile) throws IOException;
 

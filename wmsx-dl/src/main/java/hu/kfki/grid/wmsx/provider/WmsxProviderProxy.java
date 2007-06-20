@@ -32,8 +32,8 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         this.remoteService = (IRemoteWmsxProvider) remote;
     }
 
-    public String submitJdl(final String jdlFile, final String output)
-            throws IOException {
+    public String submitJdl(final String jdlFile, final String output,
+            final String resultDir) throws IOException {
         try {
             final File f = new File(jdlFile);
             if (!f.exists()) {
@@ -45,12 +45,19 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
                 if (f2.exists()) {
                     throw new IOException("File exists: " + output);
                 }
-                outputPath = f2.getAbsolutePath();
+                outputPath = f2.getCanonicalPath();
             } else {
                 outputPath = null;
             }
-            return this.remoteService
-                    .submitJdl(f.getAbsolutePath(), outputPath);
+            final String resultPath;
+            if (resultDir != null) {
+                resultPath = new File(resultDir).getCanonicalPath();
+            } else {
+                resultPath = null;
+            }
+
+            return this.remoteService.submitJdl(f.getCanonicalPath(),
+                    outputPath, resultPath);
         } catch (final RemoteException re) {
             WmsxProviderProxy.LOGGER.warning(re.getMessage());
             return null;
@@ -82,7 +89,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
     }
 
     public void submitLaszlo(final String argFile) throws IOException {
-        final File f = new File(argFile);
+        final File f = new File(argFile).getCanonicalFile();
         if (!f.exists()) {
             throw new FileNotFoundException("File not Found: " + argFile);
         }

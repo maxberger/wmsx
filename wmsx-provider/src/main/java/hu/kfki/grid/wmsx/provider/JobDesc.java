@@ -6,4 +6,6 @@ interface JobDesc {
 
     String getOutput();
 
+    String getResultDir();
+
 }

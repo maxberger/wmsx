@@ -53,6 +53,8 @@ public class App implements DiscoveryListener {
 
     private final String output;
 
+    private final String resultDir;
+
     private static LookupDiscovery discover = null;
 
     private static boolean found = false;
@@ -81,6 +83,8 @@ public class App implements DiscoveryListener {
         options.addOptionGroup(commands);
         options.addOption(new Option("o", "output", true,
                 "redirect interactive output to file"));
+        options.addOption(new Option("r", "resultDir", true,
+                "retrieve and store results to dir"));
 
         final CommandLineParser parser = new PosixParser();
         try {
@@ -89,18 +93,20 @@ public class App implements DiscoveryListener {
             if (cmd.hasOption('h')) {
                 App.printHelp(options);
             } else if (cmd.hasOption('k')) {
-                App.dispatch(App.CMD_SHUTDOWN, null, null);
+                App.dispatch(App.CMD_SHUTDOWN, null, null, null);
             } else if (cmd.hasOption('p')) {
-                App.dispatch(App.CMD_PING, null, null);
+                App.dispatch(App.CMD_PING, null, null, null);
             } else if (cmd.hasOption('f')) {
-                App.dispatch(App.CMD_FULLPING, null, null);
+                App.dispatch(App.CMD_FULLPING, null, null, null);
             } else if (cmd.hasOption('n')) {
-                App.dispatch(App.CMD_NUMBER, cmd.getOptionValue('n'), null);
+                App.dispatch(App.CMD_NUMBER, cmd.getOptionValue('n'), null,
+                        null);
             } else if (cmd.hasOption('a')) {
-                App.dispatch(App.CMD_LASZLO, cmd.getOptionValue('a'), null);
+                App.dispatch(App.CMD_LASZLO, cmd.getOptionValue('a'), null,
+                        null);
             } else if (cmd.hasOption('j')) {
                 App.dispatch(App.CMD_JDL, cmd.getOptionValue('j'), cmd
-                        .getOptionValue('o'));
+                        .getOptionValue('o'), cmd.getOptionValue('r'));
             }
         } catch (final ParseException e1) {
             System.out.println("Invalid command line:" + e1.getMessage());
@@ -117,8 +123,8 @@ public class App implements DiscoveryListener {
     }
 
     private static void dispatch(final int cmd, final String arg,
-            final String out) {
-        new App(cmd, arg, out);
+            final String out, final String res) {
+        new App(cmd, arg, out, res);
 
         // stay around long enough to receive replies
         // try {
@@ -147,10 +153,12 @@ public class App implements DiscoveryListener {
         }
     }
 
-    public App(final int cmd, final String arg, final String outputFile) {
+    public App(final int cmd, final String arg, final String outputFile,
+            final String res) {
         this.command = cmd;
         this.cmdarg = arg;
         this.output = outputFile;
+        this.resultDir = res;
         // System.setSecurityManager(new RMISecurityManager());
 
         // this.discoverLookup();
@@ -267,7 +275,8 @@ public class App implements DiscoveryListener {
                 myService.submitLaszlo(this.cmdarg);
                 break;
             case CMD_JDL:
-                final String s = myService.submitJdl(this.cmdarg, this.output);
+                final String s = myService.submitJdl(this.cmdarg, this.output,
+                        this.resultDir);
                 System.out.println("" + s);
                 break;
             }

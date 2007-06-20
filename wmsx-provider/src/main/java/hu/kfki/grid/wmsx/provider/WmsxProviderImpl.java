@@ -79,18 +79,19 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     synchronized public String submitJdl(final String jdlFile,
-            final String output) {
+            final String output, final String resultDir) {
         final int current = JobWatcher.getWatcher().getNumJobsRunning();
         final int avail = (this.maxJobs - current);
         if (avail > 0) {
-            return this.reallySubmitJdl(jdlFile, output);
+            return this.reallySubmitJdl(jdlFile, output, resultDir);
         } else {
-            this.pendingJobs.add(new JdlJob(jdlFile, output));
+            this.pendingJobs.add(new JdlJob(jdlFile, output, resultDir));
             return "pending";
         }
     }
 
-    private String reallySubmitJdl(final String jdlFile, final String output) {
+    private String reallySubmitJdl(final String jdlFile, final String output,
+            final String resultDir) {
         WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
         ParseResult result;
         try {
@@ -98,7 +99,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             final String jobStr = result.getJobId();
             final JobId id = new JobId(jobStr);
             WmsxProviderImpl.LOGGER.info("Job id is: " + id);
-            JobWatcher.getWatcher().addWatch(id, new LogListener(id));
+            JobWatcher.getWatcher().addWatch(id, LogListener.getLogListener());
             JobWatcher.getWatcher().addWatch(id, this);
             final WritableByteChannel oChannel;
             if (output != null) {
@@ -157,7 +158,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         while ((!this.pendingJobs.isEmpty())
                 && ((this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning()) > 0)) {
             final JobDesc jd = (JobDesc) this.pendingJobs.remove(0);
-            this.reallySubmitJdl(jd.getJdlFile(), jd.getOutput());
+            this.reallySubmitJdl(jd.getJdlFile(), jd.getOutput(), jd
+                    .getResultDir());
             try {
                 this.wait(100);
             } catch (final InterruptedException e) {
@@ -166,15 +168,15 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
-    public void done() {
+    public void done(final JobId id) {
         this.investigateLater();
     }
 
-    public void running() {
+    public void running(final JobId id) {
         // ignore
     }
 
-    public void startup() {
+    public void startup(final JobId id) {
         // ignore
     }
 
