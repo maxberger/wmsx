@@ -1,10 +1,12 @@
 package hu.kfki.grid.wmsx.job;
 
+import edg.workload.userinterface.jclient.JobId;
+
 public interface JobListener {
 
-	void startup();
+    void startup(JobId id);
 
-	void running();
+    void running(JobId id);
 
-	void done();
+    void done(JobId id);
 }

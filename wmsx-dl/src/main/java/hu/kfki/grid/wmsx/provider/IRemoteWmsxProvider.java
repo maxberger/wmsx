@@ -46,7 +46,8 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
     void ping() throws RemoteException;
 
-    String submitJdl(String jdlFile, String output) throws RemoteException;
+    String submitJdl(String jdlFile, String output, String resultDir)
+            throws RemoteException;
 
     void submitLaszlo(List commands) throws RemoteException;
 

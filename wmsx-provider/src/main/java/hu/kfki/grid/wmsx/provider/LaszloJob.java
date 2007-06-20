@@ -23,6 +23,8 @@ public class LaszloJob implements JobDesc {
 
     String output;
 
+    public String resultDir;
+
     public LaszloJob(final String _cmd, final String _args,
             final String _inputFile, final File _outDir, final File _tmpDir,
             final int _num) {
@@ -55,8 +57,9 @@ public class LaszloJob implements JobDesc {
                 jdlFile = potentialJdlFile;
                 out = new BufferedWriter(new FileWriter(jdlFile));
             }
-            final String jobShPath = new File(tmpDir, "job.sh")
-                    .getAbsolutePath();
+            final File jobShFile = new File(tmpDir, "job.sh");
+            final String jobShPath = jobShFile.getAbsolutePath();
+            final String jobShName = jobShFile.getName();
             final String outDirs = "out/bplots out/data out/hist out/plots";
             final String profile = "/afs/kfki.hu/home/"
                     + System.getProperty("user.name")
@@ -65,7 +68,7 @@ public class LaszloJob implements JobDesc {
             out.newLine();
             out.write("JobType = \"Interactive\";");
             out.newLine();
-            out.write("Executable = \"" + jobShPath + "\";");
+            out.write("Executable = \"" + jobShName + "\";");
             out.newLine();
             out.write("Arguments = \"");
             out.write(cmd + " ");
@@ -87,9 +90,11 @@ public class LaszloJob implements JobDesc {
             out.close();
             this.jdlFilename = jdlFile.getAbsolutePath();
             this.output = new File(tmpDir, extBase + ".out").getAbsolutePath();
+            this.resultDir = new File(outDir, extBase).getAbsolutePath();
         } catch (IOException io) {
             this.jdlFilename = null;
             this.output = null;
+            this.resultDir = null;
         }
     }
 
@@ -105,4 +110,7 @@ public class LaszloJob implements JobDesc {
         return this.output;
     }
 
+    public String getResultDir() {
+        return this.resultDir;
+    }
 }
