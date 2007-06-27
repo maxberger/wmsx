@@ -3,6 +3,7 @@ package hu.kfki.grid.wmsx.provider;
 import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.LogListener;
+import hu.kfki.grid.wmsx.job.result.ResultListener;
 import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.job.submit.ParseResult;
 import hu.kfki.grid.wmsx.job.submit.Submitter;
@@ -54,15 +55,18 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         this.workDir = workdir;
 
         this.outDir = new File(workdir, "out");
-        if (!outDir.exists())
-            outDir.mkdirs();
+        if (!this.outDir.exists()) {
+            this.outDir.mkdirs();
+        }
         this.debugDir = new File(workdir, "debug");
-        if (!debugDir.exists())
-            debugDir.mkdirs();
+        if (!this.debugDir.exists()) {
+            this.debugDir.mkdirs();
+        }
         try {
-            final File jobFile = new File(debugDir, "job.sh");
-            FileOutputStream fo = new FileOutputStream(jobFile);
-            InputStream in = ClassLoader.getSystemResourceAsStream("job.sh");
+            final File jobFile = new File(this.debugDir, "job.sh");
+            final FileOutputStream fo = new FileOutputStream(jobFile);
+            final InputStream in = ClassLoader
+                    .getSystemResourceAsStream("job.sh");
             final byte[] b = new byte[4096];
             int read = in.read(b);
             while (read > 0) {
@@ -73,8 +77,9 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             fo.close();
             Runtime.getRuntime().exec(
                     new String[] { "chmod", "+x", jobFile.getAbsolutePath() });
-        } catch (IOException e) {
-            LOGGER.warning("Error copying job.sh: " + e.getMessage());
+        } catch (final IOException e) {
+            WmsxProviderImpl.LOGGER.warning("Error copying job.sh: "
+                    + e.getMessage());
         }
     }
 
@@ -101,6 +106,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             WmsxProviderImpl.LOGGER.info("Job id is: " + id);
             JobWatcher.getWatcher().addWatch(id, LogListener.getLogListener());
             JobWatcher.getWatcher().addWatch(id, this);
+            if (ResultListener.getResultListener().setOutputDir(id, resultDir)) {
+                JobWatcher.getWatcher().addWatch(id,
+                        ResultListener.getResultListener());
+            }
             final WritableByteChannel oChannel;
             if (output != null) {
                 oChannel = new FileOutputStream(output).getChannel();

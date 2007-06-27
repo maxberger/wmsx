@@ -31,7 +31,7 @@ echo "Cleaning up source ..."
 make -s Clean
 
 for P in $PROGRAMS ; do
- echo "Compliling $P ..."
+ echo "Compiling $P ..."
  make -s bin/$P
  if (( $? != 0 )) ; then echo -e "job.sh:\tCompilation of $P failed!" ; cd .. ; sleep 1m ; exit 1 ; fi
 done
