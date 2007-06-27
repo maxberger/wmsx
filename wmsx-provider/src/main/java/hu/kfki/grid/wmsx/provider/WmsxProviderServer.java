@@ -61,7 +61,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
     private final List activeRegistrations = new Vector();
 
-    static final Object keepAlive = new Object();
+    private final Object keepAlive = new Object();
 
     private LookupDiscovery discover = null;
 
@@ -100,14 +100,14 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             System.exit(2);
         }
 
-        new WmsxProviderServer(workdir);
+        final WmsxProviderServer server = new WmsxProviderServer(workdir);
 
         // keep server running forever to
         // - allow time for locator discovery and
         // - keep re-registering the lease
-        synchronized (WmsxProviderServer.keepAlive) {
+        synchronized (server.keepAlive) {
             try {
-                WmsxProviderServer.keepAlive.wait();
+                server.keepAlive.wait();
             } catch (final java.lang.InterruptedException e) {
                 // do nothing
             }
@@ -295,8 +295,8 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             this.exporter.unexport(true);
         }
         this.exporter = null;
-        synchronized (WmsxProviderServer.keepAlive) {
-            WmsxProviderServer.keepAlive.notifyAll();
+        synchronized (this.keepAlive) {
+            this.keepAlive.notifyAll();
         }
     }
 
