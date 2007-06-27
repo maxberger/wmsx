@@ -33,10 +33,8 @@ public class ResultListener implements JobListener {
 
     public boolean setOutputDir(final JobId id, final String outputDir) {
         if (outputDir != null) {
-            final File f = new File(outputDir).getAbsoluteFile();
-            f.mkdirs();
             try {
-                this.resultDirs.put(id, f.getCanonicalFile());
+                this.resultDirs.put(id, new File(outputDir).getCanonicalFile());
                 return true;
             } catch (final IOException e) {
                 ResultListener.LOGGER.warning(e.getMessage());
@@ -48,6 +46,7 @@ public class ResultListener implements JobListener {
     public void done(final JobId id) {
         final File dir = (File) this.resultDirs.get(id);
         if (dir != null) {
+            dir.mkdirs();
             final List commandLine = new Vector();
             commandLine.add("/opt/edg/bin/edg-job-get-output");
             commandLine.add("--dir");

@@ -193,7 +193,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         // Empty on purpose.
     }
 
-    public void submitLaszlo(final List commands) throws RemoteException {
+    public void submitLaszlo(final List commands, final boolean requireAfs)
+            throws RemoteException {
         WmsxProviderImpl.LOGGER
                 .info("Adding " + commands.size() + " Commands.");
         final List jobs = new Vector(commands.size());
@@ -203,7 +204,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             final IRemoteWmsxProvider.LaszloCommand lcmd = (IRemoteWmsxProvider.LaszloCommand) it
                     .next();
             jobs.add(new LaszloJob(lcmd.getCommand(), lcmd.getArgs(), lcmd
-                    .getInputFile(), this.outDir, this.debugDir, line));
+                    .getInputFile(), this.outDir, this.debugDir, line,
+                    requireAfs));
             line++;
             // final String cmd = lcmd.getCommand();
             // final String args = lcmd.getArgs();

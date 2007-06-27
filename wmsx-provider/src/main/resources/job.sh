@@ -5,13 +5,20 @@ PROGRAM=$1
 PARAMS="$2"
 OUTDIRS="$3"
 PROFILE="$4"
+AFS="$5"
 
-if ! [[ -e /afs/kfki.hu && -d /afs/kfki.hu ]] ; then echo "No AFS!" ; sleep 1m ; exit 1 ; fi
+if [ "$AFS" != "" ] ; then
+  if ! [[ -e /afs/kfki.hu && -d /afs/kfki.hu ]] ; then 
+    echo "No AFS!"
+    sleep 1m
+    exit 1
+  fi
+fi
 if ( which g++ 2>&1 | grep "/usr/bin/which: no g++ in " >&/dev/null ) ; then echo "No g++!" ; sleep 1m ; exit 1 ; fi
 if ! [[ -e /usr/X11R6/lib && -d /usr/X11R6/lib ]] ; then echo "No libX11.a!" ; sleep 1m ; exit 1 ; fi
 
 echo "Sourcing profile ..."
-[ $PROFILE != "" ] && [ -e $PROFILE ] && . $PROFILE 
+[ "$PROFILE" != "" ] && [ -e $PROFILE ] && . $PROFILE 
 export TMPDIR=$PWD
 
 echo "Extracting $PROGRAM.tar.gz ..."
