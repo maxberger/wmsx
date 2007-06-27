@@ -10,11 +10,15 @@ AFS="$5"
 if [ "$AFS" != "" ] ; then
   if ! [[ -e /afs/kfki.hu && -d /afs/kfki.hu ]] ; then 
     echo "No AFS!"
-    sleep 1m
     exit 1
   fi
 fi
-if ( which g++ 2>&1 | grep "/usr/bin/which: no g++ in " >&/dev/null ) ; then echo "No g++!" ; sleep 1m ; exit 1 ; fi
+if ( which g++ 2>&1 > /dev/null ) ; then
+  echo -n
+else
+  echo "No g++!"
+  exit 1
+fi
 if ! [[ -e /usr/X11R6/lib && -d /usr/X11R6/lib ]] ; then echo "No libX11.a!" ; sleep 1m ; exit 1 ; fi
 
 echo "Sourcing profile ..."

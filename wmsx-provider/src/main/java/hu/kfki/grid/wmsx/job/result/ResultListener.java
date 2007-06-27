@@ -51,6 +51,7 @@ public class ResultListener implements JobListener {
             commandLine.add("/opt/edg/bin/edg-job-get-output");
             commandLine.add("--dir");
             commandLine.add(dir.getAbsolutePath());
+            commandLine.add("--noint");
             commandLine.add(id.toString());
             try {
                 Runtime.getRuntime().exec(
