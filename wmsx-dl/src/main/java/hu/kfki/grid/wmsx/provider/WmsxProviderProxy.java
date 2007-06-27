@@ -88,8 +88,8 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         return true;
     }
 
-    public void submitLaszlo(final String argFile, final boolean requireAfs)
-            throws IOException {
+    public void submitLaszlo(final String argFile, final boolean requireAfs,
+            final boolean interactive) throws IOException {
         final File f = new File(argFile).getCanonicalFile();
         if (!f.exists()) {
             throw new FileNotFoundException("File not Found: " + argFile);
@@ -122,7 +122,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         if (commands.isEmpty()) {
             WmsxProviderProxy.LOGGER.warning("List of commands is empty!");
         } else {
-            this.remoteService.submitLaszlo(commands, requireAfs);
+            this.remoteService.submitLaszlo(commands, requireAfs, interactive);
         }
     }
 
