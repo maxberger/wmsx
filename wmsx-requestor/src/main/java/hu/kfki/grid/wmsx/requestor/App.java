@@ -119,7 +119,7 @@ public class App implements DiscoveryListener {
     private static void printHelp(final Options options) {
         new HelpFormatter()
                 .printHelp(
-                        "wmsx-requestor (-h|-k|-n num|-j jdlFile [-o outFile]|-a argsFile [-A])",
+                        "wmsx-requestor (-h|-k|-n num|-j jdlFile [-o outFile] [-r resultDir]|-a argsFile [-A] [-i])",
                         options);
     }
 
@@ -271,8 +271,8 @@ public class App implements DiscoveryListener {
                 break;
             case CMD_LASZLO:
                 myService.submitLaszlo(this.commandLine.getOptionValue('a'),
-                        this.commandLine.hasOption(App.OPTION_AFS),
-                        this.commandLine.hasOption(App.OPTION_INTERACTIVE));
+                        this.commandLine.hasOption('A'),
+                        this.commandLine.hasOption('i'));
                 break;
             case CMD_JDL:
                 final String s = myService.submitJdl(this.commandLine
