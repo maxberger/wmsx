@@ -39,25 +39,28 @@ public class LaszloJob implements JobDesc {
     }
 
     private void prepareJdl() {
+        if (this.jdlFilename != null) {
+            return;
+        }
 
-        final String base = cmd + "_" + num;
+        final String base = this.cmd + "_" + this.num;
         String extBase = base;
         final String jdlExt = ".jdl";
         final File jdlFile;
         final BufferedWriter out;
         try {
-            synchronized (tmpDir) {
+            synchronized (this.tmpDir) {
                 int n = 0;
-                File potentialJdlFile = new File(tmpDir, extBase + jdlExt);
+                File potentialJdlFile = new File(this.tmpDir, extBase + jdlExt);
                 while (potentialJdlFile.exists()) {
                     n++;
                     extBase = base + "." + n;
-                    potentialJdlFile = new File(tmpDir, extBase + jdlExt);
+                    potentialJdlFile = new File(this.tmpDir, extBase + jdlExt);
                 }
                 jdlFile = potentialJdlFile;
                 out = new BufferedWriter(new FileWriter(jdlFile));
             }
-            final File jobShFile = new File(tmpDir, "job.sh");
+            final File jobShFile = new File(this.tmpDir, "job.sh");
             final String jobShPath = jobShFile.getAbsolutePath();
             final String jobShName = jobShFile.getName();
             final String outDirs = "out/bplots out/data out/hist out/plots";
@@ -71,27 +74,31 @@ public class LaszloJob implements JobDesc {
             out.write("Executable = \"" + jobShName + "\";");
             out.newLine();
             out.write("Arguments = \"");
-            out.write(cmd + " ");
-            out.write(args.replaceAll("\"", "\\\\\"") + " ");
+            out.write(this.cmd + " ");
+            out.write(this.args.replaceAll("\"", "\\\\\"") + " ");
             out.write("\\\"" + outDirs + "\\\" ");
             out.write(profile);
             out.write("\";");
             out.newLine();
-            out.write("InputSandBox = {\"" + jobShPath + "\", \"" + inputFile
-                    + "\"};");
+            out.write("InputSandBox = {\"" + jobShPath + "\", \""
+                    + this.inputFile + "\"};");
             out.newLine();
             out.write("OutputSandBox = {\"out.tar.gz\"};");
             out.newLine();
 
+            out
+                    .write("Requirements = (Member(\"AFS\",other.GlueHostApplicationSoftwareRunTimeEnvironment));");
+            out.newLine();
             // echo "Requirements = ($REQ);" >> log/submit.jdl
 
             out.write("]");
             out.newLine();
             out.close();
             this.jdlFilename = jdlFile.getAbsolutePath();
-            this.output = new File(tmpDir, extBase + ".out").getAbsolutePath();
-            this.resultDir = new File(outDir, extBase).getAbsolutePath();
-        } catch (IOException io) {
+            this.output = new File(this.tmpDir, extBase + ".out")
+                    .getAbsolutePath();
+            this.resultDir = new File(this.outDir, extBase).getAbsolutePath();
+        } catch (final IOException io) {
             this.jdlFilename = null;
             this.output = null;
             this.resultDir = null;
@@ -99,18 +106,17 @@ public class LaszloJob implements JobDesc {
     }
 
     public String getJdlFile() {
-        if (this.jdlFilename == null)
-            this.prepareJdl();
+        this.prepareJdl();
         return this.jdlFilename;
     }
 
     public String getOutput() {
-        if (this.jdlFilename == null)
-            this.prepareJdl();
+        this.prepareJdl();
         return this.output;
     }
 
     public String getResultDir() {
+        this.prepareJdl();
         return this.resultDir;
     }
 }
