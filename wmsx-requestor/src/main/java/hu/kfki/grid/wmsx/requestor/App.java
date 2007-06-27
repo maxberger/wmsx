@@ -59,6 +59,8 @@ public class App implements DiscoveryListener {
 
     private static final String OPTION_AFS = "afs";
 
+    private static final String OPTION_INTERACTIVE = "interactive";
+
     public static void main(final String[] args) {
 
         final Options options = new Options();
@@ -83,7 +85,10 @@ public class App implements DiscoveryListener {
                 "redirect interactive output to file"));
         options.addOption(new Option("r", "resultDir", true,
                 "retrieve and store results to dir"));
-        options.addOption(new Option("A", App.OPTION_AFS, false, "Require AFS"));
+        options
+                .addOption(new Option("A", App.OPTION_AFS, false, "Require AFS"));
+        options.addOption(new Option("i", App.OPTION_INTERACTIVE, false,
+                "Run as interactive"));
 
         final CommandLineParser parser = new PosixParser();
         try {
@@ -266,7 +271,8 @@ public class App implements DiscoveryListener {
                 break;
             case CMD_LASZLO:
                 myService.submitLaszlo(this.commandLine.getOptionValue('a'),
-                        this.commandLine.hasOption(App.OPTION_AFS));
+                        this.commandLine.hasOption(App.OPTION_AFS),
+                        this.commandLine.hasOption(App.OPTION_INTERACTIVE));
                 break;
             case CMD_JDL:
                 final String s = myService.submitJdl(this.commandLine

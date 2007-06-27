@@ -7,19 +7,21 @@ import java.io.IOException;
 
 public class LaszloJob implements JobDesc {
 
-    public final File outDir;
+    private final File outDir;
 
-    public final File tmpDir;
+    private final File tmpDir;
 
-    public final String cmd;
+    private final String cmd;
 
-    public final String args;
+    private final String args;
 
-    public final String inputFile;
+    private final String inputFile;
 
-    public final int num;
+    private final int num;
 
-    public final boolean requireAfs;
+    private final boolean requireAfs;
+
+    private final boolean interactive;
 
     String jdlFilename;
 
@@ -29,7 +31,8 @@ public class LaszloJob implements JobDesc {
 
     public LaszloJob(final String _cmd, final String _args,
             final String _inputFile, final File _outDir, final File _tmpDir,
-            final int _num, final boolean _requireAfs) {
+            final int _num, final boolean _requireAfs,
+            final boolean _interactive) {
         this.outDir = _outDir;
         this.tmpDir = _tmpDir;
         this.cmd = _cmd;
@@ -39,11 +42,10 @@ public class LaszloJob implements JobDesc {
         this.jdlFilename = null;
         this.output = null;
         this.requireAfs = _requireAfs;
+        this.interactive = _interactive;
     }
 
     private void prepareJdl() {
-
-        final boolean interactive = false;
 
         if (this.jdlFilename != null) {
             return;
@@ -75,7 +77,7 @@ public class LaszloJob implements JobDesc {
                     + "/public/init/bash/bashrc";
             out.write("[");
             out.newLine();
-            if (interactive) {
+            if (this.interactive) {
                 out.write("JobType = \"Interactive\";");
             } else {
                 out.write("JobType = \"Normal\";");
@@ -101,7 +103,7 @@ public class LaszloJob implements JobDesc {
                     + this.inputFile + "\"};");
             out.newLine();
             out.write("OutputSandBox = {\"out.tar.gz\"");
-            if (!interactive) {
+            if (!this.interactive) {
                 out.write(",\"StdOut\",\"StdErr\"");
             }
             out.write("};");
