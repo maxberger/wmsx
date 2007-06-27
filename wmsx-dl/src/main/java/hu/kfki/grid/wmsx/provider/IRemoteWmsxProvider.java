@@ -31,15 +31,15 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
         }
 
         public String getArgs() {
-            return args;
+            return this.args;
         }
 
         public String getCommand() {
-            return command;
+            return this.command;
         }
 
         public String getInputFile() {
-            return inputFile;
+            return this.inputFile;
         }
 
     }
@@ -49,7 +49,7 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
     String submitJdl(String jdlFile, String output, String resultDir)
             throws RemoteException;
 
-    void submitLaszlo(List commands) throws RemoteException;
+    void submitLaszlo(List commands, boolean requireAfs) throws RemoteException;
 
     void setMaxJobs(int maxJobs) throws RemoteException;
 }

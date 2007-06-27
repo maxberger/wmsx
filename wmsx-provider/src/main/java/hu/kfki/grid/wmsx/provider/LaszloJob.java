@@ -19,6 +19,8 @@ public class LaszloJob implements JobDesc {
 
     public final int num;
 
+    public final boolean requireAfs;
+
     String jdlFilename;
 
     String output;
@@ -27,7 +29,7 @@ public class LaszloJob implements JobDesc {
 
     public LaszloJob(final String _cmd, final String _args,
             final String _inputFile, final File _outDir, final File _tmpDir,
-            final int _num) {
+            final int _num, final boolean _requireAfs) {
         this.outDir = _outDir;
         this.tmpDir = _tmpDir;
         this.cmd = _cmd;
@@ -36,9 +38,13 @@ public class LaszloJob implements JobDesc {
         this.num = _num;
         this.jdlFilename = null;
         this.output = null;
+        this.requireAfs = _requireAfs;
     }
 
     private void prepareJdl() {
+
+        final boolean interactive = false;
+
         if (this.jdlFilename != null) {
             return;
         }
@@ -69,7 +75,15 @@ public class LaszloJob implements JobDesc {
                     + "/public/init/bash/bashrc";
             out.write("[");
             out.newLine();
-            out.write("JobType = \"Interactive\";");
+            if (interactive) {
+                out.write("JobType = \"Interactive\";");
+            } else {
+                out.write("JobType = \"Normal\";");
+                out.newLine();
+                out.write("StdOutput = \"StdOut\";");
+                out.newLine();
+                out.write("StdError = \"StdErr\";");
+            }
             out.newLine();
             out.write("Executable = \"" + jobShName + "\";");
             out.newLine();
@@ -78,17 +92,25 @@ public class LaszloJob implements JobDesc {
             out.write(this.args.replaceAll("\"", "\\\\\"") + " ");
             out.write("\\\"" + outDirs + "\\\" ");
             out.write(profile);
+            if (this.requireAfs) {
+                out.write(" afs");
+            }
             out.write("\";");
             out.newLine();
             out.write("InputSandBox = {\"" + jobShPath + "\", \""
                     + this.inputFile + "\"};");
             out.newLine();
-            out.write("OutputSandBox = {\"out.tar.gz\"};");
+            out.write("OutputSandBox = {\"out.tar.gz\"");
+            if (!interactive) {
+                out.write(",\"StdOut\",\"StdErr\"");
+            }
+            out.write("};");
             out.newLine();
-
-            out
-                    .write("Requirements = (Member(\"AFS\",other.GlueHostApplicationSoftwareRunTimeEnvironment));");
-            out.newLine();
+            if (this.requireAfs) {
+                out
+                        .write("Requirements = (Member(\"AFS\",other.GlueHostApplicationSoftwareRunTimeEnvironment));");
+                out.newLine();
+            }
             // echo "Requirements = ($REQ);" >> log/submit.jdl
 
             out.write("]");

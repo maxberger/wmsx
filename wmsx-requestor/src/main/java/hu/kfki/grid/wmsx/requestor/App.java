@@ -49,17 +49,15 @@ public class App implements DiscoveryListener {
 
     private final int command;
 
-    private final String cmdarg;
-
-    private final String output;
-
-    private final String resultDir;
+    private final CommandLine commandLine;
 
     private static LookupDiscovery discover = null;
 
     private static boolean found = false;
 
     private static final Object foundLock = new Object();
+
+    private static final String OPTION_AFS = "afs";
 
     public static void main(final String[] args) {
 
@@ -85,6 +83,7 @@ public class App implements DiscoveryListener {
                 "redirect interactive output to file"));
         options.addOption(new Option("r", "resultDir", true,
                 "retrieve and store results to dir"));
+        options.addOption(new Option("A", App.OPTION_AFS, false, "Require AFS"));
 
         final CommandLineParser parser = new PosixParser();
         try {
@@ -93,20 +92,17 @@ public class App implements DiscoveryListener {
             if (cmd.hasOption('h')) {
                 App.printHelp(options);
             } else if (cmd.hasOption('k')) {
-                App.dispatch(App.CMD_SHUTDOWN, null, null, null);
+                App.dispatch(App.CMD_SHUTDOWN, cmd);
             } else if (cmd.hasOption('p')) {
-                App.dispatch(App.CMD_PING, null, null, null);
+                App.dispatch(App.CMD_PING, cmd);
             } else if (cmd.hasOption('f')) {
-                App.dispatch(App.CMD_FULLPING, null, null, null);
+                App.dispatch(App.CMD_FULLPING, cmd);
             } else if (cmd.hasOption('n')) {
-                App.dispatch(App.CMD_NUMBER, cmd.getOptionValue('n'), null,
-                        null);
+                App.dispatch(App.CMD_NUMBER, cmd);
             } else if (cmd.hasOption('a')) {
-                App.dispatch(App.CMD_LASZLO, cmd.getOptionValue('a'), null,
-                        null);
+                App.dispatch(App.CMD_LASZLO, cmd);
             } else if (cmd.hasOption('j')) {
-                App.dispatch(App.CMD_JDL, cmd.getOptionValue('j'), cmd
-                        .getOptionValue('o'), cmd.getOptionValue('r'));
+                App.dispatch(App.CMD_JDL, cmd);
             }
         } catch (final ParseException e1) {
             System.out.println("Invalid command line:" + e1.getMessage());
@@ -118,13 +114,12 @@ public class App implements DiscoveryListener {
     private static void printHelp(final Options options) {
         new HelpFormatter()
                 .printHelp(
-                        "wmsx-requestor (-h|-k|-n num|-j jdlFile [-o outFile]|-a argsFile)",
+                        "wmsx-requestor (-h|-k|-n num|-j jdlFile [-o outFile]|-a argsFile [-A])",
                         options);
     }
 
-    private static void dispatch(final int cmd, final String arg,
-            final String out, final String res) {
-        new App(cmd, arg, out, res);
+    private static void dispatch(final int cmd, final CommandLine cmdLine) {
+        new App(cmd, cmdLine);
 
         // stay around long enough to receive replies
         // try {
@@ -153,12 +148,9 @@ public class App implements DiscoveryListener {
         }
     }
 
-    public App(final int cmd, final String arg, final String outputFile,
-            final String res) {
+    public App(final int cmd, final CommandLine cmdLine) {
         this.command = cmd;
-        this.cmdarg = arg;
-        this.output = outputFile;
-        this.resultDir = res;
+        this.commandLine = cmdLine;
         // System.setSecurityManager(new RMISecurityManager());
 
         // this.discoverLookup();
@@ -269,14 +261,18 @@ public class App implements DiscoveryListener {
                 myService.ping(true);
                 break;
             case CMD_NUMBER:
-                myService.setMaxJobs(Integer.parseInt(this.cmdarg));
+                myService.setMaxJobs(Integer.parseInt(this.commandLine
+                        .getOptionValue('n')));
                 break;
             case CMD_LASZLO:
-                myService.submitLaszlo(this.cmdarg);
+                myService.submitLaszlo(this.commandLine.getOptionValue('a'),
+                        this.commandLine.hasOption(App.OPTION_AFS));
                 break;
             case CMD_JDL:
-                final String s = myService.submitJdl(this.cmdarg, this.output,
-                        this.resultDir);
+                final String s = myService.submitJdl(this.commandLine
+                        .getOptionValue('j'), this.commandLine
+                        .getOptionValue('o'), this.commandLine
+                        .getOptionValue('r'));
                 System.out.println("" + s);
                 break;
             }
