@@ -7,6 +7,8 @@ import java.io.IOException;
 
 public class LaszloJobFactory implements JobFactory {
 
+    private static final String STD_OUT = "StdOut";
+
     private final File outDir;
 
     private final File tmpDir;
@@ -68,9 +70,11 @@ public class LaszloJobFactory implements JobFactory {
             this.prepareStarterFile(starterFile, outDirs, profile);
 
             final String jdlFilename = jdlFile.getAbsolutePath();
-            final String output = new File(this.tmpDir, extBase + ".out")
-                    .getAbsolutePath();
             final String resultDir = new File(this.outDir, extBase)
+                    .getAbsolutePath();
+            // final String output = new File(this.tmpDir, extBase + ".out")
+            // .getAbsolutePath();
+            final String output = new File(resultDir, LaszloJobFactory.STD_OUT)
                     .getAbsolutePath();
             return new JdlJob(jdlFilename, output, resultDir);
         } catch (final IOException io) {
@@ -100,7 +104,7 @@ public class LaszloJobFactory implements JobFactory {
         out.newLine();
         out.write("OutputSandBox = {\"out.tar.gz\"");
         if (!this.interactive) {
-            out.write(",\"StdOut\",\"StdErr\"");
+            out.write(",\"" + LaszloJobFactory.STD_OUT + "\",\"StdErr\"");
         }
         out.write("};");
         out.newLine();
