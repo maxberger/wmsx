@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class LaszloJob implements JobDesc {
+public class LaszloJobFactory implements JobFactory {
 
     private final File outDir;
 
@@ -23,13 +23,7 @@ public class LaszloJob implements JobDesc {
 
     private final boolean interactive;
 
-    String jdlFilename;
-
-    String output;
-
-    public String resultDir;
-
-    public LaszloJob(final String _cmd, final String _args,
+    public LaszloJobFactory(final String _cmd, final String _args,
             final String _inputFile, final File _outDir, final File _tmpDir,
             final int _num, final boolean _requireAfs,
             final boolean _interactive) {
@@ -39,17 +33,11 @@ public class LaszloJob implements JobDesc {
         this.args = _args;
         this.inputFile = _inputFile;
         this.num = _num;
-        this.jdlFilename = null;
-        this.output = null;
         this.requireAfs = _requireAfs;
         this.interactive = _interactive;
     }
 
-    private void prepareJdl() {
-
-        if (this.jdlFilename != null) {
-            return;
-        }
+    public JdlJob createJdlJob() {
 
         final String base = this.cmd + "_" + this.num;
         String extBase = base;
@@ -118,29 +106,16 @@ public class LaszloJob implements JobDesc {
             out.write("]");
             out.newLine();
             out.close();
-            this.jdlFilename = jdlFile.getAbsolutePath();
-            this.output = new File(this.tmpDir, extBase + ".out")
+
+            final String jdlFilename = jdlFile.getAbsolutePath();
+            final String output = new File(this.tmpDir, extBase + ".out")
                     .getAbsolutePath();
-            this.resultDir = new File(this.outDir, extBase).getAbsolutePath();
+            final String resultDir = new File(this.outDir, extBase)
+                    .getAbsolutePath();
+            return new JdlJob(jdlFilename, output, resultDir);
         } catch (final IOException io) {
-            this.jdlFilename = null;
-            this.output = null;
-            this.resultDir = null;
+            return null;
         }
     }
 
-    public String getJdlFile() {
-        this.prepareJdl();
-        return this.jdlFilename;
-    }
-
-    public String getOutput() {
-        this.prepareJdl();
-        return this.output;
-    }
-
-    public String getResultDir() {
-        this.prepareJdl();
-        return this.resultDir;
-    }
 }

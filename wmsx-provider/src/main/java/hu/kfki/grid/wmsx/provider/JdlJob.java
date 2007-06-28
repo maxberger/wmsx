@@ -3,12 +3,12 @@
  */
 package hu.kfki.grid.wmsx.provider;
 
-class JdlJob implements JobDesc {
-    final String jdlFile;
+class JdlJob {
+    private final String jdlFile;
 
-    final String output;
+    private final String output;
 
-    final String result;
+    private final String result;
 
     public JdlJob(final String jdlFile, final String output,
             final String resultDir) {
