@@ -1,14 +1,19 @@
 package hu.kfki.grid.wmsx.job.submit;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 public class Submitter {
 
     private static Submitter submitter;
+
+    private static final Logger LOGGER = Logger.getLogger(Submitter.class
+            .toString());
 
     private Submitter() {
     }
@@ -28,10 +33,12 @@ public class Submitter {
         final Process p = Runtime.getRuntime().exec(
                 (String[]) commandLine.toArray(new String[commandLine.size()]),
                 null, new File(jdlFile).getParentFile());
-
-        // final PrintStream parserOutput = new PrintStream(
-        // new ByteArrayOutputStream());
-        final PrintStream parserOutput = System.out;
-        return InputParser.parse(p.getInputStream(), parserOutput);
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final PrintStream parserOutput = new PrintStream(baos);
+        // final PrintStream parserOutput = System.out;
+        final ParseResult result = InputParser.parse(p.getInputStream(),
+                parserOutput);
+        Submitter.LOGGER.fine(baos.toString());
+        return result;
     }
 }

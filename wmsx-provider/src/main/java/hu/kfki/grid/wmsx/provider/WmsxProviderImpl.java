@@ -8,9 +8,11 @@ import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.job.submit.ParseResult;
 import hu.kfki.grid.wmsx.job.submit.Submitter;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +22,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import com.sun.jini.admin.DestroyAdmin;
 
@@ -32,6 +37,12 @@ import edg.workload.userinterface.jclient.JobId;
  */
 public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         JobListener, Runnable {
+
+    private static final String JOBIDS_ALL = "jobids.all";
+
+    private static final String JOBIDS_RUNNING = "jobids.running";
+
+    private static final String JOBIDS_DONE = "jobids.done";
 
     private static final long serialVersionUID = 2L;
 
@@ -62,6 +73,19 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         if (!this.debugDir.exists()) {
             this.debugDir.mkdirs();
         }
+        final File logDir = new File(workdir, "log");
+        if (!logDir.exists()) {
+            logDir.mkdirs();
+        }
+        try {
+            final Handler logHandler = new FileHandler(new File(logDir,
+                    "wmsx%g.log").getAbsolutePath(), 1024 * 1024, 7);
+            logHandler.setFormatter(new SimpleFormatter());
+            Logger.getLogger("").addHandler(logHandler);
+        } catch (final IOException io) {
+            WmsxProviderImpl.LOGGER.warning(io.getMessage());
+        }
+
         try {
             final File jobFile = new File(this.debugDir, "job.sh");
             final FileOutputStream fo = new FileOutputStream(jobFile);
@@ -121,16 +145,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             JobWatcher.getWatcher().addWatch(id,
                     ShadowListener.listen(result, oChannel));
             synchronized (this.workDir) {
-                try {
-                    final BufferedWriter out = new BufferedWriter(
-                            new FileWriter(new File(this.workDir, "jobids"),
-                                    true));
-                    out.write(jobStr);
-                    out.newLine();
-                    out.close();
-                } catch (final IOException e) {
-                    WmsxProviderImpl.LOGGER.warning(e.getMessage());
-                }
+                this.appendLine(jobStr, new File(this.workDir,
+                        WmsxProviderImpl.JOBIDS_ALL));
+                this.appendLine(jobStr, new File(this.workDir,
+                        WmsxProviderImpl.JOBIDS_RUNNING));
             }
             return jobStr;
         } catch (final IOException e) {
@@ -140,6 +158,44 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                     + e.getStackTrace()[0].toString());
         }
         return null;
+    }
+
+    private void removeLine(final String line, final File file) {
+        try {
+            final List lines = new Vector();
+            final BufferedReader in = new BufferedReader(new FileReader(file));
+            String inLine = in.readLine();
+            while (inLine != null) {
+                if (!inLine.equals(line)) {
+                    lines.add(inLine);
+                }
+                inLine = in.readLine();
+            }
+            in.close();
+            final BufferedWriter out = new BufferedWriter(new FileWriter(file,
+                    false));
+            final Iterator it = lines.iterator();
+            while (it.hasNext()) {
+                final String outLine = (String) it.next();
+                out.write(outLine);
+                out.newLine();
+            }
+            out.close();
+        } catch (final IOException e) {
+            WmsxProviderImpl.LOGGER.warning(e.getMessage());
+        }
+    }
+
+    private void appendLine(final String line, final File file) {
+        try {
+            final BufferedWriter out = new BufferedWriter(new FileWriter(file,
+                    true));
+            out.write(line);
+            out.newLine();
+            out.close();
+        } catch (final IOException e) {
+            WmsxProviderImpl.LOGGER.warning(e.getMessage());
+        }
     }
 
     public void destroy() throws RemoteException {
@@ -183,6 +239,13 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     public void done(final JobId id) {
         this.investigateLater();
+        synchronized (this.workDir) {
+            final String jobStr = id.toString();
+            this.appendLine(jobStr, new File(this.workDir,
+                    WmsxProviderImpl.JOBIDS_DONE));
+            this.removeLine(jobStr, new File(this.workDir,
+                    WmsxProviderImpl.JOBIDS_RUNNING));
+        }
     }
 
     public void running(final JobId id) {
