@@ -48,7 +48,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private int maxJobs = Integer.MAX_VALUE;
 
-    private final List pendingJobs = new LinkedList();
+    private final List pendingJobFactories = new LinkedList();
 
     public WmsxProviderImpl(final DestroyAdmin dadm, final File workdir) {
         this.destroyAdmin = dadm;
@@ -90,7 +90,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         if (avail > 0) {
             return this.reallySubmitJdl(jdlFile, output, resultDir);
         } else {
-            this.pendingJobs.add(new JdlJob(jdlFile, output, resultDir));
+            this.pendingJobFactories.add(new JdlJobFactory(jdlFile, output,
+                    resultDir));
             return "pending";
         }
     }
@@ -164,9 +165,11 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     private synchronized void investigateNumJobs() {
-        while ((!this.pendingJobs.isEmpty())
+        while ((!this.pendingJobFactories.isEmpty())
                 && ((this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning()) > 0)) {
-            final JobDesc jd = (JobDesc) this.pendingJobs.remove(0);
+            final JobFactory jf = (JobFactory) this.pendingJobFactories
+                    .remove(0);
+            final JdlJob jd = jf.createJdlJob();
             this.reallySubmitJdl(jd.getJdlFile(), jd.getOutput(), jd
                     .getResultDir());
             try {
@@ -203,8 +206,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         while (it.hasNext()) {
             final IRemoteWmsxProvider.LaszloCommand lcmd = (IRemoteWmsxProvider.LaszloCommand) it
                     .next();
-            jobs.add(new LaszloJob(lcmd.getCommand(), lcmd.getArgs(), lcmd
-                    .getInputFile(), this.outDir, this.debugDir, line,
+            jobs.add(new LaszloJobFactory(lcmd.getCommand(), lcmd.getArgs(),
+                    lcmd.getInputFile(), this.outDir, this.debugDir, line,
                     requireAfs, interactive));
             line++;
             // final String cmd = lcmd.getCommand();
@@ -213,7 +216,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
         }
         synchronized (this) {
-            this.pendingJobs.addAll(jobs);
+            this.pendingJobFactories.addAll(jobs);
         }
         this.investigateLater();
     }
