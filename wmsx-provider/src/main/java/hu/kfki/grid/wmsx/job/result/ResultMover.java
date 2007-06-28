@@ -26,7 +26,7 @@ public class ResultMover implements Runnable {
                 if (subdir.isDirectory()) {
                     final File[] toMoves = subdir.listFiles();
                     for (int j = 0; j < toMoves.length; j++) {
-                        final File toMove = toMoves[i];
+                        final File toMove = toMoves[j];
                         toMove.renameTo(new File(this.dir, toMove.getName()));
                     }
                     subdir.delete();
