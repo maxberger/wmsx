@@ -57,55 +57,15 @@ public class LaszloJobFactory implements JobFactory {
                 out = new BufferedWriter(new FileWriter(jdlFile));
             }
             final File jobShFile = new File(this.tmpDir, "job.sh");
-            final String jobShPath = jobShFile.getAbsolutePath();
-            final String jobShName = jobShFile.getName();
+            final File starterFile = new File(this.tmpDir, extBase + ".sh");
+            this.writeJdl(out, jobShFile, starterFile);
+
             final String outDirs = "out/bplots out/data out/hist out/plots";
             final String profile = "/afs/kfki.hu/home/"
                     + System.getProperty("user.name")
                     + "/public/init/bash/bashrc";
-            out.write("[");
-            out.newLine();
-            if (this.interactive) {
-                out.write("JobType = \"Interactive\";");
-            } else {
-                out.write("JobType = \"Normal\";");
-                out.newLine();
-                out.write("StdOutput = \"StdOut\";");
-                out.newLine();
-                out.write("StdError = \"StdErr\";");
-            }
-            out.newLine();
-            out.write("Executable = \"" + jobShName + "\";");
-            out.newLine();
-            out.write("Arguments = \"");
-            out.write(this.cmd + " ");
-            out.write(this.args.replaceAll("\"", "\\\\\"") + " ");
-            out.write("\\\"" + outDirs + "\\\" ");
-            out.write(profile);
-            if (this.requireAfs) {
-                out.write(" afs");
-            }
-            out.write("\";");
-            out.newLine();
-            out.write("InputSandBox = {\"" + jobShPath + "\", \""
-                    + this.inputFile + "\"};");
-            out.newLine();
-            out.write("OutputSandBox = {\"out.tar.gz\"");
-            if (!this.interactive) {
-                out.write(",\"StdOut\",\"StdErr\"");
-            }
-            out.write("};");
-            out.newLine();
-            if (this.requireAfs) {
-                out
-                        .write("Requirements = (Member(\"AFS\",other.GlueHostApplicationSoftwareRunTimeEnvironment));");
-                out.newLine();
-            }
-            // echo "Requirements = ($REQ);" >> log/submit.jdl
 
-            out.write("]");
-            out.newLine();
-            out.close();
+            this.prepareStarterFile(starterFile, outDirs, profile);
 
             final String jdlFilename = jdlFile.getAbsolutePath();
             final String output = new File(this.tmpDir, extBase + ".out")
@@ -116,6 +76,64 @@ public class LaszloJobFactory implements JobFactory {
         } catch (final IOException io) {
             return null;
         }
+    }
+
+    private void writeJdl(final BufferedWriter out, final File jobShFile,
+            final File starterFile) throws IOException {
+        out.write("[");
+        out.newLine();
+        if (this.interactive) {
+            out.write("JobType = \"Interactive\";");
+        } else {
+            out.write("JobType = \"Normal\";");
+            out.newLine();
+            out.write("StdOutput = \"StdOut\";");
+            out.newLine();
+            out.write("StdError = \"StdErr\";");
+        }
+        out.newLine();
+        out.write("Executable = \"" + starterFile.getName() + "\";");
+        out.newLine();
+        out.write("InputSandBox = {\"" + starterFile.getAbsolutePath()
+                + "\", \"" + jobShFile.getAbsolutePath() + "\", \""
+                + this.inputFile + "\"};");
+        out.newLine();
+        out.write("OutputSandBox = {\"out.tar.gz\"");
+        if (!this.interactive) {
+            out.write(",\"StdOut\",\"StdErr\"");
+        }
+        out.write("};");
+        out.newLine();
+        if (this.requireAfs) {
+            out
+                    .write("Requirements = (Member(\"AFS\",other.GlueHostApplicationSoftwareRunTimeEnvironment));");
+            out.newLine();
+        }
+        // echo "Requirements = ($REQ);" >> log/submit.jdl
+
+        out.write("]");
+        out.newLine();
+        out.close();
+    }
+
+    private void prepareStarterFile(final File starterFile,
+            final String outDirs, final String profile) throws IOException {
+        final BufferedWriter jobStarter = new BufferedWriter(new FileWriter(
+                starterFile));
+        jobStarter.write("#!/bin/sh");
+        jobStarter.newLine();
+        jobStarter.write("chmod +x ./job.sh");
+        jobStarter.newLine();
+        jobStarter.write("./job.sh ");
+        jobStarter.write(this.cmd + " ");
+        jobStarter.write(this.args + " ");
+        jobStarter.write("\"" + outDirs + "\" ");
+        if (this.requireAfs) {
+            jobStarter.write(profile);
+            jobStarter.write(" afs");
+        }
+        jobStarter.newLine();
+        jobStarter.close();
     }
 
 }

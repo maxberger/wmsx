@@ -87,15 +87,19 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             if (largs.size() != 1) {
                 throw new ParseException("Need workdir!");
             }
-            workdir = new File((String) largs.get(0));
+            workdir = new File((String) largs.get(0)).getCanonicalFile();
             if (!workdir.exists()) {
                 workdir.mkdirs();
             }
             if ((!workdir.exists()) || (!workdir.isDirectory())) {
-                throw new ParseException("Invalid Directory: " + workdir);
+                throw new IOException("Invalid Directory: " + workdir);
             }
         } catch (final ParseException e1) {
             System.out.println("Invalid command line: " + e1.getMessage());
+            WmsxProviderServer.printHelp(options);
+            System.exit(2);
+        } catch (final IOException e) {
+            System.out.println("Error accessing workdir: " + e.getMessage());
             WmsxProviderServer.printHelp(options);
             System.exit(2);
         }
