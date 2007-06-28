@@ -112,7 +112,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                         ResultListener.getResultListener());
             }
             final WritableByteChannel oChannel;
-            if (output != null) {
+            if ((output != null) && (result.getOStream() != null)) {
                 oChannel = new FileOutputStream(output).getChannel();
             } else {
                 oChannel = null;

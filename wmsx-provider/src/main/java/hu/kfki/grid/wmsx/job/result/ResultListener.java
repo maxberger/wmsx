@@ -54,9 +54,10 @@ public class ResultListener implements JobListener {
             commandLine.add("--noint");
             commandLine.add(id.toString());
             try {
-                Runtime.getRuntime().exec(
+                final Process p = Runtime.getRuntime().exec(
                         (String[]) commandLine.toArray(new String[commandLine
                                 .size()]), null, dir);
+                new Thread(new ResultMover(p, dir)).start();
             } catch (final IOException e) {
                 ResultListener.LOGGER.warning(e.getMessage());
             }
