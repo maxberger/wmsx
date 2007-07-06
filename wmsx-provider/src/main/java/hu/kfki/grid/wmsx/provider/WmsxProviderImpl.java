@@ -57,7 +57,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private final File debugDir;
 
-    private int maxJobs = Integer.MAX_VALUE;
+    private int maxJobs = 100;
 
     private final List pendingJobFactories = new LinkedList();
 
