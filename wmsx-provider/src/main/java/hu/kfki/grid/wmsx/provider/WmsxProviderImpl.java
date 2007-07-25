@@ -22,10 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import com.sun.jini.admin.DestroyAdmin;
 
@@ -72,18 +69,6 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         this.debugDir = new File(workdir, "debug");
         if (!this.debugDir.exists()) {
             this.debugDir.mkdirs();
-        }
-        final File logDir = new File(workdir, "log");
-        if (!logDir.exists()) {
-            logDir.mkdirs();
-        }
-        try {
-            final Handler logHandler = new FileHandler(new File(logDir,
-                    "wmsx%g.log").getAbsolutePath(), 1024 * 1024, 7);
-            logHandler.setFormatter(new SimpleFormatter());
-            Logger.getLogger("").addHandler(logHandler);
-        } catch (final IOException io) {
-            WmsxProviderImpl.LOGGER.warning(io.getMessage());
         }
 
         try {

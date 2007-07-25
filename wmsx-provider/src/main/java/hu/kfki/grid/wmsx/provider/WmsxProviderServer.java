@@ -11,7 +11,10 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import net.jini.core.entry.Entry;
 import net.jini.core.lease.Lease;
@@ -68,7 +71,8 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
     private Exporter exporter = null;
 
     private static void printHelp(final Options options) {
-        new HelpFormatter().printHelp("wmsx-provider (-h|workdir)", options);
+        new HelpFormatter().printHelp("wmsx-provider (-h|[-v] workdir)",
+                options);
     }
 
     public static void main(final String args[]) {
@@ -76,7 +80,10 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         final Options options = new Options();
         final CommandLineParser parser = new PosixParser();
         options.addOption(new Option("h", "help", false, "print this message"));
+        options.addOption(new Option("v", "verbose", false,
+                "print debug messages to stdout"));
         File workdir = new File("/tmp");
+        boolean debugToStdOut = true;
         try {
             final CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption('h')) {
@@ -94,6 +101,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             if ((!workdir.exists()) || (!workdir.isDirectory())) {
                 throw new IOException("Invalid Directory: " + workdir);
             }
+            debugToStdOut = cmd.hasOption('v');
         } catch (final ParseException e1) {
             System.out.println("Invalid command line: " + e1.getMessage());
             WmsxProviderServer.printHelp(options);
@@ -103,6 +111,8 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             WmsxProviderServer.printHelp(options);
             System.exit(2);
         }
+
+        WmsxProviderServer.setupLogging(workdir, debugToStdOut);
 
         final WmsxProviderServer server = new WmsxProviderServer(workdir);
 
@@ -117,6 +127,31 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             }
         }
         WmsxProviderServer.LOGGER.info("Terminated.");
+    }
+
+    private static void setupLogging(File workdir, boolean stdout) {
+        final File logDir = new File(workdir, "log");
+        if (!logDir.exists()) {
+            logDir.mkdirs();
+        }
+        try {
+            final Logger rootLogger = Logger.getLogger("");
+
+            if (!stdout) {
+                final Handler[] handlers = rootLogger.getHandlers();
+                for (int i = 0; i < handlers.length; i++) {
+                    final Handler h = handlers[i];
+                    rootLogger.removeHandler(h);
+                }
+            }
+
+            final Handler logHandler = new FileHandler(new File(logDir,
+                    "wmsx%g.log").getAbsolutePath(), 1024 * 1024, 7);
+            logHandler.setFormatter(new SimpleFormatter());
+            rootLogger.addHandler(logHandler);
+        } catch (final IOException io) {
+            WmsxProviderServer.LOGGER.warning(io.getMessage());
+        }
     }
 
     public WmsxProviderServer(final File workDir) {
