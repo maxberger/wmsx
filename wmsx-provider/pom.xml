@@ -78,5 +78,6 @@
         <dependency><groupId>hu.kfki.grid</groupId><artifactId>cog-jglobus</artifactId><version>1.0</version></dependency>
         <dependency><groupId>hu.kfki.grid</groupId><artifactId>edg_wl_userinterface_jclient</artifactId><version>1.0</version></dependency>
         <dependency><groupId>hu.kfki.grid</groupId><artifactId>edg_wl_common_jrequestad</artifactId><version>1.0</version></dependency>
+        <dependency><groupId>hu.kfki.grid</groupId><artifactId>classad</artifactId><version>lcg</version></dependency>
     </dependencies>
 </project>
