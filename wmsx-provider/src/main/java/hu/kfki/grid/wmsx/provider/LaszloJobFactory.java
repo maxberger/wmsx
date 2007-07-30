@@ -1,11 +1,19 @@
 package hu.kfki.grid.wmsx.provider;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.logging.Logger;
 
 public class LaszloJobFactory implements JobFactory {
+
+    private static final Logger LOGGER = Logger
+            .getLogger(LaszloJobFactory.class.toString());
 
     private static final String STD_OUT = "StdOut";
 
@@ -13,11 +21,9 @@ public class LaszloJobFactory implements JobFactory {
 
     private final File tmpDir;
 
-    private final String cmd;
+    private final String cmdWithPath;
 
     private final String args;
-
-    private final String inputFile;
 
     private final int num;
 
@@ -26,14 +32,12 @@ public class LaszloJobFactory implements JobFactory {
     private final boolean interactive;
 
     public LaszloJobFactory(final String _cmd, final String _args,
-            final String _inputFile, final File _outDir, final File _tmpDir,
-            final int _num, final boolean _requireAfs,
-            final boolean _interactive) {
+            final File _outDir, final File _tmpDir, final int _num,
+            final boolean _requireAfs, final boolean _interactive) {
         this.outDir = _outDir;
         this.tmpDir = _tmpDir;
-        this.cmd = _cmd;
+        this.cmdWithPath = _cmd;
         this.args = _args;
-        this.inputFile = _inputFile;
         this.num = _num;
         this.requireAfs = _requireAfs;
         this.interactive = _interactive;
@@ -41,7 +45,9 @@ public class LaszloJobFactory implements JobFactory {
 
     public JdlJob createJdlJob() {
 
-        final String base = this.cmd + "_" + this.num;
+        final String cmd = this.getCmd();
+
+        final String base = cmd + "_" + this.num;
         String extBase = base;
         final String jdlExt = ".jdl";
         final File jdlFile;
@@ -58,16 +64,10 @@ public class LaszloJobFactory implements JobFactory {
                 jdlFile = potentialJdlFile;
                 out = new BufferedWriter(new FileWriter(jdlFile));
             }
-            final File jobShFile = new File(this.tmpDir, "job.sh");
             final File starterFile = new File(this.tmpDir, extBase + ".sh");
-            this.writeJdl(out, jobShFile, starterFile);
+            this.writeJdl(out, starterFile);
 
-            final String outDirs = "out/bplots out/data out/hist out/plots";
-            final String profile = "/afs/kfki.hu/home/"
-                    + System.getProperty("user.name")
-                    + "/public/init/bash/bashrc";
-
-            this.prepareStarterFile(starterFile, outDirs, profile);
+            this.prepareStarterFile(starterFile);
 
             final String jdlFilename = jdlFile.getAbsolutePath();
             final String resultDir = new File(this.outDir, extBase)
@@ -82,8 +82,14 @@ public class LaszloJobFactory implements JobFactory {
         }
     }
 
-    private void writeJdl(final BufferedWriter out, final File jobShFile,
-            final File starterFile) throws IOException {
+    private String getCmd() {
+        final String cmd = new File(this.cmdWithPath).getName();
+        return cmd;
+    }
+
+    private void writeJdl(final BufferedWriter out, final File starterFile)
+            throws IOException {
+        final String inputFile = this.cmdWithPath + ".tar.gz";
         out.write("[");
         out.newLine();
         if (this.interactive) {
@@ -99,8 +105,7 @@ public class LaszloJobFactory implements JobFactory {
         out.write("Executable = \"" + starterFile.getName() + "\";");
         out.newLine();
         out.write("InputSandBox = {\"" + starterFile.getAbsolutePath()
-                + "\", \"" + jobShFile.getAbsolutePath() + "\", \""
-                + this.inputFile + "\"};");
+                + "\", \"" + inputFile + "\"};");
         out.newLine();
         out.write("OutputSandBox = {\"out.tar.gz\"");
         if (!this.interactive) {
@@ -113,31 +118,50 @@ public class LaszloJobFactory implements JobFactory {
                     .write("Requirements = (Member(\"AFS\",other.GlueHostApplicationSoftwareRunTimeEnvironment));");
             out.newLine();
         }
-        // echo "Requirements = ($REQ);" >> log/submit.jdl
-
         out.write("]");
         out.newLine();
         out.close();
     }
 
-    private void prepareStarterFile(final File starterFile,
-            final String outDirs, final String profile) throws IOException {
+    private void prepareStarterFile(final File starterFile) throws IOException {
         final BufferedWriter jobStarter = new BufferedWriter(new FileWriter(
                 starterFile));
         jobStarter.write("#!/bin/sh");
         jobStarter.newLine();
-        jobStarter.write("chmod +x ./job.sh");
+
+        jobStarter.write("PROGAM=" + this.getCmd());
         jobStarter.newLine();
-        jobStarter.write("./job.sh ");
-        jobStarter.write(this.cmd + " ");
-        jobStarter.write(this.args + " ");
-        jobStarter.write("\"" + outDirs + "\" ");
+        jobStarter.write("PARAMS=" + this.args);
+        jobStarter.newLine();
+        jobStarter.write("OUTDIR=" + "out");
+        jobStarter.newLine();
         if (this.requireAfs) {
-            jobStarter.write(profile);
-            jobStarter.write(" afs");
+            jobStarter.write("AFS=true");
+            jobStarter.newLine();
         }
-        jobStarter.newLine();
+
+        this.copyFromStarterBase(jobStarter);
         jobStarter.close();
+    }
+
+    private void copyFromStarterBase(final BufferedWriter jobStarter) {
+        try {
+            final InputStream in = ClassLoader
+                    .getSystemResourceAsStream("starter_base.sh");
+            final Reader freader = new InputStreamReader(in);
+            final BufferedReader reader = new BufferedReader(freader);
+            String line = reader.readLine();
+            while (line != null) {
+                jobStarter.write(line);
+                jobStarter.newLine();
+                line = reader.readLine();
+            }
+            in.close();
+        } catch (final IOException e) {
+            LaszloJobFactory.LOGGER
+                    .warning("Error copying from starter_base.sh: "
+                            + e.getMessage());
+        }
     }
 
 }

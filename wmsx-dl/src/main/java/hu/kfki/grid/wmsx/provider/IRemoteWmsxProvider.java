@@ -21,13 +21,9 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
         private final String args;
 
-        private final String inputFile;
-
-        public LaszloCommand(final String _command, final String _args,
-                final String _inputFile) {
-            this.command = _command;
+        public LaszloCommand(final String _commandWithPath, final String _args) {
+            this.command = _commandWithPath;
             this.args = _args;
-            this.inputFile = _inputFile;
         }
 
         public String getArgs() {
@@ -36,10 +32,6 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
         public String getCommand() {
             return this.command;
-        }
-
-        public String getInputFile() {
-            return this.inputFile;
         }
 
     }
