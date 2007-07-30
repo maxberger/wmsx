@@ -7,6 +7,7 @@ import hu.kfki.grid.wmsx.job.result.ResultListener;
 import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.job.submit.ParseResult;
 import hu.kfki.grid.wmsx.job.submit.Submitter;
+import hu.kfki.grid.wmsx.provider.arglist.LaszloJobFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

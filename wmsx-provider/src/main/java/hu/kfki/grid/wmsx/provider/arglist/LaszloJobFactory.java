@@ -1,4 +1,7 @@
-package hu.kfki.grid.wmsx.provider;
+package hu.kfki.grid.wmsx.provider.arglist;
+
+import hu.kfki.grid.wmsx.provider.JdlJob;
+import hu.kfki.grid.wmsx.provider.JobFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -126,18 +129,22 @@ public class LaszloJobFactory implements JobFactory {
     private void prepareStarterFile(final File starterFile) throws IOException {
         final BufferedWriter jobStarter = new BufferedWriter(new FileWriter(
                 starterFile));
+
+        final ArglistJdlReader jdlArgs = new ArglistJdlReader(this.cmdWithPath
+                + ".jdl", this.getCmd());
+
         jobStarter.write("#!/bin/sh");
         jobStarter.newLine();
 
         jobStarter.write("ARCHIVE=" + this.getCmd());
         jobStarter.newLine();
-        jobStarter.write("PROGRAM=" + this.getCmd());
+        jobStarter.write("PROGRAM=" + jdlArgs.getExecutable());
         jobStarter.newLine();
         jobStarter.write("PROGDIR=" + this.getCmd());
         jobStarter.newLine();
         jobStarter.write("PARAMS=\"" + this.args + "\"");
         jobStarter.newLine();
-        jobStarter.write("OUTDIR=" + "out");
+        jobStarter.write("OUTDIR=" + jdlArgs.getOutputDirectory());
         jobStarter.newLine();
         if (this.requireAfs) {
             jobStarter.write("AFS=true");
