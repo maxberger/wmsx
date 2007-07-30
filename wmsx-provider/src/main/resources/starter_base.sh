@@ -1,10 +1,5 @@
 #!/bin/sh
 
-#PROGRAM=$1
-#PARAMS="$2"
-#OUTDIR="$3"
-#AFS="$5"
-
 if [ "$AFS" != "" ] ; then
   if ! [[ -e /afs/kfki.hu && -d /afs/kfki.hu ]] ; then
     echo Even though AFS was specified in the requirements, 
@@ -21,19 +16,19 @@ else
   exit 1
 fi
 
-echo "Extracting $PROGRAM.tar.gz..."
-tar -xzf $PROGRAM.tar.gz
-rm -f $PROGRAM.tar.gz
-echo "Changing into $PROGRAM ..."
-cd $PROGRAM
+echo "Extracting $ARCHIVE.tar.gz..."
+tar -xzf $ARCHIVE.tar.gz
+rm -f $ARCHIVE.tar.gz
+echo "Changing into $PROGDIR ..."
+cd $PROGDIR
 echo "Running $PROGRAM..."
 ./$PROGRAM $PARAMS
 
 echo "Changing back to super directory..."
 cd ..
-echo "Archiving output to out.tar.gz ..."
-mv $PROGRAM/$OUTDIR .
-tar -czf out.tar.gz out
+echo "Archiving $PROGDIR/$OUTDIR to out.tar.gz ..."
+mv $PROGDIR/$OUTDIR .
+tar -czf out.tar.gz $OUTDIR
 rm -rf $OUTDIR
 echo "Cleaning up ..."
-rm -rf $PROGRAM
+rm -rf $PROGDIR
