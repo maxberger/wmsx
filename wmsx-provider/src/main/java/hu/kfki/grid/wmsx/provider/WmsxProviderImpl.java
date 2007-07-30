@@ -15,7 +15,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.channels.WritableByteChannel;
 import java.rmi.RemoteException;
 import java.util.Iterator;
@@ -71,31 +70,12 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             this.debugDir.mkdirs();
         }
 
-        try {
-            final File jobFile = new File(this.debugDir, "job.sh");
-            final FileOutputStream fo = new FileOutputStream(jobFile);
-            final InputStream in = ClassLoader
-                    .getSystemResourceAsStream("job.sh");
-            final byte[] b = new byte[4096];
-            int read = in.read(b);
-            while (read > 0) {
-                fo.write(b, 0, read);
-                read = in.read(b);
-            }
-            in.close();
-            fo.close();
-            Runtime.getRuntime().exec(
-                    new String[] { "chmod", "+x", jobFile.getAbsolutePath() });
-        } catch (final IOException e) {
-            WmsxProviderImpl.LOGGER.warning("Error copying job.sh: "
-                    + e.getMessage());
-        }
     }
 
     synchronized public String submitJdl(final String jdlFile,
             final String output, final String resultDir) {
         final int current = JobWatcher.getWatcher().getNumJobsRunning();
-        final int avail = (this.maxJobs - current);
+        final int avail = this.maxJobs - current;
         if (avail > 0) {
             return this.reallySubmitJdl(jdlFile, output, resultDir);
         } else {
@@ -121,7 +101,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                         ResultListener.getResultListener());
             }
             final WritableByteChannel oChannel;
-            if ((output != null) && (result.getOStream() != null)) {
+            if (output != null && result.getOStream() != null) {
                 new File(output).getParentFile().mkdirs();
                 oChannel = new FileOutputStream(output).getChannel();
             } else {
@@ -207,8 +187,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     private synchronized void investigateNumJobs() {
-        while ((!this.pendingJobFactories.isEmpty())
-                && ((this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning()) > 0)) {
+        while (!this.pendingJobFactories.isEmpty()
+                && this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning() > 0) {
             final JobFactory jf = (JobFactory) this.pendingJobFactories
                     .remove(0);
             final JdlJob jd = jf.createJdlJob();
@@ -256,8 +236,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             final IRemoteWmsxProvider.LaszloCommand lcmd = (IRemoteWmsxProvider.LaszloCommand) it
                     .next();
             jobs.add(new LaszloJobFactory(lcmd.getCommand(), lcmd.getArgs(),
-                    lcmd.getInputFile(), this.outDir, this.debugDir, line,
-                    requireAfs, interactive));
+                    this.outDir, this.debugDir, line, requireAfs, interactive));
             line++;
             // final String cmd = lcmd.getCommand();
             // final String args = lcmd.getArgs();

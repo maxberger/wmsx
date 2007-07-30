@@ -94,7 +94,6 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         if (!f.exists()) {
             throw new FileNotFoundException("File not Found: " + argFile);
         }
-        final File srcPath = new File(f.getParentFile().getParentFile(), "src");
         final List commands = new Vector();
         final FileReader freader = new FileReader(f);
         final BufferedReader reader = new BufferedReader(freader);
@@ -105,16 +104,11 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
                 if (line.charAt(0) != '#') {
                     final int spacePos = line.indexOf(" ");
                     final String command = line.substring(0, spacePos);
-                    final File cmdFile = new File(srcPath, command + ".tar.gz");
-                    if (cmdFile.exists()) {
-                        final String args = line.substring(spacePos + 1).trim();
-                        commands.add(new IRemoteWmsxProvider.LaszloCommand(
-                                command, args, cmdFile.getAbsolutePath()));
-                    } else {
-                        WmsxProviderProxy.LOGGER
-                                .warning("File does not exist: "
-                                        + cmdFile.getAbsolutePath());
-                    }
+                    final File cmdWithPath = new File(f.getParentFile(),
+                            command);
+                    final String args = line.substring(spacePos + 1).trim();
+                    commands.add(new IRemoteWmsxProvider.LaszloCommand(
+                            cmdWithPath.getAbsolutePath(), args));
                 }
             }
             line = reader.readLine();
