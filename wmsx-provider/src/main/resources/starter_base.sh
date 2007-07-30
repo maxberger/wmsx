@@ -22,7 +22,8 @@ rm -f $ARCHIVE.tar.gz
 echo "Changing into $PROGDIR ..."
 cd $PROGDIR
 echo "Running $PROGRAM..."
-./$PROGRAM $PARAMS
+PATH=.:$PATH
+$PROGRAM $PARAMS
 
 echo "Changing back to super directory..."
 cd ..
