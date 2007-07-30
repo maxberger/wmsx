@@ -129,9 +129,13 @@ public class LaszloJobFactory implements JobFactory {
         jobStarter.write("#!/bin/sh");
         jobStarter.newLine();
 
-        jobStarter.write("PROGAM=" + this.getCmd());
+        jobStarter.write("ARCHIVE=" + this.getCmd());
         jobStarter.newLine();
-        jobStarter.write("PARAMS=" + this.args);
+        jobStarter.write("PROGRAM=" + this.getCmd());
+        jobStarter.newLine();
+        jobStarter.write("PROGDIR=" + this.getCmd());
+        jobStarter.newLine();
+        jobStarter.write("PARAMS=\"" + this.args + "\"");
         jobStarter.newLine();
         jobStarter.write("OUTDIR=" + "out");
         jobStarter.newLine();
