@@ -66,19 +66,19 @@ public class App implements DiscoveryListener {
         final Options options = new Options();
 
         final OptionGroup commands = new OptionGroup();
-        commands.setRequired(true);
-        commands
+        //commands.setRequired(true);
+        options
                 .addOption(new Option("h", "help", false, "print this message"));
         commands.addOption(new Option("k", "kill", false,
                 "shutdown the service provider"));
-        commands.addOption(new Option("p", "ping", false,
+        options.addOption(new Option("p", "ping", false,
                 "quick check if provider is running"));
-        commands.addOption(new Option("f", "full-ping", false,
+        options.addOption(new Option("f", "full-ping", false,
                 "full check if provider is running"));
         commands.addOption(new Option("j", "jdl", true, "submit a JDL file"));
         commands.addOption(new Option("a", "args", true,
                 "submit a Laszlo-style args file"));
-        commands.addOption(new Option("n", "number", true,
+        options.addOption(new Option("n", "number", true,
                 "set number of active jobs"));
         options.addOptionGroup(commands);
         options.addOption(new Option("o", "output", true,
@@ -93,17 +93,20 @@ public class App implements DiscoveryListener {
         final CommandLineParser parser = new PosixParser();
         try {
             final CommandLine cmd = parser.parse(options, args);
-
+            if (cmd.hasOption('n')) {
+            App.dispatch(App.CMD_NUMBER, cmd);
+            }
             if (cmd.hasOption('h')) {
                 App.printHelp(options);
-            } else if (cmd.hasOption('k')) {
-                App.dispatch(App.CMD_SHUTDOWN, cmd);
-            } else if (cmd.hasOption('p')) {
+            }
+            if (cmd.hasOption('p')) {
                 App.dispatch(App.CMD_PING, cmd);
-            } else if (cmd.hasOption('f')) {
+            } 
+            if (cmd.hasOption('f')) {
                 App.dispatch(App.CMD_FULLPING, cmd);
-            } else if (cmd.hasOption('n')) {
-                App.dispatch(App.CMD_NUMBER, cmd);
+            }
+            if (cmd.hasOption('k')) {
+                App.dispatch(App.CMD_SHUTDOWN, cmd);
             } else if (cmd.hasOption('a')) {
                 App.dispatch(App.CMD_LASZLO, cmd);
             } else if (cmd.hasOption('j')) {
@@ -119,7 +122,7 @@ public class App implements DiscoveryListener {
     private static void printHelp(final Options options) {
         new HelpFormatter()
                 .printHelp(
-                        "wmsx-requestor (-h|-k|-n num|-j jdlFile [-o outFile] [-r resultDir]|-a argsFile [-A] [-i])",
+                        "wmsx-requestor [-n num] [-h] (-k|-j jdlFile [-o outFile] [-r resultDir]|-a argsFile [-A] [-i])",
                         options);
     }
 
