@@ -8,6 +8,7 @@ import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.job.submit.ParseResult;
 import hu.kfki.grid.wmsx.job.submit.Submitter;
 import hu.kfki.grid.wmsx.provider.arglist.LaszloJobFactory;
+import hu.kfki.grid.wmsx.provider.scripts.ScriptLauncher;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,6 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,6 +60,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private final List pendingJobFactories = new LinkedList();
 
+    private static WmsxProviderImpl instance;
+
     public WmsxProviderImpl(final DestroyAdmin dadm, final File workdir) {
         this.destroyAdmin = dadm;
         this.workDir = workdir;
@@ -70,7 +74,11 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         if (!this.debugDir.exists()) {
             this.debugDir.mkdirs();
         }
+        WmsxProviderImpl.instance = this;
+    }
 
+    public static WmsxProviderImpl getInstance() {
+        return WmsxProviderImpl.instance;
     }
 
     synchronized public String submitJdl(final String jdlFile,
@@ -78,7 +86,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         final int current = JobWatcher.getWatcher().getNumJobsRunning();
         final int avail = this.maxJobs - current;
         if (avail > 0) {
-            return this.reallySubmitJdl(jdlFile, output, resultDir);
+            return this.reallySubmitJdl(new JdlJobFactory(jdlFile, output,
+                    resultDir).createJdlJob());
         } else {
             this.pendingJobFactories.add(new JdlJobFactory(jdlFile, output,
                     resultDir));
@@ -86,8 +95,22 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
-    private String reallySubmitJdl(final String jdlFile, final String output,
-            final String resultDir) {
+    private String reallySubmitJdl(final JdlJob job) {
+        final String jdlFile = job.getJdlFile();
+        final String output = job.getOutput();
+        final String preexec = job.getPreexec();
+        if (preexec != null) {
+            WmsxProviderImpl.LOGGER.info("Running " + preexec);
+
+            final List cmdVec = new Vector();
+            cmdVec.add(preexec);
+            cmdVec.add(job.getCommand());
+            cmdVec.addAll(Arrays.asList(job.getArgs()));
+
+            ScriptLauncher.getInstance().launchScript(
+                    (String[]) cmdVec.toArray(new String[0]),
+                    output + "_preexec");
+        }
         WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
         ParseResult result;
         try {
@@ -97,7 +120,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             WmsxProviderImpl.LOGGER.info("Job id is: " + id);
             JobWatcher.getWatcher().addWatch(id, LogListener.getLogListener());
             JobWatcher.getWatcher().addWatch(id, this);
-            if (ResultListener.getResultListener().setOutputDir(id, resultDir)) {
+            if (ResultListener.getResultListener().setJob(id, job)) {
                 JobWatcher.getWatcher().addWatch(id,
                         ResultListener.getResultListener());
             }
@@ -193,8 +216,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             final JobFactory jf = (JobFactory) this.pendingJobFactories
                     .remove(0);
             final JdlJob jd = jf.createJdlJob();
-            this.reallySubmitJdl(jd.getJdlFile(), jd.getOutput(), jd
-                    .getResultDir());
+            this.reallySubmitJdl(jd);
             try {
                 this.wait(100);
             } catch (final InterruptedException e) {
@@ -226,8 +248,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         // Empty on purpose.
     }
 
-    public void submitLaszlo(final List commands, final boolean requireAfs,
-            final boolean interactive) throws RemoteException {
+    public synchronized void submitLaszlo(final List commands,
+            final boolean requireAfs, final boolean interactive) {
         WmsxProviderImpl.LOGGER
                 .info("Adding " + commands.size() + " Commands.");
         final List jobs = new Vector(commands.size());

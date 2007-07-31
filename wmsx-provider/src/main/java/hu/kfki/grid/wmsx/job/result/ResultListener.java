@@ -1,6 +1,7 @@
 package hu.kfki.grid.wmsx.job.result;
 
 import hu.kfki.grid.wmsx.job.JobListener;
+import hu.kfki.grid.wmsx.provider.JdlJob;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class ResultListener implements JobListener {
     private static final Logger LOGGER = Logger.getLogger(ResultListener.class
             .toString());
 
-    private final Map resultDirs = new HashMap();
+    private final Map resultJobs = new HashMap();
 
     private ResultListener() {
     }
@@ -31,20 +32,29 @@ public class ResultListener implements JobListener {
         return ResultListener.resultListener;
     }
 
-    public boolean setOutputDir(final JobId id, final String outputDir) {
-        if (outputDir != null) {
-            try {
-                this.resultDirs.put(id, new File(outputDir).getCanonicalFile());
-                return true;
-            } catch (final IOException e) {
-                ResultListener.LOGGER.warning(e.getMessage());
-            }
+    public boolean setJob(final JobId id, final JdlJob job) {
+        if (job != null) {
+            this.resultJobs.put(id, job);
+            return true;
         }
         return false;
     }
 
     public void done(final JobId id) {
-        final File dir = (File) this.resultDirs.get(id);
+        final JdlJob job = (JdlJob) this.resultJobs.get(id);
+        if (job == null) {
+            return;
+        }
+        this.retrieveResult(id, job);
+    }
+
+    private void retrieveResult(final JobId id, final JdlJob job) {
+        File dir;
+        try {
+            dir = new File(job.getResultDir()).getCanonicalFile();
+        } catch (final IOException e1) {
+            dir = null;
+        }
         if (dir != null) {
             dir.mkdirs();
             final List commandLine = new Vector();
@@ -57,7 +67,7 @@ public class ResultListener implements JobListener {
                 final Process p = Runtime.getRuntime().exec(
                         (String[]) commandLine.toArray(new String[commandLine
                                 .size()]), null, dir);
-                new Thread(new ResultMover(p, dir)).start();
+                new Thread(new ResultMoverAndPostexec(p, dir, job)).start();
             } catch (final IOException e) {
                 ResultListener.LOGGER.warning(e.getMessage());
             }

@@ -79,7 +79,13 @@ public class LaszloJobFactory implements JobFactory {
             // .getAbsolutePath();
             final String output = new File(resultDir, LaszloJobFactory.STD_OUT)
                     .getAbsolutePath();
-            return new JdlJob(jdlFilename, output, resultDir);
+            final JdlJob job = new JdlJob(jdlFilename, output, resultDir);
+            job.setPreexec(this.cmdWithPath + "_preexec");
+            job.setPostexec(this.cmdWithPath + "_postexec");
+            job.setChain(this.cmdWithPath + "_chain");
+            job.setCommand(this.cmdWithPath);
+            job.setArgs(this.args.split(" "));
+            return job;
         } catch (final IOException io) {
             return null;
         }
