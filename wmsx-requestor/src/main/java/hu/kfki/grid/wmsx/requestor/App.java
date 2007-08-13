@@ -66,9 +66,8 @@ public class App implements DiscoveryListener {
         final Options options = new Options();
 
         final OptionGroup commands = new OptionGroup();
-        //commands.setRequired(true);
-        options
-                .addOption(new Option("h", "help", false, "print this message"));
+        // commands.setRequired(true);
+        options.addOption(new Option("h", "help", false, "print this message"));
         commands.addOption(new Option("k", "kill", false,
                 "shutdown the service provider"));
         options.addOption(new Option("p", "ping", false,
@@ -94,14 +93,14 @@ public class App implements DiscoveryListener {
         try {
             final CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption('n')) {
-            App.dispatch(App.CMD_NUMBER, cmd);
+                App.dispatch(App.CMD_NUMBER, cmd);
             }
             if (cmd.hasOption('h')) {
                 App.printHelp(options);
             }
             if (cmd.hasOption('p')) {
                 App.dispatch(App.CMD_PING, cmd);
-            } 
+            }
             if (cmd.hasOption('f')) {
                 App.dispatch(App.CMD_FULLPING, cmd);
             }
@@ -111,6 +110,9 @@ public class App implements DiscoveryListener {
                 App.dispatch(App.CMD_LASZLO, cmd);
             } else if (cmd.hasOption('j')) {
                 App.dispatch(App.CMD_JDL, cmd);
+            }
+            if (cmd.getOptions().length < 1) {
+                App.printHelp(options);
             }
         } catch (final ParseException e1) {
             System.out.println("Invalid command line:" + e1.getMessage());
@@ -274,8 +276,8 @@ public class App implements DiscoveryListener {
                 break;
             case CMD_LASZLO:
                 myService.submitLaszlo(this.commandLine.getOptionValue('a'),
-                        this.commandLine.hasOption('A'),
-                        this.commandLine.hasOption('i'));
+                        this.commandLine.hasOption('A'), this.commandLine
+                                .hasOption('i'));
                 break;
             case CMD_JDL:
                 final String s = myService.submitJdl(this.commandLine
