@@ -98,7 +98,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             if (!workdir.exists()) {
                 workdir.mkdirs();
             }
-            if ((!workdir.exists()) || (!workdir.isDirectory())) {
+            if (!workdir.exists() || !workdir.isDirectory()) {
                 throw new IOException("Invalid Directory: " + workdir);
             }
             debugToStdOut = cmd.hasOption('v');
@@ -129,7 +129,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         WmsxProviderServer.LOGGER.info("Terminated.");
     }
 
-    private static void setupLogging(File workdir, boolean stdout) {
+    private static void setupLogging(final File workdir, boolean stdout) {
         final File logDir = new File(workdir, "log");
         if (!logDir.exists()) {
             logDir.mkdirs();
@@ -151,6 +151,10 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             rootLogger.addHandler(logHandler);
         } catch (final IOException io) {
             WmsxProviderServer.LOGGER.warning(io.getMessage());
+        }
+        if (!stdout) {
+            System.out.close();
+            System.err.close();
         }
     }
 
