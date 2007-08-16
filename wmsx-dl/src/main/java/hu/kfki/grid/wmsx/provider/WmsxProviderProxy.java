@@ -120,4 +120,30 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    public void forgetAfs() {
+        try {
+            this.remoteService.forgetAfs();
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
+    }
+
+    public boolean rememberAfs(final String password) {
+        try {
+            return this.remoteService.rememberAfs(password);
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+            return false;
+        }
+    }
+
+    public boolean rememberGrid(final String password) {
+        try {
+            return this.remoteService.rememberGrid(password);
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+            return false;
+        }
+    }
+
 }

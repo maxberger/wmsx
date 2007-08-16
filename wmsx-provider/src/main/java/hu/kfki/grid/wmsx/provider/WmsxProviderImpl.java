@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import renewer.AFS;
+import renewer.Renewer;
+import renewer.VOMS;
+
 import com.sun.jini.admin.DestroyAdmin;
 
 import edg.workload.userinterface.jclient.JobId;
@@ -61,6 +65,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     private final List pendingJobFactories = new LinkedList();
 
     private static WmsxProviderImpl instance;
+
+    private Renewer afsRenewer;
+
+    private Renewer gridRenewer;
 
     public WmsxProviderImpl(final DestroyAdmin dadm, final File workdir) {
         this.destroyAdmin = dadm;
@@ -211,16 +219,21 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     private synchronized void investigateNumJobs() {
-        while (!this.pendingJobFactories.isEmpty()
-                && this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning() > 0) {
-            final JobFactory jf = (JobFactory) this.pendingJobFactories
-                    .remove(0);
-            final JdlJob jd = jf.createJdlJob();
-            this.reallySubmitJdl(jd);
-            try {
-                this.wait(100);
-            } catch (final InterruptedException e) {
-                // Ignore
+        if (this.pendingJobFactories.isEmpty()) {
+            this.forgetGrid();
+        } else {
+            while (!this.pendingJobFactories.isEmpty()
+                    && this.maxJobs
+                            - JobWatcher.getWatcher().getNumJobsRunning() > 0) {
+                final JobFactory jf = (JobFactory) this.pendingJobFactories
+                        .remove(0);
+                final JdlJob jd = jf.createJdlJob();
+                this.reallySubmitJdl(jd);
+                try {
+                    this.wait(100);
+                } catch (final InterruptedException e) {
+                    // Ignore
+                }
             }
         }
     }
@@ -278,6 +291,60 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     public void run() {
         this.investigateNumJobs();
+    }
+
+    public synchronized void forgetAfs() throws RemoteException {
+        if (this.afsRenewer != null) {
+            WmsxProviderImpl.LOGGER.info("Forgetting AFS Password");
+            this.afsRenewer.shutdown();
+            this.afsRenewer = null;
+        }
+
+    }
+
+    private synchronized void forgetGrid() {
+        if (this.gridRenewer != null) {
+            WmsxProviderImpl.LOGGER.info("Forgetting Grid Password");
+            this.gridRenewer.shutdown();
+            this.gridRenewer = null;
+        }
+    }
+
+    public synchronized boolean rememberAfs(final String password)
+            throws RemoteException {
+        WmsxProviderImpl.LOGGER.info("New AFS Remeberer");
+        this.forgetAfs();
+        this.afsRenewer = new AFS(password);
+        final boolean success = this.startupRenewer(this.afsRenewer);
+        if (!success) {
+            WmsxProviderImpl.LOGGER.info("AFS Password failed");
+            this.afsRenewer = null;
+        }
+        return success;
+    }
+
+    private boolean startupRenewer(final Renewer renewer) {
+        final boolean success = renewer.renew();
+        if (success) {
+            final Thread t = new Thread(renewer);
+            t.setDaemon(true);
+            t.start();
+        }
+        return success;
+    }
+
+    public synchronized boolean rememberGrid(final String password)
+            throws RemoteException {
+        WmsxProviderImpl.LOGGER.info("New Grid Remeberer");
+        this.forgetGrid();
+        this.gridRenewer = new VOMS(password);
+        final boolean success = this.startupRenewer(this.gridRenewer);
+        if (!success) {
+            WmsxProviderImpl.LOGGER.info("Grid Password failed");
+            this.gridRenewer = null;
+        }
+        return success;
+
     }
 
 }

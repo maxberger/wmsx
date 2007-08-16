@@ -45,4 +45,11 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
             throws RemoteException;
 
     void setMaxJobs(int maxJobs) throws RemoteException;
+
+    boolean rememberAfs(String password) throws RemoteException;
+
+    boolean rememberGrid(String password) throws RemoteException;
+
+    void forgetAfs() throws RemoteException;
+
 }
