@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-
 import com.sun.jini.admin.DestroyAdmin;
 
 import edg.workload.userinterface.jclient.JobId;
@@ -219,21 +218,36 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     private synchronized void investigateNumJobs() {
-        if (this.pendingJobFactories.isEmpty()) {
-            this.forgetGrid();
-        } else {
-            while (!this.pendingJobFactories.isEmpty()
-                    && this.maxJobs
-                            - JobWatcher.getWatcher().getNumJobsRunning() > 0) {
-                final JobFactory jf = (JobFactory) this.pendingJobFactories
-                        .remove(0);
-                final JdlJob jd = jf.createJdlJob();
-                this.reallySubmitJdl(jd);
-                try {
-                    this.wait(100);
-                } catch (final InterruptedException e) {
-                    // Ignore
+        if (this.pendingJobFactories.isEmpty()
+                && JobWatcher.getWatcher().getNumJobsRunning() == 0) {
+            new Thread(new Runnable() {
+
+                public void run() {
+                    try {
+                        Thread.sleep(5 * 60 * 1000);
+                    } catch (final InterruptedException e) {
+                        // ignore
+                    }
+                    synchronized (WmsxProviderImpl.this) {
+                        if (WmsxProviderImpl.this.pendingJobFactories.isEmpty()
+                                && JobWatcher.getWatcher().getNumJobsRunning() == 0) {
+                            WmsxProviderImpl.this.forgetGrid();
+                        }
+                    }
                 }
+            }).start();
+
+        }
+        while (!this.pendingJobFactories.isEmpty()
+                && this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning() > 0) {
+            final JobFactory jf = (JobFactory) this.pendingJobFactories
+                    .remove(0);
+            final JdlJob jd = jf.createJdlJob();
+            this.reallySubmitJdl(jd);
+            try {
+                this.wait(100);
+            } catch (final InterruptedException e) {
+                // Ignore
             }
         }
     }
