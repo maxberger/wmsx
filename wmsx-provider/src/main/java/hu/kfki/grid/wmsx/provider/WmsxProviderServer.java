@@ -216,6 +216,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             out.writeObject(this.smartProxy);
             out.close();
             WmsxProviderServer.LOGGER.info("Written Proxy to " + proxyFile);
+            new File(proxyFile).deleteOnExit();
         } catch (final IOException io) {
             WmsxProviderServer.LOGGER.warning(io.getMessage());
         }

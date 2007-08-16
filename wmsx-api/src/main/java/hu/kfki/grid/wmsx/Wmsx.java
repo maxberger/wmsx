@@ -18,4 +18,9 @@ public interface Wmsx {
 
     void setMaxJobs(int maxJobs);
 
+    boolean rememberAfs(String password);
+
+    boolean rememberGrid(String password);
+
+    void forgetAfs();
 }

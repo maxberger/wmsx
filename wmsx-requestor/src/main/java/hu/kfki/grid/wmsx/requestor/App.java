@@ -3,8 +3,10 @@ package hu.kfki.grid.wmsx.requestor;
 import hu.kfki.grid.wmsx.Wmsx;
 import hu.kfki.grid.wmsx.WmsxEntry;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.util.logging.Logger;
 
@@ -18,12 +20,12 @@ import net.jini.discovery.LookupDiscovery;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 
 import com.sun.jini.admin.DestroyAdmin;
 
@@ -32,6 +34,12 @@ import com.sun.jini.admin.DestroyAdmin;
  * 
  */
 public class App implements DiscoveryListener {
+
+    private static final String FORGET_AFS = "forgetafs";
+
+    private static final String REMEMBER_AFS = "rememberafs";
+
+    private static final String REMEMBER_GRID = "remembergrid";
 
     private static final Logger LOGGER = Logger.getLogger(App.class.toString());
 
@@ -46,6 +54,12 @@ public class App implements DiscoveryListener {
     private static final int CMD_FULLPING = 4;
 
     private static final int CMD_LASZLO = 5;
+
+    private static final int CMD_REMEMBERAFS = 6;
+
+    private static final int CMD_FORGETAFS = 7;
+
+    private static final int CMD_REMEMBERGRID = 8;
 
     private final int command;
 
@@ -66,7 +80,6 @@ public class App implements DiscoveryListener {
         final Options options = new Options();
 
         final OptionGroup commands = new OptionGroup();
-        // commands.setRequired(true);
         options.addOption(new Option("h", "help", false, "print this message"));
         commands.addOption(new Option("k", "kill", false,
                 "shutdown the service provider"));
@@ -89,7 +102,14 @@ public class App implements DiscoveryListener {
         options.addOption(new Option("i", App.OPTION_INTERACTIVE, false,
                 "Run as interactive"));
 
-        final CommandLineParser parser = new PosixParser();
+        options.addOption(new Option(App.REMEMBER_AFS,
+                "Asks for AFS password and remember it until told to forget"));
+        options.addOption(new Option(App.REMEMBER_GRID,
+                "Asks for Grid password and remember it "
+                        + "until the number of managed jobs reaches 0."));
+        options.addOption(new Option(App.FORGET_AFS, "Forgets AFS password"));
+
+        final CommandLineParser parser = new GnuParser();
         try {
             final CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption('n')) {
@@ -103,6 +123,15 @@ public class App implements DiscoveryListener {
             }
             if (cmd.hasOption('f')) {
                 App.dispatch(App.CMD_FULLPING, cmd);
+            }
+            if (cmd.hasOption(App.REMEMBER_AFS)) {
+                App.dispatch(App.CMD_REMEMBERAFS, cmd);
+            }
+            if (cmd.hasOption(App.FORGET_AFS)) {
+                App.dispatch(App.CMD_FORGETAFS, cmd);
+            }
+            if (cmd.hasOption(App.REMEMBER_GRID)) {
+                App.dispatch(App.CMD_REMEMBERGRID, cmd);
             }
             if (cmd.hasOption('k')) {
                 App.dispatch(App.CMD_SHUTDOWN, cmd);
@@ -140,13 +169,14 @@ public class App implements DiscoveryListener {
         // App.LOGGER
         // .info("Failed to connect to provider. Please check if its running.");
 
-        synchronized (App.foundLock) {
-            try {
-                App.foundLock.wait(30000);
-            } catch (final InterruptedException e) {
-                // ignore
-            }
-        }
+        // synchronized (App.foundLock) {
+        // try {
+        // App.foundLock.wait(30000);
+        // } catch (final InterruptedException e) {
+        // // ignore
+        // }
+        // }
+
         if (!App.found) {
             App.LOGGER
                     .info("Failed to connect to provider. Please check if its running.");
@@ -286,11 +316,40 @@ public class App implements DiscoveryListener {
                         .getOptionValue('r'));
                 System.out.println("" + s);
                 break;
+            case CMD_FORGETAFS:
+                myService.forgetAfs();
+                break;
+            case CMD_REMEMBERAFS:
+                final String password = this.askPassword("AFS Password: ");
+                if (!myService.rememberAfs(password)) {
+                    App.LOGGER.warning("Error remembering AFS password");
+                }
+                break;
+            case CMD_REMEMBERGRID:
+                final String gpassword = this.askPassword("Grid Password: ");
+                if (!myService.rememberGrid(gpassword)) {
+                    App.LOGGER.warning("Error remembering Grid password");
+                }
+                break;
             }
         } catch (final IOException e) {
             App.LOGGER.warning(e.getMessage() + " " + e.getStackTrace());
         }
         System.exit(0);
+    }
+
+    private String askPassword(final String prompt) {
+        final BufferedReader in = new BufferedReader(new InputStreamReader(
+                System.in));
+        System.out.print(prompt);
+        String p;
+        try {
+            p = in.readLine();
+        } catch (final IOException e) {
+            p = "";
+        }
+        System.out.println();
+        return p;
     }
 
     public void discarded(final DiscoveryEvent arg0) {
