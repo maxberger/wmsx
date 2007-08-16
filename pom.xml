@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>hu.kfki.grid</groupId>
-  <artifactId>wmsx</artifactId>
+  <artifactId>wmsx-parent</artifactId>
   <packaging>pom</packaging>
   <name>WMS-X</name>
-  <version>1.0-SNAPSHOT</version>
-  <url>http://www.myorganization.org</url>
+  <version>3.0-SNAPSHOT</version>
+  <url>http://www.grid.kfki.hu</url>
   <build>
     <plugins>
       <plugin>
@@ -23,6 +23,6 @@
     <module>wmsx-dl</module>
     <module>wmsx-provider</module>
     <module>wmsx-requestor</module>
+    <module>wmsx</module>
   </modules>
 </project>
-
