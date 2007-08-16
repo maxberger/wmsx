@@ -27,6 +27,8 @@
       <directory>src/assemble/resources</directory>
       <outputDirectory/>
       <includes>
+        <include>wmsx-provider.sh</include>
+        <include>wmsx-requestor.sh</include>
         <include>sample/helloworld_postexec</include>
         <include>sample/helloworld_preexec</include>
         <include>chainsample/chainsample_postexec</include>
@@ -37,6 +39,8 @@
       <directory>src/assemble/resources</directory>
       <outputDirectory/>
       <excludes>
+        <exclude>wmsx-provider.sh</exclude>
+        <exclude>wmsx-requestor.sh</exclude>
         <exclude>sample/helloworld_postexec</exclude>
         <exclude>sample/helloworld_preexec</exclude>
         <exclude>chainsample/chainsample_postexec</exclude>
