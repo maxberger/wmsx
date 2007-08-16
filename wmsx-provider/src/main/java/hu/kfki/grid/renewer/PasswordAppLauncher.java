@@ -1,4 +1,4 @@
-package renewer;
+package hu.kfki.grid.renewer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;

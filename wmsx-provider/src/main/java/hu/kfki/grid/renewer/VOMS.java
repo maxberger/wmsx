@@ -1,4 +1,4 @@
-package renewer;
+package hu.kfki.grid.renewer;
 
 public class VOMS extends Renewer {
 

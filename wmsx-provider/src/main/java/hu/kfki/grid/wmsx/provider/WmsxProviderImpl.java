@@ -1,5 +1,8 @@
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.renewer.AFS;
+import hu.kfki.grid.renewer.Renewer;
+import hu.kfki.grid.renewer.VOMS;
 import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.LogListener;
@@ -26,9 +29,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import renewer.AFS;
-import renewer.Renewer;
-import renewer.VOMS;
 
 import com.sun.jini.admin.DestroyAdmin;
 
