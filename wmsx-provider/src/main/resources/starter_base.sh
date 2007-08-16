@@ -8,12 +8,19 @@ if [ "$AFS" != "" ] ; then
     exit 1
   fi
 fi
-if ( which g++ 2>&1 > /dev/null ) ; then
-  echo -n
-else
-  echo g++ is not present on $(hostname)
-  echo Please consider filing a bug against this site.
-  exit 1
+
+if [ "$SOFTWARE" != "" ] ; then
+  for PIECE in $SOFTWARE ; do
+    echo -n Looking for ${PIECE}...
+    if ( which $PIECE 2>&1 > /dev/null ) ; then
+      echo found
+    else
+      echo failed
+      echo $PIECE is not present on $(hostname)
+      echo Please consider filing a bug against this site.
+      exit 1
+    fi
+  done
 fi
 
 echo "Extracting $ARCHIVE.tar.gz..."

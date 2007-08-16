@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class LaszloJobFactory implements JobFactory {
@@ -154,6 +156,17 @@ public class LaszloJobFactory implements JobFactory {
         jobStarter.newLine();
         if (this.requireAfs) {
             jobStarter.write("AFS=true");
+            jobStarter.newLine();
+        }
+        final List software = jdlArgs.getSoftware();
+        if (!software.isEmpty()) {
+            jobStarter.write("SOFTWARE=");
+            final Iterator it = software.iterator();
+            while (it.hasNext()) {
+                final String s = (String) it.next();
+                jobStarter.write(s);
+                jobStarter.write(" ");
+            }
             jobStarter.newLine();
         }
 
