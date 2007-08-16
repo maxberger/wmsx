@@ -6,8 +6,10 @@ import hu.kfki.grid.wmsx.provider.WmsxProviderImpl;
 import hu.kfki.grid.wmsx.provider.scripts.ScriptLauncher;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -92,9 +94,16 @@ public class ResultMoverAndPostexec implements Runnable {
         final BufferedReader r = new BufferedReader(new StringReader(o
                 .toString()));
         final List l = new Vector();
+
+        final String output = this.job.getOutput();
+
         try {
+            final BufferedWriter debugWriter = new BufferedWriter(
+                    new FileWriter(output + "_chain"));
             String line = r.readLine();
             while (line != null) {
+                debugWriter.write(line);
+                debugWriter.newLine();
                 final String[] splitLine = line.split(" ");
                 final String command = splitLine[0];
                 final String args = line.substring(command.length() + 1);
@@ -105,6 +114,7 @@ public class ResultMoverAndPostexec implements Runnable {
 
                 line = r.readLine();
             }
+            debugWriter.close();
         } catch (final IOException e) {
             ResultMoverAndPostexec.LOGGER
                     .fine("IOException: " + e.getMessage());
