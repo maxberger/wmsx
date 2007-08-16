@@ -1,4 +1,4 @@
-package renewer;
+package hu.kfki.grid.renewer;
 
 public class AFS extends Renewer {
 
