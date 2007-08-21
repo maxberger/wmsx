@@ -32,19 +32,16 @@ public class LaszloJobFactory implements JobFactory {
 
     private final int num;
 
-    private final boolean requireAfs;
-
     private final boolean interactive;
 
     public LaszloJobFactory(final String _cmd, final String _args,
             final File _outDir, final File _tmpDir, final int _num,
-            final boolean _requireAfs, final boolean _interactive) {
+            final boolean _interactive) {
         this.outDir = _outDir;
         this.tmpDir = _tmpDir;
         this.cmdWithPath = _cmd;
         this.args = _args;
         this.num = _num;
-        this.requireAfs = _requireAfs;
         this.interactive = _interactive;
     }
 
@@ -70,9 +67,12 @@ public class LaszloJobFactory implements JobFactory {
                 out = new BufferedWriter(new FileWriter(jdlFile));
             }
             final File starterFile = new File(this.tmpDir, extBase + ".sh");
-            this.writeJdl(out, starterFile);
 
-            this.prepareStarterFile(starterFile);
+            final ArglistJdlReader jdlArgs = new ArglistJdlReader(
+                    this.cmdWithPath + ".jdl", this.getCmd());
+
+            this.writeJdl(out, starterFile, jdlArgs);
+            this.prepareStarterFile(starterFile, jdlArgs);
 
             final String jdlFilename = jdlFile.getAbsolutePath();
             final String resultDir = new File(this.outDir, extBase)
@@ -98,19 +98,21 @@ public class LaszloJobFactory implements JobFactory {
         return cmd;
     }
 
-    private void writeJdl(final BufferedWriter out, final File starterFile)
-            throws IOException {
+    private void writeJdl(final BufferedWriter out, final File starterFile,
+            final ArglistJdlReader jdlArgs) throws IOException {
+        boolean realInteractive = this.interactive || jdlArgs.getInteractive();
         final String inputFile = this.cmdWithPath + ".tar.gz";
         out.write("[");
         out.newLine();
-        if (this.interactive) {
+        if (realInteractive) {
             out.write("JobType = \"Interactive\";");
         } else {
             out.write("JobType = \"Normal\";");
             out.newLine();
-            out.write("StdOutput = \"StdOut\";");
+            out.write("StdOutput = \"" + LaszloJobFactory.STD_OUT + "\";");
             out.newLine();
-            out.write("StdError = \"StdErr\";");
+            // out.write("StdError = \"StdErr\";");
+            out.write("StdError = \"" + LaszloJobFactory.STD_OUT + "\";");
         }
         out.newLine();
         out.write("Executable = \"" + starterFile.getName() + "\";");
@@ -119,12 +121,13 @@ public class LaszloJobFactory implements JobFactory {
                 + "\", \"" + inputFile + "\"};");
         out.newLine();
         out.write("OutputSandBox = {\"out.tar.gz\"");
-        if (!this.interactive) {
-            out.write(",\"" + LaszloJobFactory.STD_OUT + "\",\"StdErr\"");
+        if (!realInteractive) {
+            out.write(",\"" + LaszloJobFactory.STD_OUT + "\"");
+            // out.write(",\"StdErr\"");
         }
         out.write("};");
         out.newLine();
-        if (this.requireAfs) {
+        if (jdlArgs.getAfs()) {
             out
                     .write("Requirements = (Member(\"AFS\",other.GlueHostApplicationSoftwareRunTimeEnvironment));");
             out.newLine();
@@ -134,12 +137,10 @@ public class LaszloJobFactory implements JobFactory {
         out.close();
     }
 
-    private void prepareStarterFile(final File starterFile) throws IOException {
+    private void prepareStarterFile(final File starterFile,
+            final ArglistJdlReader jdlArgs) throws IOException {
         final BufferedWriter jobStarter = new BufferedWriter(new FileWriter(
                 starterFile));
-
-        final ArglistJdlReader jdlArgs = new ArglistJdlReader(this.cmdWithPath
-                + ".jdl", this.getCmd());
 
         jobStarter.write("#!/bin/sh");
         jobStarter.newLine();
@@ -154,7 +155,7 @@ public class LaszloJobFactory implements JobFactory {
         jobStarter.newLine();
         jobStarter.write("OUTDIR=" + jdlArgs.getOutputDirectory());
         jobStarter.newLine();
-        if (this.requireAfs) {
+        if (jdlArgs.getAfs()) {
             jobStarter.write("AFS=true");
             jobStarter.newLine();
         }
