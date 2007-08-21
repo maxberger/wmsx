@@ -120,7 +120,7 @@ public class ResultMoverAndPostexec implements Runnable {
                     .fine("IOException: " + e.getMessage());
         }
         if (!l.isEmpty()) {
-            WmsxProviderImpl.getInstance().submitLaszlo(l, false, false);
+            WmsxProviderImpl.getInstance().submitLaszlo(l, false);
         }
     }
 }

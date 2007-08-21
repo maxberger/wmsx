@@ -20,6 +20,10 @@ public class ArglistJdlReader {
 
     private List software;
 
+    private boolean afs;
+
+    private boolean interactive;
+
     private static final Logger LOGGER = Logger
             .getLogger(ArglistJdlReader.class.toString());
 
@@ -40,7 +44,10 @@ public class ArglistJdlReader {
                 if (odir != null) {
                     this.outputDir = odir;
                 }
+                final String jobType = this.getEntry(erecord, "JobType");
+                this.interactive = "Interactive".equalsIgnoreCase(jobType);
                 this.software = this.getList(erecord, "Software");
+                this.afs = this.software.remove("AFS");
             }
         } catch (final FileNotFoundException e) {
             ArglistJdlReader.LOGGER.fine("No JDL file: " + jdlFile
@@ -87,4 +94,11 @@ public class ArglistJdlReader {
         return this.software;
     }
 
+    public boolean getAfs() {
+        return this.afs;
+    }
+
+    public boolean getInteractive() {
+        return this.interactive;
+    }
 }
