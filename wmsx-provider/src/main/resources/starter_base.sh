@@ -23,9 +23,9 @@ if [ "$SOFTWARE" != "" ] ; then
   done
 fi
 
-echo "Extracting $ARCHIVE.tar.gz..."
-tar -xzf $ARCHIVE.tar.gz
-rm -f $ARCHIVE.tar.gz
+echo "Extracting ${ARCHIVE}..."
+tar -xzf $ARCHIVE
+rm -f $ARCHIVE
 echo "Changing into $PROGDIR ..."
 cd $PROGDIR
 echo "Running $PROGRAM..."
