@@ -46,6 +46,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private static final String JOBIDS_DONE = "jobids.done";
 
+    private static final String JOBIDS_FAILED = "jobids.failed";
+
     private static final long serialVersionUID = 2L;
 
     private static final Logger LOGGER = Logger
@@ -252,7 +254,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
-    public void done(final JobId id) {
+    public void done(final JobId id, final boolean success) {
         this.investigateLater();
         synchronized (this.workDir) {
             final String jobStr = id.toString();
@@ -260,6 +262,11 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                     WmsxProviderImpl.JOBIDS_DONE));
             this.removeLine(jobStr, new File(this.workDir,
                     WmsxProviderImpl.JOBIDS_RUNNING));
+            if (!success) {
+                this.appendLine(jobStr, new File(this.workDir,
+                        WmsxProviderImpl.JOBIDS_FAILED));
+            }
+
         }
     }
 

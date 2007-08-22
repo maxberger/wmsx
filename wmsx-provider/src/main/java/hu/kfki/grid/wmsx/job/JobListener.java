@@ -8,5 +8,5 @@ public interface JobListener {
 
     void running(JobId id);
 
-    void done(JobId id);
+    void done(JobId id, boolean success);
 }

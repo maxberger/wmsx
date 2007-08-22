@@ -3,7 +3,9 @@ package hu.kfki.grid.wmsx.job.result;
 import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.provider.JdlJob;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +13,12 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.globus.gsi.GlobusCredentialException;
+
+import edg.workload.userinterface.jclient.InfoLB;
+import edg.workload.userinterface.jclient.Job;
 import edg.workload.userinterface.jclient.JobId;
+import edg.workload.userinterface.jclient.Result;
 
 public class ResultListener implements JobListener {
 
@@ -40,37 +47,66 @@ public class ResultListener implements JobListener {
         return false;
     }
 
-    public void done(final JobId id) {
+    public void done(final JobId id, final boolean success) {
         final JdlJob job = (JdlJob) this.resultJobs.get(id);
         if (job == null) {
             return;
         }
-        this.retrieveResult(id, job);
+        try {
+            final File dir = this.prepareResultDir(job);
+            if (success) {
+                this.retrieveResult(id, job, dir);
+            } else {
+                this.retrieveLog(id, dir);
+            }
+        } catch (final IOException e) {
+            ResultListener.LOGGER.warning("Error accessing result directory: "
+                    + job.getResultDir());
+        }
     }
 
-    private void retrieveResult(final JobId id, final JdlJob job) {
-        File dir;
+    private void retrieveLog(final JobId id, final File dir) {
+        final Job job = new Job(id);
+
+        Result result;
         try {
-            dir = new File(job.getResultDir()).getCanonicalFile();
-        } catch (final IOException e1) {
-            dir = null;
+            result = job.getLogInfo();
+            final String logInfo = result.toString(InfoLB.HIGH_LOG_LEVEL);
+            final BufferedWriter logWriter = new BufferedWriter(new FileWriter(
+                    new File(dir, "log")));
+            logWriter.write(logInfo);
+            logWriter.close();
+        } catch (final UnsupportedOperationException e) {
+            ResultListener.LOGGER.info("UnsupportedOperationException: "
+                    + e.getMessage());
+        } catch (final IOException e) {
+            ResultListener.LOGGER.warning("IOException" + e.getMessage());
+        } catch (final GlobusCredentialException e) {
+            ResultListener.LOGGER.info("GlobusCredentialException"
+                    + e.getMessage());
         }
-        if (dir != null) {
-            dir.mkdirs();
-            final List commandLine = new Vector();
-            commandLine.add("/opt/edg/bin/edg-job-get-output");
-            commandLine.add("--dir");
-            commandLine.add(dir.getAbsolutePath());
-            commandLine.add("--noint");
-            commandLine.add(id.toString());
-            try {
-                final Process p = Runtime.getRuntime().exec(
-                        (String[]) commandLine.toArray(new String[commandLine
-                                .size()]), null, dir);
-                new Thread(new ResultMoverAndPostexec(p, dir, job)).start();
-            } catch (final IOException e) {
-                ResultListener.LOGGER.warning(e.getMessage());
-            }
+    }
+
+    private File prepareResultDir(final JdlJob job) throws IOException {
+        final File dir = new File(job.getResultDir()).getCanonicalFile();
+        dir.mkdirs();
+        return dir;
+    }
+
+    private void retrieveResult(final JobId id, final JdlJob job, final File dir) {
+        final List commandLine = new Vector();
+        commandLine.add("/opt/edg/bin/edg-job-get-output");
+        commandLine.add("--dir");
+        commandLine.add(dir.getAbsolutePath());
+        commandLine.add("--noint");
+        commandLine.add(id.toString());
+        try {
+            final Process p = Runtime.getRuntime().exec(
+                    (String[]) commandLine.toArray(new String[commandLine
+                            .size()]), null, dir);
+            new Thread(new ResultMoverAndPostexec(p, dir, job)).start();
+        } catch (final IOException e) {
+            ResultListener.LOGGER.warning(e.getMessage());
         }
     }
 
