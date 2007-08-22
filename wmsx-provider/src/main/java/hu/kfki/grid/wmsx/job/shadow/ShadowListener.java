@@ -57,7 +57,7 @@ public class ShadowListener implements Runnable, JobListener {
         this.listenerPid = result.getShadowpid();
         this.port = result.getPort();
 
-        if ((outputStream != null) && (this.oFile != null)) {
+        if (outputStream != null && this.oFile != null) {
             this.termination = false;
             this.runThread = new Thread(this);
             this.runThread.start();
@@ -98,7 +98,7 @@ public class ShadowListener implements Runnable, JobListener {
             safety = false;
         }
 
-        if ((this.port != 0) && (this.oFile != null)) {
+        if (this.port != 0 && this.oFile != null) {
             final String oName = this.oFile.getAbsolutePath();
             try {
                 final String oBase = oName.substring(0, oName.lastIndexOf("."));
@@ -143,7 +143,7 @@ public class ShadowListener implements Runnable, JobListener {
             while (line != null) {
                 boolean passes = true;
                 final Iterator it = mustHave.iterator();
-                while (passes && (it.hasNext())) {
+                while (passes && it.hasNext()) {
                     final String lookFor = (String) it.next();
                     passes = line.indexOf(lookFor) >= 0;
                 }
@@ -229,7 +229,7 @@ public class ShadowListener implements Runnable, JobListener {
         this.cleanup();
     }
 
-    public void done(final JobId id) {
+    public void done(final JobId id, final boolean success) {
         // System.out.println("Terminator called!");
         this.termination = true;
         if (this.runThread != null) {
