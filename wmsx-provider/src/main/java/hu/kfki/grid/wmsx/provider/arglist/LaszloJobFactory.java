@@ -101,7 +101,8 @@ public class LaszloJobFactory implements JobFactory {
     private void writeJdl(final BufferedWriter out, final File starterFile,
             final ArglistJdlReader jdlArgs) throws IOException {
         boolean realInteractive = this.interactive || jdlArgs.getInteractive();
-        final String inputFile = this.cmdWithPath + ".tar.gz";
+        final String inputFile = new File(new File(this.cmdWithPath)
+                .getParentFile(), jdlArgs.getArchive()).getCanonicalPath();
         out.write("[");
         out.newLine();
         if (realInteractive) {
@@ -145,11 +146,11 @@ public class LaszloJobFactory implements JobFactory {
         jobStarter.write("#!/bin/sh");
         jobStarter.newLine();
 
-        jobStarter.write("ARCHIVE=" + this.getCmd());
+        jobStarter.write("ARCHIVE=" + jdlArgs.getArchive());
         jobStarter.newLine();
         jobStarter.write("PROGRAM=" + jdlArgs.getExecutable());
         jobStarter.newLine();
-        jobStarter.write("PROGDIR=" + this.getCmd());
+        jobStarter.write("PROGDIR=" + jdlArgs.getProgramDir());
         jobStarter.newLine();
         jobStarter.write("PARAMS=\"" + this.args + "\"");
         jobStarter.newLine();

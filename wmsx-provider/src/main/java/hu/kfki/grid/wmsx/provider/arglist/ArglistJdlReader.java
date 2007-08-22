@@ -14,44 +14,59 @@ import condor.classad.RecordExpr;
 
 public class ArglistJdlReader {
 
-    private String executable;
+    private final String executable;
 
-    private String outputDir;
+    private final String outputDir;
 
-    private List software;
+    private final List software;
 
-    private boolean afs;
+    private final boolean afs;
 
-    private boolean interactive;
+    private final boolean interactive;
+
+    private final String archive;
+
+    private final String programDir;
 
     private static final Logger LOGGER = Logger
             .getLogger(ArglistJdlReader.class.toString());
 
-    public ArglistJdlReader(final String jdlFile, final String defaultExec) {
-        this.executable = defaultExec;
-        this.outputDir = "out";
+    public ArglistJdlReader(final String jdlFile, final String cmdName) {
+
+        RecordExpr erecord = new RecordExpr();
         try {
             final ClassAdParser parser = new ClassAdParser(new FileInputStream(
                     jdlFile));
             final Expr e = parser.parse();
             if (e instanceof RecordExpr) {
-                final RecordExpr erecord = (RecordExpr) e;
-                final String exec = this.getEntry(erecord, "Executable");
-                if (exec != null) {
-                    this.executable = exec;
-                }
-                final String odir = this.getEntry(erecord, "OutputDirectory");
-                if (odir != null) {
-                    this.outputDir = odir;
-                }
-                final String jobType = this.getEntry(erecord, "JobType");
-                this.interactive = "Interactive".equalsIgnoreCase(jobType);
-                this.software = this.getList(erecord, "Software");
-                this.afs = this.software.remove("AFS");
+                erecord = (RecordExpr) e;
+            } else {
+                ArglistJdlReader.LOGGER.warning("Error Reading JDL file: "
+                        + jdlFile);
             }
         } catch (final FileNotFoundException e) {
             ArglistJdlReader.LOGGER.fine("No JDL file: " + jdlFile
                     + " assuming defaults");
+        }
+
+        this.executable = this.getEntry(erecord, "Executable", cmdName);
+        this.outputDir = this.getEntry(erecord, "OutputDirectory", "out");
+        final String jobType = this.getEntry(erecord, "JobType");
+        this.interactive = "Interactive".equalsIgnoreCase(jobType);
+        this.software = this.getList(erecord, "Software");
+        this.afs = this.software.remove("AFS");
+        this.archive = this.getEntry(erecord, "Archive", cmdName + ".tar.gz");
+        this.programDir = this.getEntry(erecord, "ProgramDir", cmdName);
+
+    }
+
+    private String getEntry(final RecordExpr erecord, final String key,
+            final String defaultValue) {
+        final String value = this.getEntry(erecord, key);
+        if (value == null) {
+            return defaultValue;
+        } else {
+            return value;
         }
 
     }
@@ -100,5 +115,19 @@ public class ArglistJdlReader {
 
     public boolean getInteractive() {
         return this.interactive;
+    }
+
+    /**
+     * @return the archive
+     */
+    public String getArchive() {
+        return this.archive;
+    }
+
+    /**
+     * @return the programDir
+     */
+    public String getProgramDir() {
+        return this.programDir;
     }
 }
