@@ -120,7 +120,11 @@ public class ResultMoverAndPostexec implements Runnable {
                     .fine("IOException: " + e.getMessage());
         }
         if (!l.isEmpty()) {
+            ResultMoverAndPostexec.LOGGER.info("Chain returned " + l.size()
+                    + " new job(s).");
             WmsxProviderImpl.getInstance().submitLaszlo(l, false);
+        } else {
+            ResultMoverAndPostexec.LOGGER.info("Chain returned no new jobs");
         }
     }
 }
