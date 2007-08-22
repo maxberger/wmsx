@@ -49,18 +49,20 @@ public class LaszloJobFactory implements JobFactory {
 
         final String cmd = this.getCmd();
 
-        final String base = cmd + "_" + this.num;
+        // final String base = cmd + "_" + this.num;
+        // String extBase = base;
+        final String base = cmd;
         String extBase = base;
         final String jdlExt = ".jdl";
         final File jdlFile;
         final BufferedWriter out;
         try {
             synchronized (this.tmpDir) {
-                int n = 0;
+                int n = 1;
                 File potentialJdlFile = new File(this.tmpDir, extBase + jdlExt);
                 while (potentialJdlFile.exists()) {
                     n++;
-                    extBase = base + "." + n;
+                    extBase = base + "_" + n;
                     potentialJdlFile = new File(this.tmpDir, extBase + jdlExt);
                 }
                 jdlFile = potentialJdlFile;
