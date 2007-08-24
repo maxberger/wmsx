@@ -25,4 +25,11 @@
     <module>wmsx-requestor</module>
     <module>wmsx</module>
   </modules>
+<distributionManagement>
+   <site>
+      <id>afs</id>
+      <name>Website for WMSX in AFS</name>
+      <url>file:///afs/kfki.hu/home/berger/public/wmsx</url>
+    </site>
+</distributionManagement>
 </project>
