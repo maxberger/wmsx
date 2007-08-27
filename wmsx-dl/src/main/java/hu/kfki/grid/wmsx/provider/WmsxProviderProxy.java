@@ -116,7 +116,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         if (commands.isEmpty()) {
             WmsxProviderProxy.LOGGER.warning("List of commands is empty!");
         } else {
-            this.remoteService.submitLaszlo(commands, interactive);
+            this.remoteService.submitLaszlo(commands, interactive, null);
         }
     }
 

@@ -283,7 +283,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     public synchronized void submitLaszlo(final List commands,
-            final boolean interactive) {
+            final boolean interactive, final String prefix) {
         WmsxProviderImpl.LOGGER
                 .info("Adding " + commands.size() + " Commands.");
         final List jobs = new Vector(commands.size());
@@ -293,7 +293,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             final IRemoteWmsxProvider.LaszloCommand lcmd = (IRemoteWmsxProvider.LaszloCommand) it
                     .next();
             jobs.add(new LaszloJobFactory(lcmd.getCommand(), lcmd.getArgs(),
-                    this.outDir, this.debugDir, line, interactive));
+                    this.outDir, this.debugDir, line, interactive, prefix));
             line++;
             // final String cmd = lcmd.getCommand();
             // final String args = lcmd.getArgs();
