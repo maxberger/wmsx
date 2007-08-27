@@ -13,7 +13,8 @@ public interface Wmsx {
     String submitJdl(String jdlFile, String outputFile, String resultDir)
             throws IOException;
 
-    void submitLaszlo(String argFile, boolean interactive) throws IOException;
+    void submitLaszlo(String argFile, boolean interactive, String name)
+            throws IOException;
 
     void setMaxJobs(int maxJobs);
 

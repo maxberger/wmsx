@@ -36,15 +36,18 @@ public class LaszloJobFactory implements JobFactory {
 
     private final String prefix;
 
+    private final String name;
+
     public LaszloJobFactory(final String _cmd, final String _args,
             final File _outDir, final File _tmpDir, final int _num,
-            final boolean _interactive, final String _prefix) {
+            final boolean _interactive, final String _prefix, final String _name) {
         this.outDir = _outDir;
         this.tmpDir = _tmpDir;
         this.cmdWithPath = _cmd;
         this.args = _args;
         this.num = _num;
         this.interactive = _interactive;
+        this.name = _name;
         if (_prefix == null) {
             prefix = num + "_";
         } else {
@@ -55,8 +58,6 @@ public class LaszloJobFactory implements JobFactory {
     public JdlJob createJdlJob() {
 
         final String cmd = this.getCmd();
-        // final String base = cmd + "_" + this.num;
-        // String extBase = base;
         final String base = prefix + cmd;
         String extBase = base;
         final String jdlExt = ".jdl";
@@ -96,6 +97,7 @@ public class LaszloJobFactory implements JobFactory {
             job.setCommand(this.cmdWithPath);
             job.setArgs(this.args.split(" "));
             job.setPrefix(prefix);
+            job.setName(name);
             return job;
         } catch (final IOException io) {
             return null;
