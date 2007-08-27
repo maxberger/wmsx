@@ -41,6 +41,8 @@ public class App implements DiscoveryListener {
 
     private static final String REMEMBER_GRID = "remembergrid";
 
+    private static final String NAME = "name";
+
     private static final Logger LOGGER = Logger.getLogger(App.class.toString());
 
     private static final int CMD_SHUTDOWN = 0;
@@ -104,6 +106,7 @@ public class App implements DiscoveryListener {
                 "Asks for Grid password and remember it "
                         + "until the number of managed jobs reaches 0."));
         options.addOption(new Option(App.FORGET_AFS, "Forgets AFS password"));
+        options.addOption(new Option(App.NAME, "Name for this execution"));
 
         final CommandLineParser parser = new GnuParser();
         try {
@@ -301,8 +304,14 @@ public class App implements DiscoveryListener {
                         .getOptionValue('n')));
                 break;
             case CMD_LASZLO:
+                final String name;
+                if (this.commandLine.hasOption(App.NAME)) {
+                    name = this.commandLine.getOptionValue(App.NAME);
+                } else {
+                    name = null;
+                }
                 myService.submitLaszlo(this.commandLine.getOptionValue('a'),
-                        this.commandLine.hasOption('i'));
+                        this.commandLine.hasOption('i'), name);
                 break;
             case CMD_JDL:
                 final String s = myService.submitJdl(this.commandLine

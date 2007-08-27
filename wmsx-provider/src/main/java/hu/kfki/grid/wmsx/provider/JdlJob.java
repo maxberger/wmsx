@@ -22,6 +22,8 @@ public class JdlJob {
 
     private String prefix;
 
+    private String name;
+
     /**
      * @return the command
      */
@@ -122,6 +124,14 @@ public class JdlJob {
 
     public final void setPrefix(final String nprefix) {
         this.prefix = nprefix;
+    }
+
+    public final String getName() {
+        return this.name;
+    }
+
+    public final void setName(final String name) {
+        this.name = name;
     }
 
 }

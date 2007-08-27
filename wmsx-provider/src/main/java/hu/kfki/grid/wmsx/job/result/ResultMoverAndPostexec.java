@@ -123,7 +123,7 @@ public class ResultMoverAndPostexec implements Runnable {
             ResultMoverAndPostexec.LOGGER.info("Chain returned " + l.size()
                     + " new job(s).");
             WmsxProviderImpl.getInstance().submitLaszlo(l, false,
-                    job.getPrefix());
+                    job.getPrefix(), job.getName());
         } else {
             ResultMoverAndPostexec.LOGGER.info("Chain returned no new jobs");
         }
