@@ -23,9 +23,11 @@ import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -71,19 +73,35 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private Renewer gridRenewer;
 
+    private Map dirs = new HashMap();
+
     public WmsxProviderImpl(final DestroyAdmin dadm, final File workdir) {
         this.destroyAdmin = dadm;
         this.workDir = workdir;
 
-        this.outDir = new File(workdir, "out");
-        if (!this.outDir.exists()) {
-            this.outDir.mkdirs();
-        }
-        this.debugDir = new File(workdir, "debug");
-        if (!this.debugDir.exists()) {
-            this.debugDir.mkdirs();
-        }
+        this.outDir = syncableDir(workdir, "out");
+        this.debugDir = syncableDir(workdir, "debug");
         WmsxProviderImpl.instance = this;
+    }
+
+    private File syncableDir(File parentdir, String subdir) {
+        File dirFile = new File(parentdir, subdir);
+        try {
+            String canon = dirFile.getCanonicalPath();
+            synchronized (dirs) {
+                File existing = (File) dirs.get(canon);
+                if (existing == null) {
+                    dirs.put(canon, dirFile);
+                    if (!dirFile.exists()) {
+                        dirFile.mkdirs();
+                    }
+                } else
+                    dirFile = existing;
+            }
+        } catch (IOException e) {
+            WmsxProviderImpl.LOGGER.warning("IOError: " + e.getMessage());
+        }
+        return dirFile;
     }
 
     public static WmsxProviderImpl getInstance() {
@@ -296,10 +314,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             tmpDir = this.debugDir;
             outputDir = this.outDir;
         } else {
-            tmpDir = new File(this.debugDir, name);
-            tmpDir.mkdirs();
-            outputDir = new File(this.outDir, name);
-            outputDir.mkdirs();
+            tmpDir = syncableDir(this.debugDir, name);
+            outputDir = syncableDir(this.outDir, name);
         }
 
         while (it.hasNext()) {
