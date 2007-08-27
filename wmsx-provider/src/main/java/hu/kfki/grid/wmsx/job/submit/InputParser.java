@@ -28,11 +28,11 @@ public class InputParser {
             String line = reader.readLine();
 
             int have = 0;
-            while ((line != null) && (have != 0x3f)) {
+            while (line != null && have != 0x3f) {
                 outStream.println(line);
                 line = line.trim();
                 try {
-                    if ((line.charAt(0) == '-') && (jobId == null)) {
+                    if (line.charAt(0) == '-' && jobId == null) {
                         jobId = line.substring(2).trim();
                         have |= 0x01;
                     } else if (line.startsWith("Shadow process")) {

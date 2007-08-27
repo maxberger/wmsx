@@ -20,6 +20,8 @@ public class JdlJob {
 
     private String[] args;
 
+    private String prefix;
+
     /**
      * @return the command
      */
@@ -71,20 +73,10 @@ public class JdlJob {
         return this.postexec;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see hu.kfki.grid.wmsx.provider.JobDesc#getJdlFile()
-     */
     public String getJdlFile() {
         return this.jdlFile;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see hu.kfki.grid.wmsx.provider.JobDesc#getOutput()
-     */
     public String getOutput() {
         return this.output;
     }
@@ -123,4 +115,13 @@ public class JdlJob {
     public void setChain(final String chain) {
         this.chain = chain;
     }
+
+    public final String getPrefix() {
+        return prefix;
+    }
+
+    public final void setPrefix(final String nprefix) {
+        this.prefix = nprefix;
+    }
+
 }
