@@ -28,6 +28,8 @@ public class ArglistJdlReader {
 
     private final String programDir;
 
+    private final String requirements;
+
     private static final Logger LOGGER = Logger
             .getLogger(ArglistJdlReader.class.toString());
 
@@ -57,7 +59,7 @@ public class ArglistJdlReader {
         this.afs = this.software.remove("AFS");
         this.archive = this.getEntry(erecord, "Archive", cmdName + ".tar.gz");
         this.programDir = this.getEntry(erecord, "ProgramDir", cmdName);
-
+        this.requirements = this.getEntry(erecord, "Requirements");
     }
 
     private String getEntry(final RecordExpr erecord, final String key,
@@ -73,10 +75,13 @@ public class ArglistJdlReader {
 
     private String getEntry(final RecordExpr erecord, final String key) {
         final Expr eval = erecord.lookup(key);
-        if (eval instanceof Constant) {
-            final Constant econst = (Constant) eval;
-            return econst.stringValue();
+        if (eval != null) {
+            return eval.toString();
         }
+        // if (eval instanceof Constant) {
+        // final Constant econst = (Constant) eval;
+        // return econst.stringValue();
+        // }
         return null;
     }
 
@@ -129,5 +134,12 @@ public class ArglistJdlReader {
      */
     public String getProgramDir() {
         return this.programDir;
+    }
+
+    /**
+     * @return the requirements
+     */
+    public String getRequirements() {
+        return this.requirements;
     }
 }
