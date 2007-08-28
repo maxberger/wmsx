@@ -8,6 +8,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import net.jini.admin.Administrable;
@@ -63,7 +66,7 @@ public class App implements DiscoveryListener {
 
     private static final int CMD_REMEMBERGRID = 8;
 
-    private final int command;
+    private final List commands;
 
     private final CommandLine commandLine;
 
@@ -112,36 +115,40 @@ public class App implements DiscoveryListener {
         final CommandLineParser parser = new GnuParser();
         try {
             final CommandLine cmd = parser.parse(options, args);
+            final List cmds = new Vector();
             if (cmd.hasOption('n')) {
-                App.dispatch(App.CMD_NUMBER, cmd);
+                cmds.add(new Integer(App.CMD_NUMBER));
             }
             if (cmd.hasOption('h')) {
                 App.printHelp(options);
             }
             if (cmd.hasOption('p')) {
-                App.dispatch(App.CMD_PING, cmd);
+                cmds.add(new Integer(App.CMD_PING));
             }
             if (cmd.hasOption('f')) {
-                App.dispatch(App.CMD_FULLPING, cmd);
+                cmds.add(new Integer(App.CMD_FULLPING));
             }
             if (cmd.hasOption(App.REMEMBER_AFS)) {
-                App.dispatch(App.CMD_REMEMBERAFS, cmd);
+                cmds.add(new Integer(App.CMD_REMEMBERAFS));
             }
             if (cmd.hasOption(App.FORGET_AFS)) {
-                App.dispatch(App.CMD_FORGETAFS, cmd);
+                cmds.add(new Integer(App.CMD_FORGETAFS));
             }
             if (cmd.hasOption(App.REMEMBER_GRID)) {
-                App.dispatch(App.CMD_REMEMBERGRID, cmd);
+                cmds.add(new Integer(App.CMD_REMEMBERGRID));
             }
             if (cmd.hasOption('k')) {
-                App.dispatch(App.CMD_SHUTDOWN, cmd);
+                cmds.add(new Integer(App.CMD_SHUTDOWN));
             } else if (cmd.hasOption('a')) {
-                App.dispatch(App.CMD_LASZLO, cmd);
+                cmds.add(new Integer(App.CMD_LASZLO));
             } else if (cmd.hasOption('j')) {
-                App.dispatch(App.CMD_JDL, cmd);
+                cmds.add(new Integer(App.CMD_JDL));
             }
             if (cmd.getOptions().length < 1) {
                 App.printHelp(options);
+            }
+            if (!cmds.isEmpty()) {
+                App.dispatch(cmds, cmd);
             }
         } catch (final ParseException e1) {
             System.out.println("Invalid command line:" + e1.getMessage());
@@ -157,7 +164,7 @@ public class App implements DiscoveryListener {
                         options);
     }
 
-    private static void dispatch(final int cmd, final CommandLine cmdLine) {
+    private static void dispatch(final List cmd, final CommandLine cmdLine) {
         new App(cmd, cmdLine);
 
         // stay around long enough to receive replies
@@ -188,8 +195,8 @@ public class App implements DiscoveryListener {
         }
     }
 
-    public App(final int cmd, final CommandLine cmdLine) {
-        this.command = cmd;
+    public App(final List cmds, final CommandLine cmdLine) {
+        this.commands = cmds;
         this.commandLine = cmdLine;
         // System.setSecurityManager(new RMISecurityManager());
 
@@ -278,62 +285,72 @@ public class App implements DiscoveryListener {
             App.foundLock.notifyAll();
         }
 
-        // App.LOGGER.info(myService.hello());
-        try {
-            switch (this.command) {
-            case CMD_SHUTDOWN:
-                try {
-                    final Administrable mys = (Administrable) myService;
-                    final Object adm = mys.getAdmin();
-                    final DestroyAdmin dadm = (DestroyAdmin) adm;
-                    dadm.destroy();
-                } catch (final ClassCastException cc) {
-                    App.LOGGER.info("ClassCast Exception: " + cc.getMessage());
-                } catch (final NullPointerException npe) {
-                    App.LOGGER
-                            .info("NullPointerException: " + npe.getMessage());
+        final Iterator cmdIt = this.commands.iterator();
+
+        while (cmdIt.hasNext()) {
+
+            final Integer com = (Integer) cmdIt.next();
+            final int command = com.intValue();
+            // App.LOGGER.info(myService.hello());
+            try {
+                switch (command) {
+                case CMD_SHUTDOWN:
+                    try {
+                        final Administrable mys = (Administrable) myService;
+                        final Object adm = mys.getAdmin();
+                        final DestroyAdmin dadm = (DestroyAdmin) adm;
+                        dadm.destroy();
+                    } catch (final ClassCastException cc) {
+                        App.LOGGER.info("ClassCast Exception: "
+                                + cc.getMessage());
+                    } catch (final NullPointerException npe) {
+                        App.LOGGER.info("NullPointerException: "
+                                + npe.getMessage());
+                    }
+                    break;
+                case CMD_PING:
+                    myService.ping(false);
+                    break;
+                case CMD_FULLPING:
+                    myService.ping(true);
+                    break;
+                case CMD_NUMBER:
+                    myService.setMaxJobs(Integer.parseInt(this.commandLine
+                            .getOptionValue('n')));
+                    break;
+                case CMD_LASZLO:
+                    myService.submitLaszlo(
+                            this.commandLine.getOptionValue('a'),
+                            this.commandLine.hasOption('i'), this.commandLine
+                                    .getOptionValue(App.NAME));
+                    break;
+                case CMD_JDL:
+                    final String s = myService.submitJdl(this.commandLine
+                            .getOptionValue('j'), this.commandLine
+                            .getOptionValue('o'), this.commandLine
+                            .getOptionValue('r'));
+                    System.out.println("" + s);
+                    break;
+                case CMD_FORGETAFS:
+                    myService.forgetAfs();
+                    break;
+                case CMD_REMEMBERAFS:
+                    final String password = this.askPassword("AFS Password: ");
+                    if (!myService.rememberAfs(password)) {
+                        App.LOGGER.warning("Error remembering AFS password");
+                    }
+                    break;
+                case CMD_REMEMBERGRID:
+                    final String gpassword = this
+                            .askPassword("Grid Password: ");
+                    if (!myService.rememberGrid(gpassword)) {
+                        App.LOGGER.warning("Error remembering Grid password");
+                    }
+                    break;
                 }
-                break;
-            case CMD_PING:
-                myService.ping(false);
-                break;
-            case CMD_FULLPING:
-                myService.ping(true);
-                break;
-            case CMD_NUMBER:
-                myService.setMaxJobs(Integer.parseInt(this.commandLine
-                        .getOptionValue('n')));
-                break;
-            case CMD_LASZLO:
-                myService.submitLaszlo(this.commandLine.getOptionValue('a'),
-                        this.commandLine.hasOption('i'), this.commandLine
-                                .getOptionValue(App.NAME));
-                break;
-            case CMD_JDL:
-                final String s = myService.submitJdl(this.commandLine
-                        .getOptionValue('j'), this.commandLine
-                        .getOptionValue('o'), this.commandLine
-                        .getOptionValue('r'));
-                System.out.println("" + s);
-                break;
-            case CMD_FORGETAFS:
-                myService.forgetAfs();
-                break;
-            case CMD_REMEMBERAFS:
-                final String password = this.askPassword("AFS Password: ");
-                if (!myService.rememberAfs(password)) {
-                    App.LOGGER.warning("Error remembering AFS password");
-                }
-                break;
-            case CMD_REMEMBERGRID:
-                final String gpassword = this.askPassword("Grid Password: ");
-                if (!myService.rememberGrid(gpassword)) {
-                    App.LOGGER.warning("Error remembering Grid password");
-                }
-                break;
+            } catch (final IOException e) {
+                App.LOGGER.warning(e.getMessage() + " " + e.getStackTrace());
             }
-        } catch (final IOException e) {
-            App.LOGGER.warning(e.getMessage() + " " + e.getStackTrace());
         }
         System.exit(0);
     }
