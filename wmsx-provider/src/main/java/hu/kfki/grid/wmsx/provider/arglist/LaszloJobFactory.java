@@ -49,16 +49,16 @@ public class LaszloJobFactory implements JobFactory {
         this.interactive = _interactive;
         this.name = _name;
         if (_prefix == null) {
-            prefix = num + "_";
+            this.prefix = this.num + "_";
         } else {
-            prefix = _prefix;
+            this.prefix = _prefix;
         }
     }
 
     public JdlJob createJdlJob() {
 
         final String cmd = this.getCmd();
-        final String base = prefix + cmd;
+        final String base = this.prefix + cmd;
         String extBase = base;
         final String jdlExt = ".jdl";
         final File jdlFile;
@@ -96,8 +96,8 @@ public class LaszloJobFactory implements JobFactory {
             job.setChain(this.cmdWithPath + "_chain");
             job.setCommand(this.cmdWithPath);
             job.setArgs(this.args.split(" "));
-            job.setPrefix(prefix);
-            job.setName(name);
+            job.setPrefix(this.prefix);
+            job.setName(this.name);
             return job;
         } catch (final IOException io) {
             return null;
@@ -139,11 +139,26 @@ public class LaszloJobFactory implements JobFactory {
         }
         out.write("};");
         out.newLine();
+        String reqValue = null;
+
         if (jdlArgs.getAfs()) {
-            out
-                    .write("Requirements = (Member(\"AFS\",other.GlueHostApplicationSoftwareRunTimeEnvironment));");
+            reqValue = "(Member(\"AFS\",other.GlueHostApplicationSoftwareRunTimeEnvironment))";
+        }
+        final String extraReq = jdlArgs.getRequirements();
+        System.out.println("Extra: " + extraReq);
+        if (extraReq != null) {
+            if (reqValue == null) {
+                reqValue = "";
+            } else {
+                reqValue = reqValue + " && ";
+            }
+            reqValue = reqValue + extraReq;
+        }
+        if (reqValue != null) {
+            out.write("Requirements = " + reqValue + ";");
             out.newLine();
         }
+
         out.write("]");
         out.newLine();
         out.close();
