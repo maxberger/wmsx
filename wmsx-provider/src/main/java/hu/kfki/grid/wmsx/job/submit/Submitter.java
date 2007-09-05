@@ -38,7 +38,12 @@ public class Submitter {
         // final PrintStream parserOutput = System.out;
         final ParseResult result = InputParser.parse(p.getInputStream(),
                 parserOutput);
-        Submitter.LOGGER.fine(baos.toString());
+        if (result.getJobId() == null) {
+            Submitter.LOGGER.warning("Failed to submit Job.");
+            Submitter.LOGGER.info(baos.toString());
+        } else {
+            Submitter.LOGGER.fine(baos.toString());
+        }
         return result;
     }
 }

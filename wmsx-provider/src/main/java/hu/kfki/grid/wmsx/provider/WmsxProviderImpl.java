@@ -73,32 +73,33 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private Renewer gridRenewer;
 
-    private Map dirs = new HashMap();
+    private final Map dirs = new HashMap();
 
     public WmsxProviderImpl(final DestroyAdmin dadm, final File workdir) {
         this.destroyAdmin = dadm;
         this.workDir = workdir;
 
-        this.outDir = syncableDir(workdir, "out");
-        this.debugDir = syncableDir(workdir, "debug");
+        this.outDir = this.syncableDir(workdir, "out");
+        this.debugDir = this.syncableDir(workdir, "debug");
         WmsxProviderImpl.instance = this;
     }
 
-    private File syncableDir(File parentdir, String subdir) {
+    private File syncableDir(final File parentdir, final String subdir) {
         File dirFile = new File(parentdir, subdir);
         try {
-            String canon = dirFile.getCanonicalPath();
-            synchronized (dirs) {
-                File existing = (File) dirs.get(canon);
+            final String canon = dirFile.getCanonicalPath();
+            synchronized (this.dirs) {
+                final File existing = (File) this.dirs.get(canon);
                 if (existing == null) {
-                    dirs.put(canon, dirFile);
+                    this.dirs.put(canon, dirFile);
                     if (!dirFile.exists()) {
                         dirFile.mkdirs();
                     }
-                } else
+                } else {
                     dirFile = existing;
+                }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             WmsxProviderImpl.LOGGER.warning("IOError: " + e.getMessage());
         }
         return dirFile;
@@ -143,28 +144,31 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         try {
             result = Submitter.getSubmitter().submitJdl(jdlFile);
             final String jobStr = result.getJobId();
-            final JobId id = new JobId(jobStr);
-            WmsxProviderImpl.LOGGER.info("Job id is: " + id);
-            JobWatcher.getWatcher().addWatch(id, LogListener.getLogListener());
-            JobWatcher.getWatcher().addWatch(id, this);
-            if (ResultListener.getResultListener().setJob(id, job)) {
+            if (jobStr != null) {
+                final JobId id = new JobId(jobStr);
+                WmsxProviderImpl.LOGGER.info("Job id is: " + id);
                 JobWatcher.getWatcher().addWatch(id,
-                        ResultListener.getResultListener());
-            }
-            final WritableByteChannel oChannel;
-            if (output != null && result.getOStream() != null) {
-                new File(output).getParentFile().mkdirs();
-                oChannel = new FileOutputStream(output).getChannel();
-            } else {
-                oChannel = null;
-            }
-            JobWatcher.getWatcher().addWatch(id,
-                    ShadowListener.listen(result, oChannel));
-            synchronized (this.workDir) {
-                this.appendLine(jobStr, new File(this.workDir,
-                        WmsxProviderImpl.JOBIDS_ALL));
-                this.appendLine(jobStr, new File(this.workDir,
-                        WmsxProviderImpl.JOBIDS_RUNNING));
+                        LogListener.getLogListener());
+                JobWatcher.getWatcher().addWatch(id, this);
+                if (ResultListener.getResultListener().setJob(id, job)) {
+                    JobWatcher.getWatcher().addWatch(id,
+                            ResultListener.getResultListener());
+                }
+                final WritableByteChannel oChannel;
+                if (output != null && result.getOStream() != null) {
+                    new File(output).getParentFile().mkdirs();
+                    oChannel = new FileOutputStream(output).getChannel();
+                } else {
+                    oChannel = null;
+                }
+                JobWatcher.getWatcher().addWatch(id,
+                        ShadowListener.listen(result, oChannel));
+                synchronized (this.workDir) {
+                    this.appendLine(jobStr, new File(this.workDir,
+                            WmsxProviderImpl.JOBIDS_ALL));
+                    this.appendLine(jobStr, new File(this.workDir,
+                            WmsxProviderImpl.JOBIDS_RUNNING));
+                }
             }
             return jobStr;
         } catch (final IOException e) {
@@ -314,8 +318,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             tmpDir = this.debugDir;
             outputDir = this.outDir;
         } else {
-            tmpDir = syncableDir(this.debugDir, name);
-            outputDir = syncableDir(this.outDir, name);
+            tmpDir = this.syncableDir(this.debugDir, name);
+            outputDir = this.syncableDir(this.outDir, name);
         }
 
         while (it.hasNext()) {

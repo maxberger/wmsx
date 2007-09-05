@@ -1,5 +1,3 @@
-#!/bin/sh
-
 if [ "$AFS" != "" ] ; then
   if ! [[ -e /afs/kfki.hu && -d /afs/kfki.hu ]] ; then
     echo Even though AFS was specified in the requirements, 

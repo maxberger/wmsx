@@ -188,13 +188,14 @@ public class LaszloJobFactory implements JobFactory {
         }
         final List software = jdlArgs.getSoftware();
         if (!software.isEmpty()) {
-            jobStarter.write("SOFTWARE=");
+            jobStarter.write("SOFTWARE=\"");
             final Iterator it = software.iterator();
             while (it.hasNext()) {
                 final String s = (String) it.next();
                 jobStarter.write(s);
                 jobStarter.write(" ");
             }
+            jobStarter.write("\"");
             jobStarter.newLine();
         }
 
