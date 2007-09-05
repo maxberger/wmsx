@@ -28,38 +28,44 @@ public class ScriptLauncher {
 
     public int launchScript(final String[] cmdarray, final String stdout) {
         int retVal = 0;
-        try {
-            new File(stdout).getParentFile().mkdirs();
-            final OutputStream o = new BufferedOutputStream(
-                    new FileOutputStream(stdout));
-            retVal = this.launchScript(cmdarray, o);
-            o.close();
-        } catch (final IOException e) {
-            ScriptLauncher.LOGGER.fine("IOException launching script: "
-                    + e.getMessage());
+        if (new File(cmdarray[0]).exists()) {
+            final File stdoutfile = new File(stdout);
+            try {
+                stdoutfile.getParentFile().mkdirs();
+                final OutputStream o = new BufferedOutputStream(
+                        new FileOutputStream(stdout));
+                retVal = this.launchScript(cmdarray, o);
+                o.close();
+            } catch (final IOException e) {
+                ScriptLauncher.LOGGER.warning("IOException launching script: "
+                        + e.getMessage());
+            }
         }
         return retVal;
     }
 
     public int launchScript(final String[] cmdarray, final OutputStream out) {
         int retVal = 0;
-        try {
-            final Process p = Runtime.getRuntime().exec(cmdarray);
-            final InputStream i = new BufferedInputStream(p.getInputStream());
+        if (new File(cmdarray[0]).exists()) {
             try {
-                retVal = p.waitFor();
-            } catch (final InterruptedException e) {
-                // Ignore
+                final Process p = Runtime.getRuntime().exec(cmdarray);
+                final InputStream i = new BufferedInputStream(p
+                        .getInputStream());
+                try {
+                    retVal = p.waitFor();
+                } catch (final InterruptedException e) {
+                    // Ignore
+                }
+                final byte[] buf = new byte[4096];
+                int r = i.read(buf);
+                while (r >= 0) {
+                    out.write(buf, 0, r);
+                    r = i.read(buf);
+                }
+            } catch (final IOException e) {
+                ScriptLauncher.LOGGER.warning("IOException launching script: "
+                        + e.getMessage());
             }
-            final byte[] buf = new byte[4096];
-            int r = i.read(buf);
-            while (r >= 0) {
-                out.write(buf, 0, r);
-                r = i.read(buf);
-            }
-        } catch (final IOException e) {
-            ScriptLauncher.LOGGER.fine("IOException launching script: "
-                    + e.getMessage());
         }
         return retVal;
     }

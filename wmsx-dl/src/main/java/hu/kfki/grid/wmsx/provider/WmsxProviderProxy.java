@@ -103,10 +103,17 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
             if (line.length() > 0) {
                 if (line.charAt(0) != '#') {
                     final int spacePos = line.indexOf(" ");
-                    final String command = line.substring(0, spacePos);
+                    final String command;
+                    final String args;
+                    if (spacePos < 0) {
+                        command = line;
+                        args = "";
+                    } else {
+                        command = line.substring(0, spacePos);
+                        args = line.substring(spacePos + 1).trim();
+                    }
                     final File cmdWithPath = new File(f.getParentFile(),
                             command);
-                    final String args = line.substring(spacePos + 1).trim();
                     commands.add(new IRemoteWmsxProvider.LaszloCommand(
                             cmdWithPath.getAbsolutePath(), args));
                 }
