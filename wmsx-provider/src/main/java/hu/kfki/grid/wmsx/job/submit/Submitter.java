@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import edg.workload.userinterface.jclient.JobId;
+
 public class Submitter {
 
     private static Submitter submitter;
@@ -25,10 +27,15 @@ public class Submitter {
         return Submitter.submitter;
     }
 
-    public ParseResult submitJdl(final String jdlFile) throws IOException {
+    public ParseResult submitJdl(final String jdlFile, final String vo)
+            throws IOException {
         final List commandLine = new Vector();
         commandLine.add("/opt/edg/bin/edg-job-submit");
         commandLine.add("--nolisten");
+        if (vo != null) {
+            commandLine.add("--vo");
+            commandLine.add(vo);
+        }
         commandLine.add(jdlFile);
         final Process p = Runtime.getRuntime().exec(
                 (String[]) commandLine.toArray(new String[commandLine.size()]),
@@ -38,9 +45,18 @@ public class Submitter {
         // final PrintStream parserOutput = System.out;
         final ParseResult result = InputParser.parse(p.getInputStream(),
                 parserOutput);
-        if (result.getJobId() == null) {
+
+        String jobIdStr = result.getJobId();
+        try {
+            new JobId(jobIdStr);
+        } catch (final IllegalArgumentException iae) {
+            jobIdStr = null;
+        }
+
+        if (jobIdStr == null) {
             Submitter.LOGGER.warning("Failed to submit Job.");
             Submitter.LOGGER.info(baos.toString());
+            return null;
         } else {
             Submitter.LOGGER.fine(baos.toString());
         }

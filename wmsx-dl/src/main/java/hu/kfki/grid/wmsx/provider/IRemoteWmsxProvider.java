@@ -52,4 +52,6 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
     void forgetAfs() throws RemoteException;
 
+    void setVo(String newVo) throws RemoteException;
+
 }

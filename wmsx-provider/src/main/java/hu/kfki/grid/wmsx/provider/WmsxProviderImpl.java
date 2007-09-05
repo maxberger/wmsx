@@ -63,6 +63,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private final File debugDir;
 
+    private String vo = null;
+
     private int maxJobs = 100;
 
     private final List pendingJobFactories = new LinkedList();
@@ -142,9 +144,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
         ParseResult result;
         try {
-            result = Submitter.getSubmitter().submitJdl(jdlFile);
-            final String jobStr = result.getJobId();
-            if (jobStr != null) {
+            final String jobStr;
+            result = Submitter.getSubmitter().submitJdl(jdlFile, this.vo);
+            if (result != null) {
+                jobStr = result.getJobId();
                 final JobId id = new JobId(jobStr);
                 WmsxProviderImpl.LOGGER.info("Job id is: " + id);
                 JobWatcher.getWatcher().addWatch(id,
@@ -169,6 +172,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                     this.appendLine(jobStr, new File(this.workDir,
                             WmsxProviderImpl.JOBIDS_RUNNING));
                 }
+            } else {
+                jobStr = null;
             }
             return jobStr;
         } catch (final IOException e) {
@@ -399,6 +404,15 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
         return success;
 
+    }
+
+    public void setVo(final String newVo) {
+        this.vo = newVo;
+        if (newVo == null) {
+            WmsxProviderImpl.LOGGER.info("VO unset");
+        } else {
+            WmsxProviderImpl.LOGGER.info("VO is now: " + newVo);
+        }
     }
 
 }

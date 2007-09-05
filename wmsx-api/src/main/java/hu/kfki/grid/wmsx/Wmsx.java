@@ -23,4 +23,6 @@ public interface Wmsx {
     boolean rememberGrid(String password);
 
     void forgetAfs();
+
+    void setVo(String newVo);
 }

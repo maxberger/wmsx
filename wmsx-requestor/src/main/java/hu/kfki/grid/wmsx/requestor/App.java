@@ -38,6 +38,8 @@ import com.sun.jini.admin.DestroyAdmin;
  */
 public class App implements DiscoveryListener {
 
+    private static final String VO = "vo";
+
     private static final String FORGET_AFS = "forgetafs";
 
     private static final String REMEMBER_AFS = "rememberafs";
@@ -65,6 +67,8 @@ public class App implements DiscoveryListener {
     private static final int CMD_FORGETAFS = 7;
 
     private static final int CMD_REMEMBERGRID = 8;
+
+    private static final int CMD_VO = 9;
 
     private final List commands;
 
@@ -111,6 +115,7 @@ public class App implements DiscoveryListener {
         options.addOption(new Option(App.FORGET_AFS, "Forgets AFS password"));
         options
                 .addOption(new Option(App.NAME, true, "Name for this execution"));
+        options.addOption(new Option(App.VO, true, "VO for job submissions"));
 
         final CommandLineParser parser = new GnuParser();
         try {
@@ -127,6 +132,9 @@ public class App implements DiscoveryListener {
             }
             if (cmd.hasOption('f')) {
                 cmds.add(new Integer(App.CMD_FULLPING));
+            }
+            if (cmd.hasOption(App.VO)) {
+                cmds.add(new Integer(App.CMD_VO));
             }
             if (cmd.hasOption(App.REMEMBER_AFS)) {
                 cmds.add(new Integer(App.CMD_REMEMBERAFS));
@@ -158,10 +166,7 @@ public class App implements DiscoveryListener {
     }
 
     private static void printHelp(final Options options) {
-        new HelpFormatter()
-                .printHelp(
-                        "wmsx-requestor [-n num] [-h] (-k|-j jdlFile [-o outFile] [-r resultDir]|-a argsFile [-A] [-i])",
-                        options);
+        new HelpFormatter().printHelp("wmsx-requestor [arguments]", options);
     }
 
     private static void dispatch(final List cmd, final CommandLine cmdLine) {
@@ -347,6 +352,12 @@ public class App implements DiscoveryListener {
                         App.LOGGER.warning("Error remembering Grid password");
                     }
                     break;
+                case CMD_VO:
+                    myService.setVo(this.commandLine.getOptionValue(App.VO));
+                    break;
+                default:
+                    App.LOGGER.warning("Invalid Command encountered: "
+                            + command);
                 }
             } catch (final IOException e) {
                 App.LOGGER.warning(e.getMessage() + " " + e.getStackTrace());
