@@ -153,4 +153,12 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    public void setVo(final String newVo) {
+        try {
+            this.remoteService.setVo(newVo);
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
+    }
+
 }
