@@ -47,10 +47,12 @@ public class Submitter {
                 parserOutput);
 
         String jobIdStr = result.getJobId();
-        try {
-            new JobId(jobIdStr);
-        } catch (final IllegalArgumentException iae) {
-            jobIdStr = null;
+        if (jobIdStr != null) {
+            try {
+                new JobId(jobIdStr);
+            } catch (final IllegalArgumentException iae) {
+                jobIdStr = null;
+            }
         }
 
         if (jobIdStr == null) {
