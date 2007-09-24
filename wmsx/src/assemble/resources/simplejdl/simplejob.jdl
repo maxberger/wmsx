@@ -1,0 +1,5 @@
+[
+JobType = "Interactive" ;
+Executable = "interactive.sh" ;
+InputSandbox = {"interactive.sh"} ;
+]

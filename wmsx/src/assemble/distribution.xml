@@ -33,6 +33,7 @@
         <include>sample/helloworld_preexec</include>
         <include>chainsample/chainsample_postexec</include>
         <include>chainsample/chainsample_chain</include>
+        <include>simplejdl/interactive.sh</include>
       </includes>
       <fileMode>0755</fileMode>
     </fileSet>
@@ -46,6 +47,7 @@
         <exclude>sample/helloworld_preexec</exclude>
         <exclude>chainsample/chainsample_postexec</exclude>
         <exclude>chainsample/chainsample_chain</exclude>
+        <exclude>simplejdl/interactive.sh</exclude>
       </excludes>
       <fileMode>0644</fileMode>
     </fileSet>
