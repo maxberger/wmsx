@@ -3,4 +3,5 @@ cd $2
 tar -xzf out.tar.gz
 VALUE=$(cat out/result)
 [ $VALUE -le 3 ] && exit 1
+echo done
 exit 0
