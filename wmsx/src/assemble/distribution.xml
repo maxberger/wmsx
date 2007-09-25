@@ -2,12 +2,13 @@
 <assembly>
   <id>distribution</id>
   <formats>
-    <format>zip</format>
+    <format>tar.gz</format>
   </formats>
+  <baseDirectory>wmsx</baseDirectory>
   <fileSets>
     <fileSet>
       <directory>target/appassembler</directory>
-      <outputDirectory/>
+      <outputDirectory>wmsx</outputDirectory>
       <includes>
         <include>bin/wmsx-provider</include>
         <include>bin/wmsx-requestor</include>
@@ -16,7 +17,7 @@
     </fileSet>
     <fileSet>
       <directory>target/appassembler</directory>
-      <outputDirectory/>
+      <outputDirectory>wmsx</outputDirectory>
       <excludes>
         <exclude>bin/wmsx-provider</exclude>
         <exclude>bin/wmsx-requestor</exclude>
@@ -27,13 +28,14 @@
       <directory>src/assemble/resources</directory>
       <outputDirectory/>
       <includes>
-        <include>wmsx-provider.sh</include>
-        <include>wmsx-requestor.sh</include>
-        <include>sample/helloworld_postexec</include>
-        <include>sample/helloworld_preexec</include>
-        <include>chainsample/chainsample_postexec</include>
-        <include>chainsample/chainsample_chain</include>
-        <include>simplejdl/interactive.sh</include>
+        <include>wmsx/wmsx-provider.sh</include>
+        <include>wmsx/wmsx-requestor.sh</include>
+        <include>wmsx/doc/sample/helloworld_postexec</include>
+        <include>wmsx/doc/sample/helloworld_preexec</include>
+        <include>wmsx/doc/chainsample/chainsample_postexec</include>
+        <include>wmsx/doc/chainsample/chainsample_chain</include>
+        <include>wmsx/doc/simplejdl/interactive.sh</include>
+        <include>configure</include>
       </includes>
       <fileMode>0755</fileMode>
     </fileSet>
@@ -41,13 +43,15 @@
       <directory>src/assemble/resources</directory>
       <outputDirectory/>
       <excludes>
-        <exclude>wmsx-provider.sh</exclude>
-        <exclude>wmsx-requestor.sh</exclude>
-        <exclude>sample/helloworld_postexec</exclude>
-        <exclude>sample/helloworld_preexec</exclude>
-        <exclude>chainsample/chainsample_postexec</exclude>
-        <exclude>chainsample/chainsample_chain</exclude>
-        <exclude>simplejdl/interactive.sh</exclude>
+        <exclude>wmsx/wmsx-provider.sh</exclude>
+        <exclude>wmsx/wmsx-requestor.sh</exclude>
+        <exclude>wmsx/doc/sample/helloworld_postexec</exclude>
+        <exclude>wmsx/doc/sample/helloworld_preexec</exclude>
+        <exclude>wmsx/doc/chainsample/chainsample_postexec</exclude>
+        <exclude>wmsx/doc/chainsample/chainsample_chain</exclude>
+        <exclude>wmsx/doc/simplejdl/interactive.sh</exclude>
+        <exclude>configure</exclude>
+        <exclude>bootstrap.sh</exclude>
       </excludes>
       <fileMode>0644</fileMode>
     </fileSet>

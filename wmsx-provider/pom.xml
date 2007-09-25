@@ -3,13 +3,13 @@
   <parent>
     <artifactId>wmsx-parent</artifactId>
     <groupId>hu.kfki.grid</groupId>
-    <version>3.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>hu.kfki.grid</groupId>
   <artifactId>wmsx-provider</artifactId>
   <packaging>jar</packaging>
-  <version>3.0-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <name>WMS-X Provider</name>
   <url>http://www.myorganization.org</url>
   <build>
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>hu.kfki.grid</groupId>
       <artifactId>wmsx-dl</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>commons-cli</groupId>
