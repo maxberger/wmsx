@@ -1,11 +1,12 @@
 package hu.kfki.grid.wmsx.job.submit;
 
+import hu.kfki.grid.wmsx.backends.Backend;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import edg.workload.userinterface.jclient.JobId;
@@ -27,16 +28,9 @@ public class Submitter {
         return Submitter.submitter;
     }
 
-    public ParseResult submitJdl(final String jdlFile, final String vo)
-            throws IOException {
-        final List commandLine = new Vector();
-        commandLine.add("/opt/edg/bin/edg-job-submit");
-        commandLine.add("--nolisten");
-        if (vo != null) {
-            commandLine.add("--vo");
-            commandLine.add(vo);
-        }
-        commandLine.add(jdlFile);
+    public ParseResult submitJdl(final String jdlFile, final String vo,
+            final Backend backend) throws IOException {
+        final List commandLine = backend.submitJdl(jdlFile, vo);
         final Process p = Runtime.getRuntime().exec(
                 (String[]) commandLine.toArray(new String[commandLine.size()]),
                 null, new File(jdlFile).getParentFile());

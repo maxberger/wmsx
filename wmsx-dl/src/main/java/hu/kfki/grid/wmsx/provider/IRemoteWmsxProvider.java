@@ -54,4 +54,6 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
     void setVo(String newVo) throws RemoteException;
 
+    void setBackend(String backend) throws RemoteException;
+
 }

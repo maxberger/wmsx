@@ -25,4 +25,6 @@ public interface Wmsx {
     void forgetAfs();
 
     void setVo(String newVo);
+
+    void setBackend(String backend);
 }

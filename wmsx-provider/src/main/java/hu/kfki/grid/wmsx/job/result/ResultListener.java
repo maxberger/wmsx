@@ -1,5 +1,6 @@
 package hu.kfki.grid.wmsx.job.result;
 
+import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.provider.JdlJob;
 
@@ -10,7 +11,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.globus.gsi.GlobusCredentialException;
@@ -47,7 +47,7 @@ public class ResultListener implements JobListener {
         return false;
     }
 
-    public void done(final JobId id, final boolean success) {
+    public void done(final JobId id, final Backend back, final boolean success) {
         final JdlJob job = (JdlJob) this.resultJobs.get(id);
         if (job == null) {
             return;
@@ -55,7 +55,7 @@ public class ResultListener implements JobListener {
         try {
             final File dir = this.prepareResultDir(job);
             if (success) {
-                this.retrieveResult(id, job, dir);
+                this.retrieveResult(id, job, dir, back);
             } else {
                 this.retrieveLog(id, dir);
             }
@@ -93,13 +93,10 @@ public class ResultListener implements JobListener {
         return dir;
     }
 
-    private void retrieveResult(final JobId id, final JdlJob job, final File dir) {
-        final List commandLine = new Vector();
-        commandLine.add("/opt/edg/bin/edg-job-get-output");
-        commandLine.add("--dir");
-        commandLine.add(dir.getAbsolutePath());
-        commandLine.add("--noint");
-        commandLine.add(id.toString());
+    private void retrieveResult(final JobId id, final JdlJob job,
+            final File dir, final Backend backend) {
+        final List commandLine = backend.jobOutputCommand(
+                dir.getAbsolutePath(), id.toString());
         try {
             final Process p = Runtime.getRuntime().exec(
                     (String[]) commandLine.toArray(new String[commandLine
@@ -110,11 +107,11 @@ public class ResultListener implements JobListener {
         }
     }
 
-    public void running(final JobId id) {
+    public void running(final JobId id, final Backend back) {
         // Empty
     }
 
-    public void startup(final JobId id) {
+    public void startup(final JobId id, final Backend back) {
         // Empty
     }
 
