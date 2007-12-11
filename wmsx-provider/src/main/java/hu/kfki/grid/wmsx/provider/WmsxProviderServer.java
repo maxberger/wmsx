@@ -215,10 +215,17 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             final ObjectOutputStream out = new ObjectOutputStream(fos);
             out.writeObject(this.smartProxy);
             out.close();
+
+            final Process p = Runtime.getRuntime().exec(
+                    new String[] { "/bin/chmod", "600", proxyFile });
+
             WmsxProviderServer.LOGGER.info("Written Proxy to " + proxyFile);
             new File(proxyFile).deleteOnExit();
+            p.waitFor();
         } catch (final IOException io) {
             WmsxProviderServer.LOGGER.warning(io.getMessage());
+        } catch (InterruptedException e) {
+            WmsxProviderServer.LOGGER.warning(e.getMessage());
         }
     }
 
