@@ -401,7 +401,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             throws RemoteException {
         WmsxProviderImpl.LOGGER.info("New Grid Remeberer");
         this.forgetGrid();
-        this.gridRenewer = new VOMS(password, vo);
+        this.gridRenewer = new VOMS(password, this.vo);
         final boolean success = this.startupRenewer(this.gridRenewer);
         if (!success) {
             WmsxProviderImpl.LOGGER.info("Grid Password failed");
@@ -421,13 +421,14 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     public void setBackend(final String newBackend) {
-        LOGGER.info("Setting backend to: " + newBackend);
+        WmsxProviderImpl.LOGGER.info("Setting backend to: " + newBackend);
         if ("glite".compareToIgnoreCase(newBackend) == 0) {
             this.backend = Backends.GLITE;
         } else if ("edg".compareToIgnoreCase(newBackend) == 0) {
             this.backend = Backends.EDG;
         } else {
-            // TODO: DEBUG!
+            WmsxProviderImpl.LOGGER.warning("Unsupported backend: "
+                    + newBackend);
         }
 
     }
