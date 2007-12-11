@@ -401,7 +401,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             throws RemoteException {
         WmsxProviderImpl.LOGGER.info("New Grid Remeberer");
         this.forgetGrid();
-        this.gridRenewer = new VOMS(password);
+        this.gridRenewer = new VOMS(password, vo);
         final boolean success = this.startupRenewer(this.gridRenewer);
         if (!success) {
             WmsxProviderImpl.LOGGER.info("Grid Password failed");
