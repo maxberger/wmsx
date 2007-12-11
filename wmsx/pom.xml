@@ -4,22 +4,22 @@
   <parent>
     <artifactId>wmsx-parent</artifactId>
     <groupId>hu.kfki.grid</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <groupId>hu.kfki.grid</groupId>
   <artifactId>wmsx</artifactId>
   <name>WMS-X Distribution</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>hu.kfki.grid</groupId>
       <artifactId>wmsx-provider</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>hu.kfki.grid</groupId>
       <artifactId>wmsx-requestor</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>

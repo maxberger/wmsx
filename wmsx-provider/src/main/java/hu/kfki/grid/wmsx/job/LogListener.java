@@ -1,5 +1,7 @@
 package hu.kfki.grid.wmsx.job;
 
+import hu.kfki.grid.wmsx.backends.Backend;
+
 import java.util.logging.Logger;
 
 import edg.workload.userinterface.jclient.JobId;
@@ -20,7 +22,7 @@ public class LogListener implements JobListener {
         return LogListener.logListener;
     }
 
-    public void done(final JobId jobId, final boolean success) {
+    public void done(final JobId jobId, final Backend back, final boolean success) {
         if (success) {
             LogListener.LOGGER.info("DONE/SUCCESS: " + jobId);
         } else {
@@ -28,11 +30,11 @@ public class LogListener implements JobListener {
         }
     }
 
-    public void running(final JobId jobId) {
+    public void running(final JobId jobId, final Backend back) {
         LogListener.LOGGER.info("RUNNING: " + jobId);
     }
 
-    public void startup(final JobId jobId) {
+    public void startup(final JobId jobId, final Backend back) {
         LogListener.LOGGER.info("STARTUP: " + jobId);
     }
 

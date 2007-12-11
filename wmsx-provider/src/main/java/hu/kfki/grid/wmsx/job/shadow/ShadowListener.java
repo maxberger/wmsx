@@ -1,5 +1,6 @@
 package hu.kfki.grid.wmsx.job.shadow;
 
+import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.job.submit.ParseResult;
 
@@ -229,7 +230,7 @@ public class ShadowListener implements Runnable, JobListener {
         this.cleanup();
     }
 
-    public void done(final JobId id, final boolean success) {
+    public void done(final JobId id, final Backend back, final boolean success) {
         // System.out.println("Terminator called!");
         this.termination = true;
         if (this.runThread != null) {
@@ -237,11 +238,11 @@ public class ShadowListener implements Runnable, JobListener {
         }
     }
 
-    public void running(final JobId id) {
+    public void running(final JobId id, final Backend back) {
         // Nothing yet
     }
 
-    public void startup(final JobId id) {
+    public void startup(final JobId id, final Backend back) {
         // Nothing yet
     }
 }

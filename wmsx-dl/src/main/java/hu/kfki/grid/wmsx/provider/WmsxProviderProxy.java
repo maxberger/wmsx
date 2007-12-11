@@ -161,4 +161,12 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    public void setBackend(String backend) {
+        try {
+            this.remoteService.setBackend(backend);
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
+    }
+
 }

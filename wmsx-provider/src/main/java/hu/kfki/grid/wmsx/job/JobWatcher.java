@@ -1,5 +1,7 @@
 package hu.kfki.grid.wmsx.job;
 
+import hu.kfki.grid.wmsx.backends.Backends;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -130,16 +132,16 @@ public class JobWatcher implements Runnable {
                         final JobListener listener = (JobListener) li.next();
                         switch (stateNow) {
                         case STATE_STARTUP:
-                            listener.startup(jobId);
+                            listener.startup(jobId, Backends.EDG);
                             break;
                         case STATE_RUNNING:
-                            listener.running(jobId);
+                            listener.running(jobId, Backends.EDG);
                             break;
                         case STATE_SUCCESS:
-                            listener.done(jobId, true);
+                            listener.done(jobId, Backends.EDG, true);
                             break;
                         case STATE_FAILED:
-                            listener.done(jobId, false);
+                            listener.done(jobId, Backends.EDG, false);
                             break;
                         }
                     }

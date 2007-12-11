@@ -3,6 +3,8 @@ package hu.kfki.grid.wmsx.provider;
 import hu.kfki.grid.renewer.AFS;
 import hu.kfki.grid.renewer.Renewer;
 import hu.kfki.grid.renewer.VOMS;
+import hu.kfki.grid.wmsx.backends.Backend;
+import hu.kfki.grid.wmsx.backends.Backends;
 import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.LogListener;
@@ -77,6 +79,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private final Map dirs = new HashMap();
 
+    private Backend backend = Backends.EDG;
+
     public WmsxProviderImpl(final DestroyAdmin dadm, final File workdir) {
         this.destroyAdmin = dadm;
         this.workDir = workdir;
@@ -145,7 +149,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         ParseResult result;
         try {
             final String jobStr;
-            result = Submitter.getSubmitter().submitJdl(jdlFile, this.vo);
+            result = Submitter.getSubmitter().submitJdl(jdlFile, this.vo,
+                    this.backend);
             if (result != null) {
                 jobStr = result.getJobId();
                 final JobId id = new JobId(jobStr);
@@ -281,7 +286,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
-    public void done(final JobId id, final boolean success) {
+    public void done(final JobId id, final Backend back, final boolean success) {
         this.investigateLater();
         synchronized (this.workDir) {
             final String jobStr = id.toString();
@@ -297,11 +302,11 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
-    public void running(final JobId id) {
+    public void running(final JobId id, final Backend back) {
         // ignore
     }
 
-    public void startup(final JobId id) {
+    public void startup(final JobId id, final Backend back) {
         // ignore
     }
 
@@ -413,6 +418,18 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         } else {
             WmsxProviderImpl.LOGGER.info("VO is now: " + newVo);
         }
+    }
+
+    public void setBackend(final String newBackend) {
+        LOGGER.info("Setting backend to: " + newBackend);
+        if ("glite".compareToIgnoreCase(newBackend) == 0) {
+            this.backend = Backends.GLITE;
+        } else if ("edg".compareToIgnoreCase(newBackend) == 0) {
+            this.backend = Backends.EDG;
+        } else {
+            // TODO: DEBUG!
+        }
+
     }
 
 }
