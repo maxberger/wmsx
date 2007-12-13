@@ -145,7 +145,6 @@ public class LaszloJobFactory implements JobFactory {
             reqValue = "(Member(\"AFS\",other.GlueHostApplicationSoftwareRunTimeEnvironment))";
         }
         final String extraReq = jdlArgs.getRequirements();
-        System.out.println("Extra: " + extraReq);
         if (extraReq != null) {
             if (reqValue == null) {
                 reqValue = "";
