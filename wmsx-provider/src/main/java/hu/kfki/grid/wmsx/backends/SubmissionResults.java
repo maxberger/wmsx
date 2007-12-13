@@ -1,7 +1,7 @@
-package hu.kfki.grid.wmsx.job.submit;
+package hu.kfki.grid.wmsx.backends;
 
-public class ParseResult {
-    final String jobId;
+public class SubmissionResults {
+    final JobUid jobId;
 
     final String iStream;
 
@@ -13,7 +13,7 @@ public class ParseResult {
 
     final int port;
 
-    public ParseResult(final String jobId, final String stream,
+    public SubmissionResults(final JobUid jobId, final String stream,
             final String stream2, final String stream3, final int pid,
             final int portNum) {
         super();
@@ -33,7 +33,7 @@ public class ParseResult {
         return this.iStream;
     }
 
-    public String getJobId() {
+    public JobUid getJobId() {
         return this.jobId;
     }
 

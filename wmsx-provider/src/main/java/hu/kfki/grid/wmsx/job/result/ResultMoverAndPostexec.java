@@ -37,7 +37,9 @@ public class ResultMoverAndPostexec implements Runnable {
 
     public void run() {
         try {
-            this.process.waitFor();
+            if (this.process != null) {
+                this.process.waitFor();
+            }
             this.moveResult();
             this.postExec();
 
@@ -123,7 +125,7 @@ public class ResultMoverAndPostexec implements Runnable {
             ResultMoverAndPostexec.LOGGER.info("Chain returned " + l.size()
                     + " new job(s).");
             WmsxProviderImpl.getInstance().submitLaszlo(l, false,
-                    job.getPrefix(), job.getName());
+                    this.job.getPrefix(), this.job.getName());
         } else {
             ResultMoverAndPostexec.LOGGER.info("Chain returned no new jobs");
         }

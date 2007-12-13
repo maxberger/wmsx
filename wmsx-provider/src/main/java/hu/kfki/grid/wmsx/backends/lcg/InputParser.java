@@ -1,4 +1,8 @@
-package hu.kfki.grid.wmsx.job.submit;
+package hu.kfki.grid.wmsx.backends.lcg;
+
+import hu.kfki.grid.wmsx.backends.Backends;
+import hu.kfki.grid.wmsx.backends.JobUid;
+import hu.kfki.grid.wmsx.backends.SubmissionResults;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,12 +11,14 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.logging.Logger;
 
+import edg.workload.userinterface.jclient.JobId;
+
 public class InputParser {
 
     private static final Logger LOGGER = Logger.getLogger(InputParser.class
             .toString());
 
-    public static ParseResult parse(final InputStream inStream,
+    public static SubmissionResults parse(final InputStream inStream,
             final PrintStream outStream) {
 
         String jobId = null;
@@ -61,7 +67,20 @@ public class InputParser {
         } catch (final IOException e) {
             InputParser.LOGGER.fine(e.getMessage());
         }
-        return new ParseResult(jobId, iStream, oStream, eStream, shadowpid,
-                port);
+
+        if (jobId != null) {
+            try {
+                new JobId(jobId);
+            } catch (final IllegalArgumentException iae) {
+                jobId = null;
+            }
+        }
+
+        if (jobId == null) {
+            return null;
+        } else {
+            return new SubmissionResults(new JobUid(Backends.EDG, jobId), iStream,
+                    oStream, eStream, shadowpid, port);
+        }
     }
 }
