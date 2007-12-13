@@ -1,5 +1,6 @@
 package hu.kfki.grid.wmsx.backends;
 
+import hu.kfki.grid.wmsx.job.JobState;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +16,6 @@ public interface Backend {
 
     boolean jobIdIsURI();
 
-    int getState(final JobUid uid);
+    JobState getState(final JobUid uid);
 
 }

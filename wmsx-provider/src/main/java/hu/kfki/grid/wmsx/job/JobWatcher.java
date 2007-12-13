@@ -21,16 +21,6 @@ public class JobWatcher implements Runnable {
 
     private static JobWatcher jobWatcher;
 
-    public static final int STATE_STARTUP = 1;
-
-    public static final int STATE_RUNNING = 2;
-
-    public static final int STATE_SUCCESS = 3;
-
-    public static final int STATE_FAILED = 4;
-
-    public static final int STATE_NONE = 0;
-
     private boolean shutdown;
 
     private JobWatcher() {
@@ -93,21 +83,21 @@ public class JobWatcher implements Runnable {
             while (it.hasNext()) {
                 final JobUid jobId = (JobUid) it.next();
 
-                final int stateNow;
+                final JobState stateNow;
                 if (!this.shutdown) {
                     stateNow = jobId.getBackend().getState(jobId);
                 } else {
-                    stateNow = JobWatcher.STATE_FAILED;
+                    stateNow = JobState.FAILED;
                 }
                 boolean differs;
                 synchronized (this.jobstate) {
-                    Integer oldState = (Integer) this.jobstate.get(jobId);
+                    JobState oldState = (JobState) this.jobstate.get(jobId);
                     if (oldState == null) {
-                        oldState = new Integer(JobWatcher.STATE_NONE);
+                        oldState = JobState.NONE;
                     }
-                    differs = oldState.intValue() != stateNow;
+                    differs = !oldState.equals(stateNow);
                     if (differs) {
-                        this.jobstate.put(jobId, new Integer(stateNow));
+                        this.jobstate.put(jobId, stateNow);
                     }
                 }
 
@@ -116,8 +106,8 @@ public class JobWatcher implements Runnable {
                     synchronized (this) {
                         listeners = new HashSet((Set) this.joblisteners
                                 .get(jobId));
-                        if (stateNow == JobWatcher.STATE_SUCCESS
-                                || stateNow == JobWatcher.STATE_FAILED) {
+                        if (JobState.SUCCESS.equals(stateNow)
+                                || JobState.FAILED.equals(stateNow)) {
                             this.joblisteners.remove(jobId);
                         }
                     }
@@ -125,19 +115,14 @@ public class JobWatcher implements Runnable {
                     final Iterator li = listeners.iterator();
                     while (li.hasNext()) {
                         final JobListener listener = (JobListener) li.next();
-                        switch (stateNow) {
-                        case STATE_STARTUP:
+                        if (JobState.STARTUP.equals(stateNow)) {
                             listener.startup(jobId);
-                            break;
-                        case STATE_RUNNING:
+                        } else if (JobState.RUNNING.equals(stateNow)) {
                             listener.running(jobId);
-                            break;
-                        case STATE_SUCCESS:
+                        } else if (JobState.SUCCESS.equals(stateNow)) {
                             listener.done(jobId, true);
-                            break;
-                        case STATE_FAILED:
+                        } else if (JobState.FAILED.equals(stateNow)) {
                             listener.done(jobId, false);
-                            break;
                         }
                     }
                 }
