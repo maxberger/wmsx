@@ -3,7 +3,7 @@ package hu.kfki.grid.wmsx.backends.lcg;
 import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
-import hu.kfki.grid.wmsx.job.JobWatcher;
+import hu.kfki.grid.wmsx.job.JobState;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -94,9 +94,9 @@ public abstract class AbstractLCGBackend implements Backend {
         return true;
     }
 
-    public int getState(final JobUid uid) {
+    public JobState getState(final JobUid uid) {
         final Job job = new Job((JobId) uid.getBackendId());
-        int retVal = JobWatcher.STATE_FAILED;
+        JobState retVal = JobState.FAILED;
         try {
 
             final Result result = job.getStatus(false);
@@ -119,16 +119,16 @@ public abstract class AbstractLCGBackend implements Backend {
             final boolean success = statusInt == JobStatus.DONE;
 
             if (startupPhase) {
-                retVal = JobWatcher.STATE_STARTUP;
+                retVal = JobState.STARTUP;
             } else if (active) {
-                retVal = JobWatcher.STATE_RUNNING;
+                retVal = JobState.RUNNING;
             } else if (success) {
-                retVal = JobWatcher.STATE_SUCCESS;
+                retVal = JobState.SUCCESS;
             }
 
         } catch (final Exception e) {
             AbstractLCGBackend.LOGGER.warning(e.getMessage());
-            retVal = JobWatcher.STATE_FAILED;
+            retVal = JobState.FAILED;
         }
         return retVal;
     }
