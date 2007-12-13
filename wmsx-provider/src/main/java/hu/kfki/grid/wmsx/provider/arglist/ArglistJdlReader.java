@@ -1,16 +1,12 @@
 package hu.kfki.grid.wmsx.provider.arglist;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.Vector;
-import java.util.logging.Logger;
+import hu.kfki.grid.wmsx.job.description.EmptyJobDescription;
+import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
+import hu.kfki.grid.wmsx.job.description.JobDescription;
 
-import condor.classad.ClassAdParser;
-import condor.classad.Constant;
-import condor.classad.Expr;
-import condor.classad.ListExpr;
-import condor.classad.RecordExpr;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class ArglistJdlReader {
 
@@ -35,81 +31,25 @@ public class ArglistJdlReader {
 
     public ArglistJdlReader(final String jdlFile, final String cmdName) {
 
-        RecordExpr erecord = new RecordExpr();
+        JobDescription desc;
         try {
-            final ClassAdParser parser = new ClassAdParser(new FileInputStream(
-                    jdlFile));
-            final Expr e = parser.parse();
-            if (e instanceof RecordExpr) {
-                erecord = (RecordExpr) e;
-            } else {
-                ArglistJdlReader.LOGGER.warning("Error Reading JDL file: "
-                        + jdlFile);
-            }
-        } catch (final FileNotFoundException e) {
-            ArglistJdlReader.LOGGER.fine("No JDL file: " + jdlFile
-                    + " assuming defaults");
+            desc = new JDLJobDescription(jdlFile);
+        } catch (final IOException io) {
+            ArglistJdlReader.LOGGER.warning("Error Reading JDL file: "
+                    + io.getMessage() + ", assuming defaults");
+            desc = new EmptyJobDescription();
         }
 
-        this.executable = this.getEntry(erecord, "Executable", cmdName);
-        this.outputDir = this.getEntry(erecord, "OutputDirectory", "out");
-        final String jobType = this.getEntry(erecord, "JobType");
+        this.executable = desc.getStringEntry(JobDescription.EXECUTABLE,
+                cmdName);
+        this.outputDir = desc.getStringEntry("OutputDirectory", "out");
+        final String jobType = desc.getStringEntry(JobDescription.JOBTYPE);
         this.interactive = "Interactive".equalsIgnoreCase(jobType);
-        this.software = this.getList(erecord, "Software");
+        this.software = desc.getListEntry("Software");
         this.afs = this.software.remove("AFS");
-        this.archive = this.getEntry(erecord, "Archive", cmdName + ".tar.gz");
-        this.programDir = this.getEntry(erecord, "ProgramDir", cmdName);
-        this.requirements = this.getEntry(erecord, "Requirements");
-    }
-
-    private String getEntry(final RecordExpr erecord, final String key,
-            final String defaultValue) {
-        final String value = this.getEntry(erecord, key);
-        if (value == null) {
-            return defaultValue;
-        } else {
-            return this.unquote(value);
-        }
-
-    }
-
-    private String unquote(final String value) {
-        if (value.length() < 2) {
-            return value;
-        }
-        if (value.charAt(0) == '"' && value.charAt(value.length() - 1) == '"') {
-            return value.substring(1, value.length() - 1);
-        }
-        return value;
-    }
-
-    private String getEntry(final RecordExpr erecord, final String key) {
-        final Expr eval = erecord.lookup(key);
-        if (eval != null) {
-            return eval.toString();
-        }
-        // if (eval instanceof Constant) {
-        // final Constant econst = (Constant) eval;
-        // return econst.stringValue();
-        // }
-        return null;
-    }
-
-    private List getList(final RecordExpr erecord, final String key) {
-        final List theList = new Vector();
-        final Expr eval = erecord.lookup(key);
-        if (eval instanceof ListExpr) {
-            final ListExpr elist = (ListExpr) eval;
-            final int len = elist.size();
-            for (int i = 0; i < len; i++) {
-                final Expr sub = elist.sub(i);
-                if (sub instanceof Constant) {
-                    final Constant subconst = (Constant) sub;
-                    theList.add(subconst.stringValue());
-                }
-            }
-        }
-        return theList;
+        this.archive = desc.getStringEntry("Archive", cmdName + ".tar.gz");
+        this.programDir = desc.getStringEntry("ProgramDir", cmdName);
+        this.requirements = desc.getStringEntry("Requirements");
     }
 
     public String getExecutable() {
