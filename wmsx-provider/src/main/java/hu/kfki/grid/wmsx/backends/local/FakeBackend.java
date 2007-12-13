@@ -16,7 +16,7 @@ public class FakeBackend implements Backend {
 
     private int count = 0;
 
-    /** <Integer,Integer> */
+    /** <Integer,JobState> */
     private final Map state;
 
     private FakeBackend() {

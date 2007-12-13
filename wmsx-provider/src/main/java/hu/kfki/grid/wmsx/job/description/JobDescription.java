@@ -10,7 +10,13 @@ public interface JobDescription {
 
     static final String INPUTSANDBOX = "InputSandBox";
 
-    static final String OUTPUTSANDBOX = "InputSandBox";
+    static final String OUTPUTSANDBOX = "OutputSandBox";
+
+    static final String ARGUMENTS = "Arguments";
+
+    static final String STDOUTPUT = "StdOutput";
+
+    static final String STDERROR = "StdError";
 
     String getStringEntry(final String key, final String defaultValue);
 

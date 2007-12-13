@@ -436,6 +436,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             this.backend = Backends.EDG;
         } else if ("fake".compareToIgnoreCase(newBackend) == 0) {
             this.backend = Backends.FAKE;
+        } else if ("local".compareToIgnoreCase(newBackend) == 0) {
+            this.backend = Backends.LOCAL;
         } else {
             WmsxProviderImpl.LOGGER.warning("Unsupported backend: "
                     + newBackend);
