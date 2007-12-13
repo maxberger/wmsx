@@ -1,6 +1,6 @@
 package hu.kfki.grid.wmsx.job;
 
-import hu.kfki.grid.wmsx.backends.Backends;
+import hu.kfki.grid.wmsx.backends.JobUid;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,11 +8,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import edg.workload.userinterface.jclient.Job;
-import edg.workload.userinterface.jclient.JobId;
-import edg.workload.userinterface.jclient.JobStatus;
-import edg.workload.userinterface.jclient.Result;
 
 public class JobWatcher implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(JobWatcher.class
@@ -26,15 +21,15 @@ public class JobWatcher implements Runnable {
 
     private static JobWatcher jobWatcher;
 
-    private static final int STATE_STARTUP = 1;
+    public static final int STATE_STARTUP = 1;
 
-    private static final int STATE_RUNNING = 2;
+    public static final int STATE_RUNNING = 2;
 
-    private static final int STATE_SUCCESS = 3;
+    public static final int STATE_SUCCESS = 3;
 
-    private static final int STATE_FAILED = 4;
+    public static final int STATE_FAILED = 4;
 
-    private static final int STATE_NONE = 0;
+    public static final int STATE_NONE = 0;
 
     private boolean shutdown;
 
@@ -58,7 +53,7 @@ public class JobWatcher implements Runnable {
         return JobWatcher.jobWatcher;
     }
 
-    public synchronized void addWatch(final JobId jobId,
+    public synchronized void addWatch(final JobUid jobId,
             final JobListener listener) {
         if (!this.shutdown) {
             Set listeners = (Set) this.joblisteners.get(jobId);
@@ -96,11 +91,11 @@ public class JobWatcher implements Runnable {
 
             final Iterator it = jobs.iterator();
             while (it.hasNext()) {
-                final JobId jobId = (JobId) it.next();
+                final JobUid jobId = (JobUid) it.next();
 
                 final int stateNow;
                 if (!this.shutdown) {
-                    stateNow = JobWatcher.getState(new Job(jobId));
+                    stateNow = jobId.getBackend().getState(jobId);
                 } else {
                     stateNow = JobWatcher.STATE_FAILED;
                 }
@@ -132,16 +127,16 @@ public class JobWatcher implements Runnable {
                         final JobListener listener = (JobListener) li.next();
                         switch (stateNow) {
                         case STATE_STARTUP:
-                            listener.startup(jobId, Backends.EDG);
+                            listener.startup(jobId);
                             break;
                         case STATE_RUNNING:
-                            listener.running(jobId, Backends.EDG);
+                            listener.running(jobId);
                             break;
                         case STATE_SUCCESS:
-                            listener.done(jobId, Backends.EDG, true);
+                            listener.done(jobId, true);
                             break;
                         case STATE_FAILED:
-                            listener.done(jobId, Backends.EDG, false);
+                            listener.done(jobId, false);
                             break;
                         }
                     }
@@ -156,44 +151,6 @@ public class JobWatcher implements Runnable {
             }
         }
         System.gc();
-    }
-
-    private static int getState(final Job job) {
-        int retVal = JobWatcher.STATE_FAILED;
-        try {
-
-            final Result result = job.getStatus(false);
-
-            final JobStatus status = (JobStatus) result.getResult();
-
-            final int statusInt = status.code();
-
-            final boolean startupPhase = statusInt == JobStatus.SUBMITTED
-                    || statusInt == JobStatus.WAITING
-                    || statusInt == JobStatus.READY
-                    || statusInt == JobStatus.SCHEDULED;
-
-            final boolean active = statusInt == JobStatus.RUNNING;
-
-            // boolean done = (statusInt == JobStatus.DONE)
-            // || (statusInt == JobStatus.CLEARED)
-            // || (statusInt == JobStatus.ABORTED)
-            // || (statusInt == JobStatus.CANCELLED);
-            final boolean success = statusInt == JobStatus.DONE;
-
-            if (startupPhase) {
-                retVal = JobWatcher.STATE_STARTUP;
-            } else if (active) {
-                retVal = JobWatcher.STATE_RUNNING;
-            } else if (success) {
-                retVal = JobWatcher.STATE_SUCCESS;
-            }
-
-        } catch (final Exception e) {
-            JobWatcher.LOGGER.warning(e.getMessage());
-            retVal = JobWatcher.STATE_FAILED;
-        }
-        return retVal;
     }
 
     public synchronized int getNumJobsRunning() {

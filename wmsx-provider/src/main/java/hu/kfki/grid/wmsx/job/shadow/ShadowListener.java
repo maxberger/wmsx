@@ -1,8 +1,8 @@
 package hu.kfki.grid.wmsx.job.shadow;
 
-import hu.kfki.grid.wmsx.backends.Backend;
+import hu.kfki.grid.wmsx.backends.JobUid;
+import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobListener;
-import hu.kfki.grid.wmsx.job.submit.ParseResult;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,8 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
-
-import edg.workload.userinterface.jclient.JobId;
 
 public class ShadowListener implements Runnable, JobListener {
 
@@ -45,7 +43,7 @@ public class ShadowListener implements Runnable, JobListener {
 
     int port;
 
-    private ShadowListener(final ParseResult result,
+    private ShadowListener(final SubmissionResults result,
             final WritableByteChannel outputStream) {
         this.appOutput = outputStream;
         // Runtime.runFinalizersOnExit(true);
@@ -76,7 +74,7 @@ public class ShadowListener implements Runnable, JobListener {
         return new File(stream);
     }
 
-    public static ShadowListener listen(final ParseResult result,
+    public static ShadowListener listen(final SubmissionResults result,
             final WritableByteChannel outputStream) {
         final ShadowListener l = new ShadowListener(result, outputStream);
         return l;
@@ -161,7 +159,6 @@ public class ShadowListener implements Runnable, JobListener {
     }
 
     private void cleanup() {
-        ShadowListener.LOGGER.info("Cleanup called");
         this.killer(false);
         this.closeChannel(this.oChannel);
         this.oChannel = null;
@@ -210,7 +207,7 @@ public class ShadowListener implements Runnable, JobListener {
     }
 
     public void run() {
-        // System.out.println("I am listening...");
+        ShadowListener.LOGGER.info("Shadow listener started");
         try {
             final ByteBuffer buf = ByteBuffer.allocateDirect(4096);
             while (!this.termination) {
@@ -226,11 +223,11 @@ public class ShadowListener implements Runnable, JobListener {
             // System.out.println("Exceptional!");
             // Ignore, the end is near!
         }
-        // System.out.println("Listener is terminated");
+        ShadowListener.LOGGER.info("Shadow listener terminated");
         this.cleanup();
     }
 
-    public void done(final JobId id, final Backend back, final boolean success) {
+    public void done(final JobUid id, final boolean success) {
         // System.out.println("Terminator called!");
         this.termination = true;
         if (this.runThread != null) {
@@ -238,11 +235,11 @@ public class ShadowListener implements Runnable, JobListener {
         }
     }
 
-    public void running(final JobId id, final Backend back) {
+    public void running(final JobUid id) {
         // Nothing yet
     }
 
-    public void startup(final JobId id, final Backend back) {
+    public void startup(final JobUid id) {
         // Nothing yet
     }
 }

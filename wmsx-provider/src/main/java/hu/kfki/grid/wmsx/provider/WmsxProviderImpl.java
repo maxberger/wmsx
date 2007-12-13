@@ -5,13 +5,13 @@ import hu.kfki.grid.renewer.Renewer;
 import hu.kfki.grid.renewer.VOMS;
 import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.Backends;
+import hu.kfki.grid.wmsx.backends.JobUid;
+import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.LogListener;
 import hu.kfki.grid.wmsx.job.result.ResultListener;
 import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
-import hu.kfki.grid.wmsx.job.submit.ParseResult;
-import hu.kfki.grid.wmsx.job.submit.Submitter;
 import hu.kfki.grid.wmsx.provider.arglist.LaszloJobFactory;
 import hu.kfki.grid.wmsx.provider.scripts.ScriptLauncher;
 
@@ -34,8 +34,6 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import com.sun.jini.admin.DestroyAdmin;
-
-import edg.workload.userinterface.jclient.JobId;
 
 /**
  * My Jini Service Implementation!
@@ -119,17 +117,24 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             final String output, final String resultDir) {
         final int current = JobWatcher.getWatcher().getNumJobsRunning();
         final int avail = this.maxJobs - current;
+        final String result;
         if (avail > 0) {
-            return this.reallySubmitJdl(new JdlJobFactory(jdlFile, output,
-                    resultDir).createJdlJob());
+            final JobUid id = this.reallySubmitJdl(new JdlJobFactory(jdlFile,
+                    output, resultDir).createJdlJob());
+            if (id != null) {
+                result = id.getBackendId().toString();
+            } else {
+                result = "failed";
+            }
         } else {
             this.pendingJobFactories.add(new JdlJobFactory(jdlFile, output,
                     resultDir));
-            return "pending";
+            result = "pending";
         }
+        return result;
     }
 
-    private String reallySubmitJdl(final JdlJob job) {
+    private JobUid reallySubmitJdl(final JdlJob job) {
         final String jdlFile = job.getJdlFile();
         final String output = job.getOutput();
         final String preexec = job.getPreexec();
@@ -146,14 +151,12 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                     output + "_preexec");
         }
         WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
-        ParseResult result;
+        SubmissionResults result;
         try {
-            final String jobStr;
-            result = Submitter.getSubmitter().submitJdl(jdlFile, this.vo,
-                    this.backend);
+            final JobUid id;
+            result = this.backend.submitJdl(jdlFile, this.vo);
             if (result != null) {
-                jobStr = result.getJobId();
-                final JobId id = new JobId(jobStr);
+                id = result.getJobId();
                 WmsxProviderImpl.LOGGER.info("Job id is: " + id);
                 JobWatcher.getWatcher().addWatch(id,
                         LogListener.getLogListener());
@@ -172,15 +175,15 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 JobWatcher.getWatcher().addWatch(id,
                         ShadowListener.listen(result, oChannel));
                 synchronized (this.workDir) {
-                    this.appendLine(jobStr, new File(this.workDir,
+                    this.appendURILine(id, new File(this.workDir,
                             WmsxProviderImpl.JOBIDS_ALL));
-                    this.appendLine(jobStr, new File(this.workDir,
+                    this.appendURILine(id, new File(this.workDir,
                             WmsxProviderImpl.JOBIDS_RUNNING));
                 }
             } else {
-                jobStr = null;
+                id = null;
             }
-            return jobStr;
+            return id;
         } catch (final IOException e) {
             WmsxProviderImpl.LOGGER.warning(e.getMessage());
         } catch (final NullPointerException e) {
@@ -190,41 +193,47 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         return null;
     }
 
-    private void removeLine(final String line, final File file) {
-        try {
-            final List lines = new Vector();
-            final BufferedReader in = new BufferedReader(new FileReader(file));
-            String inLine = in.readLine();
-            while (inLine != null) {
-                if (!inLine.equals(line)) {
-                    lines.add(inLine);
+    private void removeURILine(final JobUid uid, final File file) {
+        if (uid.getBackend().jobIdIsURI()) {
+            final String line = uid.getBackendId().toString();
+            try {
+                final List lines = new Vector();
+                final BufferedReader in = new BufferedReader(new FileReader(
+                        file));
+                String inLine = in.readLine();
+                while (inLine != null) {
+                    if (!inLine.equals(line)) {
+                        lines.add(inLine);
+                    }
+                    inLine = in.readLine();
                 }
-                inLine = in.readLine();
+                in.close();
+                final BufferedWriter out = new BufferedWriter(new FileWriter(
+                        file, false));
+                final Iterator it = lines.iterator();
+                while (it.hasNext()) {
+                    final String outLine = (String) it.next();
+                    out.write(outLine);
+                    out.newLine();
+                }
+                out.close();
+            } catch (final IOException e) {
+                WmsxProviderImpl.LOGGER.warning(e.getMessage());
             }
-            in.close();
-            final BufferedWriter out = new BufferedWriter(new FileWriter(file,
-                    false));
-            final Iterator it = lines.iterator();
-            while (it.hasNext()) {
-                final String outLine = (String) it.next();
-                out.write(outLine);
-                out.newLine();
-            }
-            out.close();
-        } catch (final IOException e) {
-            WmsxProviderImpl.LOGGER.warning(e.getMessage());
         }
     }
 
-    private void appendLine(final String line, final File file) {
-        try {
-            final BufferedWriter out = new BufferedWriter(new FileWriter(file,
-                    true));
-            out.write(line);
-            out.newLine();
-            out.close();
-        } catch (final IOException e) {
-            WmsxProviderImpl.LOGGER.warning(e.getMessage());
+    private void appendURILine(final JobUid uid, final File file) {
+        if (uid.getBackend().jobIdIsURI()) {
+            try {
+                final BufferedWriter out = new BufferedWriter(new FileWriter(
+                        file, true));
+                out.write(uid.getBackendId().toString());
+                out.newLine();
+                out.close();
+            } catch (final IOException e) {
+                WmsxProviderImpl.LOGGER.warning(e.getMessage());
+            }
         }
     }
 
@@ -286,27 +295,26 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
-    public void done(final JobId id, final Backend back, final boolean success) {
+    public void done(final JobUid id, final boolean success) {
         this.investigateLater();
         synchronized (this.workDir) {
-            final String jobStr = id.toString();
-            this.appendLine(jobStr, new File(this.workDir,
+            this.appendURILine(id, new File(this.workDir,
                     WmsxProviderImpl.JOBIDS_DONE));
-            this.removeLine(jobStr, new File(this.workDir,
+            this.removeURILine(id, new File(this.workDir,
                     WmsxProviderImpl.JOBIDS_RUNNING));
             if (!success) {
-                this.appendLine(jobStr, new File(this.workDir,
+                this.appendURILine(id, new File(this.workDir,
                         WmsxProviderImpl.JOBIDS_FAILED));
             }
 
         }
     }
 
-    public void running(final JobId id, final Backend back) {
+    public void running(final JobUid id) {
         // ignore
     }
 
-    public void startup(final JobId id, final Backend back) {
+    public void startup(final JobUid id) {
         // ignore
     }
 
@@ -426,6 +434,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             this.backend = Backends.GLITE;
         } else if ("edg".compareToIgnoreCase(newBackend) == 0) {
             this.backend = Backends.EDG;
+        } else if ("fake".compareToIgnoreCase(newBackend) == 0) {
+            this.backend = Backends.FAKE;
         } else {
             WmsxProviderImpl.LOGGER.warning("Unsupported backend: "
                     + newBackend);

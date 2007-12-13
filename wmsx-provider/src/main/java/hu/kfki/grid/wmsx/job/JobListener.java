@@ -1,13 +1,12 @@
 package hu.kfki.grid.wmsx.job;
 
-import hu.kfki.grid.wmsx.backends.Backend;
-import edg.workload.userinterface.jclient.JobId;
+import hu.kfki.grid.wmsx.backends.JobUid;
 
 public interface JobListener {
 
-    void startup(JobId id, Backend backend);
+    void startup(JobUid id);
 
-    void running(JobId id, Backend backend);
+    void running(JobUid id);
 
-    void done(JobId id, Backend backend, boolean success);
+    void done(JobUid id, boolean success);
 }
