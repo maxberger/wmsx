@@ -13,4 +13,14 @@ public class EmptyJobDescription extends AbstractJobDescription {
         return null;
     }
 
+    public String toJDL() {
+        return "[]";
+    }
+
+    public void removeEntry(final String entry) {
+    }
+
+    public void replaceEntry(final String entry, final String value) {
+    }
+
 }

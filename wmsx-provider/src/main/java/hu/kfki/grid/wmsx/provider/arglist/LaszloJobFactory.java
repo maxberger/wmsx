@@ -90,7 +90,7 @@ public class LaszloJobFactory implements JobFactory {
             // .getAbsolutePath();
             final String output = new File(resultDir, LaszloJobFactory.STD_OUT)
                     .getAbsolutePath();
-            final JdlJob job = new JdlJob(jdlFilename, output, resultDir);
+            final JdlJob job = new JdlJob(jdlFilename, output, resultDir, null);
             job.setPreexec(this.cmdWithPath + "_preexec");
             job.setPostexec(this.cmdWithPath + "_postexec");
             job.setChain(this.cmdWithPath + "_chain");

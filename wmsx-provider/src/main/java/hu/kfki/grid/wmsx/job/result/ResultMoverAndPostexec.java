@@ -4,6 +4,7 @@ import hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider;
 import hu.kfki.grid.wmsx.provider.JdlJob;
 import hu.kfki.grid.wmsx.provider.WmsxProviderImpl;
 import hu.kfki.grid.wmsx.provider.scripts.ScriptLauncher;
+import hu.kfki.grid.wmsx.workflow.Workflow;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -86,7 +87,10 @@ public class ResultMoverAndPostexec implements Runnable {
                 this.runchain(cmdVec);
             }
         }
-
+        final Workflow wf = this.job.getWorkflow();
+        if (wf != null) {
+            wf.isDone(this.job);
+        }
     }
 
     private void runchain(final List cmdVec) {

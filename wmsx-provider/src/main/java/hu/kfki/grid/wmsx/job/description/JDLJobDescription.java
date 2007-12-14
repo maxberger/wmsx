@@ -56,4 +56,25 @@ public class JDLJobDescription extends AbstractJobDescription {
         return theList;
     }
 
+    public String toJDL() {
+        return this.erecord.toString();
+    }
+
+    public String toString() {
+        return this.toJDL();
+    }
+
+    public void removeEntry(final String entry) {
+        try {
+            this.erecord.removeAttribute(entry);
+        } catch (final IllegalArgumentException e) {
+            // ignore
+        }
+    }
+
+    public void replaceEntry(final String entry, final String value) {
+        this.removeEntry(entry);
+        this.erecord.insertAttribute(entry, Constant.getInstance(value));
+    }
+
 }

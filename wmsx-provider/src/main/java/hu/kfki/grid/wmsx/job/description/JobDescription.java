@@ -18,10 +18,18 @@ public interface JobDescription {
 
     static final String STDERROR = "StdError";
 
+    static final String RESULTDIR = "ResultDir";
+
     String getStringEntry(final String key, final String defaultValue);
 
     String getStringEntry(final String key);
 
     List getListEntry(final String key);
+
+    String toJDL();
+
+    void removeEntry(String entry);
+
+    void replaceEntry(String entry, String value);
 
 }
