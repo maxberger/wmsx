@@ -18,7 +18,7 @@ class JdlJobFactory implements JobFactory {
     }
 
     public JdlJob createJdlJob() {
-        return new JdlJob(this.jdlFile, this.output, this.result);
+        return new JdlJob(this.jdlFile, this.output, this.result, null);
     }
 
 }

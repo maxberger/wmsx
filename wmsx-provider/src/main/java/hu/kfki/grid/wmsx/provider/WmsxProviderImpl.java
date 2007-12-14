@@ -322,6 +322,13 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         // Empty on purpose.
     }
 
+    public void addJobFactory(final JobFactory f) {
+        synchronized (this) {
+            this.pendingJobFactories.add(f);
+        }
+        this.investigateLater();
+    }
+
     public synchronized void submitLaszlo(final List commands,
             final boolean interactive, final String prefix, final String name) {
         WmsxProviderImpl.LOGGER

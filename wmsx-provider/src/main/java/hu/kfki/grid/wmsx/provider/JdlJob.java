@@ -3,12 +3,22 @@
  */
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
+import hu.kfki.grid.wmsx.job.description.JobDescription;
+import hu.kfki.grid.wmsx.workflow.Workflow;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.logging.Logger;
+
 public class JdlJob {
     private final String jdlFile;
 
     private final String output;
 
-    private final String result;
+    private String result;
 
     private String preexec;
 
@@ -23,6 +33,11 @@ public class JdlJob {
     private String prefix;
 
     private String name;
+
+    private Workflow workflow;
+
+    private static final Logger LOGGER = Logger.getLogger(JdlJob.class
+            .toString());
 
     /**
      * @return the command
@@ -55,10 +70,65 @@ public class JdlJob {
     }
 
     public JdlJob(final String jdlFile, final String output,
-            final String resultDir) {
-        this.jdlFile = jdlFile;
+            final String resultDir, final Workflow wf) {
         this.output = output;
         this.result = resultDir;
+        this.workflow = wf;
+        this.jdlFile = this.filterJdlFile(jdlFile);
+    }
+
+    private String filterJdlFile(final String jdlFileToFilter) {
+        String retVal;
+        boolean isFiltered = false;
+        try {
+            final JobDescription job = new JDLJobDescription(jdlFileToFilter);
+
+            final String resDir = job.getStringEntry(JobDescription.RESULTDIR);
+            if (resDir != null) {
+                final File resFile = new File(resDir);
+                if (resFile.isAbsolute()) {
+                    this.result = resFile.getAbsolutePath();
+                } else {
+                    this.result = new File(new File(jdlFileToFilter)
+                            .getAbsoluteFile().getParentFile(), resDir)
+                            .getAbsolutePath();
+                }
+                job.removeEntry(JobDescription.RESULTDIR);
+                isFiltered = true;
+            }
+            final String jobType = job.getStringEntry(JobDescription.JOBTYPE);
+            if ("workflow".equalsIgnoreCase(jobType)) {
+                final File jdlFileFile = new File(jdlFileToFilter)
+                        .getAbsoluteFile();
+                if (this.workflow == null) {
+                    this.workflow = new Workflow(jdlFileFile.getParentFile());
+                }
+                final String name = jdlFileFile.getName();
+                this.setName(name);
+                this.workflow.setNextNodes(name, job.getListEntry("Next"));
+                job.replaceEntry(JobDescription.JOBTYPE, "normal");
+                job.removeEntry("Next");
+                job.removeEntry("Prev");
+                isFiltered = true;
+            }
+
+            if (isFiltered) {
+                final File dir = new File(jdlFileToFilter).getAbsoluteFile()
+                        .getParentFile();
+                final File tmp = File.createTempFile("jdl", null, dir);
+                final Writer w = new FileWriter(tmp);
+                w.write(job.toJDL());
+                w.close();
+                tmp.deleteOnExit();
+                retVal = tmp.getAbsolutePath();
+            } else {
+                retVal = jdlFileToFilter;
+            }
+        } catch (final IOException e) {
+            JdlJob.LOGGER.warning(e.getMessage());
+            retVal = jdlFileToFilter;
+        }
+        return retVal;
     }
 
     /**
@@ -73,6 +143,13 @@ public class JdlJob {
      */
     public String getPostexec() {
         return this.postexec;
+    }
+
+    /**
+     * @return the postexec
+     */
+    public Workflow getWorkflow() {
+        return this.workflow;
     }
 
     public String getJdlFile() {
@@ -119,7 +196,7 @@ public class JdlJob {
     }
 
     public final String getPrefix() {
-        return prefix;
+        return this.prefix;
     }
 
     public final void setPrefix(final String nprefix) {
