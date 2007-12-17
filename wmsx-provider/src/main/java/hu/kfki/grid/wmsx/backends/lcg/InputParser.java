@@ -79,8 +79,8 @@ public class InputParser {
         if (jobId == null) {
             return null;
         } else {
-            return new SubmissionResults(new JobUid(Backends.EDG, jobId), iStream,
-                    oStream, eStream, shadowpid, port);
+            return new SubmissionResults(new JobUid(Backends.EDG, new JobId(
+                    jobId)), iStream, oStream, eStream, shadowpid, port);
         }
     }
 }
