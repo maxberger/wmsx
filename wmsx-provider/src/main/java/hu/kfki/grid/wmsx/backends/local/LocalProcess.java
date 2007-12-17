@@ -65,6 +65,7 @@ public class LocalProcess implements Runnable {
 
     private void copyList(final List inputList, final File from, final File to)
             throws IOException {
+        IOException ex = null;
         final Iterator it = inputList.iterator();
         while (it.hasNext()) {
             final String fileName = (String) it.next();
@@ -76,7 +77,15 @@ public class LocalProcess implements Runnable {
                 inputFile = new File(from, fileName);
             }
             final File toFile = new File(to, inputFile.getName());
-            this.copy(inputFile, toFile);
+            try {
+                this.copy(inputFile, toFile);
+            } catch (final IOException e) {
+                LocalProcess.LOGGER.warning(e.getMessage());
+                ex = e;
+            }
+        }
+        if (ex != null) {
+            throw new IOException("Error copying some files");
         }
     }
 
@@ -141,7 +150,7 @@ public class LocalProcess implements Runnable {
         if (this.workdir == null) {
             return;
         }
-        final File realTarget = new File(dir, "sub");
+        final File realTarget = new File(dir, "sub" + this.uid);
         realTarget.mkdirs();
         final List list = this.job.getListEntry(JobDescription.OUTPUTSANDBOX);
         try {
