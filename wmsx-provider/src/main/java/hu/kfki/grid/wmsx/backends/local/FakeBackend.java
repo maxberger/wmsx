@@ -17,10 +17,10 @@ public class FakeBackend implements Backend {
     private int count = 0;
 
     /** <Integer,JobState> */
-    private final Map state;
+    private final Map<Object, JobState> state;
 
     private FakeBackend() {
-        this.state = new HashMap();
+        this.state = new HashMap<Object, JobState>();
     };
 
     public static synchronized FakeBackend getInstance() {
@@ -33,7 +33,7 @@ public class FakeBackend implements Backend {
     public JobState getState(final JobUid uid) {
         JobState newState = JobState.SUCCESS;
         final Object key = uid.getBackendId();
-        final JobState nowState = (JobState) this.state.get(key);
+        final JobState nowState = this.state.get(key);
         if (JobState.NONE.equals(nowState)) {
             newState = JobState.STARTUP;
         } else if (JobState.STARTUP.equals(nowState)) {
@@ -65,6 +65,7 @@ public class FakeBackend implements Backend {
                 0);
     }
 
+    @Override
     public String toString() {
         return "Fake";
     }
