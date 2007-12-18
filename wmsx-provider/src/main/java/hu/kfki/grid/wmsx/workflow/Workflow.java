@@ -43,9 +43,11 @@ public class Workflow {
         final String name = jdlJob.getName();
         System.out.println("Done with: " + name);
         this.done.add(name);
-        final List next = (List) this.nextNodes.get(name);
-        if (next != null) {
-            this.potentialTodo.addAll(next);
+        synchronized (this.nextNodes) {
+            final List next = (List) this.nextNodes.get(name);
+            if (next != null) {
+                this.potentialTodo.addAll(next);
+            }
         }
         final Iterator it = this.potentialTodo.iterator();
         final List toExecute = new Vector();
@@ -81,10 +83,11 @@ public class Workflow {
                 new WorkflowNodeJobFactory(this, node));
     }
 
-    public synchronized void setNextNodes(final String name,
-            final List listEntry) {
-        this.nextNodes.put(name, listEntry);
-        this.parsePrev(listEntry);
+    public void setNextNodes(final String name, final List listEntry) {
+        synchronized (this.nextNodes) {
+            this.nextNodes.put(name, listEntry);
+            this.parsePrev(listEntry);
+        }
     }
 
     private void parsePrev(final List listEntry) {
