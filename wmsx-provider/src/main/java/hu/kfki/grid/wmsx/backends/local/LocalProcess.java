@@ -18,7 +18,7 @@ public class LocalProcess implements Runnable {
 
     File workdir;
 
-    final Map stateMap;
+    final Map<Object, JobState> stateMap;
 
     final Object uid;
 
@@ -29,8 +29,8 @@ public class LocalProcess implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(LocalProcess.class
             .toString());
 
-    public LocalProcess(final Map state, final Object id, final File jdlDir,
-            final JobDescription desc) {
+    public LocalProcess(final Map<Object, JobState> state, final Object id,
+            final File jdlDir, final JobDescription desc) {
         state.put(id, JobState.NONE);
         this.stateMap = state;
         this.uid = id;
@@ -58,17 +58,17 @@ public class LocalProcess implements Runnable {
         this.workdir.mkdirs();
         LocalProcess.LOGGER.info(this.workdir.toString());
 
-        final List inputList = this.job
+        final List<String> inputList = this.job
                 .getListEntry(JobDescription.INPUTSANDBOX);
         this.copyList(inputList, this.baseDir, this.workdir);
     }
 
-    private void copyList(final List inputList, final File from, final File to)
-            throws IOException {
+    private void copyList(final List<String> inputList, final File from,
+            final File to) throws IOException {
         IOException ex = null;
-        final Iterator it = inputList.iterator();
+        final Iterator<String> it = inputList.iterator();
         while (it.hasNext()) {
-            final String fileName = (String) it.next();
+            final String fileName = it.next();
             final File fileNameFile = new File(fileName);
             final File inputFile;
             if (fileNameFile.isAbsolute()) {
@@ -78,7 +78,7 @@ public class LocalProcess implements Runnable {
             }
             final File toFile = new File(to, inputFile.getName());
             try {
-                this.copy(inputFile, toFile);
+                LocalProcess.copy(inputFile, toFile);
             } catch (final IOException e) {
                 LocalProcess.LOGGER.warning(e.getMessage());
                 ex = e;
@@ -89,13 +89,34 @@ public class LocalProcess implements Runnable {
         }
     }
 
-    private void copy(final File in, final File out) throws IOException {
-        final FileChannel inChannel = new FileInputStream(in).getChannel();
-        final FileChannel outChannel = new FileOutputStream(out).getChannel();
+    private static void copy(final File in, final File out) throws IOException {
+        final FileInputStream fin = new FileInputStream(in);
+        final FileOutputStream fout = new FileOutputStream(out);
+        final FileChannel inChannel = fin.getChannel();
+        final FileChannel outChannel = fout.getChannel();
         try {
             inChannel.transferTo(0, inChannel.size(), outChannel);
-        } catch (final IOException e) {
-            throw e;
+        } catch (final IOException ia) {
+            // This is due to a bug in Java 1.4
+            try {
+                final byte[] b = new byte[4096];
+                int count;
+                do {
+                    count = fin.read(b);
+                    if (count > 0) {
+                        fout.write(b, 0, count);
+                    }
+                } while (count > 0);
+            } catch (final IOException o) {
+                throw ia;
+            } finally {
+                if (fin != null) {
+                    fin.close();
+                }
+                if (fout != null) {
+                    fout.close();
+                }
+            }
         } finally {
             if (inChannel != null) {
                 inChannel.close();
@@ -152,7 +173,8 @@ public class LocalProcess implements Runnable {
         }
         final File realTarget = new File(dir, "sub" + this.uid);
         realTarget.mkdirs();
-        final List list = this.job.getListEntry(JobDescription.OUTPUTSANDBOX);
+        final List<String> list = this.job
+                .getListEntry(JobDescription.OUTPUTSANDBOX);
         try {
             this.copyList(list, this.workdir, realTarget);
         } catch (final IOException e) {
