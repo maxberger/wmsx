@@ -1,6 +1,5 @@
 package hu.kfki.grid.renewer;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -26,10 +25,10 @@ public class PasswordAppLauncher {
         boolean retVal = false;
         try {
             final Process p = Runtime.getRuntime().exec(cmdarray);
-            final BufferedInputStream bi = new BufferedInputStream(p
-                    .getInputStream());
-            final byte[] b = new byte[4096];
-            bi.read(b);
+            // final BufferedInputStream bi = new BufferedInputStream(p
+            // .getInputStream());
+            // final byte[] b = new byte[4096];
+            // bi.read(b);
             if (password != null) {
                 Thread.sleep(1000);
                 final BufferedWriter w = new BufferedWriter(
