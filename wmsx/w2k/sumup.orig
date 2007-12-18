@@ -1,6 +1,6 @@
 [
 JobType = "Workflow";
-Executable = "sumup-g.sh CASENAME IDX";
+Executable = "sumup-g.sh"; Arguments = "CASENAME IDX";
 StdOutput = "StdOut-sumup";
 InputSandbox = {"scripts/sumup-g.sh","scripts/basesetup.sh","CASENAME/CASENAME.struct",SCFCLM,"CASENAME/CASENAME.scf2","CASENAME/CASENAME.inc","CASENAME/CASENAME.vsp","CASENAME/CASENAME.vns","CASENAME/CASENAME.inm","CASENAME/CASENAME.scf","CASENAME/CASENAME.clmsum","CASENAME/CASENAME.broyd1","CASENAME/CASENAME.broyd2"};
 OutputSandbox = {"StdOut-sumup","CASENAME/CASENAME.scf2p","CASENAME/CASENAME.clmval","CASENAME/sumpara.error","CASENAME/lcore.error","CASENAME/mixer.error","CASENAME/CASENAME.scfc","CASENAME/CASENAME.clmcor","CASENAME/CASENAME.scf","CASENAME/CASENAME.broyd1","CASENAME/CASENAME.broyd2","CASENAME/CASENAME.scfm","CASENAME/CASENAME.clmsum","CASENAME/result"};

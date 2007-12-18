@@ -1,6 +1,7 @@
 [
 JobType = "Workflow";
-Executable = "lapw0-g.sh CASENAME";
+Executable = "lapw0-g.sh";
+Arguments = "CASENAME";
 StdOutput = "StdOut-lapw0";
 InputSandbox = {"scripts/lapw0-g.sh","scripts/basesetup.sh","CASENAME/CASENAME.in0","CASENAME/CASENAME.struct","CASENAME/CASENAME.clmsum","CASENAME/CASENAME.inm"};
 OutputSandbox = {"StdOut-lapw0","CASENAME/CASENAME.clmsum","CASENAME/CASENAME.in0","CASENAME/CASENAME.inm","CASENAME/CASENAME.output0","CASENAME/CASENAME.scf0","CASENAME/CASENAME.struct","CASENAME/CASENAME.vns","CASENAME/CASENAME.vsp"};
