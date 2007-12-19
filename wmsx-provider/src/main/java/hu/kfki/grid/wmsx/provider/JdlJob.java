@@ -132,6 +132,9 @@ public class JdlJob {
                 }
                 final String name = jdlFileFile.getName();
                 this.setName(name);
+                if (this.command == null) {
+                    this.command = name;
+                }
                 this.workflow.setNextNodes(name, job.getListEntry("Next"));
                 job.replaceEntry(JobDescription.JOBTYPE, "normal");
                 job.removeEntry("Next");
