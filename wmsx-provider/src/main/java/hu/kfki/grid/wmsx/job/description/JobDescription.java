@@ -20,11 +20,15 @@ public interface JobDescription {
 
     static final String RESULTDIR = "ResultDir";
 
+    static final String POSTEXEC = "PostExec";
+
+    static final String CHAIN = "Chain";
+
     String getStringEntry(final String key, final String defaultValue);
 
     String getStringEntry(final String key);
 
-    List getListEntry(final String key);
+    List<String> getListEntry(final String key);
 
     String toJDL();
 

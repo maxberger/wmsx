@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public class JdlJob {
     private final String jdlFile;
 
-    private final String output;
+    private String output;
 
     private String result;
 
@@ -74,6 +74,7 @@ public class JdlJob {
         this.output = output;
         this.result = resultDir;
         this.workflow = wf;
+        this.args = new String[0];
         this.jdlFile = this.filterJdlFile(jdlFile);
     }
 
@@ -83,19 +84,45 @@ public class JdlJob {
         try {
             final JobDescription job = new JDLJobDescription(jdlFileToFilter);
 
-            final String resDir = job.getStringEntry(JobDescription.RESULTDIR);
-            if (resDir != null) {
-                final File resFile = new File(resDir);
-                if (resFile.isAbsolute()) {
-                    this.result = resFile.getAbsolutePath();
-                } else {
-                    this.result = new File(new File(jdlFileToFilter)
-                            .getAbsoluteFile().getParentFile(), resDir)
-                            .getAbsolutePath();
-                }
-                job.removeEntry(JobDescription.RESULTDIR);
+            final File jdlFileDir = new File(jdlFileToFilter).getAbsoluteFile()
+                    .getParentFile();
+
+            final String resultDir = this.filterJob(jdlFileDir, job,
+                    JobDescription.RESULTDIR);
+            if (resultDir != null) {
+                this.result = resultDir;
                 isFiltered = true;
             }
+
+            final String postExec = this.filterJob(jdlFileDir, job,
+                    JobDescription.POSTEXEC);
+            if (postExec != null) {
+                this.postexec = postExec;
+                isFiltered = true;
+            }
+
+            final String chainn = this.filterJob(jdlFileDir, job,
+                    JobDescription.CHAIN);
+            if (chainn != null) {
+                this.chain = chainn;
+                isFiltered = true;
+            }
+
+            final String outp = job.getStringEntry(JobDescription.STDOUTPUT);
+            if (outp != null) {
+                if (new File(outp).isAbsolute()) {
+                    this.output = outp;
+                } else {
+                    final File parent;
+                    if (resultDir != null) {
+                        parent = new File(resultDir);
+                    } else {
+                        parent = jdlFileDir;
+                    }
+                    this.output = new File(parent, outp).getAbsolutePath();
+                }
+            }
+
             final String jobType = job.getStringEntry(JobDescription.JOBTYPE);
             if ("workflow".equalsIgnoreCase(jobType)) {
                 final File jdlFileFile = new File(jdlFileToFilter)
@@ -129,6 +156,24 @@ public class JdlJob {
             retVal = jdlFileToFilter;
         }
         return retVal;
+    }
+
+    private String filterJob(final File jdlFileDir, final JobDescription job,
+            final String which) {
+        final String res;
+        final String resDir = job.getStringEntry(which);
+        if (resDir != null) {
+            final File resFile = new File(resDir);
+            if (resFile.isAbsolute()) {
+                res = resFile.getAbsolutePath();
+            } else {
+                res = new File(jdlFileDir, resDir).getAbsolutePath();
+            }
+            job.removeEntry(which);
+        } else {
+            res = null;
+        }
+        return res;
     }
 
     /**
