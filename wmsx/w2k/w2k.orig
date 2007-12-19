@@ -7,4 +7,5 @@ InputSandbox = {"scripts/lapw0-g.sh","scripts/basesetup.sh","CASENAME/CASENAME.i
 OutputSandbox = {"StdOut-lapw0","CASENAME/CASENAME.clmsum","CASENAME/CASENAME.in0","CASENAME/CASENAME.inm","CASENAME/CASENAME.output0","CASENAME/CASENAME.scf0","CASENAME/CASENAME.struct","CASENAME/CASENAME.vns","CASENAME/CASENAME.vsp"};
 ResultDir = "CASENAME";
 Next = {LAPW1};
+PreExec = "pre.sh";
 ]
