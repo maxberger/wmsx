@@ -1,3 +1,5 @@
-echo hallo
-echo $*
-exit 1
+cd $2
+current=$(cat counter)
+echo $current
+[ $current -lt 3 ] && exit 1
+exit 0
