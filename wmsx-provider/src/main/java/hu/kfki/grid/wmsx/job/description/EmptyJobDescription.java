@@ -5,8 +5,8 @@ import java.util.Vector;
 
 public class EmptyJobDescription extends AbstractJobDescription {
 
-    public List getListEntry(final String key) {
-        return new Vector();
+    public List<String> getListEntry(final String key) {
+        return new Vector<String>();
     }
 
     public String getStringEntry(final String key) {

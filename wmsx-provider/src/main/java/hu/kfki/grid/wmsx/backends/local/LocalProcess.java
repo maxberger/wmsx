@@ -142,8 +142,12 @@ public class LocalProcess implements Runnable {
         if (commande == null) {
             return;
         }
-        final String command = new File(this.workdir, commande)
-                .getCanonicalPath();
+        final String command;
+        if (new File(commande).isAbsolute()) {
+            command = commande;
+        } else {
+            command = new File(this.workdir, commande).getCanonicalPath();
+        }
         try {
             Runtime.getRuntime().exec(
                     new String[] { "/bin/chmod", "+x", command }).waitFor();

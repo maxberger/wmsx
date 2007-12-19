@@ -16,17 +16,15 @@ public class LocalBackend implements Backend {
 
     private int count = 0;
 
-    /** <Integer,JobState> */
-    private final Map state;
+    private final Map<Object, JobState> state;
 
-    /** <Integer,LocalProcess> */
-    private final Map processes;
+    private final Map<Object, LocalProcess> processes;
 
     private static LocalBackend instance;
 
     private LocalBackend() {
-        this.state = new Hashtable();
-        this.processes = new Hashtable();
+        this.state = new Hashtable<Object, JobState>();
+        this.processes = new Hashtable<Object, LocalProcess>();
     };
 
     public static synchronized LocalBackend getInstance() {
@@ -37,7 +35,7 @@ public class LocalBackend implements Backend {
     }
 
     public JobState getState(final JobUid uid) {
-        return (JobState) this.state.get(uid.getBackendId());
+        return this.state.get(uid.getBackendId());
     }
 
     public boolean jobIdIsURI() {
@@ -49,8 +47,7 @@ public class LocalBackend implements Backend {
     }
 
     public Process retrieveResult(final JobUid id, final File dir) {
-        final LocalProcess lp = (LocalProcess) this.processes.get(id
-                .getBackendId());
+        final LocalProcess lp = this.processes.get(id.getBackendId());
         // System.out.println("LP is" + lp);
         if (lp != null) {
             // System.out.println("Moving to " + dir);
@@ -73,6 +70,7 @@ public class LocalBackend implements Backend {
                 0);
     }
 
+    @Override
     public String toString() {
         return "Local";
     }

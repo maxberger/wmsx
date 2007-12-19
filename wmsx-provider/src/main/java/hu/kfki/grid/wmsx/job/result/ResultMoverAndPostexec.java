@@ -71,15 +71,14 @@ public class ResultMoverAndPostexec implements Runnable {
             final String output = this.job.getOutput();
             ResultMoverAndPostexec.LOGGER.info("Running " + postexec);
 
-            final List cmdVec = new Vector();
+            final List<String> cmdVec = new Vector<String>();
             cmdVec.add(postexec);
             cmdVec.add(this.job.getCommand());
             cmdVec.add(this.dir.getAbsolutePath());
             cmdVec.addAll(Arrays.asList(this.job.getArgs()));
 
             final int postRetVal = ScriptLauncher.getInstance().launchScript(
-                    (String[]) cmdVec.toArray(new String[0]),
-                    output + "_postexec");
+                    cmdVec.toArray(new String[0]), output + "_postexec");
             if (postRetVal == 1) {
                 final String chain = this.job.getChain();
                 ResultMoverAndPostexec.LOGGER.info("Running " + chain);
@@ -93,13 +92,13 @@ public class ResultMoverAndPostexec implements Runnable {
         }
     }
 
-    private void runchain(final List cmdVec) {
+    private void runchain(final List<String> cmdVec) {
         final OutputStream o = new ByteArrayOutputStream();
         ScriptLauncher.getInstance().launchScript(
-                (String[]) cmdVec.toArray(new String[0]), o);
+                cmdVec.toArray(new String[0]), o);
         final BufferedReader r = new BufferedReader(new StringReader(o
                 .toString()));
-        final List l = new Vector();
+        final List<IRemoteWmsxProvider.LaszloCommand> l = new Vector<IRemoteWmsxProvider.LaszloCommand>();
 
         final String output = this.job.getOutput();
 

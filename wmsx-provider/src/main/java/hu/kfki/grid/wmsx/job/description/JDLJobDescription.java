@@ -37,8 +37,8 @@ public class JDLJobDescription extends AbstractJobDescription {
         return null;
     }
 
-    public List getListEntry(final String key) {
-        final List theList = new Vector();
+    public List<String> getListEntry(final String key) {
+        final List<String> theList = new Vector<String>();
         final Expr eval = this.erecord.lookup(key);
         if (eval instanceof ListExpr) {
             final ListExpr elist = (ListExpr) eval;
@@ -60,6 +60,7 @@ public class JDLJobDescription extends AbstractJobDescription {
         return this.erecord.toString();
     }
 
+    @Override
     public String toString() {
         return this.toJDL();
     }
