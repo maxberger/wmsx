@@ -99,6 +99,7 @@ public class ResultMoverAndPostexec implements Runnable {
         final BufferedReader r = new BufferedReader(new StringReader(o
                 .toString()));
         final List<IRemoteWmsxProvider.LaszloCommand> l = new Vector<IRemoteWmsxProvider.LaszloCommand>();
+        final List<String> j = new Vector<String>();
 
         final String output = this.job.getOutput();
 
@@ -110,13 +111,16 @@ public class ResultMoverAndPostexec implements Runnable {
                 debugWriter.write(line);
                 debugWriter.newLine();
                 final String[] splitLine = line.split(" ");
-                final String command = splitLine[0];
-                final String args = line.substring(command.length() + 1);
+                if (splitLine.length == 1) {
+                    j.add(line);
+                } else {
+                    final String command = splitLine[0];
+                    final String args = line.substring(command.length() + 1);
 
-                final IRemoteWmsxProvider.LaszloCommand lcmd = new IRemoteWmsxProvider.LaszloCommand(
-                        command, args);
-                l.add(lcmd);
-
+                    final IRemoteWmsxProvider.LaszloCommand lcmd = new IRemoteWmsxProvider.LaszloCommand(
+                            command, args);
+                    l.add(lcmd);
+                }
                 line = r.readLine();
             }
             debugWriter.close();
@@ -124,13 +128,32 @@ public class ResultMoverAndPostexec implements Runnable {
             ResultMoverAndPostexec.LOGGER
                     .fine("IOException: " + e.getMessage());
         }
+
+        boolean did = false;
+        if (!j.isEmpty()) {
+            ResultMoverAndPostexec.LOGGER.info("Chain returned " + j.size()
+                    + " new JDL job(s).");
+            for (final String jdl : j) {
+                final String nextJdl;
+                if (new File(jdl).isAbsolute()) {
+                    nextJdl = jdl;
+                } else {
+                    nextJdl = new File(this.dir, jdl).getAbsolutePath();
+                }
+                WmsxProviderImpl.getInstance().submitJdl(nextJdl, null, null);
+            }
+            did = true;
+        }
         if (!l.isEmpty()) {
             ResultMoverAndPostexec.LOGGER.info("Chain returned " + l.size()
-                    + " new job(s).");
+                    + " new Laszlo job(s).");
             WmsxProviderImpl.getInstance().submitLaszlo(l, false,
                     this.job.getPrefix(), this.job.getName());
-        } else {
+            did = true;
+        }
+        if (!did) {
             ResultMoverAndPostexec.LOGGER.info("Chain returned no new jobs");
         }
+
     }
 }

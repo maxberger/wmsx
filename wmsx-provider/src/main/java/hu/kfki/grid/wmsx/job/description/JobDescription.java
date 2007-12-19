@@ -22,6 +22,8 @@ public interface JobDescription {
 
     static final String POSTEXEC = "PostExec";
 
+    static final String PREEXEC = "PreExec";
+
     static final String CHAIN = "Chain";
 
     String getStringEntry(final String key, final String defaultValue);

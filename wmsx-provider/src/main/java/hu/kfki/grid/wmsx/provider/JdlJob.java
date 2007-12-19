@@ -101,6 +101,13 @@ public class JdlJob {
                 isFiltered = true;
             }
 
+            final String preExec = this.filterJob(jdlFileDir, job,
+                    JobDescription.PREEXEC);
+            if (preExec != null) {
+                this.preexec = preExec;
+                isFiltered = true;
+            }
+
             final String chainn = this.filterJob(jdlFileDir, job,
                     JobDescription.CHAIN);
             if (chainn != null) {
