@@ -1,5 +1,6 @@
 package hu.kfki.grid.wmsx.job.description;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -15,7 +16,10 @@ public class JDLJobDescription extends AbstractJobDescription {
 
     private final RecordExpr erecord;
 
+    final File baseDir;
+
     public JDLJobDescription(final String jdlFile) throws IOException {
+        this.baseDir = new File(jdlFile).getAbsoluteFile().getParentFile();
         final ClassAdParser parser = new ClassAdParser(new FileInputStream(
                 jdlFile));
         final Expr e = parser.parse();
@@ -76,6 +80,10 @@ public class JDLJobDescription extends AbstractJobDescription {
     public void replaceEntry(final String entry, final String value) {
         this.removeEntry(entry);
         this.erecord.insertAttribute(entry, Constant.getInstance(value));
+    }
+
+    public File getBaseDir() {
+        return this.baseDir;
     }
 
 }
