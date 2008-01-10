@@ -4,5 +4,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface Controller extends Remote {
-    String sayHello() throws RemoteException;
+    WorkDescription retrieveWork() throws RemoteException;
+
+    public void doneWith(String id, ResultDescription result)
+            throws RemoteException;
 }
