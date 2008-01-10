@@ -38,6 +38,8 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
     void ping() throws RemoteException;
 
+    void startWorkers(int number) throws RemoteException;
+
     String submitJdl(String jdlFile, String output, String resultDir)
             throws RemoteException;
 

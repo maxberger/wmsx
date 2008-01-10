@@ -14,6 +14,7 @@ import hu.kfki.grid.wmsx.job.result.ResultListener;
 import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.provider.arglist.LaszloJobFactory;
 import hu.kfki.grid.wmsx.provider.scripts.ScriptLauncher;
+import hu.kfki.grid.wmsx.worker.ControllerServer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -86,6 +87,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         this.outDir = this.syncableDir(workdir, "out");
         this.debugDir = this.syncableDir(workdir, "debug");
         WmsxProviderImpl.instance = this;
+        ControllerServer.getInstance().prepareWorker(
+                this.syncableDir(this.debugDir, "worker"));
     }
 
     private File syncableDir(final File parentdir, final String subdir) {
@@ -254,10 +257,19 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }).start();
     }
 
-    public void setMaxJobs(final int maxj) throws RemoteException {
+    public void setMaxJobs(final int maxj) {
         WmsxProviderImpl.LOGGER.info("setMaxJobs to " + maxj);
         this.maxJobs = maxj;
         this.investigateLater();
+    }
+
+    public void startWorkers(int num) {
+        if (num > 50) {
+            num = 50;
+        }
+        for (int i = 0; i < num; i++) {
+            ControllerServer.getInstance().submitWorker();
+        }
     }
 
     private synchronized void investigateNumJobs() {

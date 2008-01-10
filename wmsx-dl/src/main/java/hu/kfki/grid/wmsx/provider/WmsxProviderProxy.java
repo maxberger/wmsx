@@ -76,6 +76,17 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    public void startWorkers(final int num) {
+        if (num < 1) {
+            return;
+        }
+        try {
+            this.remoteService.startWorkers(num);
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
+    }
+
     public boolean ping(final boolean remote) {
         if (remote) {
             try {
@@ -161,7 +172,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
-    public void setBackend(String backend) {
+    public void setBackend(final String backend) {
         try {
             this.remoteService.setBackend(backend);
         } catch (final RemoteException re) {

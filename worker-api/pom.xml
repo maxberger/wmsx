@@ -10,4 +10,15 @@
   <artifactId>worker-api</artifactId>
   <name>WMS-X Worker API</name>
   <version>1.1-SNAPSHOT</version>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>
+          <target>1.4</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
