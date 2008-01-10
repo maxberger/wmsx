@@ -3,7 +3,7 @@
  */
 package hu.kfki.grid.wmsx.provider;
 
-class JdlJobFactory implements JobFactory {
+public class JdlJobFactory implements JobFactory {
     private final String jdlFile;
 
     private final String output;

@@ -185,12 +185,12 @@ public class LaszloJobFactory implements JobFactory {
             jobStarter.write("AFS=true");
             jobStarter.newLine();
         }
-        final List software = jdlArgs.getSoftware();
+        final List<String> software = jdlArgs.getSoftware();
         if (!software.isEmpty()) {
             jobStarter.write("SOFTWARE=\"");
-            final Iterator it = software.iterator();
+            final Iterator<String> it = software.iterator();
             while (it.hasNext()) {
-                final String s = (String) it.next();
+                final String s = it.next();
                 jobStarter.write(s);
                 jobStarter.write(" ");
             }

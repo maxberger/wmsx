@@ -14,7 +14,7 @@ public class ArglistJdlReader {
 
     private final String outputDir;
 
-    private final List software;
+    private final List<String> software;
 
     private final boolean afs;
 
@@ -60,7 +60,7 @@ public class ArglistJdlReader {
         return this.outputDir;
     }
 
-    public List getSoftware() {
+    public List<String> getSoftware() {
         return this.software;
     }
 

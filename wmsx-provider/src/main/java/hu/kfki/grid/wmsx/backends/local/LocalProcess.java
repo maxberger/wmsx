@@ -3,12 +3,10 @@ package hu.kfki.grid.wmsx.backends.local;
 import hu.kfki.grid.wmsx.job.JobState;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.provider.scripts.ScriptLauncher;
+import hu.kfki.grid.wmsx.util.FileUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +76,7 @@ public class LocalProcess implements Runnable {
             }
             final File toFile = new File(to, inputFile.getName());
             try {
-                LocalProcess.copy(inputFile, toFile);
+                FileUtil.copy(inputFile, toFile);
             } catch (final IOException e) {
                 LocalProcess.LOGGER.warning(e.getMessage());
                 ex = e;
@@ -86,53 +84,6 @@ public class LocalProcess implements Runnable {
         }
         if (ex != null) {
             throw new IOException("Error copying some files");
-        }
-    }
-
-    private static void copy(final File in, final File out) throws IOException {
-        final FileInputStream fin = new FileInputStream(in);
-        final FileOutputStream fout = new FileOutputStream(out);
-        final FileChannel inChannel = fin.getChannel();
-        final FileChannel outChannel = fout.getChannel();
-        try {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-        } catch (final IOException ia) {
-            // This is due to a bug in Java 1.4
-            try {
-                final byte[] b = new byte[4096];
-                int count;
-                do {
-                    count = fin.read(b);
-                    if (count > 0) {
-                        fout.write(b, 0, count);
-                    }
-                } while (count > 0);
-            } catch (final IOException o) {
-                throw ia;
-            } finally {
-                if (fin != null) {
-                    fin.close();
-                }
-                if (fout != null) {
-                    fout.close();
-                }
-            }
-        } finally {
-            if (inChannel != null) {
-                inChannel.close();
-            }
-            if (outChannel != null) {
-                outChannel.close();
-            }
-        }
-
-        try {
-            Runtime.getRuntime().exec(
-                    new String[] { "/bin/chmod",
-                            "--reference=" + in.getCanonicalPath(),
-                            out.getCanonicalPath() }).waitFor();
-        } catch (final InterruptedException e) {
-            // Ignore
         }
     }
 
