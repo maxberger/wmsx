@@ -62,7 +62,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
     protected WmsxProviderImpl impl = null;
 
-    private final List activeRegistrations = new Vector();
+    private final List<ServiceRegistration> activeRegistrations = new Vector<ServiceRegistration>();
 
     private final Object keepAlive = new Object();
 
@@ -90,7 +90,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
                 WmsxProviderServer.printHelp(options);
                 System.exit(0);
             }
-            final List largs = cmd.getArgList();
+            final List<?> largs = cmd.getArgList();
             if (largs.size() != 1) {
                 throw new ParseException("Need workdir!");
             }
@@ -224,7 +224,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             p.waitFor();
         } catch (final IOException io) {
             WmsxProviderServer.LOGGER.warning(io.getMessage());
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             WmsxProviderServer.LOGGER.warning(e.getMessage());
         }
     }
@@ -320,17 +320,17 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
     }
 
     public void destroy() throws RemoteException {
-        final List regs;
+        final List<ServiceRegistration> regs;
         if (this.discover != null) {
             this.discover.terminate();
         }
         this.discover = null;
         synchronized (this.activeRegistrations) {
-            regs = new Vector(this.activeRegistrations);
+            regs = new Vector<ServiceRegistration>(this.activeRegistrations);
         }
-        final Iterator it = regs.iterator();
+        final Iterator<ServiceRegistration> it = regs.iterator();
         while (it.hasNext()) {
-            final ServiceRegistration reg = (ServiceRegistration) it.next();
+            final ServiceRegistration reg = it.next();
             try {
                 if (this.leaseManager != null) {
                     this.leaseManager.cancel(reg.getLease());

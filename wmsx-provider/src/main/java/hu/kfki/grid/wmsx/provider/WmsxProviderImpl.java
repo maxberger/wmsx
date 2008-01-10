@@ -67,7 +67,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private int maxJobs = 100;
 
-    private final List pendingJobFactories = new LinkedList();
+    private final List<JobFactory> pendingJobFactories = new LinkedList<JobFactory>();
 
     private static WmsxProviderImpl instance;
 
@@ -75,7 +75,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private Renewer gridRenewer;
 
-    private final Map dirs = new HashMap();
+    private final Map<String, File> dirs = new HashMap<String, File>();
 
     private Backend backend = Backends.EDG;
 
@@ -93,7 +93,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         try {
             final String canon = dirFile.getCanonicalPath();
             synchronized (this.dirs) {
-                final File existing = (File) this.dirs.get(canon);
+                final File existing = this.dirs.get(canon);
                 if (existing == null) {
                     this.dirs.put(canon, dirFile);
                     if (!dirFile.exists()) {
@@ -197,7 +197,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         if (uid.getBackend().jobIdIsURI()) {
             final String line = uid.getBackendId().toString();
             try {
-                final List lines = new Vector();
+                final List<String> lines = new Vector<String>();
                 final BufferedReader in = new BufferedReader(new FileReader(
                         file));
                 String inLine = in.readLine();
@@ -210,9 +210,9 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 in.close();
                 final BufferedWriter out = new BufferedWriter(new FileWriter(
                         file, false));
-                final Iterator it = lines.iterator();
+                final Iterator<String> it = lines.iterator();
                 while (it.hasNext()) {
-                    final String outLine = (String) it.next();
+                    final String outLine = it.next();
                     out.write(outLine);
                     out.newLine();
                 }
@@ -283,8 +283,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
         while (!this.pendingJobFactories.isEmpty()
                 && this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning() > 0) {
-            final JobFactory jf = (JobFactory) this.pendingJobFactories
-                    .remove(0);
+            final JobFactory jf = this.pendingJobFactories.remove(0);
             final JdlJob jd = jf.createJdlJob();
             this.reallySubmitJdl(jd);
             try {
@@ -319,7 +318,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     public void ping() throws RemoteException {
-        // Empty on purpose.
+        // do nothing.
     }
 
     public void addJobFactory(final JobFactory f) {
@@ -329,6 +328,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         this.investigateLater();
     }
 
+    @SuppressWarnings("unchecked")
     public synchronized void submitLaszlo(final List commands,
             final boolean interactive, final String prefix, final String name) {
         WmsxProviderImpl.LOGGER

@@ -19,6 +19,8 @@
     </plugins>
   </build>
   <modules>
+    <module>worker-api</module>
+    <module>worker</module>
     <module>wmsx-api</module>
     <module>wmsx-dl</module>
     <module>wmsx-provider</module>
