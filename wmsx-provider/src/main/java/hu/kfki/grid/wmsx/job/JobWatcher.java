@@ -13,9 +13,9 @@ public class JobWatcher implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(JobWatcher.class
             .toString());
 
-    private final Map joblisteners = new HashMap();
+    private final Map<JobUid, Set<JobListener>> joblisteners = new HashMap<JobUid, Set<JobListener>>();
 
-    private final Map jobstate = new HashMap();
+    private final Map<JobUid, JobState> jobstate = new HashMap<JobUid, JobState>();
 
     private Thread runThread;
 
@@ -46,9 +46,9 @@ public class JobWatcher implements Runnable {
     public synchronized void addWatch(final JobUid jobId,
             final JobListener listener) {
         if (!this.shutdown) {
-            Set listeners = (Set) this.joblisteners.get(jobId);
+            Set<JobListener> listeners = this.joblisteners.get(jobId);
             if (listeners == null) {
-                listeners = new HashSet();
+                listeners = new HashSet<JobListener>();
                 this.joblisteners.put(jobId, listeners);
             }
             listeners.add(listener);
@@ -74,14 +74,14 @@ public class JobWatcher implements Runnable {
                 JobWatcher.LOGGER.fine(e.getMessage());
             }
 
-            Set jobs;
+            Set<JobUid> jobs;
             synchronized (this) {
-                jobs = new HashSet(this.joblisteners.keySet());
+                jobs = new HashSet<JobUid>(this.joblisteners.keySet());
             }
 
-            final Iterator it = jobs.iterator();
+            final Iterator<JobUid> it = jobs.iterator();
             while (it.hasNext()) {
-                final JobUid jobId = (JobUid) it.next();
+                final JobUid jobId = it.next();
 
                 final JobState stateNow;
                 if (!this.shutdown) {
@@ -91,7 +91,7 @@ public class JobWatcher implements Runnable {
                 }
                 boolean differs;
                 synchronized (this.jobstate) {
-                    JobState oldState = (JobState) this.jobstate.get(jobId);
+                    JobState oldState = this.jobstate.get(jobId);
                     if (oldState == null) {
                         oldState = JobState.NONE;
                     }
@@ -102,9 +102,9 @@ public class JobWatcher implements Runnable {
                 }
 
                 if (differs) {
-                    Set listeners;
+                    Set<JobListener> listeners;
                     synchronized (this) {
-                        listeners = new HashSet((Set) this.joblisteners
+                        listeners = new HashSet<JobListener>(this.joblisteners
                                 .get(jobId));
                         if (JobState.SUCCESS.equals(stateNow)
                                 || JobState.FAILED.equals(stateNow)) {
@@ -112,9 +112,9 @@ public class JobWatcher implements Runnable {
                         }
                     }
 
-                    final Iterator li = listeners.iterator();
+                    final Iterator<JobListener> li = listeners.iterator();
                     while (li.hasNext()) {
-                        final JobListener listener = (JobListener) li.next();
+                        final JobListener listener = li.next();
                         if (JobState.STARTUP.equals(stateNow)) {
                             listener.startup(jobId);
                         } else if (JobState.RUNNING.equals(stateNow)) {
