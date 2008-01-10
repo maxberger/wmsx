@@ -74,7 +74,9 @@ public class App implements DiscoveryListener {
 
     private static final int CMD_BACKEND = 10;
 
-    private final List commands;
+    private static final int CMD_WORKERS = 11;
+
+    private final List<Integer> commands;
 
     private final CommandLine commandLine;
 
@@ -103,6 +105,8 @@ public class App implements DiscoveryListener {
                 "submit a Laszlo-style args file"));
         options.addOption(new Option("n", "number", true,
                 "set number of active jobs"));
+        options.addOption(new Option("w", "workers", true,
+                "submit number of workers"));
         options.addOptionGroup(commands);
         options.addOption(new Option("o", "output", true,
                 "redirect interactive output to file"));
@@ -126,7 +130,7 @@ public class App implements DiscoveryListener {
         final CommandLineParser parser = new GnuParser();
         try {
             final CommandLine cmd = parser.parse(options, args);
-            final List cmds = new Vector();
+            final List<Integer> cmds = new Vector<Integer>();
             if (cmd.hasOption('n')) {
                 cmds.add(new Integer(App.CMD_NUMBER));
             }
@@ -154,6 +158,9 @@ public class App implements DiscoveryListener {
             if (cmd.hasOption(App.REMEMBER_GRID)) {
                 cmds.add(new Integer(App.CMD_REMEMBERGRID));
             }
+            if (cmd.hasOption('w')) {
+                cmds.add(new Integer(App.CMD_WORKERS));
+            }
             if (cmd.hasOption('k')) {
                 cmds.add(new Integer(App.CMD_SHUTDOWN));
             } else if (cmd.hasOption('a')) {
@@ -178,7 +185,8 @@ public class App implements DiscoveryListener {
         new HelpFormatter().printHelp("wmsx-requestor [arguments]", options);
     }
 
-    private static void dispatch(final List cmd, final CommandLine cmdLine) {
+    private static void dispatch(final List<Integer> cmd,
+            final CommandLine cmdLine) {
         new App(cmd, cmdLine);
 
         // stay around long enough to receive replies
@@ -209,7 +217,7 @@ public class App implements DiscoveryListener {
         }
     }
 
-    public App(final List cmds, final CommandLine cmdLine) {
+    public App(final List<Integer> cmds, final CommandLine cmdLine) {
         this.commands = cmds;
         this.commandLine = cmdLine;
         // System.setSecurityManager(new RMISecurityManager());
@@ -277,7 +285,7 @@ public class App implements DiscoveryListener {
 
     private void haveReg(final ServiceRegistrar registrar) {
         Wmsx myService = null;
-        final Class[] classes = new Class[] { Wmsx.class };
+        final Class<?>[] classes = new Class<?>[] { Wmsx.class };
         final ServiceTemplate template = new ServiceTemplate(null, classes,
                 new Entry[] { new WmsxEntry(System.getProperty("user.name")) });
         try {
@@ -299,11 +307,11 @@ public class App implements DiscoveryListener {
             App.foundLock.notifyAll();
         }
 
-        final Iterator cmdIt = this.commands.iterator();
+        final Iterator<Integer> cmdIt = this.commands.iterator();
 
         while (cmdIt.hasNext()) {
 
-            final Integer com = (Integer) cmdIt.next();
+            final Integer com = cmdIt.next();
             final int command = com.intValue();
             // App.LOGGER.info(myService.hello());
             try {
@@ -331,6 +339,10 @@ public class App implements DiscoveryListener {
                 case CMD_NUMBER:
                     myService.setMaxJobs(Integer.parseInt(this.commandLine
                             .getOptionValue('n')));
+                    break;
+                case CMD_WORKERS:
+                    myService.startWorkers(Integer.parseInt(this.commandLine
+                            .getOptionValue('w')));
                     break;
                 case CMD_LASZLO:
                     myService.submitLaszlo(
