@@ -1,5 +1,6 @@
 package hu.kfki.grid.wmsx.job.description;
 
+import java.io.File;
 import java.util.List;
 import java.util.Vector;
 
@@ -21,6 +22,10 @@ public class EmptyJobDescription extends AbstractJobDescription {
     }
 
     public void replaceEntry(final String entry, final String value) {
+    }
+
+    public File getBaseDir() {
+        return File.listRoots()[0];
     }
 
 }

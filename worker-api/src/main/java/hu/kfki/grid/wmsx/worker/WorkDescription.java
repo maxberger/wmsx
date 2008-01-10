@@ -9,13 +9,13 @@ public class WorkDescription implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    private final String id;
+    private final Object id;
 
-    public WorkDescription(final String _id) {
+    public WorkDescription(final Object _id) {
         this.id = _id;
     }
 
-    public String getId() {
+    public Object getId() {
         return this.id;
     }
 

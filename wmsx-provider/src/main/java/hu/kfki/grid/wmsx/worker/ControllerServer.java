@@ -22,7 +22,7 @@ public class ControllerServer {
 
     private static ControllerServer instance;
 
-    private final Controller controller;
+    private final ControllerImpl controller;
 
     private final Controller controllerStub;
 
@@ -53,6 +53,10 @@ public class ControllerServer {
 
         }
         this.controllerStub = stub;
+    }
+
+    public ControllerImpl getControllerImpl() {
+        return this.controller;
     }
 
     public void writeProxy(final File where) throws IOException {

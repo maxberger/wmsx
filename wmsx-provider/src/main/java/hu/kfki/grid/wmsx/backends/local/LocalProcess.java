@@ -20,19 +20,16 @@ public class LocalProcess implements Runnable {
 
     final Object uid;
 
-    final File baseDir;
-
     final JobDescription job;
 
     private static final Logger LOGGER = Logger.getLogger(LocalProcess.class
             .toString());
 
     public LocalProcess(final Map<Object, JobState> state, final Object id,
-            final File jdlDir, final JobDescription desc) {
+            final JobDescription desc) {
         state.put(id, JobState.NONE);
         this.stateMap = state;
         this.uid = id;
-        this.baseDir = jdlDir;
         this.job = desc;
         this.workdir = null;
     }
@@ -58,7 +55,7 @@ public class LocalProcess implements Runnable {
 
         final List<String> inputList = this.job
                 .getListEntry(JobDescription.INPUTSANDBOX);
-        this.copyList(inputList, this.baseDir, this.workdir);
+        this.copyList(inputList, this.job.getBaseDir(), this.workdir);
     }
 
     private void copyList(final List<String> inputList, final File from,
@@ -67,13 +64,7 @@ public class LocalProcess implements Runnable {
         final Iterator<String> it = inputList.iterator();
         while (it.hasNext()) {
             final String fileName = it.next();
-            final File fileNameFile = new File(fileName);
-            final File inputFile;
-            if (fileNameFile.isAbsolute()) {
-                inputFile = fileNameFile;
-            } else {
-                inputFile = new File(from, fileName);
-            }
+            final File inputFile = FileUtil.resolveFile(from, fileName);
             final File toFile = new File(to, inputFile.getName());
             try {
                 FileUtil.copy(inputFile, toFile);
@@ -93,12 +84,9 @@ public class LocalProcess implements Runnable {
         if (commande == null) {
             return;
         }
-        final String command;
-        if (new File(commande).isAbsolute()) {
-            command = commande;
-        } else {
-            command = new File(this.workdir, commande).getCanonicalPath();
-        }
+        final String command = FileUtil.resolveFile(this.workdir, commande)
+                .getCanonicalPath();
+
         try {
             Runtime.getRuntime().exec(
                     new String[] { "/bin/chmod", "+x", command }).waitFor();

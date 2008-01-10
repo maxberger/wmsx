@@ -61,9 +61,8 @@ public class LocalBackend implements Backend {
             throws IOException {
         this.count++;
         final Object id = new Integer(this.count);
-        final File jdlDir = new File(jdlFile).getAbsoluteFile().getParentFile();
         final JobDescription desc = new JDLJobDescription(jdlFile);
-        final LocalProcess p = new LocalProcess(this.state, id, jdlDir, desc);
+        final LocalProcess p = new LocalProcess(this.state, id, desc);
         this.processes.put(id, p);
         new Thread(p).start();
         return new SubmissionResults(new JobUid(this, id), null, null, null, 0,

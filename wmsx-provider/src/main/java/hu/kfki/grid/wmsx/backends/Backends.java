@@ -4,6 +4,7 @@ import hu.kfki.grid.wmsx.backends.lcg.EDGBackend;
 import hu.kfki.grid.wmsx.backends.lcg.GLiteBackend;
 import hu.kfki.grid.wmsx.backends.local.FakeBackend;
 import hu.kfki.grid.wmsx.backends.local.LocalBackend;
+import hu.kfki.grid.wmsx.worker.WorkerBackend;
 
 public final class Backends {
 
@@ -14,4 +15,6 @@ public final class Backends {
     public static final Backend FAKE = FakeBackend.getInstance();
 
     public static final Backend LOCAL = LocalBackend.getInstance();
+
+    public static final Backend WORKER = WorkerBackend.getInstance();
 }

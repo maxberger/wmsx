@@ -1,5 +1,6 @@
 package hu.kfki.grid.wmsx.job.description;
 
+import java.io.File;
 import java.util.List;
 
 public interface JobDescription {
@@ -37,5 +38,7 @@ public interface JobDescription {
     void removeEntry(String entry);
 
     void replaceEntry(String entry, String value);
+
+    File getBaseDir();
 
 }

@@ -78,4 +78,15 @@ public final class FileUtil {
         }
     }
 
+    public static File resolveFile(final File dir, final String fileName) {
+        final File fileNameFile = new File(fileName);
+        final File inputFile;
+        if (fileNameFile.isAbsolute()) {
+            inputFile = fileNameFile;
+        } else {
+            inputFile = new File(dir, fileName);
+        }
+        return inputFile;
+    }
+
 }
