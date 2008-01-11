@@ -18,6 +18,9 @@ public class WorkDescription implements Serializable {
 
     private final String executable;
 
+    /* <String> */
+    private final List arguments;
+
     private final String stdout;
 
     private final String stderr;
@@ -26,12 +29,13 @@ public class WorkDescription implements Serializable {
     private final List outputSandbox;
 
     public WorkDescription(final Object _id, final Map input,
-            final List output, final String exec, final String out,
-            final String err) {
+            final List output, final String exec, final List arg,
+            final String out, final String err) {
         this.id = _id;
         this.inputSandbox = input;
         this.outputSandbox = output;
         this.executable = exec;
+        this.arguments = arg;
         this.stdout = out;
         this.stderr = err;
     }
@@ -58,6 +62,10 @@ public class WorkDescription implements Serializable {
 
     public List getOutputSandbox() {
         return this.outputSandbox;
+    }
+
+    public List getArguments() {
+        return this.arguments;
     }
 
 }
