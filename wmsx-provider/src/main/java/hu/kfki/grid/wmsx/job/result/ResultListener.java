@@ -17,7 +17,7 @@ public class ResultListener implements JobListener {
     private static final Logger LOGGER = Logger.getLogger(ResultListener.class
             .toString());
 
-    private final Map resultJobs = new HashMap();
+    private final Map<JobUid, JdlJob> resultJobs = new HashMap<JobUid, JdlJob>();
 
     private ResultListener() {
     }
@@ -38,7 +38,7 @@ public class ResultListener implements JobListener {
     }
 
     public void done(final JobUid id, final boolean success) {
-        final JdlJob job = (JdlJob) this.resultJobs.get(id);
+        final JdlJob job = this.resultJobs.get(id);
         if (job == null) {
             return;
         }

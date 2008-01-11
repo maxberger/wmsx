@@ -7,9 +7,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Logger;
 
 public final class FileUtil {
     private static final int BUFSIZE = 4096;
+
+    private static final Logger LOGGER = Logger.getLogger(FileUtil.class
+            .toString());
 
     private FileUtil() {
     };
@@ -99,6 +106,45 @@ public final class FileUtil {
             // Ignore
         }
 
+    }
+
+    public static Map<String, byte[]> createSandbox(final List<String> files,
+            final File dir) {
+        final Map<String, byte[]> sandbox = new TreeMap<String, byte[]>();
+
+        for (final String fileName : files) {
+            try {
+                final File f = FileUtil.resolveFile(dir, fileName);
+                sandbox.put(f.getName(), FileUtil.loadFile(f));
+            } catch (final IOException io) {
+                FileUtil.LOGGER.warning(io.getMessage());
+            }
+        }
+        return sandbox;
+    }
+
+    private static byte[] loadFile(final File f) throws IOException {
+        final int len = (int) f.length();
+        final byte[] buf = new byte[len];
+        final FileInputStream fis = new FileInputStream(f);
+        fis.read(buf);
+        fis.close();
+        return buf;
+    }
+
+    public static void retrieveSandbox(final Map<String, byte[]> sandbox,
+            final File dir) {
+        for (final Map.Entry<String, byte[]> entry : sandbox.entrySet()) {
+            try {
+                final File f = new File(dir, entry.getKey());
+                final FileOutputStream fos = new FileOutputStream(f);
+                fos.write(entry.getValue());
+                fos.close();
+                FileUtil.makeExecutable(f);
+            } catch (final IOException ioe) {
+                FileUtil.LOGGER.warning(ioe.getMessage());
+            }
+        }
     }
 
 }
