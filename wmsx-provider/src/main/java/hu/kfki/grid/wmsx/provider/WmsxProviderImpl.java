@@ -10,10 +10,10 @@ import hu.kfki.grid.wmsx.job.LogListener;
 import hu.kfki.grid.wmsx.job.result.ResultListener;
 import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.provider.arglist.LaszloJobFactory;
-import hu.kfki.grid.wmsx.provider.scripts.ScriptLauncher;
 import hu.kfki.grid.wmsx.renewer.AFS;
 import hu.kfki.grid.wmsx.renewer.Renewer;
 import hu.kfki.grid.wmsx.renewer.VOMS;
+import hu.kfki.grid.wmsx.util.ScriptLauncher;
 import hu.kfki.grid.wmsx.worker.ControllerServer;
 
 import java.io.BufferedReader;

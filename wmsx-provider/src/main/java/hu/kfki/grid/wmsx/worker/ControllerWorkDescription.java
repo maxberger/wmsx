@@ -32,7 +32,10 @@ public class ControllerWorkDescription {
             }
         }
 
-        this.workDescription = new WorkDescription(uid, inputSandbox);
+        this.workDescription = new WorkDescription(uid, inputSandbox, jobDesc
+                .getStringEntry(JobDescription.EXECUTABLE), jobDesc
+                .getStringEntry(JobDescription.STDOUTPUT), jobDesc
+                .getStringEntry(JobDescription.STDERROR));
     }
 
     private byte[] loadFile(final File f) throws IOException {

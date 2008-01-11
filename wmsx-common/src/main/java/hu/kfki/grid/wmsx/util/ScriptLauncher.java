@@ -1,4 +1,4 @@
-package hu.kfki.grid.wmsx.provider.scripts;
+package hu.kfki.grid.wmsx.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -31,7 +31,7 @@ public class ScriptLauncher {
             return null;
         }
         final File stdoutfile = new File(stdout);
-        stdoutfile.getParentFile().mkdirs();
+        stdoutfile.getAbsoluteFile().getParentFile().mkdirs();
         return new BufferedOutputStream(new FileOutputStream(stdout));
     }
 
