@@ -43,16 +43,40 @@ public class JobWatcher implements Runnable {
         return JobWatcher.jobWatcher;
     }
 
-    public synchronized void addWatch(final JobUid jobId,
-            final JobListener listener) {
-        if (!this.shutdown) {
-            Set<JobListener> listeners = this.joblisteners.get(jobId);
-            if (listeners == null) {
-                listeners = new HashSet<JobListener>();
-                this.joblisteners.put(jobId, listeners);
+    public void addWatch(final JobUid jobId, final JobListener listener) {
+        JobState stateNow;
+        synchronized (this) {
+            if (!this.shutdown) {
+                Set<JobListener> listeners = this.joblisteners.get(jobId);
+                if (listeners == null) {
+                    listeners = new HashSet<JobListener>();
+                    this.joblisteners.put(jobId, listeners);
+                }
+                listeners.add(listener);
+
+                stateNow = this.jobstate.get(jobId);
+
+                this.doStart();
+            } else {
+                stateNow = null;
+
             }
-            listeners.add(listener);
-            this.doStart();
+        }
+        if (stateNow != null) {
+            if (JobState.STARTUP.equals(stateNow)) {
+                listener.startup(jobId);
+            } else if (JobState.RUNNING.equals(stateNow)) {
+                listener.startup(jobId);
+                listener.running(jobId);
+            } else if (JobState.SUCCESS.equals(stateNow)) {
+                listener.startup(jobId);
+                listener.running(jobId);
+                listener.done(jobId, true);
+            } else if (JobState.FAILED.equals(stateNow)) {
+                listener.startup(jobId);
+                listener.running(jobId);
+                listener.done(jobId, false);
+            }
         }
     }
 
@@ -119,11 +143,11 @@ public class JobWatcher implements Runnable {
         if (differs) {
             Set<JobListener> listeners;
             synchronized (this) {
-                listeners = new HashSet<JobListener>(this.joblisteners
-                        .get(jobId));
-                if (JobState.SUCCESS.equals(stateNow)
-                        || JobState.FAILED.equals(stateNow)) {
-                    this.joblisteners.remove(jobId);
+                final Set<JobListener> gset = this.joblisteners.get(jobId);
+                if (gset == null) {
+                    listeners = new HashSet<JobListener>();
+                } else {
+                    listeners = new HashSet<JobListener>(gset);
                 }
             }
 
