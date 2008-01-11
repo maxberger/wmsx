@@ -1,6 +1,8 @@
 package hu.kfki.grid.wmsx.backends.local;
 
+import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.job.JobState;
+import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.util.FileUtil;
 import hu.kfki.grid.wmsx.util.ScriptLauncher;
@@ -16,16 +18,16 @@ public class LocalProcess implements Runnable {
 
     File workdir;
 
-    final Map<Object, JobState> stateMap;
+    final Map<JobUid, JobState> stateMap;
 
-    final Object uid;
+    final JobUid uid;
 
     final JobDescription job;
 
     private static final Logger LOGGER = Logger.getLogger(LocalProcess.class
             .toString());
 
-    public LocalProcess(final Map<Object, JobState> state, final Object id,
+    public LocalProcess(final Map<JobUid, JobState> state, final JobUid id,
             final JobDescription desc) {
         state.put(id, JobState.NONE);
         this.stateMap = state;
@@ -36,14 +38,18 @@ public class LocalProcess implements Runnable {
 
     public synchronized void run() {
         this.stateMap.put(this.uid, JobState.STARTUP);
+        JobWatcher.getWatcher().checkWithState(this.uid, JobState.STARTUP);
         try {
             this.startup();
             this.stateMap.put(this.uid, JobState.RUNNING);
+            JobWatcher.getWatcher().checkWithState(this.uid, JobState.RUNNING);
             this.running();
             this.stateMap.put(this.uid, JobState.SUCCESS);
+            JobWatcher.getWatcher().checkWithState(this.uid, JobState.SUCCESS);
         } catch (final IOException e) {
             LocalProcess.LOGGER.warning(e.getMessage());
             this.stateMap.put(this.uid, JobState.FAILED);
+            JobWatcher.getWatcher().checkWithState(this.uid, JobState.FAILED);
         }
     }
 

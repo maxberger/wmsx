@@ -16,15 +16,15 @@ public class LocalBackend implements Backend {
 
     private int count = 0;
 
-    private final Map<Object, JobState> state;
+    private final Map<JobUid, JobState> state;
 
-    private final Map<Object, LocalProcess> processes;
+    private final Map<JobUid, LocalProcess> processes;
 
     private static LocalBackend instance;
 
     private LocalBackend() {
-        this.state = new Hashtable<Object, JobState>();
-        this.processes = new Hashtable<Object, LocalProcess>();
+        this.state = new Hashtable<JobUid, JobState>();
+        this.processes = new Hashtable<JobUid, LocalProcess>();
     };
 
     public static synchronized LocalBackend getInstance() {
@@ -61,12 +61,12 @@ public class LocalBackend implements Backend {
             throws IOException {
         this.count++;
         final Object id = new Integer(this.count);
+        final JobUid juid = new JobUid(this, id);
         final JobDescription desc = new JDLJobDescription(jdlFile);
-        final LocalProcess p = new LocalProcess(this.state, id, desc);
-        this.processes.put(id, p);
+        final LocalProcess p = new LocalProcess(this.state, juid, desc);
+        this.processes.put(juid, p);
         new Thread(p).start();
-        return new SubmissionResults(new JobUid(this, id), null, null, null, 0,
-                0);
+        return new SubmissionResults(juid, null, null, null, 0, 0);
     }
 
     @Override
