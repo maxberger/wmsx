@@ -1,4 +1,4 @@
-package hu.kfki.grid.renewer;
+package hu.kfki.grid.wmsx.renewer;
 
 public abstract class Renewer implements Runnable {
 

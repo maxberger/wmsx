@@ -1,4 +1,4 @@
-package hu.kfki.grid.renewer;
+package hu.kfki.grid.wmsx.renewer;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

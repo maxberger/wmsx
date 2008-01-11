@@ -1,4 +1,4 @@
-package hu.kfki.grid.renewer;
+package hu.kfki.grid.wmsx.renewer;
 
 import java.util.List;
 import java.util.Vector;
@@ -7,22 +7,22 @@ public class VOMS extends Renewer {
 
     private final String voms;
 
-    public VOMS(final String password, String vo) {
+    public VOMS(final String password, final String vo) {
         super(password);
         this.voms = vo;
     }
 
+    @Override
     protected boolean exec(final String password) {
-        final List commandLine = new Vector();
+        final List<String> commandLine = new Vector<String>();
         commandLine.add("voms-proxy-init");
-        if (voms != null) {
+        if (this.voms != null) {
             commandLine.add("-voms");
             commandLine.add(this.voms);
         }
         commandLine.add("-pwstdin");
         return PasswordAppLauncher.getInstance().launch(
-                (String[]) commandLine.toArray(new String[commandLine.size()]),
-                password);
+                commandLine.toArray(new String[commandLine.size()]), password);
 
     }
 
