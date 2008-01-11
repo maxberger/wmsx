@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 public class Worker {
@@ -27,7 +29,7 @@ public class Worker {
         long delay = 60;
         Worker.LOGGER.info("Worker started");
         try {
-            while (lastChecked < 15 * 60) {
+            while (lastChecked < 45 * 60) {
                 final WorkDescription todo = this.controller.retrieveWork();
 
                 if (todo != null) {
@@ -41,7 +43,7 @@ public class Worker {
                         // ignore
                     }
                     lastChecked += delay;
-                    // delay *= 2;
+                    delay *= 1.5;
                 }
             }
         } catch (final RemoteException re) {
@@ -55,9 +57,14 @@ public class Worker {
         final File currentDir = new File(".").getAbsoluteFile();
         FileUtil.retrieveSandbox(todo.getInputSandbox(), currentDir);
 
+        final List<String> arguments = todo.getArguments();
+        final List<String> cmdArray = new Vector<String>(1 + arguments.size());
+        cmdArray.add(new File(currentDir, todo.getExecutable())
+                .getAbsolutePath());
+        cmdArray.addAll(arguments);
+
         ScriptLauncher.getInstance().launchScript(
-                new File(currentDir, todo.getExecutable()).getAbsolutePath(),
-                currentDir,
+                cmdArray.toArray(new String[0]),
                 new File(currentDir, todo.getStdout()).getAbsolutePath());
         this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
                 .createSandbox(todo.getOutputSandbox(), currentDir)));
