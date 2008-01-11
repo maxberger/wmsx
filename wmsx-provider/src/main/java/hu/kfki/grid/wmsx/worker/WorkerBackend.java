@@ -54,8 +54,8 @@ public class WorkerBackend implements Backend {
         final Object id = new Integer(this.count);
         final JobDescription desc = new JDLJobDescription(jdlFile);
         this.controllerImpl.addWork(new ControllerWorkDescription(id, desc));
-        return new SubmissionResults(new JobUid(this, id), null, null, null, 0,
-                0);
+        return new SubmissionResults(this.controllerImpl.getJuidForId(id),
+                null, null, null, 0, 0);
     }
 
     @Override

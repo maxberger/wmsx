@@ -1,6 +1,9 @@
 package hu.kfki.grid.wmsx.worker;
 
+import hu.kfki.grid.wmsx.backends.Backends;
+import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.job.JobState;
+import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.util.FileUtil;
 
 import java.io.File;
@@ -14,13 +17,15 @@ import java.util.logging.Logger;
 
 public class ControllerImpl implements Controller {
 
-    LinkedList<ControllerWorkDescription> pending = new LinkedList<ControllerWorkDescription>();
+    private final Map<Object, JobUid> juidMap = new TreeMap<Object, JobUid>();
 
-    Map<Object, ControllerWorkDescription> running = new TreeMap<Object, ControllerWorkDescription>();
+    private final LinkedList<ControllerWorkDescription> pending = new LinkedList<ControllerWorkDescription>();
 
-    Map<Object, Map<String, byte[]>> success = new TreeMap<Object, Map<String, byte[]>>();
+    private final Map<Object, ControllerWorkDescription> running = new TreeMap<Object, ControllerWorkDescription>();
 
-    Set<Object> failed = new TreeSet<Object>();
+    private final Map<Object, Map<String, byte[]>> success = new TreeMap<Object, Map<String, byte[]>>();
+
+    private final Set<Object> failed = new TreeSet<Object>();
 
     private static final Logger LOGGER = Logger.getLogger(ControllerImpl.class
             .toString());
@@ -29,20 +34,28 @@ public class ControllerImpl implements Controller {
     }
 
     public WorkDescription retrieveWork() {
+        final ControllerWorkDescription cwd;
         synchronized (this.pending) {
             if (this.pending.isEmpty()) {
                 return null;
             }
-            final ControllerWorkDescription cwd = this.pending.removeFirst();
+            cwd = this.pending.removeFirst();
             this.running.put(cwd.getWorkDescription().getId(), cwd);
-            return cwd.getWorkDescription();
         }
+        JobWatcher.getWatcher().checkWithState(
+                this.getJuidForId(cwd.getWorkDescription().getId()),
+                JobState.RUNNING);
+        return cwd.getWorkDescription();
+
     }
 
     public void addWork(final ControllerWorkDescription newWork) {
         synchronized (this.pending) {
             this.pending.add(newWork);
         }
+        JobWatcher.getWatcher().checkWithState(
+                this.getJuidForId(newWork.getWorkDescription().getId()),
+                JobState.STARTUP);
     }
 
     @SuppressWarnings("unchecked")
@@ -53,6 +66,8 @@ public class ControllerImpl implements Controller {
             this.success.put(id, result.getOutputSandbox());
         }
         ControllerImpl.LOGGER.info("Done with worker Job " + id);
+        JobWatcher.getWatcher().checkWithState(this.getJuidForId(id),
+                JobState.SUCCESS);
     }
 
     public JobState getState(final Object id) {
@@ -81,5 +96,17 @@ public class ControllerImpl implements Controller {
             sandbox = this.success.get(id);
         }
         FileUtil.retrieveSandbox(sandbox, dir);
+    }
+
+    public JobUid getJuidForId(final Object id) {
+        JobUid j;
+        synchronized (this.juidMap) {
+            j = this.juidMap.get(id);
+            if (j == null) {
+                j = new JobUid(Backends.WORKER, id);
+                this.juidMap.put(id, j);
+            }
+        }
+        return j;
     }
 }
