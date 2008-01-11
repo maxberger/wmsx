@@ -2,8 +2,8 @@ package hu.kfki.grid.wmsx.backends.local;
 
 import hu.kfki.grid.wmsx.job.JobState;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
-import hu.kfki.grid.wmsx.provider.scripts.ScriptLauncher;
 import hu.kfki.grid.wmsx.util.FileUtil;
+import hu.kfki.grid.wmsx.util.ScriptLauncher;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,13 +86,7 @@ public class LocalProcess implements Runnable {
         }
         final String command = FileUtil.resolveFile(this.workdir, commande)
                 .getCanonicalPath();
-
-        try {
-            Runtime.getRuntime().exec(
-                    new String[] { "/bin/chmod", "+x", command }).waitFor();
-        } catch (final InterruptedException e) {
-            // Ignore
-        }
+        FileUtil.makeExecutable(new File(command));
 
         final String arguments = this.job
                 .getStringEntry(JobDescription.ARGUMENTS);

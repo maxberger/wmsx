@@ -1,5 +1,8 @@
 package hu.kfki.grid.wmsx.worker;
 
+import hu.kfki.grid.wmsx.util.FileUtil;
+import hu.kfki.grid.wmsx.util.ScriptLauncher;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,7 +43,7 @@ public class Worker {
                         // ignore
                     }
                     lastChecked += delay;
-                    delay *= 2;
+                    // delay *= 2;
                 }
             }
         } catch (final RemoteException re) {
@@ -48,9 +51,16 @@ public class Worker {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void performWork(final WorkDescription todo) throws RemoteException {
         Worker.LOGGER.info("Assigned work" + todo.getId());
         this.retrieveInputSandbox(todo.getInputSandbox());
+        final File currentDir = new File(".").getAbsoluteFile();
+
+        ScriptLauncher.getInstance().launchScript(
+                new File(currentDir, todo.getExecutable()).getAbsolutePath(),
+                currentDir,
+                new File(currentDir, todo.getStdout()).getAbsolutePath());
         this.controller.doneWith(todo.getId(), new ResultDescription());
 
     }
@@ -58,17 +68,11 @@ public class Worker {
     private void retrieveInputSandbox(final Map<String, byte[]> inputSandbox) {
         for (final Map.Entry<String, byte[]> entry : inputSandbox.entrySet()) {
             try {
-                final File f = new File(entry.getKey()).getCanonicalFile();
+                final File f = new File(entry.getKey());
                 final FileOutputStream fos = new FileOutputStream(f);
                 fos.write(entry.getValue());
                 fos.close();
-                try {
-                    Runtime.getRuntime().exec(
-                            new String[] { "/bin/chmod", "+x",
-                                    f.getAbsolutePath() }).waitFor();
-                } catch (final InterruptedException e) {
-                    // Ignore
-                }
+                FileUtil.makeExecutable(f);
             } catch (final IOException ioe) {
                 Worker.LOGGER.warning(ioe.getMessage());
             }

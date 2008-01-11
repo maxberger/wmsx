@@ -89,4 +89,16 @@ public final class FileUtil {
         return inputFile;
     }
 
+    public static void makeExecutable(final File file) throws IOException {
+        try {
+            Runtime.getRuntime()
+                    .exec(
+                            new String[] { "/bin/chmod", "+x",
+                                    file.getCanonicalPath() }).waitFor();
+        } catch (final InterruptedException e) {
+            // Ignore
+        }
+
+    }
+
 }
