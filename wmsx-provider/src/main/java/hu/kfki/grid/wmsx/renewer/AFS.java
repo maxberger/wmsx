@@ -1,4 +1,4 @@
-package hu.kfki.grid.renewer;
+package hu.kfki.grid.wmsx.renewer;
 
 public class AFS extends Renewer {
 
@@ -6,11 +6,13 @@ public class AFS extends Renewer {
         super(password);
     }
 
+    @Override
     protected boolean exec(final String password) {
         return PasswordAppLauncher.getInstance().launch(
                 new String[] { "kinit" }, password);
     }
 
+    @Override
     protected void postexec() {
         PasswordAppLauncher.getInstance()
                 .launch(new String[] { "aklog" }, null);
