@@ -43,7 +43,7 @@ public class Worker {
                         // ignore
                     }
                     lastChecked += delay;
-                    delay *= 1.5;
+                    delay += Math.random() / 2.0 * delay;
                 }
             }
         } catch (final RemoteException re) {
