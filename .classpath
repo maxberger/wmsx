@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="worker-api/src/main/java"/>
 	<classpathentry kind="src" path="worker/src/main/java"/>
 	<classpathentry kind="src" path="wmsx-api/src/main/java"/>
+	<classpathentry kind="src" path="wmsx-common/src/main/java"/>
 	<classpathentry kind="src" path="wmsx-dl/src/main/java"/>
 	<classpathentry kind="src" path="wmsx-provider/src/main/java"/>
 	<classpathentry excluding="**" kind="src" output="wmsx-provider/src/main/resources" path="wmsx-provider/src/main/resources"/>
