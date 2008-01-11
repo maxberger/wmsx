@@ -44,7 +44,7 @@ public class WorkerBackend implements Backend {
     }
 
     public Process retrieveResult(final JobUid id, final File dir) {
-        // TODO Auto-generated method stub
+        this.controllerImpl.retrieveSandbox(id.getBackendId(), dir);
         return null;
     }
 

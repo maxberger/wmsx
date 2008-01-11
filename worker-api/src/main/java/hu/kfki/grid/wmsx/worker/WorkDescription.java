@@ -1,6 +1,7 @@
 package hu.kfki.grid.wmsx.worker;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 public class WorkDescription implements Serializable {
@@ -21,10 +22,15 @@ public class WorkDescription implements Serializable {
 
     private final String stderr;
 
+    /* <String> */
+    private final List outputSandbox;
+
     public WorkDescription(final Object _id, final Map input,
-            final String exec, final String out, final String err) {
+            final List output, final String exec, final String out,
+            final String err) {
         this.id = _id;
         this.inputSandbox = input;
+        this.outputSandbox = output;
         this.executable = exec;
         this.stdout = out;
         this.stderr = err;
@@ -48,6 +54,10 @@ public class WorkDescription implements Serializable {
 
     public String getStderr() {
         return this.stderr;
+    }
+
+    public List getOutputSandbox() {
+        return this.outputSandbox;
     }
 
 }
