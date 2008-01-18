@@ -29,7 +29,7 @@ import com.sun.jini.admin.DestroyAdmin;
 /**
  * Remote interface for destruction of service - unused.
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  */
 public interface RemoteDestroy extends DestroyAdmin, Remote {
 

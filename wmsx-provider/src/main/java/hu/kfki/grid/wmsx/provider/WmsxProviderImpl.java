@@ -61,7 +61,7 @@ import com.sun.jini.admin.DestroyAdmin;
 /**
  * My Jini Service Implementation!
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  */
 public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         JobListener, Runnable {

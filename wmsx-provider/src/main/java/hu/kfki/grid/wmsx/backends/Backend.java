@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * Generic interface for all backends.
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  */
 public interface Backend {
 

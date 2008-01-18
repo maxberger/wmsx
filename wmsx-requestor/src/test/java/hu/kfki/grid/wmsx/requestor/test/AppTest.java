@@ -30,7 +30,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  */
 public class AppTest extends TestCase {
     /**

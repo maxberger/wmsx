@@ -30,14 +30,14 @@ import java.util.List;
 /**
  * Remote version of Jini service.
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  */
 public interface IRemoteWmsxProvider extends Serializable, Remote {
 
     /**
      * Describes an arglist command.
      * 
-     * @version $Revision: 123 $
+     * @version $Revision$
      */
     static class LaszloCommand implements Serializable {
 

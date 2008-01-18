@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 /**
  * Utilities for file management.
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  * 
  */
 public final class FileUtil {

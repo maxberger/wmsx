@@ -27,7 +27,7 @@ import java.util.Map;
 
 /**
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  */
 public class Pair<K, V> implements Map.Entry<K, V>, Serializable {
 

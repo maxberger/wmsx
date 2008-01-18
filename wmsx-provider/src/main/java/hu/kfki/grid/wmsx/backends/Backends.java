@@ -31,7 +31,7 @@ import hu.kfki.grid.wmsx.worker.WorkerBackend;
 /**
  * Constant list of backends implemented.
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  */
 public final class Backends {
 
