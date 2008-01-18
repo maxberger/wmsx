@@ -1,4 +1,5 @@
 SUBDIRS = gstream
+docdir = ${datadir}/doc/${PACKAGE}
 
 install-data-local:
 	mkdir -p $(bindir)

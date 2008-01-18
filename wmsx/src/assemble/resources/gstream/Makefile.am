@@ -1,6 +1,6 @@
 INCLUDES                =  -I$(top_builddir) -I$(top_srcdir)
 
-gstreamincdir = $(includedir)/libgstream
+gstreamincdir = $(includedir)/gstream
 gstreaminc_HEADERS        = gstream.h pstream.h
 
 lib_LTLIBRARIES        = libgstream.la
