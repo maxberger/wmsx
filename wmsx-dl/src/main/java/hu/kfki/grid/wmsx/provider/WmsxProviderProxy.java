@@ -23,6 +23,7 @@
 package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.Wmsx;
+import hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider.LaszloCommand;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,12 +46,14 @@ import net.jini.admin.Administrable;
  */
 public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
 
-    private static final long serialVersionUID = 2L;
+    private static final String FILE_NOT_FOUND = "File not Found: ";
 
-    private IRemoteWmsxProvider remoteService = null;
+    private static final long serialVersionUID = 2L;
 
     private static final Logger LOGGER = Logger
             .getLogger(WmsxProviderProxy.class.toString());
+
+    private final IRemoteWmsxProvider remoteService;
 
     public WmsxProviderProxy(final Remote remote) {
         this.remoteService = (IRemoteWmsxProvider) remote;
@@ -61,7 +64,8 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         try {
             final File f = new File(jdlFile);
             if (!f.exists()) {
-                throw new FileNotFoundException("File not Found: " + jdlFile);
+                throw new FileNotFoundException(
+                        WmsxProviderProxy.FILE_NOT_FOUND + jdlFile);
             }
             final String outputPath;
             if (output != null) {
@@ -127,9 +131,10 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
             final String name) throws IOException {
         final File f = new File(argFile).getCanonicalFile();
         if (!f.exists()) {
-            throw new FileNotFoundException("File not Found: " + argFile);
+            throw new FileNotFoundException(WmsxProviderProxy.FILE_NOT_FOUND
+                    + argFile);
         }
-        final List commands = new Vector();
+        final List<LaszloCommand> commands = new Vector<LaszloCommand>();
         final FileReader freader = new FileReader(f);
         final BufferedReader reader = new BufferedReader(freader);
         String line = reader.readLine();

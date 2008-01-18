@@ -71,10 +71,10 @@ public abstract class AbstractLCGBackend implements Backend {
         }
     }
 
-    abstract protected List<String> jobOutputCommand(String absolutePath,
+    protected abstract List<String> jobOutputCommand(String absolutePath,
             String string);
 
-    abstract protected List<String> submitJdlCommand(String jdlFile, String vo);
+    protected abstract List<String> submitJdlCommand(String jdlFile, String vo);
 
     public Process retrieveResult(final JobUid id, final File dir) {
         try {
@@ -93,10 +93,10 @@ public abstract class AbstractLCGBackend implements Backend {
 
     public SubmissionResults submitJdl(final String jdlFile, final String vo)
             throws IOException {
-        final List commandLine = this.submitJdlCommand(jdlFile, vo);
+        final List<String> commandLine = this.submitJdlCommand(jdlFile, vo);
         final Process p = Runtime.getRuntime().exec(
-                (String[]) commandLine.toArray(new String[commandLine.size()]),
-                null, new File(jdlFile).getParentFile());
+                commandLine.toArray(new String[commandLine.size()]), null,
+                new File(jdlFile).getParentFile());
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final PrintStream parserOutput = new PrintStream(baos);
         // final PrintStream parserOutput = System.out;

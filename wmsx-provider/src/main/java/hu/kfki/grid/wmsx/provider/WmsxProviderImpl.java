@@ -87,7 +87,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private final File debugDir;
 
-    private String vo = null;
+    private String vo;
 
     private int maxJobs = 100;
 
@@ -139,7 +139,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         return WmsxProviderImpl.instance;
     }
 
-    synchronized public String submitJdl(final String jdlFile,
+    public synchronized String submitJdl(final String jdlFile,
             final String output, final String resultDir) {
         final int current = JobWatcher.getWatcher().getNumJobsRunning();
         final int avail = this.maxJobs - current;
@@ -366,13 +366,13 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         this.investigateLater();
     }
 
-    @SuppressWarnings("unchecked")
-    public synchronized void submitLaszlo(final List commands,
+    public synchronized void submitLaszlo(
+            final List<IRemoteWmsxProvider.LaszloCommand> commands,
             final boolean interactive, final String prefix, final String name) {
         WmsxProviderImpl.LOGGER
                 .info("Adding " + commands.size() + " Commands.");
-        final List jobs = new Vector(commands.size());
-        final Iterator it = commands.iterator();
+        final List<JobFactory> jobs = new Vector<JobFactory>(commands.size());
+        final Iterator<LaszloCommand> it = commands.iterator();
         int line = 1;
 
         final File tmpDir;
@@ -386,8 +386,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
 
         while (it.hasNext()) {
-            final IRemoteWmsxProvider.LaszloCommand lcmd = (IRemoteWmsxProvider.LaszloCommand) it
-                    .next();
+            final IRemoteWmsxProvider.LaszloCommand lcmd = it.next();
             jobs.add(new LaszloJobFactory(lcmd.getCommand(), lcmd.getArgs(),
                     outputDir, tmpDir, line, interactive, prefix, name));
             line++;
