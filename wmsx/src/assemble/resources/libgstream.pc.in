@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+
+Name: libgstream
+Version: @VERSION@
+Description: WMSX gstream library
+Requires:
+Libs: @GSTREAM_LIBDIR@ @GSTREAM_LIBS@
+Libs.private: 
+

@@ -22,7 +22,7 @@
 
 #include <fstream>
 #include <string>
-#include <gstream/pstream.h>
+#include <libgstream/pstream.h>
 
 
 namespace std
