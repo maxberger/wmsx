@@ -20,23 +20,23 @@ public class Workflow {
 
     final File directory;
 
-    final Map nextNodes;
+    final Map<String, List<String>> nextNodes;
 
-    final Map prevNodes;
+    final Map<String, List<String>> prevNodes;
 
-    final Set potentialTodo;
+    final Set<String> potentialTodo;
 
-    final Set done;
+    final Set<String> done;
 
     private static final Logger LOGGER = Logger.getLogger(Workflow.class
             .toString());
 
     public Workflow(final File dir) {
         this.directory = dir;
-        this.nextNodes = new HashMap();
-        this.prevNodes = new HashMap();
-        this.potentialTodo = new HashSet();
-        this.done = new HashSet();
+        this.nextNodes = new HashMap<String, List<String>>();
+        this.prevNodes = new HashMap<String, List<String>>();
+        this.potentialTodo = new HashSet<String>();
+        this.done = new HashSet<String>();
     }
 
     public synchronized void isDone(final JdlJob jdlJob) {
@@ -44,21 +44,21 @@ public class Workflow {
         System.out.println("Done with: " + name);
         this.done.add(name);
         synchronized (this.nextNodes) {
-            final List next = (List) this.nextNodes.get(name);
+            final List<String> next = this.nextNodes.get(name);
             if (next != null) {
                 this.potentialTodo.addAll(next);
             }
         }
-        final Iterator it = this.potentialTodo.iterator();
-        final List toExecute = new Vector();
+        final Iterator<String> it = this.potentialTodo.iterator();
+        final List<String> toExecute = new Vector<String>();
         while (it.hasNext()) {
-            final String node = (String) it.next();
-            final List prevs = (List) this.prevNodes.get(node);
+            final String node = it.next();
+            final List<String> prevs = this.prevNodes.get(node);
             boolean execute = true;
             if (prevs != null) {
-                final Iterator i2 = prevs.iterator();
+                final Iterator<String> i2 = prevs.iterator();
                 while (i2.hasNext() && execute) {
-                    final String prevNode = (String) i2.next();
+                    final String prevNode = i2.next();
                     if (!this.done.contains(prevNode)) {
                         execute = false;
                     }
@@ -69,9 +69,9 @@ public class Workflow {
             }
         }
 
-        final Iterator i3 = toExecute.iterator();
+        final Iterator<String> i3 = toExecute.iterator();
         while (i3.hasNext()) {
-            final String node = (String) i3.next();
+            final String node = i3.next();
             this.executeNode(node);
         }
     }
@@ -83,23 +83,23 @@ public class Workflow {
                 new WorkflowNodeJobFactory(this, node));
     }
 
-    public void setNextNodes(final String name, final List listEntry) {
+    public void setNextNodes(final String name, final List<String> listEntry) {
         synchronized (this.nextNodes) {
             this.nextNodes.put(name, listEntry);
             this.parsePrev(listEntry);
         }
     }
 
-    private void parsePrev(final List listEntry) {
-        final Iterator it = listEntry.iterator();
+    private void parsePrev(final List<String> listEntry) {
+        final Iterator<String> it = listEntry.iterator();
         while (it.hasNext()) {
-            final String nodeName = (String) it.next();
+            final String nodeName = it.next();
             if (!this.prevNodes.containsKey(nodeName)) {
                 try {
                     final JobDescription nodeJob = new JDLJobDescription(
                             new File(this.directory, nodeName)
                                     .getAbsolutePath());
-                    final List prevs = nodeJob.getListEntry("Prev");
+                    final List<String> prevs = nodeJob.getListEntry("Prev");
                     this.prevNodes.put(nodeName, prevs);
                 } catch (final IOException e) {
                     Workflow.LOGGER.warning(e.getMessage());
