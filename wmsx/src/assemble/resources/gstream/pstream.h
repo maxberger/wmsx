@@ -30,6 +30,7 @@ along with PStreams; if not, write to the Free Software Foundation, Inc.,
 
 ///// I changed 'redi' to 'std' !!! /////
 ///// I added '#include <string>' !!! /////
+///// I added '#include <sstream>' !!! /////
 ///// I added 'isinpipe' and 'isoutpipe' functions!!! /////
 ///// I added 'openin' and 'openout' functions!!! /////
 ///// I added 'pstream_common::kill' function!!! /////
@@ -61,6 +62,7 @@ along with PStreams; if not, write to the Free Software Foundation, Inc.,
 # include <stdio.h>     // for FILE, fdopen()
 #endif
 #include <string>
+#include <sstream>
 
 
 /// The library version.

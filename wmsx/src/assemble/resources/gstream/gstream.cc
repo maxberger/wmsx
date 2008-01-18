@@ -1,11 +1,84 @@
-#include "gstream.h"
+#include <gstream.h>
+#include <cstring>
+#include <cstdlib>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <streambuf>
+#include <iostream>
+#include <string>
+#include <sstream>
 
 
 namespace std
 {
 
 
-void cleanup(const string &filename, const string &directoryname)
+static string vo="";
+static string dest="";
+static string tmpdir="";
+static bool debug=false;
+
+
+void gstream_debug(const bool flag)
+{
+    debug=flag;
+}
+
+
+bool gstream_debug()
+{
+    return debug;
+}
+
+
+static void ginit()
+{
+    if ( getenv("LCG_CATALOG_TYPE")==NULL )
+    {
+	cerr << "[gstream] Environmental variable LCG_CATALOG_TYPE is not set!\n[gstream]\tvoid init()\n";
+	exit(1);
+    }
+    if ( getenv("LFC_HOST")==NULL )
+    {
+	cerr << "[gstream] Environmental variable LFC_HOST is not set!\n[gstream]\tvoid init()\n";
+	exit(1);
+    }
+    if ( getenv("LCG_GFAL_VO")==NULL )
+    {
+	cerr << "[gstream] Environmental variable LCG_GFAL_VO is not set!\n[gstream]\tvoid init()\n";
+	exit(1);
+    }
+    if ( getenv("DEST")==NULL )
+    {
+	cerr << "[gstream] Environmental variable DEST is not set!\n[gstream]\tvoid init()\n";
+	exit(1);
+    }
+    vo=getenv("LCG_GFAL_VO");
+    dest=getenv("DEST");
+    ostringstream command;
+    int err;
+    command << "grid-proxy-info -e >&/dev/null";
+    err=system(command.str().c_str());
+    command.str("");
+    command.clear();
+    if ( err!=0 )
+    {
+	cerr << "[gstream] No valid grid-proxy!\n[gstream]\tvoid init()\n";
+	exit(1);
+    }
+    if ( getenv("TMPDIR")==NULL ) tmpdir=""; else tmpdir=getenv("TMPDIR");
+    if ( tmpdir=="" )
+    {
+	string pwd;
+	if ( getenv("PWD")==NULL ) pwd=""; else pwd=getenv("PWD");
+	tmpdir=pwd;
+    }
+}
+
+
+static void cleanup(const string &filename, const string &directoryname)
 {
     ostringstream command;
     command << "rm -f " << filename;
@@ -19,16 +92,8 @@ void cleanup(const string &filename, const string &directoryname)
 }
 
 
-void mkstagefile(const string &gfilename, string &filename, string &directoryname)
+static void mkstagefile(const string &gfilename, string &filename, string &directoryname)
 {
-    string tmpdir;
-    if ( getenv("TMPDIR")==NULL ) tmpdir=""; else tmpdir=getenv("TMPDIR");
-    if ( tmpdir=="" )
-    {
-	string pwd;
-	if ( getenv("PWD")==NULL ) pwd=""; else pwd=getenv("PWD");
-	tmpdir=pwd;
-    }
     string fname;
     istringstream iss(gfilename);
     while ( getline(iss, fname, '/') ) { }
@@ -54,44 +119,25 @@ void mkstagefile(const string &gfilename, string &filename, string &directorynam
 }
 
 
-void gget(const string &gfilename, const string &filename, const string &directoryname)
+static bool gexists(const string &gfilename)
 {
-    if ( getenv("LCG_CATALOG_TYPE")==NULL )
-    {
-	cerr << "[gstream] Environmental variable LCG_CATALOG_TYPE is not set!\n[gstream]\tvoid gget(const string&, const string&, const string&)\n";
-	cleanup(filename, directoryname);
-	exit(1);
-    }
-    if ( getenv("LFC_HOST")==NULL )
-    {
-	cerr << "[gstream] Environmental variable LFC_HOST is not set!\n[gstream]\tvoid gget(const string&, const string&, const string&)\n";
-	cleanup(filename, directoryname);
-	exit(1);
-    }
-    string vo;
-    if ( getenv("LCG_GFAL_VO")==NULL ) vo=""; else vo=getenv("LCG_GFAL_VO");
-    if ( vo=="" )
-    {
-	cerr << "[gstream] Environmental variable LCG_GFAL_VO is not set!\n[gstream]\tvoid gget(const string&, const string&, const string&)\n";
-	cleanup(filename, directoryname);
-	exit(1);
-    }
     ostringstream command;
-    int err;
-    command << "grid-proxy-info -e >&/dev/null";
-    err=system(command.str().c_str());
+    command << "lcg-lg --vo " << vo << " ";
+    command << "lfn:" << gfilename << " >&/dev/null";
+    int err=system(command.str().c_str());
     command.str("");
     command.clear();
-    if ( err!=0 )
-    {
-	cerr << "[gstream] No valid grid-proxy!\n[gstream]\tvoid gget(const string&, const string&, const string&)\n";
-	cleanup(filename, directoryname);
-	exit(1);
-    }
-    cerr << "[gstream] Getting: " << gfilename << endl;
+    return (err==0);
+}
+
+
+static void gget(const string &gfilename, const string &filename, const string &directoryname)
+{
+    if ( debug ) cerr << "[gstream] Getting: " << gfilename << endl;
+    ostringstream command;
     command << "lcg-cp --vo " << vo << " ";
     command << "lfn:" << gfilename << " file:" << filename;
-    err=1;
+    int err=1;
     int tries=0;
     while ( err!=0 )
     {
@@ -100,7 +146,7 @@ void gget(const string &gfilename, const string &filename, const string &directo
 	++tries;
 	if ( tries>=5 )
 	{
-	    cerr << "[gstream] Error getting file. Giving up after the 5-th try!\n[gstream]\tvoid gget(const string&, const string&, const string&)\n";
+	    cerr << "[gstream] Error getting file " << gfilename << " . Giving up after the 5-th try!\n[gstream]\tvoid gget(const string&, const string&, const string&)\n";
 	    cleanup(filename, directoryname);
 	    exit(1);
 	}
@@ -110,82 +156,15 @@ void gget(const string &gfilename, const string &filename, const string &directo
 }
 
 
-void gput(const string &gfilename, const string &filename, const string &directoryname)
+static void gdel(const string &gfilename)
 {
-    if ( getenv("LCG_CATALOG_TYPE")==NULL )
-    {
-	cerr << "[gstream] Environmental variable LCG_CATALOG_TYPE is not set!\n[gstream]\tvoid gput(const string&, const string&, const string&)\n";
-	cleanup(filename, directoryname);
-	exit(1);
-    }
-    if ( getenv("LFC_HOST")==NULL )
-    {
-	cerr << "[gstream] Environmental variable LFC_HOST is not set!\n[gstream]\tvoid gput(const string&, const string&, const string&)\n";
-	cleanup(filename, directoryname);
-	exit(1);
-    }
-    string vo;
-    if ( getenv("LCG_GFAL_VO")==NULL ) vo=""; else vo=getenv("LCG_GFAL_VO");
-    if ( vo=="" )
-    {
-	cerr << "[gstream] Environmental variable LCG_GFAL_VO is not set!\n[gstream]\tvoid gput(const string&, const string&, const string&)\n";
-	cleanup(filename, directoryname);
-	exit(1);
-    }
+    if ( debug ) cerr << "[gstream] Deleting: " << gfilename << endl;
     ostringstream command;
-    int err;
-    command << "grid-proxy-info -e >&/dev/null";
-    err=system(command.str().c_str());
-    command.str("");
-    command.clear();
-    if ( err!=0 )
-    {
-	cerr << "[gstream] No valid grid-proxy!\n[gstream]\tvoid gput(const string&, const string&, const string&)\n";
-	cleanup(filename, directoryname);
-	exit(1);
-    }
-    string dest;
-    if ( getenv("DEST")==NULL ) dest=""; else dest=getenv("DEST");
-    if ( dest=="" )
-    {
-	cerr << "[gstream] Environmental variable DEST is not set!\n[gstream]\tvoid gput(const string&, const string&, const string&)\n";
-	cleanup(filename, directoryname);
-	exit(1);
-    }
-    cerr << "[gstream] Putting: " << gfilename << endl;
-    command << "lcg-lg --vo " << vo << " ";
-    command << "lfn:" << gfilename << " >&/dev/null";
-    err=system(command.str().c_str());
-    command.str("");
-    command.clear();
-    int tries;
-    if ( err==0 )
-    {
-	command << "lcg-del --vo " << vo << " ";
-	command << "-s " << dest << " ";
-	command << "lfn:" << gfilename;
-	err=1;
-	tries=0;
-	while ( err!=0 )
-	{
-	    err=system(command.str().c_str());
-	    if ( err!=0 ) sleep(60);
-	    ++tries;
-	    if ( tries>=5 )
-	    {
-		cerr << "[gstream] Error deleting file. Giving up after the 5-th try!\n[gstream]\tvoid gput(const string&, const string&, const string&)\n";
-		cleanup(filename, directoryname);
-		exit(1);
-	    }
-	}
-	command.str("");
-	command.clear();
-    }
-    command << "lcg-cr --vo " << vo << " ";
-    command << "-d " << dest << " ";
-    command << "-l lfn:" << gfilename << " file:" << filename << " 1>/dev/null";
-    err=1;
-    tries=0;
+    command << "lcg-del --vo " << vo << " ";
+    command << "-a ";
+    command << "lfn:" << gfilename;
+    int err=1;
+    int tries=0;
     while ( err!=0 )
     {
 	err=system(command.str().c_str());
@@ -193,7 +172,32 @@ void gput(const string &gfilename, const string &filename, const string &directo
 	++tries;
 	if ( tries>=5 )
 	{
-	    cerr << "[gstream] Error putting file. Giving up after the 5-th try!\n[gstream]\tvoid gput(const string&, const string&, const string&)\n";
+	    cerr << "[gstream] Error deleting file " << gfilename << " . Giving up after the 5-th try!\n[gstream]\tvoid gdel(const string&)\n";
+	    exit(1);
+	}
+    }
+    command.str("");
+    command.clear();
+}
+
+
+static void gput(const string &gfilename, const string &filename, const string &directoryname)
+{
+    if ( debug ) cerr << "[gstream] Putting: " << gfilename << endl;
+    ostringstream command;
+    command << "lcg-cr --vo " << vo << " ";
+    command << "-d " << dest << " ";
+    command << "-l lfn:" << gfilename << " file:" << filename << " 1>/dev/null";
+    int err=1;
+    int tries=0;
+    while ( err!=0 )
+    {
+	err=system(command.str().c_str());
+	if ( err!=0 ) sleep(60);
+	++tries;
+	if ( tries>=5 )
+	{
+	    cerr << "[gstream] Error putting file " << gfilename << " . Giving up after the 5-th try!\n[gstream]\tvoid gput(const string&, const string&, const string&)\n";
 	    cleanup(filename, directoryname);
 	    exit(1);
 	}
@@ -210,7 +214,7 @@ void gput(const string &gfilename, const string &filename, const string &directo
 	++tries;
 	if ( tries>=5 )
 	{
-	    cerr << "[gstream] Error in lfc-chmod. Giving up after the 5-th try!\n[gstream]\tvoid gput(const string&, const string&, const string&)\n";
+	    cerr << "[gstream] Error in lfc-chmod " << gfilename << " . Giving up after the 5-th try!\n[gstream]\tvoid gput(const string&, const string&, const string&)\n";
 	    cleanup(filename, directoryname);
 	    exit(1);
 	}
@@ -221,13 +225,13 @@ void gput(const string &gfilename, const string &filename, const string &directo
 
 
 gstream::gstream()
- : opened_(false), closed_(true)
+ : opened_(false)
 {
 }
 
 
-gstream::gstream(const char* name, ios::openmode mode)
- : opened_(false), closed_(true)
+gstream::gstream(const string &name, ios::openmode mode)
+ : opened_(false)
 {
     gstream::open(name, mode);
 }
@@ -239,15 +243,16 @@ gstream::~gstream()
 }
 
 
-gstream& gstream::open(const char* name, ios::openmode mode)
+gstream& gstream::open(const string &name, ios::openmode mode)
 {
     if ( opened_==false )
     {
 	gfilename_=name;
 	if ( gfilename_.substr(0, 6)=="/grid/" )
 	{
+	    ginit();
 	    mkstagefile(gfilename_, filename_, directoryname_);
-	    gget(gfilename_, filename_, directoryname_);
+	    if ( gexists(gfilename_) ) gget(gfilename_, filename_, directoryname_);
 	}
 	else 
 	{
@@ -256,7 +261,6 @@ gstream& gstream::open(const char* name, ios::openmode mode)
 	}
 	fstream::open(filename_.c_str(), mode);
 	opened_=true;
-	closed_=false;
     }
     return *this;
 }
@@ -264,30 +268,29 @@ gstream& gstream::open(const char* name, ios::openmode mode)
 
 gstream& gstream::close()
 {
-    if ( closed_==false )
+    if ( opened_==true )
     {
 	fstream::close();
 	if ( gfilename_.substr(0, 6)=="/grid/" )
 	{
+	    if ( gexists(gfilename_) ) gdel(gfilename_);
 	    gput(gfilename_, filename_, directoryname_);
 	    cleanup(filename_, directoryname_);
 	}
 	opened_=false;
-	closed_=true;
     }
     return *this;
 }
 
 
 igstream::igstream()
- : opened_(false), closed_(true)
+ : opened_(false)
 {
-
 }
 
 
-igstream::igstream(const char* name, ios::openmode mode)
- : opened_(false), closed_(true)
+igstream::igstream(const string &name, ios::openmode mode)
+ : opened_(false)
 {
     igstream::open(name, mode);
 }
@@ -299,15 +302,24 @@ igstream::~igstream()
 }
 
 
-igstream& igstream::open(const char* name, ios::openmode mode)
+igstream& igstream::open(const string &name, ios::openmode mode)
 {
     if ( opened_==false )
     {
 	gfilename_=name;
 	if ( gfilename_.substr(0, 6)=="/grid/" )
 	{
-	    mkstagefile(gfilename_, filename_, directoryname_);
-	    gget(gfilename_, filename_, directoryname_);
+	    ginit();
+	    if ( gexists(gfilename_) )
+	    {
+		mkstagefile(gfilename_, filename_, directoryname_);
+		gget(gfilename_, filename_, directoryname_);
+	    }
+	    else
+	    {
+		cerr << "[gstream] File " << gfilename_ << " does not exist.\n[gstream]\tigstream& igstream::open(const string&, ios::openmode)\n";
+		exit(1);
+	    }
 	}
 	else
 	{
@@ -316,7 +328,6 @@ igstream& igstream::open(const char* name, ios::openmode mode)
 	}
 	ifstream::open(filename_.c_str(), mode);
 	opened_=true;
-	closed_=false;
     }
     return *this;
 }
@@ -324,28 +335,24 @@ igstream& igstream::open(const char* name, ios::openmode mode)
 
 igstream& igstream::close()
 {
-    if ( closed_==false )
+    if ( opened_==true )
     {
 	ifstream::close();
-	if ( gfilename_.substr(0, 6)=="/grid/" )
-	{
-	    cleanup(filename_, directoryname_);
-	}
+	if ( gfilename_.substr(0, 6)=="/grid/" ) cleanup(filename_, directoryname_);
 	opened_=false;
-	closed_=true;
     }
     return *this;
 }
 
 
 ogstream::ogstream()
- : opened_(false), closed_(true)
+ : opened_(false)
 {
 }
 
 
-ogstream::ogstream(const char* name, ios::openmode mode)
- : opened_(false), closed_(true)
+ogstream::ogstream(const string &name, ios::openmode mode)
+ : opened_(false)
 {
     ogstream::open(name, mode);
 }
@@ -357,14 +364,17 @@ ogstream::~ogstream()
 }
 
 
-ogstream& ogstream::open(const char* name, ios::openmode mode)
+ogstream& ogstream::open(const string &name, ios::openmode mode)
 {
     if ( opened_==false )
     {
 	gfilename_=name;
 	if ( gfilename_.substr(0, 6)=="/grid/" )
 	{
+	    ginit();
 	    mkstagefile(gfilename_, filename_, directoryname_);
+	    if ( (mode&ios::app!=0) && gexists(gfilename_) )
+		gget(gfilename_, filename_, directoryname_);
 	}
 	else
 	{
@@ -373,7 +383,6 @@ ogstream& ogstream::open(const char* name, ios::openmode mode)
 	}
 	ofstream::open(filename_.c_str(), mode);
 	opened_=true;
-	closed_=false;
     }
     return *this;
 }
@@ -381,16 +390,16 @@ ogstream& ogstream::open(const char* name, ios::openmode mode)
 
 ogstream& ogstream::close()
 {
-    if ( closed_==false )
+    if ( opened_==true )
     {
 	ofstream::close();
 	if ( gfilename_.substr(0, 6)=="/grid/" )
 	{
+	    if ( gexists(gfilename_) ) gdel(gfilename_);
 	    gput(gfilename_, filename_, directoryname_);
 	    cleanup(filename_, directoryname_);
 	}
 	opened_=false;
-	closed_=true;
     }
     return *this;
 }
@@ -403,19 +412,18 @@ ogstream& ogstream::close()
 static void searchandreplace(string &str, const string &f, const string &r)
 {
     unsigned int pos=str.find(f);
-//    while ( pos!=str.npos ) { str.replace(pos, f.length(), r); pos=str.find(f); }
     while ( pos<str.length() ) { str.replace(pos, f.length(), r); pos=str.find(f); }
 }
 
 
 igpstream::igpstream()
- : opened_(false), closed_(true)
+ : opened_(false)
 {
 }
 
 
 igpstream::igpstream(const string &name, const string &pipe)
- : opened_(false), closed_(true)
+ : opened_(false)
 {
     igpstream::open(name, pipe);
 }
@@ -435,8 +443,17 @@ igpstream& igpstream::open(const string &name, const string &pipe)
 	pipename_=pipe;
 	if ( gfilename_.substr(0, 6)=="/grid/" )
 	{
-	    mkstagefile(gfilename_, filename_, directoryname_);
-	    gget(gfilename_, filename_, directoryname_);
+	    ginit();
+	    if ( gexists(gfilename_) )
+	    {
+		mkstagefile(gfilename_, filename_, directoryname_);
+		gget(gfilename_, filename_, directoryname_);
+	    }
+	    else
+	    {
+		cerr << "[gstream] File " << gfilename_ << " does not exist.\n[gstream]\tigpstream& igpstream::open(const string&, ios::openmode)\n";
+		exit(1);
+	    }
 	}
 	else
 	{
@@ -446,7 +463,6 @@ igpstream& igpstream::open(const string &name, const string &pipe)
 	searchandreplace(pipename_, "%f", filename_);
 	ipstream::open(pipename_);
 	opened_=true;
-	closed_=false;
     }
     return *this;
 }
@@ -454,25 +470,24 @@ igpstream& igpstream::open(const string &name, const string &pipe)
 
 igpstream& igpstream::close()
 {
-    if ( closed_==false )
+    if ( opened_==true )
     {
 	ipstream::close();
 	if ( gfilename_.substr(0, 6)=="/grid/" ) cleanup(filename_, directoryname_);
 	opened_=false;
-	closed_=true;
     }
     return *this;
 }
 
 
 ogpstream::ogpstream()
- : opened_(false), closed_(true)
+ : opened_(false)
 {
 }
 
 
 ogpstream::ogpstream(const string &name, const string &pipe)
- : opened_(false), closed_(true)
+ : opened_(false)
 {
     ogpstream::open(name, pipe);
 }
@@ -490,7 +505,13 @@ ogpstream& ogpstream::open(const string &name, const string &pipe)
     {
 	gfilename_=name;
 	pipename_=pipe;
-	if ( gfilename_.substr(0, 6)=="/grid/" ) mkstagefile(gfilename_, filename_, directoryname_);
+	if ( gfilename_.substr(0, 6)=="/grid/" )
+	{
+	    ginit();
+	    mkstagefile(gfilename_, filename_, directoryname_);
+	    if ( gexists(gfilename_) )
+		gget(gfilename_, filename_, directoryname_);
+	}
 	else
 	{
 	    filename_=gfilename_;
@@ -499,7 +520,6 @@ ogpstream& ogpstream::open(const string &name, const string &pipe)
 	searchandreplace(pipename_, "%f", filename_);
 	opstream::open(pipename_);
 	opened_=true;
-	closed_=false;
     }
     return *this;
 }
@@ -507,16 +527,16 @@ ogpstream& ogpstream::open(const string &name, const string &pipe)
 
 ogpstream& ogpstream::close()
 {
-    if ( closed_==false )
+    if ( opened_==true )
     {
 	opstream::close();
 	if ( gfilename_.substr(0, 6)=="/grid/" )
 	{
+	    if ( gexists(gfilename_) ) gdel(gfilename_);
 	    gput(gfilename_, filename_, directoryname_);
 	    cleanup(filename_, directoryname_);
 	}
 	opened_=false;
-	closed_=true;
     }
     return *this;
 }
