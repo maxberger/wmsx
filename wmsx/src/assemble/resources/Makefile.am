@@ -14,3 +14,6 @@ install-data-local:
 	cp -pR wmsx/repo $(libexecdir)/wmsx/
 	mkdir -p $(docdir)
 	cp -pR wmsx/doc/* $(docdir)
+
+pkgconfigdir=$(libdir)/pkgconfig
+pkgconfig_DATA = libgstream.pc.in
