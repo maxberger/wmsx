@@ -1,11 +1,24 @@
 /*
- * Pair.java
+ * WMSX - Workload Management Extensions for gLite
  * 
- * Created on 30.05.2007, 14:20:56
+ * Copyright (C) 2007-2008 Max Berger
  * 
- * To change this template, choose Tools | Template Manager and open the
- * template in the editor.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see http://www.gnu.org/licenses/.
+ * 
  */
+
+/* $Id: vasblasd$ */
 
 package hu.kfki.grid.wmsx.util;
 
@@ -14,31 +27,31 @@ import java.util.Map;
 
 /**
  * 
- * @author Max Berger
+ * @version $Revision: 123 $
  */
-public class Pair implements Map.Entry, Serializable {
+public class Pair<K, V> implements Map.Entry<K, V>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    Object key;
+    private final K key;
 
-    Object value;
+    private V value;
 
-    public Pair(final Object k, final Object v) {
+    public Pair(final K k, final V v) {
         this.key = k;
         this.value = v;
     }
 
-    public Object getKey() {
+    public K getKey() {
         return this.key;
     }
 
-    public Object getValue() {
+    public V getValue() {
         return this.value;
     }
 
-    public Object setValue(final Object arg0) {
-        final Object old = this.value;
+    public V setValue(final V arg0) {
+        final V old = this.value;
         this.value = arg0;
         return old;
     }

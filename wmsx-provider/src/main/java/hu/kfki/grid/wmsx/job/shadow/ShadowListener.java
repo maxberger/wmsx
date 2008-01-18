@@ -1,3 +1,25 @@
+/*
+ * WMSX - Workload Management Extensions for gLite
+ * 
+ * Copyright (C) 2007-2008 Max Berger
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see http://www.gnu.org/licenses/.
+ * 
+ */
+
+/* $Id: vasblasd$ */
+
 package hu.kfki.grid.wmsx.job.shadow;
 
 import hu.kfki.grid.wmsx.backends.JobUid;
@@ -80,6 +102,7 @@ public class ShadowListener implements Runnable, JobListener {
         return l;
     }
 
+    @Override
     protected void finalize() {
         this.cleanup();
     }
@@ -87,7 +110,7 @@ public class ShadowListener implements Runnable, JobListener {
     private void killer(final boolean serious) {
 
         boolean safety = true;
-        final List commandLine = new Vector();
+        final List<String> commandLine = new Vector<String>();
         commandLine.add("kill");
         if (serious) {
             commandLine.add("-9");
@@ -101,16 +124,17 @@ public class ShadowListener implements Runnable, JobListener {
             final String oName = this.oFile.getAbsolutePath();
             try {
                 final String oBase = oName.substring(0, oName.lastIndexOf("."));
-                final List mustHave = new Vector();
+                final List<String> mustHave = new Vector<String>();
                 mustHave.add(oBase);
                 mustHave.add(Integer.toString(this.port));
                 mustHave.add("edg-wl-grid-console-shadow");
                 final Process p = Runtime.getRuntime().exec(
                         new String[] { "ps", "ax" });
-                final List v = this.grepLines(p.getInputStream(), mustHave);
-                final Iterator it = v.iterator();
+                final List<String> v = this.grepLines(p.getInputStream(),
+                        mustHave);
+                final Iterator<String> it = v.iterator();
                 while (it.hasNext()) {
-                    final String line = (String) it.next();
+                    final String line = it.next();
                     final String pidStr = line.substring(0, 6).trim();
                     commandLine.add(pidStr);
                 }
@@ -122,7 +146,7 @@ public class ShadowListener implements Runnable, JobListener {
         }
 
         if (!safety) {
-            this.runtimeExec((String[]) commandLine
+            this.runtimeExec(commandLine
                     .toArray(new String[commandLine.size()]));
         }
 
@@ -132,8 +156,9 @@ public class ShadowListener implements Runnable, JobListener {
         }
     }
 
-    private List grepLines(final InputStream inputStream, final List mustHave) {
-        final List lines = new Vector();
+    private List<String> grepLines(final InputStream inputStream,
+            final List<String> mustHave) {
+        final List<String> lines = new Vector<String>();
         try {
 
             final BufferedReader reader = new BufferedReader(
@@ -141,9 +166,9 @@ public class ShadowListener implements Runnable, JobListener {
             String line = reader.readLine();
             while (line != null) {
                 boolean passes = true;
-                final Iterator it = mustHave.iterator();
+                final Iterator<String> it = mustHave.iterator();
                 while (passes && it.hasNext()) {
-                    final String lookFor = (String) it.next();
+                    final String lookFor = it.next();
                     passes = line.indexOf(lookFor) >= 0;
                 }
                 if (passes) {
