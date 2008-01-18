@@ -50,9 +50,10 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
         private final String args;
 
-        public LaszloCommand(final String _commandWithPath, final String _args) {
-            this.command = _commandWithPath;
-            this.args = _args;
+        public LaszloCommand(final String commandWithPath,
+                final String arguments) {
+            this.command = commandWithPath;
+            this.args = arguments;
         }
 
         public String getArgs() {

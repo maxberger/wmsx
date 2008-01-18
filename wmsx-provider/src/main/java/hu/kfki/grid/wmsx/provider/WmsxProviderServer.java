@@ -151,7 +151,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         WmsxProviderServer.LOGGER.info("Terminated.");
     }
 
-    private static void setupLogging(final File workdir, boolean stdout) {
+    private static void setupLogging(final File workdir, final boolean stdout) {
         final File logDir = new File(workdir, "log");
         if (!logDir.exists()) {
             logDir.mkdirs();

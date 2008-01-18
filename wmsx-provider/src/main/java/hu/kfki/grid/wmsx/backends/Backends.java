@@ -44,4 +44,7 @@ public final class Backends {
     public static final Backend LOCAL = LocalBackend.getInstance();
 
     public static final Backend WORKER = WorkerBackend.getInstance();
+
+    private Backends() {
+    }
 }

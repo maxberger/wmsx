@@ -26,6 +26,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Describes the work sent to worker.
+ * 
+ * @version $Revision$
+ */
 public class WorkDescription implements Serializable {
 
     /**
@@ -50,10 +55,10 @@ public class WorkDescription implements Serializable {
     /* <String> */
     private final List outputSandbox;
 
-    public WorkDescription(final Object _id, final Map input,
+    public WorkDescription(final Object jobId, final Map input,
             final List output, final String exec, final List arg,
             final String out, final String err) {
-        this.id = _id;
+        this.id = jobId;
         this.inputSandbox = input;
         this.outputSandbox = output;
         this.executable = exec;

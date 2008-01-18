@@ -60,20 +60,21 @@ public class LaszloJobFactory implements JobFactory {
 
     private final String name;
 
-    public LaszloJobFactory(final String _cmd, final String _args,
-            final File _outDir, final File _tmpDir, final int _num,
-            final boolean _interactive, final String _prefix, final String _name) {
-        this.outDir = _outDir;
-        this.tmpDir = _tmpDir;
-        this.cmdWithPath = _cmd;
-        this.args = _args;
-        this.num = _num;
-        this.interactive = _interactive;
-        this.name = _name;
-        if (_prefix == null) {
+    public LaszloJobFactory(final String command, final String arguments,
+            final File outputDir, final File tempDir, final int number,
+            final boolean isInteractive, final String addtlPrefix,
+            final String jobName) {
+        this.outDir = outputDir;
+        this.tmpDir = tempDir;
+        this.cmdWithPath = command;
+        this.args = arguments;
+        this.num = number;
+        this.interactive = isInteractive;
+        this.name = jobName;
+        if (addtlPrefix == null) {
             this.prefix = this.num + "_";
         } else {
-            this.prefix = _prefix;
+            this.prefix = addtlPrefix;
         }
     }
 
@@ -133,7 +134,8 @@ public class LaszloJobFactory implements JobFactory {
 
     private void writeJdl(final BufferedWriter out, final File starterFile,
             final ArglistJdlReader jdlArgs) throws IOException {
-        boolean realInteractive = this.interactive || jdlArgs.getInteractive();
+        final boolean realInteractive = this.interactive
+                || jdlArgs.getInteractive();
         final String inputFile = new File(new File(this.cmdWithPath)
                 .getParentFile(), jdlArgs.getArchive()).getCanonicalPath();
         out.write("[");

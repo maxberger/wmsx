@@ -28,6 +28,5 @@ import java.rmi.RemoteException;
 public interface Controller extends Remote {
     WorkDescription retrieveWork() throws RemoteException;
 
-    public void doneWith(Object id, ResultDescription result)
-            throws RemoteException;
+    void doneWith(Object id, ResultDescription result) throws RemoteException;
 }
