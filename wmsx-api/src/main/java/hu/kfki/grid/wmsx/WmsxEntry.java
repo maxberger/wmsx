@@ -27,7 +27,7 @@ import net.jini.core.entry.Entry;
 /**
  * Entry for registering WMSX to a JINI Registry - unused.
  * 
- * @version $Revision: 123 $ *
+ * @version $Revision$ *
  */
 public class WmsxEntry implements Entry {
 

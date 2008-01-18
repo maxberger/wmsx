@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 /**
  * Launches skripts and binaries.
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  */
 public class ScriptLauncher {
 

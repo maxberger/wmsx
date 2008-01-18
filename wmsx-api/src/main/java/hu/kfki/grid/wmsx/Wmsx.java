@@ -27,7 +27,7 @@ import java.io.IOException;
 /**
  * My Jini Service Interface!
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  */
 public interface Wmsx {
 

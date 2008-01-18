@@ -57,7 +57,7 @@ import com.sun.jini.admin.DestroyAdmin;
 /**
  * Hello world!
  * 
- * @version $Revision: 123 $
+ * @version $Revision$
  */
 public class App implements DiscoveryListener {
 
