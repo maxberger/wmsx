@@ -40,24 +40,22 @@ public class WorkDescription implements Serializable {
 
     private final Object id;
 
-    /* <String,byte[]> */
-    private final Map inputSandbox;
+    private final Map<String, byte[]> inputSandbox;
 
     private final String executable;
 
-    /* <String> */
-    private final List arguments;
+    private final List<String> arguments;
 
     private final String stdout;
 
     private final String stderr;
 
     /* <String> */
-    private final List outputSandbox;
+    private final List<String> outputSandbox;
 
-    public WorkDescription(final Object jobId, final Map input,
-            final List output, final String exec, final List arg,
-            final String out, final String err) {
+    public WorkDescription(final Object jobId, final Map<String, byte[]> input,
+            final List<String> output, final String exec,
+            final List<String> arg, final String out, final String err) {
         this.id = jobId;
         this.inputSandbox = input;
         this.outputSandbox = output;
@@ -71,7 +69,7 @@ public class WorkDescription implements Serializable {
         return this.id;
     }
 
-    public Map getInputSandbox() {
+    public Map<String, byte[]> getInputSandbox() {
         return this.inputSandbox;
     }
 
@@ -87,11 +85,11 @@ public class WorkDescription implements Serializable {
         return this.stderr;
     }
 
-    public List getOutputSandbox() {
+    public List<String> getOutputSandbox() {
         return this.outputSandbox;
     }
 
-    public List getArguments() {
+    public List<String> getArguments() {
         return this.arguments;
     }
 

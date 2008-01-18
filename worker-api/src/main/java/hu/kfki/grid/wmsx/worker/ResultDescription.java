@@ -32,14 +32,13 @@ public class ResultDescription implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    /* <String,byte[]> */
-    private final Map outputSandbox;
+    private final Map<String, byte[]> outputSandbox;
 
-    public ResultDescription(final Map output) {
+    public ResultDescription(final Map<String, byte[]> output) {
         this.outputSandbox = output;
     }
 
-    public Map getOutputSandbox() {
+    public Map<String, byte[]> getOutputSandbox() {
         return this.outputSandbox;
     }
 

@@ -38,9 +38,10 @@ import java.util.logging.Logger;
  * Utilities for file management.
  * 
  * @version $Revision$
- * 
  */
 public final class FileUtil {
+    private static final String BIN_CHMOD = "/bin/chmod";
+
     private static final int BUFSIZE = 4096;
 
     private static final Logger LOGGER = Logger.getLogger(FileUtil.class
@@ -49,8 +50,8 @@ public final class FileUtil {
     private FileUtil() {
     };
 
-    public static final void copy(final InputStream fin,
-            final OutputStream fout, final IOException ia) throws IOException {
+    public static void copy(final InputStream fin, final OutputStream fout,
+            final IOException ia) throws IOException {
         try {
             final byte[] b = new byte[FileUtil.BUFSIZE];
             int count;
@@ -76,14 +77,13 @@ public final class FileUtil {
         }
     }
 
-    public static final void copy(final InputStream fin, final File out)
+    public static void copy(final InputStream fin, final File out)
             throws IOException {
         final FileOutputStream fout = new FileOutputStream(out);
         FileUtil.copy(fin, fout, null);
     }
 
-    public static final void copy(final File in, final File out)
-            throws IOException {
+    public static void copy(final File in, final File out) throws IOException {
 
         final FileInputStream fin = new FileInputStream(in);
         final FileOutputStream fout = new FileOutputStream(out);
@@ -105,9 +105,9 @@ public final class FileUtil {
 
         try {
             Runtime.getRuntime().exec(
-                    new String[] { "/bin/chmod",
+                    new String[] { FileUtil.BIN_CHMOD,
                             "--reference=" + in.getCanonicalPath(),
-                            out.getCanonicalPath() }).waitFor();
+                            out.getCanonicalPath(), }).waitFor();
         } catch (final InterruptedException e) {
             // Ignore
         }
@@ -126,10 +126,9 @@ public final class FileUtil {
 
     public static void makeExecutable(final File file) throws IOException {
         try {
-            Runtime.getRuntime()
-                    .exec(
-                            new String[] { "/bin/chmod", "+x",
-                                    file.getCanonicalPath() }).waitFor();
+            Runtime.getRuntime().exec(
+                    new String[] { FileUtil.BIN_CHMOD, "+x",
+                            file.getCanonicalPath(), }).waitFor();
         } catch (final InterruptedException e) {
             // Ignore
         }
