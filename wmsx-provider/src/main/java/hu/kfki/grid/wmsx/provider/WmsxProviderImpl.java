@@ -286,11 +286,14 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         this.investigateLater();
     }
 
-    public void startWorkers(int num) {
+    public void startWorkers(final int num) {
+        int n;
         if (num > 50) {
-            num = 50;
+            n = 50;
+        } else {
+            n = num;
         }
-        for (int i = 0; i < num; i++) {
+        for (int i = 0; i < n; i++) {
             ControllerServer.getInstance().submitWorker();
         }
     }
@@ -447,6 +450,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         return success;
     }
 
+    /** {@inheritDoc} */
     public synchronized boolean rememberGrid(final String password)
             throws RemoteException {
         WmsxProviderImpl.LOGGER.info("New Grid Remeberer");
@@ -461,6 +465,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     }
 
+    /** {@inheritDoc} */
     public void setVo(final String newVo) {
         this.vo = newVo;
         if (newVo == null) {
@@ -470,6 +475,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
+    /** {@inheritDoc} */
     public void setBackend(final String newBackend) {
         WmsxProviderImpl.LOGGER.info("Setting backend to: " + newBackend);
         if ("glite".compareToIgnoreCase(newBackend) == 0) {
