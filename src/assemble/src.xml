@@ -1,0 +1,31 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <includeSubModules>true</includeSubModules>
+      <sources>
+        <fileSets>
+          <fileSet>
+            <excludes>
+              <exclude>target/**</exclude>
+              <exclude>w2k/**</exclude>
+            </excludes>
+          </fileSet>
+        </fileSets>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+<fileSets>
+<fileSet>
+<includes>
+<include>pom.xml</include>
+<include>LICENSE</include>
+</includes>
+</fileSet>
+</fileSets>
+</assembly>
+

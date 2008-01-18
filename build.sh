@@ -1,3 +1,5 @@
 #!/bin/sh
-. ~/bin/jdk14
-mvn -o install package && unzip -o wmsx/target/wmsx-*-SNAPSHOT*zip -d /home/berger/afs/public/  
+mvn clean
+mvn package install assembly:assembly
+cp wmsx/target/*distribution* $HOME/public_html/wmsx/
+cp target/*src*zip $HOME/public_html/wmsx/
