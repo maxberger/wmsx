@@ -26,7 +26,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include "pstream.h"
+#include <gstream/pstream.h>
 
 
 namespace std
