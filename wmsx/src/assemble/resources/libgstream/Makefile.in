@@ -142,7 +142,7 @@ gstreaminc_HEADERS = gstream.h pstream.h
 lib_LTLIBRARIES = libgstream.la
 libgstream_la_SOURCES = gstream.cc
 libgstream_la_LIBADD = @LTLIBOBJS@
-subdir = gstream
+subdir = libgstream
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -186,7 +186,7 @@ all: all-am
 .SUFFIXES: .c .cc .lo .o .obj
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  gstream/Makefile
+	  $(AUTOMAKE) --gnu  libgstream/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 libLTLIBRARIES_INSTALL = $(INSTALL)

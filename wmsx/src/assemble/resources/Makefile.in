@@ -134,7 +134,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-SUBDIRS = gstream
+SUBDIRS = libgstream
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libgstream.pc.in
@@ -156,7 +156,7 @@ DIST_COMMON = README $(srcdir)/Makefile.in $(srcdir)/configure AUTHORS \
 	COPYING ChangeLog INSTALL Makefile.am NEWS aclocal.m4 \
 	config.h.in config/config.guess config/config.sub \
 	config/depcomp config/install-sh config/ltmain.sh \
-	config/missing config/mkinstalldirs configure.in
+	config/missing config/mkinstalldirs configure configure.in
 DIST_SUBDIRS = $(SUBDIRS)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
