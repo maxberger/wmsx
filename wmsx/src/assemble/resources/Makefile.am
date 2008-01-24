@@ -1,4 +1,4 @@
-SUBDIRS = gstream
+SUBDIRS = libgstream
 docdir = ${datadir}/doc/${PACKAGE}
 
 install-data-local:

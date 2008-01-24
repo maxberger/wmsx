@@ -4,7 +4,7 @@
 AC_PREREQ(2.59)
 AC_INIT(wmsx, 1.0.0, BUG-REPORT-ADDRESS)
 AC_CONFIG_AUX_DIR(config)
-AC_CONFIG_SRCDIR([gstream/gstream.cc])
+AC_CONFIG_SRCDIR([libgstream/gstream.cc])
 AM_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE(wmsx,1.0)
 
@@ -33,4 +33,4 @@ AC_FUNC_FORK
 AC_PROG_GCC_TRADITIONAL
 AC_HEADER_STDC
 AC_CHECK_FUNCS([dup2 memmove])
-AC_OUTPUT(Makefile gstream/Makefile)
+AC_OUTPUT(Makefile libgstream/Makefile)
