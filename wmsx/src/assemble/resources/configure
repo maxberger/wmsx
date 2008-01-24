@@ -732,7 +732,7 @@ PACKAGE_VERSION='1.0.0'
 PACKAGE_STRING='wmsx 1.0.0'
 PACKAGE_BUGREPORT='BUG-REPORT-ADDRESS'
 
-ac_unique_file="gstream/gstream.cc"
+ac_unique_file="libgstream/gstream.cc"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -20689,7 +20689,7 @@ _ACEOF
 fi
 done
 
-ac_config_files="$ac_config_files Makefile gstream/Makefile"
+ac_config_files="$ac_config_files Makefile libgstream/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -21277,7 +21277,7 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "gstream/Makefile") CONFIG_FILES="$CONFIG_FILES gstream/Makefile" ;;
+    "libgstream/Makefile") CONFIG_FILES="$CONFIG_FILES libgstream/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
