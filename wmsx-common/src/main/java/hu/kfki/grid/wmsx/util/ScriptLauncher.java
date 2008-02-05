@@ -69,9 +69,6 @@ public class ScriptLauncher {
             final OutputStream o = this.prepareOutput(stdout);
             final Process p = Runtime.getRuntime().exec(cmdString, null, dir);
             retVal = this.wrapProcess(p, o);
-            if (o != null) {
-                o.close();
-            }
         } catch (final IOException e) {
             ScriptLauncher.LOGGER.warning("IOException launching script: "
                     + e.getMessage());
@@ -85,9 +82,6 @@ public class ScriptLauncher {
             try {
                 final OutputStream o = this.prepareOutput(stdout);
                 retVal = this.launchScript(cmdarray, o);
-                if (o != null) {
-                    o.close();
-                }
             } catch (final IOException e) {
                 ScriptLauncher.LOGGER.warning("IOException launching script: "
                         + e.getMessage());
@@ -99,25 +93,12 @@ public class ScriptLauncher {
     public int wrapProcess(final Process p, final OutputStream out) {
         int retVal = 0;
         if (p != null) {
+            final InputStream i = new BufferedInputStream(p.getInputStream());
+            StreamListener.listen(i, out);
             try {
-                final InputStream i = new BufferedInputStream(p
-                        .getInputStream());
-                try {
-                    retVal = p.waitFor();
-                } catch (final InterruptedException e) {
-                    // Ignore
-                }
-                if (out != null) {
-                    final byte[] buf = new byte[4096];
-                    int r = i.read(buf);
-                    while (r >= 0) {
-                        out.write(buf, 0, r);
-                        r = i.read(buf);
-                    }
-                }
-            } catch (final IOException e) {
-                ScriptLauncher.LOGGER.warning("IOException wrapping exec: "
-                        + e.getMessage());
+                retVal = p.waitFor();
+            } catch (final InterruptedException e) {
+                // Ignore
             }
         }
         return retVal;
