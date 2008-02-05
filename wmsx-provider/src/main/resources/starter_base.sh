@@ -24,17 +24,17 @@ fi
 echo "Extracting ${ARCHIVE}..."
 tar -xzf $ARCHIVE
 rm -f $ARCHIVE
-echo "Changing into $PROGDIR ..."
-cd $PROGDIR
-echo "Running $PROGRAM..."
+echo "Changing into $PROGRAMDIRECTORY ..."
+cd $PROGRAMDIRECTORY
+echo "Running $EXECUTABLE $ARGUMENTS"
 PATH=.:$PATH
-$PROGRAM $PARAMS
+$EXECUTABLE $ARGUMENTS
 
 echo "Changing back to super directory..."
 cd ..
-echo "Archiving $PROGDIR/$OUTDIR to out.tar.gz ..."
-mv $PROGDIR/$OUTDIR .
-tar -czf out.tar.gz $OUTDIR
-rm -rf $OUTDIR
+echo "Archiving $PROGGRAMDIRECTORY/$OUTPUTDIRECTORY to out.tar.gz ..."
+mv $PROGRAMDIRECTORY/$OUTPUTDIRECTORY .
+tar -czf out.tar.gz $OUTPUTDIRECTORY
+rm -rf $OUTPUTDIRECTORY
 echo "Cleaning up ..."
-rm -rf $PROGDIR
+rm -rf $PROGRAMDIRECTORY

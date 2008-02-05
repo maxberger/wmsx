@@ -197,13 +197,13 @@ public class LaszloJobFactory implements JobFactory {
 
         jobStarter.write("ARCHIVE=" + jdlArgs.getArchive());
         jobStarter.newLine();
-        jobStarter.write("PROGRAM=" + jdlArgs.getExecutable());
+        jobStarter.write("EXECUTABLE=" + jdlArgs.getExecutable());
         jobStarter.newLine();
-        jobStarter.write("PROGDIR=" + jdlArgs.getProgramDir());
+        jobStarter.write("PROGRAMDIRECTORY=" + jdlArgs.getProgramDir());
         jobStarter.newLine();
-        jobStarter.write("PARAMS=\"" + this.args + "\"");
+        jobStarter.write("ARGUMENTS=\"" + this.args + "\"");
         jobStarter.newLine();
-        jobStarter.write("OUTDIR=" + jdlArgs.getOutputDirectory());
+        jobStarter.write("OUTPUTDIRECTORY=" + jdlArgs.getOutputDirectory());
         jobStarter.newLine();
         if (jdlArgs.getAfs()) {
             jobStarter.write("AFS=true");

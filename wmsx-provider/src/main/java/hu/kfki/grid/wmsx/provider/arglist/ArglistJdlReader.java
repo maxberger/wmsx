@@ -64,15 +64,18 @@ public class ArglistJdlReader {
 
         this.executable = desc.getStringEntry(JobDescription.EXECUTABLE,
                 cmdName);
-        this.outputDir = desc.getStringEntry("OutputDirectory", "out");
+        this.outputDir = desc.getStringEntry(JobDescription.OUTPUTDIRECTORY,
+                "out");
         final String jobType = desc.getStringEntry(JobDescription.JOBTYPE);
-        this.interactive = "Interactive".equalsIgnoreCase(jobType);
-        this.software = desc.getListEntry("Software");
-        this.afs = this.software.remove("AFS");
-        this.archive = desc.getStringEntry("Archive", cmdName + ".tar.gz");
+        this.interactive = JobDescription.INTERACTIVE.equalsIgnoreCase(jobType);
+        this.software = desc.getListEntry(JobDescription.SOFTWARE);
+        this.afs = this.software.remove(JobDescription.AFS);
+        this.archive = desc.getStringEntry(JobDescription.ARCHIVE, cmdName
+                + ".tar.gz");
         final String oldProgDir = desc.getStringEntry("ProgramDir", cmdName);
-        this.programDir = desc.getStringEntry("ProgramDirectory", oldProgDir);
-        this.requirements = desc.getStringEntry("Requirements");
+        this.programDir = desc.getStringEntry(JobDescription.PROGRAMDIRECTORY,
+                oldProgDir);
+        this.requirements = desc.getStringEntry(JobDescription.REQUIREMENTS);
     }
 
     public String getExecutable() {

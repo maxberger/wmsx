@@ -49,6 +49,20 @@ public interface JobDescription {
 
     static final String CHAIN = "Chain";
 
+    static final String OUTPUTDIRECTORY = "OutputDirectory";
+
+    static final String INTERACTIVE = "Interactive";
+
+    static final String SOFTWARE = "Software";
+
+    static final String AFS = "AFS";
+
+    static final String ARCHIVE = "Archive";
+
+    static final String PROGRAMDIRECTORY = "ProgramDirectory";
+
+    static final String REQUIREMENTS = "Requirements";
+
     String getStringEntry(final String key, final String defaultValue);
 
     String getStringEntry(final String key);
