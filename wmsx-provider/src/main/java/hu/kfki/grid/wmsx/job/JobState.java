@@ -37,4 +37,23 @@ public final class JobState {
 
     public static final JobState NONE = new JobState();
 
+    @Override
+    public String toString() {
+        final String result;
+        if (JobState.STARTUP.equals(this)) {
+            result = "STARTUP";
+        } else if (JobState.RUNNING.equals(this)) {
+            result = "RUNNING";
+        } else if (JobState.SUCCESS.equals(this)) {
+            result = "SUCCESS";
+        } else if (JobState.FAILED.equals(this)) {
+            result = "FAILED";
+        } else if (JobState.NONE.equals(this)) {
+            result = "NONE";
+        } else {
+            result = super.toString();
+        }
+        return result;
+    }
+
 }
