@@ -70,7 +70,8 @@ public class ArglistJdlReader {
         this.software = desc.getListEntry("Software");
         this.afs = this.software.remove("AFS");
         this.archive = desc.getStringEntry("Archive", cmdName + ".tar.gz");
-        this.programDir = desc.getStringEntry("ProgramDir", cmdName);
+        final String oldProgDir = desc.getStringEntry("ProgramDir", cmdName);
+        this.programDir = desc.getStringEntry("ProgramDirectory", oldProgDir);
         this.requirements = desc.getStringEntry("Requirements");
     }
 
