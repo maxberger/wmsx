@@ -57,7 +57,7 @@ public class LocalBackend implements Backend {
     }
 
     public JobState getState(final JobUid uid) {
-        return this.state.get(uid.getBackendId());
+        return this.state.get(uid);
     }
 
     public boolean jobIdIsURI() {
@@ -69,12 +69,9 @@ public class LocalBackend implements Backend {
     }
 
     public Process retrieveResult(final JobUid id, final File dir) {
-        final LocalProcess lp = this.processes.get(id.getBackendId());
-        // System.out.println("LP is" + lp);
+        final LocalProcess lp = this.processes.get(id);
         if (lp != null) {
-            // System.out.println("Moving to " + dir);
             lp.retrieveOutput(dir);
-            // System.out.println("Done");
         }
         return null;
     }
