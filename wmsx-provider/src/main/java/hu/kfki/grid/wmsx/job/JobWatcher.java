@@ -129,11 +129,14 @@ public class JobWatcher implements Runnable {
             while (it.hasNext()) {
                 final JobUid jobId = it.next();
 
-                final JobState stateNow;
+                JobState stateNow;
                 if (!this.shutdown) {
                     stateNow = jobId.getBackend().getState(jobId);
                 } else {
                     stateNow = JobState.FAILED;
+                }
+                if (stateNow == null) {
+                    stateNow = JobState.NONE;
                 }
 
                 this.checkWithState(jobId, stateNow);
