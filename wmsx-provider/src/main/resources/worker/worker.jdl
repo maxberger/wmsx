@@ -2,4 +2,5 @@
 Executable = "worker.sh" ;
 InputSandbox = {"worker.sh","worker.tar.gz","proxyFile"};
 RetryCount = 10;
+StdOutput = "std.out";
 ]
