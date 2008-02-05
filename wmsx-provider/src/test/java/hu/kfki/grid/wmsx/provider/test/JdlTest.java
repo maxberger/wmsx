@@ -70,7 +70,7 @@ public class JdlTest extends TestCase {
         w.newLine();
         w.write("Strange=\"bla\";");
         w.newLine();
-        // w.write("#Comment=\"bla\";");
+        w.write("#Comment=\"bla\";");
         w.newLine();
 
         w.write("]");
