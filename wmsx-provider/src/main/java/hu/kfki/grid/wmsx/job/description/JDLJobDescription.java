@@ -23,7 +23,7 @@
 package hu.kfki.grid.wmsx.job.description;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
@@ -42,8 +42,8 @@ public class JDLJobDescription extends AbstractJobDescription {
 
     public JDLJobDescription(final String jdlFile) throws IOException {
         this.baseDir = new File(jdlFile).getAbsoluteFile().getParentFile();
-        final ClassAdParser parser = new ClassAdParser(new FileInputStream(
-                jdlFile));
+        final ClassAdParser parser = new ClassAdParser(new NoHashReader(
+                new FileReader(jdlFile)));
         final Expr e = parser.parse();
         if (e instanceof RecordExpr) {
             this.erecord = (RecordExpr) e;
