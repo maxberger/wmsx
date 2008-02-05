@@ -136,7 +136,7 @@ public class LocalProcess implements Runnable {
         if (this.workdir == null) {
             return;
         }
-        final File realTarget = new File(dir, "sub" + this.uid);
+        final File realTarget = new File(dir, "sub" + this.uid.getBackendId());
         realTarget.mkdirs();
         final List<String> list = this.job
                 .getListEntry(JobDescription.OUTPUTSANDBOX);
