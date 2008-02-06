@@ -151,21 +151,7 @@ public class LocalProcess implements Runnable {
     }
 
     private void cleanup() {
-        this.cleanDir(this.workdir);
+        FileUtil.cleanDir(this.workdir);
     }
 
-    private void cleanDir(final File dir) {
-        final File[] entries = dir.listFiles();
-        if (entries != null) {
-            for (int i = 0; i < entries.length; i++) {
-                final File f = entries[i];
-                if (f.isDirectory()) {
-                    this.cleanDir(f);
-                } else if (f.isFile()) {
-                    f.delete();
-                }
-            }
-        }
-        dir.delete();
-    }
 }

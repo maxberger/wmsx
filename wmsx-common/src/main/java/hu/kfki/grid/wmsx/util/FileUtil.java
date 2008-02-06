@@ -174,4 +174,19 @@ public final class FileUtil {
         }
     }
 
+    public static void cleanDir(final File dir) {
+        final File[] entries = dir.listFiles();
+        if (entries != null) {
+            for (int i = 0; i < entries.length; i++) {
+                final File f = entries[i];
+                if (f.isDirectory()) {
+                    FileUtil.cleanDir(f);
+                } else if (f.isFile()) {
+                    f.delete();
+                }
+            }
+        }
+        dir.delete();
+    }
+
 }
