@@ -77,19 +77,34 @@ public class Worker {
     private void performWork(final WorkDescription todo) throws RemoteException {
         Worker.LOGGER.info("Assigned work" + todo.getId());
         final File currentDir = new File(".").getAbsoluteFile();
-        FileUtil.retrieveSandbox(todo.getInputSandbox(), currentDir);
+        final File workDir;
+        File wd;
+        try {
+            wd = File.createTempFile("worker", "", currentDir);
+            wd.delete();
+            wd.mkdirs();
+        } catch (final IOException ioe) {
+            Worker.LOGGER.info(ioe.getMessage());
+            wd = currentDir;
+        }
+        workDir = wd;
+        Worker.LOGGER.fine("WorkDir: " + workDir);
+
+        FileUtil.retrieveSandbox(todo.getInputSandbox(), workDir);
 
         final List<String> arguments = todo.getArguments();
         final List<String> cmdArray = new Vector<String>(1 + arguments.size());
-        cmdArray.add(new File(currentDir, todo.getExecutable())
-                .getAbsolutePath());
+        cmdArray.add(new File(workDir, todo.getExecutable()).getAbsolutePath());
         cmdArray.addAll(arguments);
 
         ScriptLauncher.getInstance().launchScript(
                 cmdArray.toArray(new String[0]),
-                new File(currentDir, todo.getStdout()).getAbsolutePath());
+                new File(workDir, todo.getStdout()).getAbsolutePath());
         this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
-                .createSandbox(todo.getOutputSandbox(), currentDir)));
+                .createSandbox(todo.getOutputSandbox(), workDir)));
+        if (!currentDir.equals(workDir)) {
+            FileUtil.cleanDir(workDir);
+        }
     }
 
     public static void main(final String args[]) {
