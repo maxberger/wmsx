@@ -60,8 +60,9 @@ public class ControllerServer {
         final InvocationLayerFactory invocationLayerFactory = new BasicILFactory();
 
         Controller stub = null;
-        int port = 20000;
-        while (stub == null && port < 25000) {
+        int port = GlobusTcp.getInstance().getMinTcp();
+        final int max = GlobusTcp.getInstance().getMaxTcp();
+        while (stub == null && port <= max) {
             try {
                 final ServerEndpoint endpoint = TcpServerEndpoint
                         .getInstance(port);
