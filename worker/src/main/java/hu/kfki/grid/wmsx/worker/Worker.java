@@ -59,7 +59,7 @@ public class Worker {
 
                 if (todo != null) {
                     this.performWork(todo);
-                    delay = 60;
+                    delay = 5;
                     lastChecked = 0;
                 } else {
                     Worker.LOGGER.info("Sleeping...");
@@ -82,7 +82,7 @@ public class Worker {
 
     @SuppressWarnings("unchecked")
     private void performWork(final WorkDescription todo) throws RemoteException {
-        Worker.LOGGER.info("Assigned work" + todo.getId());
+        Worker.LOGGER.info("Assigned work: " + todo.getId());
         final File currentDir = new File(".").getAbsoluteFile();
         final File workDir;
         File wd;
@@ -110,7 +110,6 @@ public class Worker {
         this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
                 .createSandbox(todo.getOutputSandbox(), workDir)));
         if (!currentDir.equals(workDir)) {
-            // FIXME
             FileUtil.cleanDir(workDir);
         }
     }
