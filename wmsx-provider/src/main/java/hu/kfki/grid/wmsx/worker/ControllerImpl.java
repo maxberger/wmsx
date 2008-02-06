@@ -30,12 +30,15 @@ import hu.kfki.grid.wmsx.util.FileUtil;
 
 import java.io.File;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Logger;
+
+import net.jini.id.Uuid;
 
 public class ControllerImpl implements Controller {
 
@@ -49,23 +52,29 @@ public class ControllerImpl implements Controller {
 
     private final Set<Object> failed = new TreeSet<Object>();
 
+    private final Map<Uuid, Long> lastSeen = new HashMap<Uuid, Long>();
+
     private static final Logger LOGGER = Logger.getLogger(ControllerImpl.class
             .toString());
 
     ControllerImpl() {
     }
 
-    public WorkDescription retrieveWork() {
+    public WorkDescription retrieveWork(final Uuid uuid) {
         final ControllerWorkDescription cwd;
+        final Object jobid;
+        this.ping(uuid);
         synchronized (this.pending) {
             if (this.pending.isEmpty()) {
                 return null;
             }
             cwd = this.pending.removeFirst();
-            this.running.put(cwd.getWorkDescription().getId(), cwd);
+            jobid = cwd.getWorkDescription().getId();
+            this.running.put(jobid, cwd);
         }
-        JobWatcher.getWatcher().checkWithState(
-                this.getJuidForId(cwd.getWorkDescription().getId()),
+        ControllerImpl.LOGGER.info("Assigning job " + jobid + " to worker "
+                + uuid);
+        JobWatcher.getWatcher().checkWithState(this.getJuidForId(jobid),
                 JobState.RUNNING);
         return cwd.getWorkDescription();
 
@@ -81,8 +90,8 @@ public class ControllerImpl implements Controller {
     }
 
     @SuppressWarnings("unchecked")
-    public void doneWith(final Object id, final ResultDescription result)
-            throws RemoteException {
+    public void doneWith(final Object id, final ResultDescription result,
+            final Uuid uuid) throws RemoteException {
         synchronized (this.pending) {
             this.running.remove(id);
             this.success.put(id, result.getOutputSandbox());
@@ -130,5 +139,11 @@ public class ControllerImpl implements Controller {
             }
         }
         return j;
+    }
+
+    public void ping(final Uuid uuid) {
+        synchronized (this.lastSeen) {
+            this.lastSeen.put(uuid, new Long(System.currentTimeMillis()));
+        }
     }
 }
