@@ -34,28 +34,38 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
+
 public class Worker {
 
     private static final int MAX_WAIT = 45 * 60;
 
+    private final Uuid uuid;
+
     final Controller controller;
+
+    final Alive alive;
 
     private static final Logger LOGGER = Logger.getLogger(Worker.class
             .toString());
 
     private Worker(final Controller cont) {
         this.controller = cont;
+        this.uuid = UuidFactory.generate();
+        this.alive = new Alive(cont, this.uuid);
     }
 
     public void start() {
 
         long lastChecked = 0;
         long delay = 5;
-        Worker.LOGGER.info("Worker started");
+        Worker.LOGGER.info("Worker started, Uuid is " + this.uuid);
         try {
             while (lastChecked < Worker.MAX_WAIT) {
                 Worker.LOGGER.info("Checking for work");
-                final WorkDescription todo = this.controller.retrieveWork();
+                final WorkDescription todo = this.controller
+                        .retrieveWork(this.uuid);
 
                 if (todo != null) {
                     this.performWork(todo);
@@ -63,6 +73,7 @@ public class Worker {
                     lastChecked = 0;
                 } else {
                     Worker.LOGGER.info("Sleeping...");
+                    this.alive.stop();
                     lastChecked += delay;
                     if (lastChecked < Worker.MAX_WAIT) {
                         try {
@@ -77,11 +88,13 @@ public class Worker {
         } catch (final RemoteException re) {
             Worker.LOGGER.warning(re.getMessage());
         }
+        this.alive.stop();
         Worker.LOGGER.info("Shutting down.");
     }
 
     @SuppressWarnings("unchecked")
     private void performWork(final WorkDescription todo) throws RemoteException {
+        this.alive.start();
         Worker.LOGGER.info("Assigned work: " + todo.getId());
         final File currentDir = new File(".").getAbsoluteFile();
         final File workDir;
@@ -110,7 +123,7 @@ public class Worker {
                 todo.getStderr(), workDir);
         Worker.LOGGER.info("Submitting results...");
         this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
-                .createSandbox(todo.getOutputSandbox(), workDir)));
+                .createSandbox(todo.getOutputSandbox(), workDir)), this.uuid);
         if (!currentDir.equals(workDir)) {
             FileUtil.cleanDir(workDir);
         }

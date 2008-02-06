@@ -25,8 +25,13 @@ package hu.kfki.grid.wmsx.worker;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface Controller extends Remote {
-    WorkDescription retrieveWork() throws RemoteException;
+import net.jini.id.Uuid;
 
-    void doneWith(Object id, ResultDescription result) throws RemoteException;
+public interface Controller extends Remote {
+    WorkDescription retrieveWork(Uuid uuid) throws RemoteException;
+
+    void doneWith(Object id, ResultDescription result, Uuid uuid)
+            throws RemoteException;
+
+    void ping(Uuid uuid) throws RemoteException;
 }
