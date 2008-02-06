@@ -59,11 +59,12 @@ public class ScriptLauncher {
 
     private OutputStream prepareOutput(final String stdout, final File workdir)
             throws IOException {
-        final File stdoutfile = FileUtil.resolveFile(workdir, stdout)
-                .getCanonicalFile();
-        if (stdoutfile == null) {
+        final File stdoutfileAbs = FileUtil.resolveFile(workdir, stdout);
+        if (stdoutfileAbs == null) {
             return null;
         }
+        final File stdoutfile = stdoutfileAbs.getCanonicalFile();
+
         synchronized (this.streamMap) {
             final String path = stdoutfile.getPath();
             OutputStream out = this.streamMap.get(path);
