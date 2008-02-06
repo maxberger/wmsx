@@ -32,7 +32,7 @@ import java.io.OutputStream;
 import java.util.logging.Logger;
 
 /**
- * Launches skripts and binaries.
+ * Launches scripts and binaries.
  * 
  * @version $Revision$
  */
@@ -95,6 +95,9 @@ public class ScriptLauncher {
         if (p != null) {
             final InputStream i = new BufferedInputStream(p.getInputStream());
             StreamListener.listen(i, out);
+            // TODO!
+            StreamListener.listen(new BufferedInputStream(p.getErrorStream()),
+                    out);
             try {
                 retVal = p.waitFor();
             } catch (final InterruptedException e) {
