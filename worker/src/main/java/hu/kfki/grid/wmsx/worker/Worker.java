@@ -104,9 +104,11 @@ public class Worker {
         cmdArray.add(new File(workDir, todo.getExecutable()).getAbsolutePath());
         cmdArray.addAll(arguments);
 
+        Worker.LOGGER.info("Launching...");
         ScriptLauncher.getInstance().launchScript(
                 cmdArray.toArray(new String[0]), todo.getStdout(),
                 todo.getStderr(), workDir);
+        Worker.LOGGER.info("Submitting results...");
         this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
                 .createSandbox(todo.getOutputSandbox(), workDir)));
         if (!currentDir.equals(workDir)) {
