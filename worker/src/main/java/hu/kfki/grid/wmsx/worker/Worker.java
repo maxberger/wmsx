@@ -36,6 +36,8 @@ import java.util.logging.Logger;
 
 public class Worker {
 
+    private static final int MAX_WAIT = 45 * 60;
+
     final Controller controller;
 
     private static final Logger LOGGER = Logger.getLogger(Worker.class
@@ -51,7 +53,8 @@ public class Worker {
         long delay = 60;
         Worker.LOGGER.info("Worker started");
         try {
-            while (lastChecked < 45 * 60) {
+            while (lastChecked < Worker.MAX_WAIT) {
+                Worker.LOGGER.info("Checking for work");
                 final WorkDescription todo = this.controller.retrieveWork();
 
                 if (todo != null) {
@@ -59,18 +62,22 @@ public class Worker {
                     delay = 60;
                     lastChecked = 0;
                 } else {
-                    try {
-                        Thread.sleep(delay * 1000);
-                    } catch (final InterruptedException e) {
-                        // ignore
-                    }
+                    Worker.LOGGER.info("Sleeping...");
                     lastChecked += delay;
+                    if (lastChecked < Worker.MAX_WAIT) {
+                        try {
+                            Thread.sleep(delay * 1000);
+                        } catch (final InterruptedException e) {
+                            // ignore
+                        }
+                    }
                     delay += Math.random() / 2.0 * delay;
                 }
             }
         } catch (final RemoteException re) {
             Worker.LOGGER.warning(re.getMessage());
         }
+        Worker.LOGGER.info("Shutting down.");
     }
 
     @SuppressWarnings("unchecked")
@@ -80,7 +87,7 @@ public class Worker {
         final File workDir;
         File wd;
         try {
-            wd = File.createTempFile("wd", "", currentDir);
+            wd = File.createTempFile("work", "", currentDir);
             wd.delete();
             wd.mkdirs();
         } catch (final IOException ioe) {
