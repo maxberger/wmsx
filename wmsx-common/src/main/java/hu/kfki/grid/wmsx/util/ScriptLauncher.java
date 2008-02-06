@@ -69,7 +69,7 @@ public class ScriptLauncher {
             OutputStream out = this.streamMap.get(path);
             if (out == null) {
                 stdoutfile.getParentFile().mkdirs();
-                out = new BufferedOutputStream(new FileOutputStream(stdout));
+                out = new BufferedOutputStream(new FileOutputStream(stdoutfile));
                 this.streamMap.put(path, out);
             }
             return out;
