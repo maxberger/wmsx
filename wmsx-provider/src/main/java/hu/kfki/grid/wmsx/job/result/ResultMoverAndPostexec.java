@@ -101,7 +101,7 @@ public class ResultMoverAndPostexec implements Runnable {
 
             final int postRetVal = ScriptLauncher.getInstance().launchScript(
                     cmdVec.toArray(new String[0]), output + "_postexec",
-                    output + "_postexec");
+                    output + "_postexec", this.dir);
             if (postRetVal == 1) {
                 final String chain = this.job.getChain();
                 ResultMoverAndPostexec.LOGGER.info("Running " + chain);
@@ -118,7 +118,7 @@ public class ResultMoverAndPostexec implements Runnable {
     private void runchain(final List<String> cmdVec) {
         final OutputStream o = new ByteArrayOutputStream();
         ScriptLauncher.getInstance().launchScript(
-                cmdVec.toArray(new String[0]), o, null);
+                cmdVec.toArray(new String[0]), o, null, this.dir);
         final BufferedReader r = new BufferedReader(new StringReader(o
                 .toString()));
         final List<IRemoteWmsxProvider.LaszloCommand> l = new Vector<IRemoteWmsxProvider.LaszloCommand>();
