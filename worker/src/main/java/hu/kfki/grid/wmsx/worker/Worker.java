@@ -50,7 +50,7 @@ public class Worker {
     public void start() {
 
         long lastChecked = 0;
-        long delay = 60;
+        long delay = 5;
         Worker.LOGGER.info("Worker started");
         try {
             while (lastChecked < Worker.MAX_WAIT) {
