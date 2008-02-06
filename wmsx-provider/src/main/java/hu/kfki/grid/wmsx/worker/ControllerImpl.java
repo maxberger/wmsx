@@ -217,6 +217,8 @@ public class ControllerImpl implements Controller, Runnable {
                         }
                     }
                     if (!found) {
+                        ControllerImpl.LOGGER
+                                .info("Rescheduling suspicious Job " + id);
                         this.pending.add(this.running.get(id));
                     }
                 }
