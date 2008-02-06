@@ -25,9 +25,11 @@ public class StreamListener implements Runnable {
                 final byte[] buf = new byte[4096];
                 int r = this.in.read(buf);
                 while (r >= 0) {
-                    this.out.write(buf, 0, r);
-                    if (this.in.available() == 0) {
-                        this.out.flush();
+                    synchronized (this.out) {
+                        this.out.write(buf, 0, r);
+                        if (this.in.available() == 0) {
+                            this.out.flush();
+                        }
                     }
                     r = this.in.read(buf);
                 }

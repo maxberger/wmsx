@@ -80,7 +80,7 @@ public class Worker {
         final File workDir;
         File wd;
         try {
-            wd = File.createTempFile("worker", "", currentDir);
+            wd = File.createTempFile("wd", "", currentDir);
             wd.delete();
             wd.mkdirs();
         } catch (final IOException ioe) {
