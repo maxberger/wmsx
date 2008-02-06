@@ -29,6 +29,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 /**
@@ -37,6 +39,8 @@ import java.util.logging.Logger;
  * @version $Revision$
  */
 public class ScriptLauncher {
+
+    private final Map<String, OutputStream> streamMap = new TreeMap<String, OutputStream>();
 
     private static ScriptLauncher instance;
 
@@ -57,18 +61,27 @@ public class ScriptLauncher {
         if (stdout == null) {
             return null;
         }
-        final File stdoutfile = new File(stdout);
-        stdoutfile.getAbsoluteFile().getParentFile().mkdirs();
-        return new BufferedOutputStream(new FileOutputStream(stdout));
+        final File stdoutfile = new File(stdout).getCanonicalFile();
+        synchronized (this.streamMap) {
+            final String path = stdoutfile.getPath();
+            OutputStream out = this.streamMap.get(path);
+            if (out == null) {
+                stdoutfile.getParentFile().mkdirs();
+                out = new BufferedOutputStream(new FileOutputStream(stdout));
+                this.streamMap.put(path, out);
+            }
+            return out;
+        }
     }
 
     public int launchScript(final String cmdString, final File dir,
-            final String stdout) {
+            final String stdout, final String stderr) {
         int retVal = 0;
         try {
             final OutputStream o = this.prepareOutput(stdout);
+            final OutputStream e = this.prepareOutput(stderr);
             final Process p = Runtime.getRuntime().exec(cmdString, null, dir);
-            retVal = this.wrapProcess(p, o);
+            retVal = this.wrapProcess(p, o, e);
         } catch (final IOException e) {
             ScriptLauncher.LOGGER.warning("IOException launching script: "
                     + e.getMessage());
@@ -76,12 +89,14 @@ public class ScriptLauncher {
         return retVal;
     }
 
-    public int launchScript(final String[] cmdarray, final String stdout) {
+    public int launchScript(final String[] cmdarray, final String stdout,
+            final String stderr) {
         int retVal = 0;
         if (new File(cmdarray[0]).exists()) {
             try {
                 final OutputStream o = this.prepareOutput(stdout);
-                retVal = this.launchScript(cmdarray, o);
+                final OutputStream e = this.prepareOutput(stderr);
+                retVal = this.launchScript(cmdarray, o, e);
             } catch (final IOException e) {
                 ScriptLauncher.LOGGER.warning("IOException launching script: "
                         + e.getMessage());
@@ -90,14 +105,14 @@ public class ScriptLauncher {
         return retVal;
     }
 
-    public int wrapProcess(final Process p, final OutputStream out) {
+    public int wrapProcess(final Process p, final OutputStream out,
+            final OutputStream err) {
         int retVal = 0;
         if (p != null) {
             final InputStream i = new BufferedInputStream(p.getInputStream());
             StreamListener.listen(i, out);
-            // TODO!
             StreamListener.listen(new BufferedInputStream(p.getErrorStream()),
-                    out);
+                    err);
             try {
                 retVal = p.waitFor();
             } catch (final InterruptedException e) {
@@ -107,12 +122,13 @@ public class ScriptLauncher {
         return retVal;
     }
 
-    public int launchScript(final String[] cmdarray, final OutputStream out) {
+    public int launchScript(final String[] cmdarray, final OutputStream out,
+            final OutputStream err) {
         int retVal = 0;
         if (new File(cmdarray[0]).exists()) {
             try {
                 final Process p = Runtime.getRuntime().exec(cmdarray);
-                retVal = this.wrapProcess(p, out);
+                retVal = this.wrapProcess(p, out, err);
             } catch (final IOException e) {
                 ScriptLauncher.LOGGER.warning("IOException launching script: "
                         + e.getMessage());
