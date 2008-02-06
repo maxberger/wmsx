@@ -175,7 +175,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
             ScriptLauncher.getInstance().launchScript(
                     cmdVec.toArray(new String[0]), output + "_preexec",
-                    output + "_preexec");
+                    output + "_preexec", new File(job.getResultDir()));
         }
         WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
         SubmissionResults result;

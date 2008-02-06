@@ -114,7 +114,13 @@ public final class FileUtil {
     }
 
     public static File resolveFile(final File dir, final String fileName) {
+        if (fileName == null) {
+            return null;
+        }
         final File fileNameFile = new File(fileName);
+        if (dir == null) {
+            return fileNameFile.getAbsoluteFile();
+        }
         final File inputFile;
         if (fileNameFile.isAbsolute()) {
             inputFile = fileNameFile;

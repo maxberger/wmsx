@@ -57,11 +57,13 @@ public class ScriptLauncher {
         return ScriptLauncher.instance;
     }
 
-    private OutputStream prepareOutput(final String stdout) throws IOException {
-        if (stdout == null) {
+    private OutputStream prepareOutput(final String stdout, final File workdir)
+            throws IOException {
+        final File stdoutfile = FileUtil.resolveFile(workdir, stdout)
+                .getCanonicalFile();
+        if (stdoutfile == null) {
             return null;
         }
-        final File stdoutfile = new File(stdout).getCanonicalFile();
         synchronized (this.streamMap) {
             final String path = stdoutfile.getPath();
             OutputStream out = this.streamMap.get(path);
@@ -78,8 +80,8 @@ public class ScriptLauncher {
             final String stdout, final String stderr) {
         int retVal = 0;
         try {
-            final OutputStream o = this.prepareOutput(stdout);
-            final OutputStream e = this.prepareOutput(stderr);
+            final OutputStream o = this.prepareOutput(stdout, dir);
+            final OutputStream e = this.prepareOutput(stderr, dir);
             final Process p = Runtime.getRuntime().exec(cmdString, null, dir);
             retVal = this.wrapProcess(p, o, e);
         } catch (final IOException e) {
@@ -90,13 +92,13 @@ public class ScriptLauncher {
     }
 
     public int launchScript(final String[] cmdarray, final String stdout,
-            final String stderr) {
+            final String stderr, final File workdir) {
         int retVal = 0;
         if (new File(cmdarray[0]).exists()) {
             try {
-                final OutputStream o = this.prepareOutput(stdout);
-                final OutputStream e = this.prepareOutput(stderr);
-                retVal = this.launchScript(cmdarray, o, e);
+                final OutputStream o = this.prepareOutput(stdout, workdir);
+                final OutputStream e = this.prepareOutput(stderr, workdir);
+                retVal = this.launchScript(cmdarray, o, e, workdir);
             } catch (final IOException e) {
                 ScriptLauncher.LOGGER.warning("IOException launching script: "
                         + e.getMessage());
@@ -123,11 +125,12 @@ public class ScriptLauncher {
     }
 
     public int launchScript(final String[] cmdarray, final OutputStream out,
-            final OutputStream err) {
+            final OutputStream err, final File workdir) {
         int retVal = 0;
         if (new File(cmdarray[0]).exists()) {
             try {
-                final Process p = Runtime.getRuntime().exec(cmdarray);
+                final Process p = Runtime.getRuntime().exec(cmdarray, null,
+                        workdir);
                 retVal = this.wrapProcess(p, out, err);
             } catch (final IOException e) {
                 ScriptLauncher.LOGGER.warning("IOException launching script: "

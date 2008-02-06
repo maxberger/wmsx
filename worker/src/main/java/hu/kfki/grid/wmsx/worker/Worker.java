@@ -87,7 +87,7 @@ public class Worker {
         final File workDir;
         File wd;
         try {
-            wd = File.createTempFile("work", "", currentDir);
+            wd = File.createTempFile("work", "", currentDir).getCanonicalFile();
             wd.delete();
             wd.mkdirs();
         } catch (final IOException ioe) {
@@ -105,12 +105,12 @@ public class Worker {
         cmdArray.addAll(arguments);
 
         ScriptLauncher.getInstance().launchScript(
-                cmdArray.toArray(new String[0]),
-                new File(workDir, todo.getStdout()).getAbsolutePath(),
-                new File(workDir, todo.getStderr()).getAbsolutePath());
+                cmdArray.toArray(new String[0]), todo.getStdout(),
+                todo.getStderr(), workDir);
         this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
                 .createSandbox(todo.getOutputSandbox(), workDir)));
         if (!currentDir.equals(workDir)) {
+            // FIXME
             FileUtil.cleanDir(workDir);
         }
     }
