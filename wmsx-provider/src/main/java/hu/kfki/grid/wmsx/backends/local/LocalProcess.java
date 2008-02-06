@@ -128,8 +128,12 @@ public class LocalProcess implements Runnable {
         if (stdout != null) {
             stdout = new File(this.workdir, stdout).getCanonicalPath();
         }
+        String stderr = this.job.getStringEntry(JobDescription.STDERROR);
+        if (stderr != null) {
+            stderr = new File(this.workdir, stderr).getCanonicalPath();
+        }
         ScriptLauncher.getInstance().launchScript(commandline, this.workdir,
-                stdout);
+                stdout, stderr);
     }
 
     public synchronized void retrieveOutput(final File dir) {

@@ -99,7 +99,8 @@ public class Worker {
 
         ScriptLauncher.getInstance().launchScript(
                 cmdArray.toArray(new String[0]),
-                new File(workDir, todo.getStdout()).getAbsolutePath());
+                new File(workDir, todo.getStdout()).getAbsolutePath(),
+                new File(workDir, todo.getStderr()).getAbsolutePath());
         this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
                 .createSandbox(todo.getOutputSandbox(), workDir)));
         if (!currentDir.equals(workDir)) {

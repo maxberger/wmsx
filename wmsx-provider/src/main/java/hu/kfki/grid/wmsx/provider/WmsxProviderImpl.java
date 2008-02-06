@@ -174,7 +174,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             cmdVec.addAll(Arrays.asList(job.getArgs()));
 
             ScriptLauncher.getInstance().launchScript(
-                    cmdVec.toArray(new String[0]), output + "_preexec");
+                    cmdVec.toArray(new String[0]), output + "_preexec",
+                    output + "_preexec");
         }
         WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
         SubmissionResults result;
@@ -317,7 +318,6 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                     }
                 }
             }).start();
-
         }
         while (!this.pendingJobFactories.isEmpty()
                 && this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning() > 0) {
