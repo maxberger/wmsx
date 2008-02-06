@@ -101,7 +101,7 @@ public class LaszloJobFactory implements JobFactory {
             final File starterFile = new File(this.tmpDir, extBase + ".sh");
 
             final ArglistJdlReader jdlArgs = new ArglistJdlReader(
-                    this.cmdWithPath + ".jdl", this.getCmd());
+                    this.cmdWithPath + ".wjdl", this.getCmd());
 
             this.writeJdl(out, starterFile, jdlArgs);
             this.prepareStarterFile(starterFile, jdlArgs);
