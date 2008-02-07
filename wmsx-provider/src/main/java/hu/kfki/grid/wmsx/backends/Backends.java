@@ -24,6 +24,7 @@ package hu.kfki.grid.wmsx.backends;
 
 import hu.kfki.grid.wmsx.backends.lcg.EDGBackend;
 import hu.kfki.grid.wmsx.backends.lcg.GLiteBackend;
+import hu.kfki.grid.wmsx.backends.lcg.GLiteWmsBackend;
 import hu.kfki.grid.wmsx.backends.local.FakeBackend;
 import hu.kfki.grid.wmsx.backends.local.LocalBackend;
 import hu.kfki.grid.wmsx.worker.WorkerBackend;
@@ -38,6 +39,8 @@ public final class Backends {
     public static final Backend EDG = EDGBackend.getInstance();
 
     public static final Backend GLITE = GLiteBackend.getInstance();
+
+    public static final Backend GLITEWMS = GLiteWmsBackend.getInstance();
 
     public static final Backend FAKE = FakeBackend.getInstance();
 
