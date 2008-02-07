@@ -63,7 +63,7 @@ public class Workflow {
 
     public synchronized void isDone(final JdlJob jdlJob) {
         final String name = jdlJob.getName();
-        System.out.println("Done with: " + name);
+        Workflow.LOGGER.info("Done with: " + name);
         this.done.add(name);
         synchronized (this.nextNodes) {
             final List<String> next = this.nextNodes.get(name);
@@ -99,7 +99,7 @@ public class Workflow {
     }
 
     private void executeNode(final String node) {
-        System.out.println("Executing " + node);
+        Workflow.LOGGER.info("Submitting: " + node);
         this.potentialTodo.remove(node);
         WmsxProviderImpl.getInstance().addJobFactory(
                 new WorkflowNodeJobFactory(this, node));
