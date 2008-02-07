@@ -31,7 +31,6 @@ import hu.kfki.grid.wmsx.util.FileUtil;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +48,9 @@ public class ControllerImpl implements Controller, Runnable {
 
     private final Map<Object, ControllerWorkDescription> running = new TreeMap<Object, ControllerWorkDescription>();
 
-    private final Map<Object, Set<Uuid>> assignedTo = new TreeMap<Object, Set<Uuid>>();
+    private final Map<Object, Uuid> assignedTo = new TreeMap<Object, Uuid>();
+
+    private final Map<Object, Long> assignedAt = new TreeMap<Object, Long>();
 
     private final Map<Object, Map<String, byte[]>> success = new TreeMap<Object, Map<String, byte[]>>();
 
@@ -76,12 +77,8 @@ public class ControllerImpl implements Controller, Runnable {
             cwd = this.pending.removeFirst();
             jobid = cwd.getWorkDescription().getId();
             this.running.put(jobid, cwd);
-            Set<Uuid> assigned = this.assignedTo.get(jobid);
-            if (assigned == null) {
-                assigned = new HashSet<Uuid>();
-                this.assignedTo.put(jobid, assigned);
-            }
-            assigned.add(uuid);
+            this.assignedTo.put(jobid, uuid);
+            this.assignedAt.put(jobid, new Long(System.currentTimeMillis()));
         }
         ControllerImpl.LOGGER.info("Assigning job " + jobid + " to worker "
                 + uuid);
@@ -192,18 +189,20 @@ public class ControllerImpl implements Controller, Runnable {
             }
             synchronized (this.pending) {
 
-                final Set<Object> suspicous = new HashSet<Object>();
+                final Set<Object> suspicous = new TreeSet<Object>();
 
                 synchronized (this.lastSeen) {
                     final long now = System.currentTimeMillis();
                     for (final Object id : this.running.keySet()) {
-                        long minalive = Long.MAX_VALUE;
-                        for (final Uuid uuid : this.assignedTo.get(id)) {
-                            final long seen = this.lastSeen.get(uuid)
-                                    .longValue();
-                            minalive = Math.min(minalive, now - seen);
+                        final Uuid uuid = this.assignedTo.get(id);
+                        final long seen = this.lastSeen.get(uuid).longValue();
+                        final long alive = now - seen;
+                        if (alive > 90 * 1000) {
+                            suspicous.add(id);
                         }
-                        if (minalive > 90 * 1000) {
+                        final long timerunning = now
+                                - this.assignedAt.get(id).longValue();
+                        if (timerunning > 120 * 1000) {
                             suspicous.add(id);
                         }
                     }
