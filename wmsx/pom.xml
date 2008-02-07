@@ -29,6 +29,7 @@
         <artifactId>appassembler-maven-plugin</artifactId>
         <version>1.0-20070124.085332-18</version>
         <configuration>
+          <extraJvmArguments>-Xmx512m</extraJvmArguments> 
           <programs>
             <program>
               <mainClass>hu.kfki.grid.wmsx.provider.WmsxProviderServer</mainClass>
