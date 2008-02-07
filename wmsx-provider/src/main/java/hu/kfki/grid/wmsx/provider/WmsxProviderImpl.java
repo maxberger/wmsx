@@ -479,6 +479,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         WmsxProviderImpl.LOGGER.info("Setting backend to: " + newBackend);
         if ("glite".compareToIgnoreCase(newBackend) == 0) {
             this.backend = Backends.GLITE;
+        } else if ("glitewms".compareToIgnoreCase(newBackend) == 0) {
+            this.backend = Backends.GLITEWMS;
         } else if ("edg".compareToIgnoreCase(newBackend) == 0) {
             this.backend = Backends.EDG;
         } else if ("fake".compareToIgnoreCase(newBackend) == 0) {

@@ -78,6 +78,9 @@ public class InputParser {
                     } else if (line.startsWith("Error Stream")) {
                         eStream = line.substring(25).trim();
                         have |= 0x10;
+                    } else if (line.startsWith("https://")) {
+                        jobId = line.trim();
+                        have |= 0x01;
                     }
                 } catch (final NumberFormatException nfe) {
                     InputParser.LOGGER.fine(nfe.getMessage());
