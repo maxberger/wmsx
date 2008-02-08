@@ -25,7 +25,7 @@ package hu.kfki.grid.wmsx.backends.lcg;
 import java.util.List;
 import java.util.Vector;
 
-public class GLiteBackend extends AbstractLCGBackend {
+public final class GLiteBackend extends AbstractLCGBackend {
 
     private static GLiteBackend instance;
 
@@ -56,6 +56,7 @@ public class GLiteBackend extends AbstractLCGBackend {
         final List<String> commandLine = new Vector<String>();
         commandLine.add("/opt/glite/bin/glite-job-submit");
         commandLine.add("--nolisten");
+        commandLine.add("--noint");
         if (vo != null) {
             commandLine.add("--vo");
             commandLine.add(vo);
