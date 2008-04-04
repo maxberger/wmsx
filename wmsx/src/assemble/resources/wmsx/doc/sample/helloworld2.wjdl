@@ -1,6 +1,6 @@
 [
     JobType = "Normal";
-    Archive = "helloworld.tar.gz";
+    Archive = "helloworld2.tar.gz";
     ProgramDirectory = "programdirectory";
     Executable = "executable";
     OutputDirectory = "outputdirectory";
