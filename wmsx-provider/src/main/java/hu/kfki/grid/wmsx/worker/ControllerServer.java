@@ -22,6 +22,8 @@
 
 package hu.kfki.grid.wmsx.worker;
 
+import hu.kfki.grid.wmsx.backends.Backend;
+import hu.kfki.grid.wmsx.backends.Backends;
 import hu.kfki.grid.wmsx.provider.JdlJobFactory;
 import hu.kfki.grid.wmsx.provider.JobFactory;
 import hu.kfki.grid.wmsx.provider.WmsxProviderImpl;
@@ -40,18 +42,18 @@ import net.jini.jeri.InvocationLayerFactory;
 import net.jini.jeri.ServerEndpoint;
 import net.jini.jeri.tcp.TcpServerEndpoint;
 
-public class ControllerServer {
+public final class ControllerServer {
 
     private static ControllerServer instance;
+
+    private static final Logger LOGGER = Logger
+            .getLogger(ControllerServer.class.toString());
 
     private final ControllerImpl controller;
 
     private final Controller controllerStub;
 
-    private JobFactory jobFactory;
-
-    private static final Logger LOGGER = Logger
-            .getLogger(ControllerServer.class.toString());
+    private String jdlPath;
 
     private ControllerServer() {
 
@@ -105,22 +107,28 @@ public class ControllerServer {
             try {
                 Runtime.getRuntime().exec(
                         new String[] { "/bin/chmod", "+x",
-                                shFile.getCanonicalPath() }).waitFor();
+                                shFile.getCanonicalPath(), }).waitFor();
             } catch (final InterruptedException e) {
                 // Ignore
             }
             ControllerServer.getInstance().writeProxy(
                     new File(tmpDir, "proxyFile"));
-            this.jobFactory = new JdlJobFactory(jdlFile.getCanonicalPath(),
-                    null, null);
         } catch (final IOException e) {
             ControllerServer.LOGGER.warning(e.toString());
         }
     }
 
-    public void submitWorker() {
-        if (this.jobFactory != null) {
-            WmsxProviderImpl.getInstance().addJobFactory(this.jobFactory);
+    public void submitWorker(final Backend backend) {
+        final Backend submitTo;
+        if (Backends.WORKER.equals(backend)) {
+            submitTo = Backends.LOCAL;
+        } else {
+            submitTo = backend;
+        }
+        if (this.jdlPath != null) {
+            final JobFactory fac = new JdlJobFactory(this.jdlPath, null, null,
+                    submitTo);
+            WmsxProviderImpl.getInstance().addJobFactory(fac);
         }
 
     }

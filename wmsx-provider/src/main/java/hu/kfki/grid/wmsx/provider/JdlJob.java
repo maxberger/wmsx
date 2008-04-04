@@ -22,6 +22,7 @@
 
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.workflow.Workflow;
@@ -33,6 +34,10 @@ import java.io.Writer;
 import java.util.logging.Logger;
 
 public class JdlJob {
+
+    private static final Logger LOGGER = Logger.getLogger(JdlJob.class
+            .toString());
+
     private final String jdlFile;
 
     private String output;
@@ -55,8 +60,14 @@ public class JdlJob {
 
     private Workflow workflow;
 
-    private static final Logger LOGGER = Logger.getLogger(JdlJob.class
-            .toString());
+    public JdlJob(final String jdlFile, final String output,
+            final String resultDir, final Workflow wf, final Backend backend) {
+        this.output = output;
+        this.result = resultDir;
+        this.workflow = wf;
+        this.args = new String[0];
+        this.jdlFile = this.filterJdlFile(jdlFile, backend);
+    }
 
     /**
      * @return the command
@@ -88,16 +99,8 @@ public class JdlJob {
         this.args = args;
     }
 
-    public JdlJob(final String jdlFile, final String output,
-            final String resultDir, final Workflow wf) {
-        this.output = output;
-        this.result = resultDir;
-        this.workflow = wf;
-        this.args = new String[0];
-        this.jdlFile = this.filterJdlFile(jdlFile);
-    }
-
-    private String filterJdlFile(final String jdlFileToFilter) {
+    private String filterJdlFile(final String jdlFileToFilter,
+            final Backend backend) {
         String retVal;
         boolean isFiltered = false;
         try {
@@ -154,14 +157,15 @@ public class JdlJob {
                 final File jdlFileFile = new File(jdlFileToFilter)
                         .getAbsoluteFile();
                 if (this.workflow == null) {
-                    this.workflow = new Workflow(jdlFileFile.getParentFile());
+                    this.workflow = new Workflow(jdlFileFile.getParentFile(),
+                            backend);
                 }
-                final String name = jdlFileFile.getName();
-                this.setName(name);
+                final String newname = jdlFileFile.getName();
+                this.setName(newname);
                 if (this.command == null) {
-                    this.command = name;
+                    this.command = newname;
                 }
-                this.workflow.setNextNodes(name, job.getListEntry("Next"));
+                this.workflow.setNextNodes(this.name, job.getListEntry("Next"));
                 job.replaceEntry(JobDescription.JOBTYPE, "normal");
                 job.removeEntry("Next");
                 job.removeEntry("Prev");

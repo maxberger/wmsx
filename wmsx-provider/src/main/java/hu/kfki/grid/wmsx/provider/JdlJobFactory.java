@@ -22,6 +22,8 @@
 
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.backends.Backend;
+
 public class JdlJobFactory implements JobFactory {
     private final String jdlFile;
 
@@ -29,15 +31,27 @@ public class JdlJobFactory implements JobFactory {
 
     private final String result;
 
-    public JdlJobFactory(final String jdlFile, final String output,
-            final String resultDir) {
-        this.jdlFile = jdlFile;
-        this.output = output;
+    private Backend backend;
+
+    public JdlJobFactory(final String jdl, final String out,
+            final String resultDir, final Backend back) {
+        this.jdlFile = jdl;
+        this.output = out;
         this.result = resultDir;
+        this.backend = back;
     }
 
     public JdlJob createJdlJob() {
-        return new JdlJob(this.jdlFile, this.output, this.result, null);
+        return new JdlJob(this.jdlFile, this.output, this.result, null,
+                this.backend);
+    }
+
+    public Backend getBackend() {
+        return this.backend;
+    }
+
+    public void setBackend(final Backend newBackend) {
+        this.backend = newBackend;
     }
 
 }

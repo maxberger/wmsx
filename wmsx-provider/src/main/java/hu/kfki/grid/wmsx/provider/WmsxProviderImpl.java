@@ -66,6 +66,10 @@ import com.sun.jini.admin.DestroyAdmin;
 public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         JobListener, Runnable {
 
+    private static final int MAX_WORKERS_PER_CALL = 50;
+
+    private static final int INITIAL_MAX_JOBS = 100;
+
     private static final String JOBIDS_ALL = "jobids.all";
 
     private static final String JOBIDS_RUNNING = "jobids.running";
@@ -79,6 +83,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     private static final Logger LOGGER = Logger
             .getLogger(WmsxProviderImpl.class.toString());
 
+    private static WmsxProviderImpl instance;
+
     private final DestroyAdmin destroyAdmin;
 
     private final File workDir;
@@ -89,11 +95,9 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private String vo;
 
-    private int maxJobs = 100;
+    private int maxJobs = WmsxProviderImpl.INITIAL_MAX_JOBS;
 
     private final List<JobFactory> pendingJobFactories = new LinkedList<JobFactory>();
-
-    private static WmsxProviderImpl instance;
 
     private Renewer afsRenewer;
 
@@ -101,7 +105,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private final Map<String, File> dirs = new HashMap<String, File>();
 
-    private Backend backend = Backends.EDG;
+    private Backend currentBackend = Backends.EDG;
 
     public WmsxProviderImpl(final DestroyAdmin dadm, final File workdir) {
         this.destroyAdmin = dadm;
@@ -146,7 +150,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         final String result;
         if (avail > 0) {
             final JobUid id = this.reallySubmitJdl(new JdlJobFactory(jdlFile,
-                    output, resultDir).createJdlJob());
+                    output, resultDir, this.currentBackend).createJdlJob(),
+                    this.currentBackend);
             if (id != null) {
                 result = id.getBackendId().toString();
             } else {
@@ -154,13 +159,13 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             }
         } else {
             this.pendingJobFactories.add(new JdlJobFactory(jdlFile, output,
-                    resultDir));
+                    resultDir, this.currentBackend));
             result = "pending";
         }
         return result;
     }
 
-    private JobUid reallySubmitJdl(final JdlJob job) {
+    private JobUid reallySubmitJdl(final JdlJob job, final Backend backend) {
         final String jdlFile = job.getJdlFile();
         final String output = job.getOutput();
         final String preexec = job.getPreexec();
@@ -181,7 +186,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         SubmissionResults result;
         try {
             final JobUid id;
-            result = this.backend.submitJdl(jdlFile, this.vo);
+            result = backend.submitJdl(jdlFile, this.vo);
             if (result != null) {
                 id = result.getJobId();
                 WmsxProviderImpl.LOGGER.info("Job id is: " + id);
@@ -289,13 +294,13 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     public void startWorkers(final int num) {
         int n;
-        if (num > 50) {
-            n = 50;
+        if (num > WmsxProviderImpl.MAX_WORKERS_PER_CALL) {
+            n = WmsxProviderImpl.MAX_WORKERS_PER_CALL;
         } else {
             n = num;
         }
         for (int i = 0; i < n; i++) {
-            ControllerServer.getInstance().submitWorker();
+            ControllerServer.getInstance().submitWorker(this.currentBackend);
         }
     }
 
@@ -323,7 +328,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 && this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning() > 0) {
             final JobFactory jf = this.pendingJobFactories.remove(0);
             final JdlJob jd = jf.createJdlJob();
-            this.reallySubmitJdl(jd);
+            this.reallySubmitJdl(jd, jf.getBackend());
             try {
                 this.wait(100);
             } catch (final InterruptedException e) {
@@ -388,7 +393,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         while (it.hasNext()) {
             final IRemoteWmsxProvider.LaszloCommand lcmd = it.next();
             jobs.add(new LaszloJobFactory(lcmd.getCommand(), lcmd.getArgs(),
-                    outputDir, tmpDir, line, interactive, prefix, name));
+                    outputDir, tmpDir, line, interactive, prefix, name,
+                    this.currentBackend));
             line++;
             // final String cmd = lcmd.getCommand();
             // final String args = lcmd.getArgs();
@@ -478,17 +484,17 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     public void setBackend(final String newBackend) {
         WmsxProviderImpl.LOGGER.info("Setting backend to: " + newBackend);
         if ("glite".compareToIgnoreCase(newBackend) == 0) {
-            this.backend = Backends.GLITE;
+            this.currentBackend = Backends.GLITE;
         } else if ("glitewms".compareToIgnoreCase(newBackend) == 0) {
-            this.backend = Backends.GLITEWMS;
+            this.currentBackend = Backends.GLITEWMS;
         } else if ("edg".compareToIgnoreCase(newBackend) == 0) {
-            this.backend = Backends.EDG;
+            this.currentBackend = Backends.EDG;
         } else if ("fake".compareToIgnoreCase(newBackend) == 0) {
-            this.backend = Backends.FAKE;
+            this.currentBackend = Backends.FAKE;
         } else if ("local".compareToIgnoreCase(newBackend) == 0) {
-            this.backend = Backends.LOCAL;
+            this.currentBackend = Backends.LOCAL;
         } else if ("worker".compareToIgnoreCase(newBackend) == 0) {
-            this.backend = Backends.WORKER;
+            this.currentBackend = Backends.WORKER;
         } else {
             WmsxProviderImpl.LOGGER.warning("Unsupported backend: "
                     + newBackend);
