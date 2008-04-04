@@ -140,8 +140,8 @@ public class JdlJob {
                     this.output = outp;
                 } else {
                     final File parent;
-                    if (resultDir != null) {
-                        parent = new File(resultDir);
+                    if (this.result != null) {
+                        parent = new File(this.result);
                     } else {
                         parent = jdlFileDir;
                     }
