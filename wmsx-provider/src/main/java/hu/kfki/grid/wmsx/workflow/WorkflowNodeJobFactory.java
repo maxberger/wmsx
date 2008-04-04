@@ -22,6 +22,7 @@
 
 package hu.kfki.grid.wmsx.workflow;
 
+import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.provider.JdlJob;
 import hu.kfki.grid.wmsx.provider.JobFactory;
 
@@ -41,6 +42,11 @@ public class WorkflowNodeJobFactory implements JobFactory {
     public JdlJob createJdlJob() {
         final File workdir = this.workflow.getDirectory();
         return new JdlJob(new File(workdir, this.name).getAbsolutePath(), null,
-                workdir.getAbsolutePath(), this.workflow);
+                workdir.getAbsolutePath(), this.workflow, this.workflow
+                        .getBackend());
+    }
+
+    public Backend getBackend() {
+        return this.workflow.getBackend();
     }
 }

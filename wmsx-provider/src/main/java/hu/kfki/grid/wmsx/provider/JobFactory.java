@@ -22,7 +22,11 @@
 
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.backends.Backend;
+
 public interface JobFactory {
+
+    Backend getBackend();
 
     JdlJob createJdlJob();
 }

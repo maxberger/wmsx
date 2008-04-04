@@ -22,6 +22,7 @@
 
 package hu.kfki.grid.wmsx.workflow;
 
+import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.provider.JdlJob;
@@ -40,25 +41,28 @@ import java.util.logging.Logger;
 
 public class Workflow {
 
-    final File directory;
+    private final File directory;
 
-    final Map<String, List<String>> nextNodes;
+    private final Map<String, List<String>> nextNodes;
 
-    final Map<String, List<String>> prevNodes;
+    private final Map<String, List<String>> prevNodes;
 
-    final Set<String> potentialTodo;
+    private final Set<String> potentialTodo;
 
-    final Set<String> done;
+    private final Set<String> done;
+
+    private final Backend backend;
 
     private static final Logger LOGGER = Logger.getLogger(Workflow.class
             .toString());
 
-    public Workflow(final File dir) {
+    public Workflow(final File dir, final Backend back) {
         this.directory = dir;
         this.nextNodes = new HashMap<String, List<String>>();
         this.prevNodes = new HashMap<String, List<String>>();
         this.potentialTodo = new HashSet<String>();
         this.done = new HashSet<String>();
+        this.backend = back;
     }
 
     public synchronized void isDone(final JdlJob jdlJob) {
@@ -133,5 +137,9 @@ public class Workflow {
 
     public File getDirectory() {
         return this.directory;
+    }
+
+    public Backend getBackend() {
+        return this.backend;
     }
 }

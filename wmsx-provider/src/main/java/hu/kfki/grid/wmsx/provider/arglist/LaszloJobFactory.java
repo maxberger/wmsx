@@ -22,6 +22,7 @@
 
 package hu.kfki.grid.wmsx.provider.arglist;
 
+import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.provider.JdlJob;
 import hu.kfki.grid.wmsx.provider.JobFactory;
 
@@ -60,10 +61,12 @@ public class LaszloJobFactory implements JobFactory {
 
     private final String name;
 
+    private final Backend backend;
+
     public LaszloJobFactory(final String command, final String arguments,
             final File outputDir, final File tempDir, final int number,
             final boolean isInteractive, final String addtlPrefix,
-            final String jobName) {
+            final String jobName, final Backend back) {
         this.outDir = outputDir;
         this.tmpDir = tempDir;
         this.cmdWithPath = command;
@@ -76,6 +79,7 @@ public class LaszloJobFactory implements JobFactory {
         } else {
             this.prefix = addtlPrefix;
         }
+        this.backend = back;
     }
 
     public JdlJob createJdlJob() {
@@ -113,7 +117,8 @@ public class LaszloJobFactory implements JobFactory {
             // .getAbsolutePath();
             final String output = new File(resultDir, LaszloJobFactory.STD_OUT)
                     .getAbsolutePath();
-            final JdlJob job = new JdlJob(jdlFilename, output, resultDir, null);
+            final JdlJob job = new JdlJob(jdlFilename, output, resultDir, null,
+                    this.backend);
             job.setPreexec(this.cmdWithPath + "_preexec");
             job.setPostexec(this.cmdWithPath + "_postexec");
             job.setChain(this.cmdWithPath + "_chain");
@@ -244,6 +249,10 @@ public class LaszloJobFactory implements JobFactory {
                     .warning("Error copying from starter_base.sh: "
                             + e.getMessage());
         }
+    }
+
+    public Backend getBackend() {
+        return this.backend;
     }
 
 }
