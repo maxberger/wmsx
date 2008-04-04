@@ -31,7 +31,7 @@ if ! [[ -d $OUTDIR/outputdirectory ]] ; then
 fi
 ## If condition is not fulfilled, then start new job:
 VALUE=$((`cat $OUTDIR/outputdirectory/result`))
-if (( $VALUE <= 3 )) ; then
+if (( $VALUE <= 13 )) ; then
     ## Start child job (call _chain script):
     exit 1
 fi
