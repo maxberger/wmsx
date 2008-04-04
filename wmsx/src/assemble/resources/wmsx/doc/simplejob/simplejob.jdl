@@ -1,0 +1,13 @@
+[
+    JobType = "Normal";
+    Executable = "simplejob.sh";
+    InputSandbox = {"simplejob.sh"};
+    StdOutput  = "StdOut";
+    StdError   = "StdOut";
+    OutputSandbox = {"StdOut", "outputfile.dat"};
+    Requirements = (
+			Member("AFS", other.GlueHostApplicationSoftwareRunTimeEnvironment) &&
+			other.GlueCEPolicyMaxWallClockTime>=2160 &&
+			other.GlueHostMainMemoryRAMSize>=512
+		   );
+]
