@@ -22,7 +22,7 @@
 
 package hu.kfki.grid.wmsx.backends.lcg;
 
-import hu.kfki.grid.wmsx.backends.Backends;
+import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 
@@ -41,7 +41,7 @@ public class InputParser {
             .toString());
 
     public static SubmissionResults parse(final InputStream inStream,
-            final PrintStream outStream) {
+            final PrintStream outStream, final Backend backend) {
 
         String jobId = null;
         String iStream = null;
@@ -104,8 +104,8 @@ public class InputParser {
         if (jobId == null) {
             return null;
         } else {
-            return new SubmissionResults(new JobUid(Backends.EDG, new JobId(
-                    jobId)), iStream, oStream, eStream, shadowpid, port);
+            return new SubmissionResults(new JobUid(backend, new JobId(jobId)),
+                    iStream, oStream, eStream, shadowpid, port);
         }
     }
 }

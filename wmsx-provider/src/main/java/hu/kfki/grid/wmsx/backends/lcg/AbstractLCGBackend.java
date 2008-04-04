@@ -79,7 +79,7 @@ public abstract class AbstractLCGBackend implements Backend {
     public Process retrieveResult(final JobUid id, final File dir) {
         try {
             final List<String> commandLine = this.jobOutputCommand(dir
-                    .getAbsolutePath(), id.toString());
+                    .getAbsolutePath(), id.getBackendId().toString());
             final Process p = Runtime.getRuntime().exec(
                     commandLine.toArray(new String[commandLine.size()]), null,
                     dir);
@@ -101,7 +101,7 @@ public abstract class AbstractLCGBackend implements Backend {
         final PrintStream parserOutput = new PrintStream(baos);
         // final PrintStream parserOutput = System.out;
         final SubmissionResults result = InputParser.parse(p.getInputStream(),
-                parserOutput);
+                parserOutput, this);
 
         if (result == null) {
             AbstractLCGBackend.LOGGER.warning("Failed to submit Job.");
