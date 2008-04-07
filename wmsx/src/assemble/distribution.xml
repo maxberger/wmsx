@@ -35,6 +35,18 @@
         <include>wmsx/doc/chainsample/chainsample_postexec</include>
         <include>wmsx/doc/chainsample/chainsample_chain</include>
         <include>wmsx/doc/simplejdl/interactive.sh</include>
+        <include>chainsample/chainsample2_chain</include>
+        <include>chainsample/chainsample2_postexec</include>
+        <include>chainsample/chainsample2_preexec</include>
+        <include>chainsample/chainsample_preexec</include>
+        <include>chainsample_old/chainsample_chain</include>
+        <include>chainsample_old/chainsample_postexec</include>
+        <include>interactive/interactive.sh</include>
+        <include>sample/helloworld2_postexec</include>
+        <include>sample/helloworld2_preexec</include>
+        <include>sample_old/helloworld_postexec</include>
+        <include>sample_old/helloworld_preexec</include>
+        <include>simplejob/simplejob.sh</include>
         <include>configure</include>
       </includes>
       <fileMode>0755</fileMode>
@@ -50,11 +62,22 @@
         <exclude>wmsx/doc/chainsample/chainsample_postexec</exclude>
         <exclude>wmsx/doc/chainsample/chainsample_chain</exclude>
         <exclude>wmsx/doc/simplejdl/interactive.sh</exclude>
+        <exclude>chainsample/chainsample2_chain</exclude>
+        <exclude>chainsample/chainsample2_postexec</exclude>
+        <exclude>chainsample/chainsample2_preexec</exclude>
+        <exclude>chainsample/chainsample_preexec</exclude>
+        <exclude>chainsample_old/chainsample_chain</exclude>
+        <exclude>chainsample_old/chainsample_postexec</exclude>
+        <exclude>interactive/interactive.sh</exclude>
+        <exclude>sample/helloworld2_postexec</exclude>
+        <exclude>sample/helloworld2_preexec</exclude>
+        <exclude>sample_old/helloworld_postexec</exclude>
+        <exclude>sample_old/helloworld_preexec</exclude>
+        <exclude>simplejob/simplejob.sh</exclude>
         <exclude>configure</exclude>
         <exclude>bootstrap.sh</exclude>
       </excludes>
       <fileMode>0644</fileMode>
     </fileSet>
   </fileSets>
-  </assembly>
-
+</assembly>

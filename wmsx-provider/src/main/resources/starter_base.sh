@@ -32,7 +32,7 @@ ${EXECUTABLE} ${ARGUMENTS}
 
 echo "Changing back to super directory..."
 cd ..
-echo "Archiving ${PROGGRAMDIRECTORY}/${OUTPUTDIRECTORY} to out.tar.gz ..."
+echo "Archiving ${PROGRAMDIRECTORY}/${OUTPUTDIRECTORY} to out.tar.gz ..."
 mv ${PROGRAMDIRECTORY}/${OUTPUTDIRECTORY} .
 tar -czf out.tar.gz ${OUTPUTDIRECTORY}
 rm -rf ${OUTPUTDIRECTORY}

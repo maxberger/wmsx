@@ -27,9 +27,9 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>appassembler-maven-plugin</artifactId>
-        <version>1.0-20070124.085332-18</version>
+        <version>1.0-alpha-2</version>
         <configuration>
-          <extraJvmArguments>-Xmx512m  -Djava.library.path=$BASEDIR/lib</extraJvmArguments> 
+          <extraJvmArguments>-Xmx512m  -Djava.library.path=$BASEDIR/lib</extraJvmArguments>
           <programs>
             <program>
               <mainClass>hu.kfki.grid.wmsx.provider.WmsxProviderServer</mainClass>
