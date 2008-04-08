@@ -22,12 +22,26 @@
       <version>1.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>codehaus-snapshot-plugins</id>
+      <name>codehaus-shapshot-plugins</name>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
   <build>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>appassembler-maven-plugin</artifactId>
-        <version>1.0-alpha-2</version>
+<!--        <version>1.0-alpha-2</version> -->
+        <version>1.0-20070515.085508-32</version>
         <configuration>
           <extraJvmArguments>-Xmx512m  -Djava.library.path=$BASEDIR/lib</extraJvmArguments>
           <programs>
