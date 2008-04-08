@@ -113,6 +113,7 @@ public final class ControllerServer {
             }
             ControllerServer.getInstance().writeProxy(
                     new File(tmpDir, "proxyFile"));
+            this.jdlPath = jdlFile.getCanonicalPath();
         } catch (final IOException e) {
             ControllerServer.LOGGER.warning(e.toString());
         }
@@ -129,6 +130,8 @@ public final class ControllerServer {
             final JobFactory fac = new JdlJobFactory(this.jdlPath, null, null,
                     submitTo);
             WmsxProviderImpl.getInstance().addJobFactory(fac);
+        } else {
+            ControllerServer.LOGGER.warning("Worker not initialized!");
         }
 
     }
