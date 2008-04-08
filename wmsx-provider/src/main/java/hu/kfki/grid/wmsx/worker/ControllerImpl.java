@@ -26,6 +26,7 @@ import hu.kfki.grid.wmsx.backends.Backends;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.job.JobState;
 import hu.kfki.grid.wmsx.job.JobWatcher;
+import hu.kfki.grid.wmsx.job.description.EmptyJobDescription;
 import hu.kfki.grid.wmsx.util.FileUtil;
 
 import java.io.File;
@@ -58,15 +59,25 @@ public class ControllerImpl implements Controller, Runnable {
 
     private final Map<Uuid, Long> lastSeen = new HashMap<Uuid, Long>();
 
+    private final WorkDescription shutdownWorkDescription;
+
     private boolean pendingCheckRunning;
+
+    private boolean shutdownState;
 
     private static final Logger LOGGER = Logger.getLogger(ControllerImpl.class
             .toString());
 
     ControllerImpl() {
+        this.shutdownState = false;
+        this.shutdownWorkDescription = new ControllerWorkDescription(
+                "shutdown", new EmptyJobDescription()).getWorkDescription();
     }
 
     public WorkDescription retrieveWork(final Uuid uuid) {
+        if (this.shutdownState) {
+            return this.shutdownWorkDescription;
+        }
         final ControllerWorkDescription cwd;
         final Object jobid;
         this.ping(uuid);
@@ -228,5 +239,9 @@ public class ControllerImpl implements Controller, Runnable {
                 }
             }
         }
+    }
+
+    public void setShutdownState(final boolean newShutdown) {
+        this.shutdownState = newShutdown;
     }
 }

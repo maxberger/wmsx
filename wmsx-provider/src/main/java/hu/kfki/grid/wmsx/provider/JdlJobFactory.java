@@ -33,6 +33,16 @@ public class JdlJobFactory implements JobFactory {
 
     private Backend backend;
 
+    /**
+     * @param jdl
+     *            path to JDL file
+     * @param out
+     *            path to stdout file for interactive jobs
+     * @param resultDir
+     *            path to directory for retrieving results.
+     * @param back
+     *            backend to use.
+     */
     public JdlJobFactory(final String jdl, final String out,
             final String resultDir, final Backend back) {
         this.jdlFile = jdl;
