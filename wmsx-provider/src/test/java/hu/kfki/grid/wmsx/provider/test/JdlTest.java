@@ -37,7 +37,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  * 
- * @version $Revision: 253 $
+ * @version $Revision$
  */
 public class JdlTest extends TestCase {
     /**
