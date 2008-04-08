@@ -209,4 +209,12 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    public void shutdownWorkers() {
+        try {
+            this.remoteService.shutdownWorkers();
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
+    }
+
 }

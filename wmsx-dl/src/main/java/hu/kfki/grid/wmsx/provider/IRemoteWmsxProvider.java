@@ -89,4 +89,6 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
     void setBackend(String backend) throws RemoteException;
 
+    void shutdownWorkers() throws RemoteException;
+
 }

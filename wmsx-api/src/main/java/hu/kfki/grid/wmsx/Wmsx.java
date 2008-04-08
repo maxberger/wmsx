@@ -52,4 +52,6 @@ public interface Wmsx {
     void setVo(String newVo);
 
     void setBackend(String backend);
+
+    void shutdownWorkers();
 }

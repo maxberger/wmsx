@@ -55,6 +55,10 @@ public final class ControllerServer {
 
     private String jdlPath;
 
+    private File tmpDir;
+
+    private int workerCount = 0;
+
     private ControllerServer() {
 
         this.controller = new ControllerImpl();
@@ -91,17 +95,17 @@ public final class ControllerServer {
         out.close();
     }
 
-    public void prepareWorker(final File tmpDir) {
-        // final File tmpDir = this.syncableDir(this.debugDir, "worker");
+    public void prepareWorker(final File tmpDirForWorker) {
+        this.tmpDir = tmpDirForWorker;
 
         try {
-            final File jdlFile = new File(tmpDir, "worker.jdl");
+            final File jdlFile = new File(this.tmpDir, "worker.jdl");
             FileUtil.copy(ClassLoader
                     .getSystemResourceAsStream("worker/worker.jdl"), jdlFile);
             FileUtil.copy(ClassLoader
                     .getSystemResourceAsStream("worker/worker.tar.gz"),
-                    new File(tmpDir, "worker.tar.gz"));
-            final File shFile = new File(tmpDir, "worker.sh");
+                    new File(this.tmpDir, "worker.tar.gz"));
+            final File shFile = new File(this.tmpDir, "worker.sh");
             FileUtil.copy(ClassLoader
                     .getSystemResourceAsStream("worker/worker.sh"), shFile);
             try {
@@ -112,7 +116,7 @@ public final class ControllerServer {
                 // Ignore
             }
             ControllerServer.getInstance().writeProxy(
-                    new File(tmpDir, "proxyFile"));
+                    new File(this.tmpDir, "proxyFile"));
             this.jdlPath = jdlFile.getCanonicalPath();
         } catch (final IOException e) {
             ControllerServer.LOGGER.warning(e.toString());
@@ -127,13 +131,19 @@ public final class ControllerServer {
             submitTo = backend;
         }
         if (this.jdlPath != null) {
-            final JobFactory fac = new JdlJobFactory(this.jdlPath, null, null,
-                    submitTo);
+            this.controller.setShutdownState(false);
+            this.workerCount++;
+            final JobFactory fac = new JdlJobFactory(this.jdlPath, null,
+                    new File(this.tmpDir, new Integer(this.workerCount)
+                            .toString()).getAbsolutePath(), submitTo);
             WmsxProviderImpl.getInstance().addJobFactory(fac);
         } else {
             ControllerServer.LOGGER.warning("Worker not initialized!");
         }
+    }
 
+    public void shutdownWorkers() {
+        this.controller.setShutdownState(true);
     }
 
     public static synchronized ControllerServer getInstance() {

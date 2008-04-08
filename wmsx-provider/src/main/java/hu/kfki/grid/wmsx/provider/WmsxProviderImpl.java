@@ -502,4 +502,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     }
 
+    public void shutdownWorkers() {
+        ControllerServer.getInstance().shutdownWorkers();
+    }
+
 }

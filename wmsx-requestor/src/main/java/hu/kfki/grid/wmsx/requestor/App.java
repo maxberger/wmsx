@@ -71,6 +71,8 @@ public class App implements DiscoveryListener {
 
     private static final String REMEMBER_GRID = "remembergrid";
 
+    private static final String SHUTDOWN_WORKERS = "shutdownworkers";
+
     private static final String NAME = "name";
 
     private static final Logger LOGGER = Logger.getLogger(App.class.toString());
@@ -98,6 +100,8 @@ public class App implements DiscoveryListener {
     private static final int CMD_BACKEND = 10;
 
     private static final int CMD_WORKERS = 11;
+
+    private static final int CMD_SHUTDOWNWORKERS = 12;
 
     private final List<Integer> commands;
 
@@ -130,6 +134,8 @@ public class App implements DiscoveryListener {
                 "set number of active jobs"));
         options.addOption(new Option("w", "workers", true,
                 "submit number of workers"));
+        options.addOption(new Option(App.SHUTDOWN_WORKERS,
+                "shutdown all workers"));
         options.addOptionGroup(commands);
         options.addOption(new Option("o", "output", true,
                 "redirect interactive output to file"));
@@ -180,6 +186,9 @@ public class App implements DiscoveryListener {
             }
             if (cmd.hasOption(App.REMEMBER_GRID)) {
                 cmds.add(new Integer(App.CMD_REMEMBERGRID));
+            }
+            if (cmd.hasOption(App.SHUTDOWN_WORKERS)) {
+                cmds.add(new Integer(App.CMD_SHUTDOWNWORKERS));
             }
             if (cmd.hasOption('w')) {
                 cmds.add(new Integer(App.CMD_WORKERS));
@@ -366,6 +375,9 @@ public class App implements DiscoveryListener {
                 case CMD_WORKERS:
                     myService.startWorkers(Integer.parseInt(this.commandLine
                             .getOptionValue('w')));
+                    break;
+                case CMD_SHUTDOWNWORKERS:
+                    myService.shutdownWorkers();
                     break;
                 case CMD_LASZLO:
                     myService.submitLaszlo(

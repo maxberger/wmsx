@@ -58,21 +58,30 @@ public class Worker {
 
     public void start() {
 
+        boolean terminate = false;
         long lastChecked = 0;
         long delay = 5;
         Worker.LOGGER.info("Worker started, Uuid is " + this.uuid);
         try {
-            while (lastChecked < Worker.MAX_WAIT) {
-                Worker.LOGGER.info("Checking for work");
+            while (!terminate) {
+                Worker.LOGGER.info("Checking for work ( "
+                        + System.currentTimeMillis() + " )");
+
                 final WorkDescription todo = this.controller
                         .retrieveWork(this.uuid);
 
                 if (todo != null) {
-                    this.performWork(todo);
-                    delay = 5;
-                    lastChecked = 0;
+
+                    if ("shutdown".equals(todo.getId())) {
+                        terminate = true;
+                    } else {
+                        this.performWork(todo);
+                        delay = 5;
+                        lastChecked = 0;
+                    }
                 } else {
-                    Worker.LOGGER.info("Sleeping...");
+                    Worker.LOGGER.info("Sleeping ( "
+                            + System.currentTimeMillis() + " )");
                     this.alive.stop();
                     lastChecked += delay;
                     if (lastChecked < Worker.MAX_WAIT) {
@@ -83,6 +92,9 @@ public class Worker {
                         }
                     }
                     delay += Math.random() / 2.0 * delay;
+                    if (lastChecked >= Worker.MAX_WAIT) {
+                        terminate = true;
+                    }
                 }
             }
         } catch (final RemoteException re) {
@@ -95,7 +107,8 @@ public class Worker {
     @SuppressWarnings("unchecked")
     private void performWork(final WorkDescription todo) throws RemoteException {
         this.alive.start();
-        Worker.LOGGER.info("Assigned work: " + todo.getId());
+        Worker.LOGGER.info("Assigned work: " + todo.getId() + " ( "
+                + System.currentTimeMillis() + " )");
         final File currentDir = new File(".").getAbsoluteFile();
         final File workDir;
         File wd;
@@ -108,7 +121,8 @@ public class Worker {
             wd = currentDir;
         }
         workDir = wd;
-        Worker.LOGGER.fine("WorkDir: " + workDir);
+        Worker.LOGGER.fine("Retrieving sandbox to WorkDir: " + workDir + " ( "
+                + System.currentTimeMillis() + " )");
 
         FileUtil.retrieveSandbox(todo.getInputSandbox(), workDir);
 
@@ -117,11 +131,12 @@ public class Worker {
         cmdArray.add(new File(workDir, todo.getExecutable()).getAbsolutePath());
         cmdArray.addAll(arguments);
 
-        Worker.LOGGER.info("Launching...");
+        Worker.LOGGER.info("Launching ( " + System.currentTimeMillis() + " )");
         ScriptLauncher.getInstance().launchScript(
                 cmdArray.toArray(new String[0]), todo.getStdout(),
                 todo.getStderr(), workDir);
-        Worker.LOGGER.info("Submitting results...");
+        Worker.LOGGER.info("Submitting results ( " + System.currentTimeMillis()
+                + " )");
         this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
                 .createSandbox(todo.getOutputSandbox(), workDir)), this.uuid);
         if (!currentDir.equals(workDir)) {
