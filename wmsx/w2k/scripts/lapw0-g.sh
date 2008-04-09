@@ -1,4 +1,5 @@
 #!/bin/bash -x
+date +"%s.%N"
 export MAIN=$PWD
 casename=$1
 mkdir $PWD/$casename
@@ -8,10 +9,10 @@ cd $MAIN
 . ./basesetup.sh
 cd $SCRATCH
 
-echo `date +"%s.%N"` >> time.txt
+date +"%s.%N"
 x -d lapw0
 lapw0 lapw0.def
-echo `date +"%s.%N"` >> time.txt
+date +"%s.%N"
  
 
 

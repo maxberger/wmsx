@@ -1,4 +1,5 @@
 #!/bin/bash -x
+date +"%s.%N"
 export MAIN=$PWD
 casename=$1
 mkdir $PWD/$casename
@@ -8,7 +9,7 @@ cd $MAIN
 . ./basesetup.sh
 cd $SCRATCH
 
-echo `date +"%s.%N"` >> time.txt
+date +"%s.%N"
 
 Idx=$2
 sed -n "${Idx}p" $casename.klist > $casename.klist_$Idx
@@ -23,6 +24,4 @@ if [ $Idx -gt 1 ]; then
 fi
 
 lapw1 lapw1_$Idx.def
-echo `date +"%s.%N"` >> time.txt
-#tar -czf lapw1-out$Idx.tar $casename.energy_* $casename.in1  $casename.klist_* $casename.output1_* $casename.scf1_* $casename.struct $casename.vector_* $casename.vsp lapw1_*.error time.txt $casename.nsh *.def
-#ls -la
+date +"%s.%N"
