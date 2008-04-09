@@ -1,4 +1,5 @@
 #!/bin/bash -x
+date +"%s.%N"
 export MAIN=$PWD
 casename=$1
 mkdir $PWD/$casename
@@ -8,7 +9,7 @@ cd $MAIN
 . ./basesetup.sh
 cd $SCRATCH
 
-echo `date +"%s.%N"` >> time.txt
+date +"%s.%N"
 
 x -d sumpara
 sumpara sumpara.def $K
@@ -25,8 +26,4 @@ cat $casename.scfm >>$casename.scf
 result=`testconv -p :ENE -c 0.01 |cut -c1`
 echo $result > result
 
-echo `date +"%s.%N"` >> time.txt
-#tar -czf sumup.tar  $casename.broyd1 $casename.broyd2 $casename.clmcor $casename.clmsum $casename.clmsum_old $casename.clmval $casename.inc $casename.inm $casename.outputm $casename.scf $casename.scf0 $casename.scf1_1 $casename.scf2 $casename.scfc $casename.scfm $casename.struct sumpara.def sumpara.error lcore.def lcore.error mixer.def mixer.error time.txt result
-#mv sumup.tar ..
-
-
+date +"%s.%N"
