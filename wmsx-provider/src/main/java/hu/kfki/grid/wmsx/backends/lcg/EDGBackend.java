@@ -25,7 +25,7 @@ package hu.kfki.grid.wmsx.backends.lcg;
 import java.util.List;
 import java.util.Vector;
 
-public class EDGBackend extends AbstractLCGBackend {
+public final class EDGBackend extends AbstractLCGBackend {
 
     private static EDGBackend instance;
 
@@ -46,8 +46,20 @@ public class EDGBackend extends AbstractLCGBackend {
         commandLine.add("/opt/edg/bin/edg-job-get-output");
         commandLine.add("--dir");
         commandLine.add(absolutePath);
-        commandLine.add("--noint");
+        commandLine.add(AbstractLCGBackend.NOINT);
         commandLine.add(idString);
+        return commandLine;
+    }
+
+    @Override
+    public List<String> retreiveLogCommand(final String jobId,
+            final String filename) {
+        final List<String> commandLine = new Vector<String>();
+        commandLine.add("/opt/edg/bin/edg-job-get-logging-info");
+        commandLine.add("-o");
+        commandLine.add(filename);
+        commandLine.add(AbstractLCGBackend.NOINT);
+        commandLine.add(jobId);
         return commandLine;
     }
 
