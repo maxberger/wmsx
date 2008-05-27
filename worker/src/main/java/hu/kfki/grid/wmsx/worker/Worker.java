@@ -37,18 +37,27 @@ import java.util.logging.Logger;
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 
-public class Worker {
+/**
+ * Performs work on a remote host.
+ * 
+ * @version $Revision$
+ */
+public final class Worker {
+
+    private static final int START_DELAY = 5;
+
+    private static final int MSTOSECONDS = 1000;
 
     private static final int MAX_WAIT = 45 * 60;
 
-    private final Uuid uuid;
-
-    final Controller controller;
-
-    final Alive alive;
-
     private static final Logger LOGGER = Logger.getLogger(Worker.class
             .toString());
+
+    private final Uuid uuid;
+
+    private final Controller controller;
+
+    private final Alive alive;
 
     private Worker(final Controller cont) {
         this.controller = cont;
@@ -60,7 +69,7 @@ public class Worker {
 
         boolean terminate = false;
         long lastChecked = 0;
-        long delay = 5;
+        long delay = Worker.START_DELAY;
         Worker.LOGGER.info("Worker started, Uuid is " + this.uuid);
         try {
             while (!terminate) {
@@ -76,7 +85,7 @@ public class Worker {
                         terminate = true;
                     } else {
                         this.performWork(todo);
-                        delay = 5;
+                        delay = Worker.START_DELAY;
                         lastChecked = 0;
                     }
                 } else {
@@ -86,7 +95,7 @@ public class Worker {
                     lastChecked += delay;
                     if (lastChecked < Worker.MAX_WAIT) {
                         try {
-                            Thread.sleep(delay * 1000);
+                            Thread.sleep(delay * Worker.MSTOSECONDS);
                         } catch (final InterruptedException e) {
                             // ignore
                         }
@@ -112,9 +121,17 @@ public class Worker {
         final File currentDir = new File(".").getAbsoluteFile();
         final File workDir;
         File wd;
+        final String wfid = todo.getWorkflowId();
+        final boolean partOfWf = wfid != null;
         try {
-            wd = File.createTempFile("work", "", currentDir).getCanonicalFile();
-            wd.delete();
+
+            if (partOfWf) {
+                wd = new File(currentDir, "wfwork" + wfid).getCanonicalFile();
+            } else {
+                wd = File.createTempFile("swork", "", currentDir)
+                        .getCanonicalFile();
+                wd.delete();
+            }
             wd.mkdirs();
         } catch (final IOException ioe) {
             Worker.LOGGER.info(ioe.getMessage());
@@ -140,11 +157,11 @@ public class Worker {
         this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
                 .createSandbox(todo.getOutputSandbox(), workDir)), this.uuid);
         if (!currentDir.equals(workDir)) {
-            FileUtil.cleanDir(workDir);
+            FileUtil.cleanDir(workDir, partOfWf);
         }
     }
 
-    public static void main(final String args[]) {
+    public static void main(final String[] args) {
         Worker.LOGGER.info("Initializing worker...");
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new AllSecurityManager());

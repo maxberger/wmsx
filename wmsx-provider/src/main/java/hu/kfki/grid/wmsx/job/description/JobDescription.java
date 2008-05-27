@@ -27,41 +27,61 @@ import java.util.List;
 
 public interface JobDescription {
 
-    static final String EXECUTABLE = "Executable";
+    String EXECUTABLE = "Executable";
 
-    static final String JOBTYPE = "JobType";
+    String JOBTYPE = "JobType";
 
-    static final String INPUTSANDBOX = "InputSandBox";
+    String INPUTSANDBOX = "InputSandBox";
 
-    static final String OUTPUTSANDBOX = "OutputSandBox";
+    String OUTPUTSANDBOX = "OutputSandBox";
 
-    static final String ARGUMENTS = "Arguments";
+    String ARGUMENTS = "Arguments";
 
-    static final String STDOUTPUT = "StdOutput";
+    String STDOUTPUT = "StdOutput";
 
-    static final String STDERROR = "StdError";
+    String STDERROR = "StdError";
 
-    static final String RESULTDIR = "ResultDir";
+    String RESULTDIR = "ResultDir";
 
-    static final String POSTEXEC = "PostExec";
+    String POSTEXEC = "PostExec";
 
-    static final String PREEXEC = "PreExec";
+    String PREEXEC = "PreExec";
 
-    static final String CHAIN = "Chain";
+    String CHAIN = "Chain";
 
-    static final String OUTPUTDIRECTORY = "OutputDirectory";
+    String OUTPUTDIRECTORY = "OutputDirectory";
 
-    static final String INTERACTIVE = "Interactive";
+    String INTERACTIVE = "Interactive";
 
-    static final String SOFTWARE = "Software";
+    String SOFTWARE = "Software";
 
-    static final String AFS = "AFS";
+    String AFS = "AFS";
 
-    static final String ARCHIVE = "Archive";
+    String ARCHIVE = "Archive";
 
-    static final String PROGRAMDIRECTORY = "ProgramDirectory";
+    String PROGRAMDIRECTORY = "ProgramDirectory";
 
-    static final String REQUIREMENTS = "Requirements";
+    String REQUIREMENTS = "Requirements";
+
+    /**
+     * Next nodes in workflows. WMSX addition.
+     */
+    String NEXT = "Next";
+
+    /**
+     * Previous nodes in workflows. WMSX addition.
+     */
+    String PREV = "Prev";
+
+    /**
+     * Executable for deployment. WMSX addition.
+     */
+    String DEPLOY = "Deploy";
+
+    /**
+     * Id of the workflow. Used internally for Worker Task.
+     */
+    String WORKFLOWID = "WorkflowId";
 
     String getStringEntry(final String key, final String defaultValue);
 
@@ -71,8 +91,22 @@ public interface JobDescription {
 
     String toJDL();
 
+    /**
+     * Removes a given entry.
+     * 
+     * @param entry
+     *            entry to remove.
+     */
     void removeEntry(String entry);
 
+    /**
+     * Set a given entry, replacing old values.
+     * 
+     * @param entry
+     *            entry to set
+     * @param value
+     *            new value
+     */
     void replaceEntry(String entry, String value);
 
     File getBaseDir();

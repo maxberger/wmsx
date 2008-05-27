@@ -53,7 +53,8 @@ public class ControllerWorkDescription {
                 .getListEntry(JobDescription.OUTPUTSANDBOX), jobDesc
                 .getStringEntry(JobDescription.EXECUTABLE), args, jobDesc
                 .getStringEntry(JobDescription.STDOUTPUT), jobDesc
-                .getStringEntry(JobDescription.STDERROR));
+                .getStringEntry(JobDescription.STDERROR), jobDesc
+                .getStringEntry(JobDescription.WORKFLOWID));
     }
 
     public WorkDescription getWorkDescription() {

@@ -36,18 +36,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ * Wrapper for a process on the local machine.
+ * 
+ * @version $Revision$
+ */
 public class LocalProcess implements Runnable {
-
-    File workdir;
-
-    final Map<JobUid, JobState> stateMap;
-
-    final JobUid uid;
-
-    final JobDescription job;
 
     private static final Logger LOGGER = Logger.getLogger(LocalProcess.class
             .toString());
+
+    private File workdir;
+
+    private final Map<JobUid, JobState> stateMap;
+
+    private final JobUid uid;
+
+    private final JobDescription job;
 
     public LocalProcess(final Map<JobUid, JobState> state, final JobUid id,
             final JobDescription desc) {
@@ -155,7 +160,7 @@ public class LocalProcess implements Runnable {
     }
 
     private void cleanup() {
-        FileUtil.cleanDir(this.workdir);
+        FileUtil.cleanDir(this.workdir, false);
     }
 
 }

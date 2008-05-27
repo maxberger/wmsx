@@ -39,7 +39,15 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+/**
+ * Describes a running workflow.
+ * 
+ * @version $Revision$
+ */
 public class Workflow {
+
+    private static final Logger LOGGER = Logger.getLogger(Workflow.class
+            .toString());
 
     private final File directory;
 
@@ -53,16 +61,16 @@ public class Workflow {
 
     private final Backend backend;
 
-    private static final Logger LOGGER = Logger.getLogger(Workflow.class
-            .toString());
+    private final int id;
 
-    public Workflow(final File dir, final Backend back) {
+    Workflow(final File dir, final Backend back, final int wfid) {
         this.directory = dir;
         this.nextNodes = new HashMap<String, List<String>>();
         this.prevNodes = new HashMap<String, List<String>>();
         this.potentialTodo = new HashSet<String>();
         this.done = new HashSet<String>();
         this.backend = back;
+        this.id = wfid;
     }
 
     public synchronized void isDone(final JdlJob jdlJob) {
@@ -135,11 +143,24 @@ public class Workflow {
         }
     }
 
+    /**
+     * @return working directory for this workflow.
+     */
     public File getDirectory() {
         return this.directory;
     }
 
+    /**
+     * @return the backend used to execute this workflow.
+     */
     public Backend getBackend() {
         return this.backend;
+    }
+
+    /**
+     * @return the uinique Id of this workflow.
+     */
+    public int getId() {
+        return this.id;
     }
 }
