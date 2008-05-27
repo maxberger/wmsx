@@ -46,8 +46,20 @@ public final class GLiteWmsBackend extends AbstractLCGBackend {
         commandLine.add("/opt/glite/bin/glite-wms-job-output");
         commandLine.add("--dir");
         commandLine.add(absolutePath);
-        commandLine.add("--noint");
+        commandLine.add(AbstractLCGBackend.NOINT);
         commandLine.add(idString);
+        return commandLine;
+    }
+
+    @Override
+    public List<String> retreiveLogCommand(final String jobId,
+            final String filename) {
+        final List<String> commandLine = new Vector<String>();
+        commandLine.add("/opt/edg/bin/glite-wms-job-logging-info");
+        commandLine.add("-o");
+        commandLine.add(filename);
+        commandLine.add(AbstractLCGBackend.NOINT);
+        commandLine.add(jobId);
         return commandLine;
     }
 
@@ -56,7 +68,7 @@ public final class GLiteWmsBackend extends AbstractLCGBackend {
         final List<String> commandLine = new Vector<String>();
         commandLine.add("/opt/glite/bin/glite-wms-job-submit");
         commandLine.add("-a");
-        commandLine.add("--noint");
+        commandLine.add(AbstractLCGBackend.NOINT);
         commandLine.add("--nolisten");
         if (vo != null) {
             commandLine.add("--vo");

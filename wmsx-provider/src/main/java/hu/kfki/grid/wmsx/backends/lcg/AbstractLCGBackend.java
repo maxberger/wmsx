@@ -27,18 +27,13 @@ import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.globus.gsi.GlobusCredentialException;
-
-import edg.workload.userinterface.jclient.InfoLB;
 import edg.workload.userinterface.jclient.Job;
 import edg.workload.userinterface.jclient.JobId;
 import edg.workload.userinterface.jclient.JobStatus;
@@ -46,35 +41,56 @@ import edg.workload.userinterface.jclient.Result;
 
 public abstract class AbstractLCGBackend implements Backend {
 
+    protected static final String NOINT = "--noint";
+
     private static final Logger LOGGER = Logger
             .getLogger(AbstractLCGBackend.class.toString());
 
     public void retrieveLog(final JobUid id, final File dir) {
-        final Job job = new Job((JobId) id.getBackendId());
 
-        Result result;
         try {
-            result = job.getLogInfo();
-            final String logInfo = result.toString(InfoLB.HIGH_LOG_LEVEL);
-            final BufferedWriter logWriter = new BufferedWriter(new FileWriter(
-                    new File(dir, "log")));
-            logWriter.write(logInfo);
-            logWriter.close();
-        } catch (final UnsupportedOperationException e) {
-            AbstractLCGBackend.LOGGER.info("UnsupportedOperationException: "
-                    + e.getMessage());
+            final JobId jobId = (JobId) id.getBackendId();
+            final List<String> commandLine = this.retreiveLogCommand(jobId
+                    .toString(), dir.getAbsolutePath());
+            final Process p = Runtime.getRuntime().exec(
+                    commandLine.toArray(new String[commandLine.size()]), null,
+                    dir);
+            p.waitFor();
         } catch (final IOException e) {
-            AbstractLCGBackend.LOGGER.warning("IOException" + e.getMessage());
-        } catch (final GlobusCredentialException e) {
-            AbstractLCGBackend.LOGGER.info("GlobusCredentialException"
-                    + e.getMessage());
+            AbstractLCGBackend.LOGGER.warning(e.getMessage());
+        } catch (final InterruptedException e) {
+            // ignore
         }
+
+        // TODO: Re-enable!
+        // final Job job = new Job((JobId) id.getBackendId());
+        //
+        // Result result;
+        // try {
+        // result = job.getLogInfo();
+        // final String logInfo = result.toString(InfoLB.HIGH_LOG_LEVEL);
+        // final BufferedWriter logWriter = new BufferedWriter(new FileWriter(
+        // new File(dir, "log")));
+        // logWriter.write(logInfo);
+        // logWriter.close();
+        // } catch (final UnsupportedOperationException e) {
+        // AbstractLCGBackend.LOGGER.info("UnsupportedOperationException: "
+        // + e.getMessage());
+        // } catch (final IOException e) {
+        // AbstractLCGBackend.LOGGER.warning("IOException" + e.getMessage());
+        // } catch (final GlobusCredentialException e) {
+        // AbstractLCGBackend.LOGGER.info("GlobusCredentialException"
+        // + e.getMessage());
+        // }
     }
 
     protected abstract List<String> jobOutputCommand(String absolutePath,
             String string);
 
     protected abstract List<String> submitJdlCommand(String jdlFile, String vo);
+
+    protected abstract List<String> retreiveLogCommand(String jobId,
+            String filename);
 
     public Process retrieveResult(final JobUid id, final File dir) {
         try {
