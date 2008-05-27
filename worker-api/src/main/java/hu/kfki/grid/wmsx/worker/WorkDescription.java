@@ -50,12 +50,35 @@ public class WorkDescription implements Serializable {
 
     private final String stderr;
 
+    private final String workflowId;
+
     /* <String> */
     private final List<String> outputSandbox;
 
+    /**
+     * Create a new work description.
+     * 
+     * @param jobId
+     *            Id of the job.
+     * @param input
+     *            Input Sandbox.
+     * @param output
+     *            List of files for output sandbox.
+     * @param exec
+     *            Name of executable.
+     * @param arg
+     *            Arguments for executable.
+     * @param out
+     *            Name of file to store Stdout in.
+     * @param err
+     *            Name of file to store Stderr in.
+     * @param wfId
+     *            Id of the workflow or null.
+     */
     public WorkDescription(final Object jobId, final Map<String, byte[]> input,
             final List<String> output, final String exec,
-            final List<String> arg, final String out, final String err) {
+            final List<String> arg, final String out, final String err,
+            final String wfId) {
         this.id = jobId;
         this.inputSandbox = input;
         this.outputSandbox = output;
@@ -63,8 +86,12 @@ public class WorkDescription implements Serializable {
         this.arguments = arg;
         this.stdout = out;
         this.stderr = err;
+        this.workflowId = wfId;
     }
 
+    /**
+     * @return JobId for this job.
+     */
     public Object getId() {
         return this.id;
     }
@@ -73,24 +100,46 @@ public class WorkDescription implements Serializable {
         return this.inputSandbox;
     }
 
+    /**
+     * @return executable to call
+     */
     public String getExecutable() {
         return this.executable;
     }
 
+    /**
+     * @return file used to store stdout
+     */
     public String getStdout() {
         return this.stdout;
     }
 
+    /**
+     * @return file used to store stderr
+     */
     public String getStderr() {
         return this.stderr;
     }
 
+    /**
+     * @return files to send back to the caller.
+     */
     public List<String> getOutputSandbox() {
         return this.outputSandbox;
     }
 
+    /**
+     * @return command line arguments.
+     */
     public List<String> getArguments() {
         return this.arguments;
+    }
+
+    /**
+     * @return id of the workflow, or null
+     */
+    public String getWorkflowId() {
+        return this.workflowId;
     }
 
 }

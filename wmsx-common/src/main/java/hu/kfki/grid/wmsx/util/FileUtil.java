@@ -113,16 +113,24 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Smartly resolve a given filename against a given directory.
+     * 
+     * @param dir
+     *            directory to resolve to
+     * @param fileName
+     *            filename to resolve
+     * @return an absolute path describing the file.
+     */
     public static File resolveFile(final File dir, final String fileName) {
         if (fileName == null) {
             return null;
         }
         final File fileNameFile = new File(fileName);
-        if (dir == null) {
-            return fileNameFile.getAbsoluteFile();
-        }
         final File inputFile;
-        if (fileNameFile.isAbsolute()) {
+        if (dir == null) {
+            inputFile = fileNameFile.getAbsoluteFile();
+        } else if (fileNameFile.isAbsolute()) {
             inputFile = fileNameFile;
         } else {
             inputFile = new File(dir, fileName);
@@ -130,6 +138,14 @@ public final class FileUtil {
         return inputFile;
     }
 
+    /**
+     * Tries to make a particular file executable.
+     * 
+     * @param file
+     *            the file to modify
+     * @throws IOException
+     *             if the file could not be found.
+     */
     public static void makeExecutable(final File file) throws IOException {
         try {
             Runtime.getRuntime().exec(
@@ -180,19 +196,36 @@ public final class FileUtil {
         }
     }
 
-    public static void cleanDir(final File dir) {
+    /**
+     * Recursively clean the given directory. Use with caution!
+     * 
+     * @param dir
+     *            Directory to clean.
+     * @param removeOnExit
+     *            if true, deletion will be delayed until program exits
+     */
+    public static void cleanDir(final File dir, final boolean removeOnExit) {
         final File[] entries = dir.listFiles();
         if (entries != null) {
             for (int i = 0; i < entries.length; i++) {
                 final File f = entries[i];
                 if (f.isDirectory()) {
-                    FileUtil.cleanDir(f);
+                    FileUtil.cleanDir(f, removeOnExit);
                 } else if (f.isFile()) {
-                    f.delete();
+                    FileUtil.remove(f, removeOnExit);
                 }
             }
         }
+        FileUtil.remove(dir, removeOnExit);
         dir.delete();
+    }
+
+    private static void remove(final File f, final boolean removeOnExit) {
+        if (removeOnExit) {
+            f.deleteOnExit();
+        } else {
+            f.delete();
+        }
     }
 
 }
