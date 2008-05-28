@@ -18,13 +18,18 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends.lcg;
 
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * Backend for gLite 3.1.
+ * 
+ * @version $Revision$
+ */
 public final class GLiteWmsBackend extends AbstractLCGBackend {
 
     private static GLiteWmsBackend instance;
@@ -32,6 +37,9 @@ public final class GLiteWmsBackend extends AbstractLCGBackend {
     private GLiteWmsBackend() {
     }
 
+    /**
+     * @return the Singleton instance.
+     */
     public static synchronized GLiteWmsBackend getInstance() {
         if (GLiteWmsBackend.instance == null) {
             GLiteWmsBackend.instance = new GLiteWmsBackend();
@@ -39,6 +47,7 @@ public final class GLiteWmsBackend extends AbstractLCGBackend {
         return GLiteWmsBackend.instance;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> jobOutputCommand(final String absolutePath,
             final String idString) {
@@ -51,11 +60,12 @@ public final class GLiteWmsBackend extends AbstractLCGBackend {
         return commandLine;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> retreiveLogCommand(final String jobId,
             final String filename) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add("/opt/edg/bin/glite-wms-job-logging-info");
+        commandLine.add("/opt/glite/bin/glite-wms-job-logging-info");
         commandLine.add("-o");
         commandLine.add(filename);
         commandLine.add(AbstractLCGBackend.NOINT);
@@ -63,6 +73,7 @@ public final class GLiteWmsBackend extends AbstractLCGBackend {
         return commandLine;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> submitJdlCommand(final String jdlFile, final String vo) {
         final List<String> commandLine = new Vector<String>();
@@ -78,6 +89,7 @@ public final class GLiteWmsBackend extends AbstractLCGBackend {
         return commandLine;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "GLiteWms";

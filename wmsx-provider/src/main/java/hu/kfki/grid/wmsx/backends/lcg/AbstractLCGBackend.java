@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends.lcg;
 
@@ -41,19 +41,31 @@ import edg.workload.userinterface.jclient.JobId;
 import edg.workload.userinterface.jclient.JobStatus;
 import edg.workload.userinterface.jclient.Result;
 
+/**
+ * Common backend for all LCG (EDG and gLite) targets.
+ * 
+ * @version $Revision$
+ */
 public abstract class AbstractLCGBackend implements Backend {
 
+    /**
+     * Parameter for non-interactive.
+     */
     protected static final String NOINT = "--noint";
 
     private static final Logger LOGGER = Logger
             .getLogger(AbstractLCGBackend.class.toString());
 
+    /** {@inheritDoc} */
     public void retrieveLog(final JobUid id, final File dir) {
-
         try {
             final JobId jobId = (JobId) id.getBackendId();
+            if (!dir.exists() && !dir.mkdirs()) {
+                throw new IOException("Failed to create: " + dir);
+            }
+            final File logFile = new File(dir, "log");
             final List<String> commandLine = this.retreiveLogCommand(jobId
-                    .toString(), dir.getAbsolutePath());
+                    .toString(), logFile.getAbsolutePath());
             final Process p = Runtime.getRuntime().exec(
                     commandLine.toArray(new String[commandLine.size()]), null,
                     dir);
@@ -157,7 +169,8 @@ public abstract class AbstractLCGBackend implements Backend {
             // || (statusInt == JobStatus.CLEARED)
             // || (statusInt == JobStatus.ABORTED)
             // || (statusInt == JobStatus.CANCELLED);
-            final boolean success = statusInt == JobStatus.DONE;
+            final boolean success = statusInt == JobStatus.DONE
+                    || statusInt == JobStatus.CLEARED;
 
             if (startupPhase) {
                 retVal = JobState.STARTUP;
