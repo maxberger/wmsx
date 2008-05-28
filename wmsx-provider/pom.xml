@@ -39,8 +39,7 @@
                 <goal>translate-project</goal>
             </goals>
             <configuration>
-                <classifier>jdk14</classifier>
-                <attach>true</attach>
+                <replace>true</replace>
             </configuration>
         </execution>
     </executions></plugin>
