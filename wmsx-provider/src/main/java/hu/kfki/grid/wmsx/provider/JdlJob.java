@@ -89,7 +89,7 @@ public class JdlJob {
      * @return the args
      */
     public String[] getArgs() {
-        return this.args;
+        return this.args.clone();
     }
 
     /**
@@ -97,7 +97,7 @@ public class JdlJob {
      *            the args to set
      */
     public void setArgs(final String[] argss) {
-        this.args = argss;
+        this.args = argss.clone();
     }
 
     private String filterJdlFile(final String jdlFileToFilter,
@@ -115,16 +115,10 @@ public class JdlJob {
             this.makeStdoutAbsolute(job, jdlFileDir);
             isFiltered = this.filterWorkflow(jdlFileToFilter, backend,
                     isFiltered, job);
+            isFiltered |= this.filterDeploy(job, backend);
 
             if (isFiltered) {
-                final File dir = new File(jdlFileToFilter).getAbsoluteFile()
-                        .getParentFile();
-                final File tmp = File.createTempFile("jdl", null, dir);
-                final Writer w = new FileWriter(tmp);
-                w.write(job.toJDL());
-                w.close();
-                tmp.deleteOnExit();
-                retVal = tmp.getAbsolutePath();
+                retVal = this.createFilteredJdl(jdlFileToFilter, job);
             } else {
                 retVal = jdlFileToFilter;
             }
@@ -133,6 +127,30 @@ public class JdlJob {
             retVal = jdlFileToFilter;
         }
         return retVal;
+    }
+
+    private boolean filterDeploy(final JobDescription job, final Backend backend) {
+        final String deploy = job.getStringEntry(JobDescription.DEPLOY);
+        if (deploy != null) {
+            if (!backend.supportsDeploy()) {
+                JdlJob.LOGGER
+                        .warning(backend + " does not yet support Deploy!");
+                // TODO: Create Yet-Another-Wrapper
+            }
+        }
+        return false;
+    }
+
+    private String createFilteredJdl(final String jdlFileToFilter,
+            final JobDescription job) throws IOException {
+        final File dir = new File(jdlFileToFilter).getAbsoluteFile()
+                .getParentFile();
+        final File tmp = File.createTempFile("jdl", null, dir);
+        final Writer w = new FileWriter(tmp);
+        w.write(job.toJDL());
+        w.close();
+        tmp.deleteOnExit();
+        return tmp.getAbsolutePath();
     }
 
     private boolean filterWorkflow(final String jdlFileToFilter,
@@ -207,15 +225,20 @@ public class JdlJob {
             if (new File(outp).isAbsolute()) {
                 this.output = outp;
             } else {
-                final File parent;
-                if (this.result != null) {
-                    parent = new File(this.result);
-                } else {
-                    parent = jdlFileDir;
-                }
-                this.output = new File(parent, outp).getAbsolutePath();
+                this.makeStdoutAbsoluteFromRelavitePath(jdlFileDir, outp);
             }
         }
+    }
+
+    private void makeStdoutAbsoluteFromRelavitePath(final File jdlFileDir,
+            final String outp) {
+        final File parent;
+        if (this.result != null) {
+            parent = new File(this.result);
+        } else {
+            parent = jdlFileDir;
+        }
+        this.output = new File(parent, outp).getAbsolutePath();
     }
 
     private String filterJob(final File jdlFileDir, final JobDescription job,

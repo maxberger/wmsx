@@ -51,7 +51,8 @@ public class ControllerWorkDescription {
 
         this.workDescription = new WorkDescription(uid, inputSandbox, jobDesc
                 .getListEntry(JobDescription.OUTPUTSANDBOX), jobDesc
-                .getStringEntry(JobDescription.EXECUTABLE), args, jobDesc
+                .getStringEntry(JobDescription.EXECUTABLE), jobDesc
+                .getStringEntry(JobDescription.DEPLOY), args, jobDesc
                 .getStringEntry(JobDescription.STDOUTPUT), jobDesc
                 .getStringEntry(JobDescription.STDERROR), jobDesc
                 .getStringEntry(JobDescription.WORKFLOWID));

@@ -33,25 +33,17 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>retrotranslator-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-classes</phase>
+       <executions>
+        <execution>
             <goals>
-              <goal>translate</goal>
+                <goal>translate-project</goal>
             </goals>
             <configuration>
-              <filesets>
-                <fileset>
-                  <directory>${project.build.outputDirectory}</directory>
-                  <includes>
-                    <include>**/*.class</include>
-                  </includes>
-                </fileset>
-              </filesets>
+                <classifier>jdk14</classifier>
+                <attach>true</attach>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
+        </execution>
+    </executions></plugin>
       <plugin>
         <groupId>org.codehaus.mojo.groovy</groupId>
         <artifactId>groovy-maven-plugin</artifactId>
@@ -157,5 +149,11 @@
       <artifactId>classad</artifactId>
       <version>lcg</version>
     </dependency>
+<dependency>
+    <groupId>net.sf.retrotranslator</groupId>
+    <artifactId>retrotranslator-runtime</artifactId>
+    <version>1.2.4</version>
+<scope>runtime</scope>
+</dependency>
   </dependencies>
 </project>

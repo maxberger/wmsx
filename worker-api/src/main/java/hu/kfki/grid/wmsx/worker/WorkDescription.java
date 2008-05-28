@@ -44,6 +44,8 @@ public class WorkDescription implements Serializable {
 
     private final String executable;
 
+    private final String deploy;
+
     private final List<String> arguments;
 
     private final String stdout;
@@ -66,6 +68,8 @@ public class WorkDescription implements Serializable {
      *            List of files for output sandbox.
      * @param exec
      *            Name of executable.
+     * @param deployexec
+     *            Name of executable for deployment or null.
      * @param arg
      *            Arguments for executable.
      * @param out
@@ -77,12 +81,13 @@ public class WorkDescription implements Serializable {
      */
     public WorkDescription(final Object jobId, final Map<String, byte[]> input,
             final List<String> output, final String exec,
-            final List<String> arg, final String out, final String err,
-            final String wfId) {
+            final String deployexec, final List<String> arg, final String out,
+            final String err, final String wfId) {
         this.id = jobId;
         this.inputSandbox = input;
         this.outputSandbox = output;
         this.executable = exec;
+        this.deploy = deployexec;
         this.arguments = arg;
         this.stdout = out;
         this.stderr = err;
@@ -105,6 +110,13 @@ public class WorkDescription implements Serializable {
      */
     public String getExecutable() {
         return this.executable;
+    }
+
+    /**
+     * @return deployment executable to call
+     */
+    public String getDeploy() {
+        return this.deploy;
     }
 
     /**
