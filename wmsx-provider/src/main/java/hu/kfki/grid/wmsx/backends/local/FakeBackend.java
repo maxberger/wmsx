@@ -32,11 +32,21 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FakeBackend implements Backend {
+/**
+ * Fake backend used for testing.
+ * 
+ * @version $Revision$
+ */
+public final class FakeBackend implements Backend {
 
-    private static FakeBackend instance;
+    private static final class SingletonHolder {
+        private static final FakeBackend INSTANCE = new FakeBackend();
 
-    private int count = 0;
+        private SingletonHolder() {
+        }
+    }
+
+    private int count;
 
     /** <Integer,JobState> */
     private final Map<Object, JobState> state;
@@ -45,11 +55,8 @@ public class FakeBackend implements Backend {
         this.state = new HashMap<Object, JobState>();
     };
 
-    public static synchronized FakeBackend getInstance() {
-        if (FakeBackend.instance == null) {
-            FakeBackend.instance = new FakeBackend();
-        }
-        return FakeBackend.instance;
+    public static FakeBackend getInstance() {
+        return FakeBackend.SingletonHolder.INSTANCE;
     }
 
     public JobState getState(final JobUid uid) {
@@ -81,7 +88,7 @@ public class FakeBackend implements Backend {
     public SubmissionResults submitJdl(final String jdlFile, final String vo)
             throws IOException {
         this.count++;
-        final Integer in = new Integer(this.count);
+        final Integer in = Integer.valueOf(this.count);
         this.state.put(in, JobState.NONE);
         return new SubmissionResults(new JobUid(this, in), null, null, null, 0,
                 0);
@@ -90,5 +97,9 @@ public class FakeBackend implements Backend {
     @Override
     public String toString() {
         return "Fake";
+    }
+
+    public boolean supportsDeploy() {
+        return false;
     }
 }

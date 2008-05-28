@@ -34,26 +34,33 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class LocalBackend implements Backend {
+/**
+ * Local backend.
+ * 
+ * @version $Revision$
+ */
+public final class LocalBackend implements Backend {
 
-    private int count = 0;
+    private int count;
 
     private final Map<JobUid, JobState> state;
 
     private final Map<JobUid, LocalProcess> processes;
 
-    private static LocalBackend instance;
+    private static final class SingletonHolder {
+        private static final LocalBackend INSTANCE = new LocalBackend();
+
+        private SingletonHolder() {
+        }
+    }
 
     private LocalBackend() {
         this.state = new Hashtable<JobUid, JobState>();
         this.processes = new Hashtable<JobUid, LocalProcess>();
     };
 
-    public static synchronized LocalBackend getInstance() {
-        if (LocalBackend.instance == null) {
-            LocalBackend.instance = new LocalBackend();
-        }
-        return LocalBackend.instance;
+    public static LocalBackend getInstance() {
+        return LocalBackend.SingletonHolder.INSTANCE;
     }
 
     public JobState getState(final JobUid uid) {
@@ -79,7 +86,7 @@ public class LocalBackend implements Backend {
     public SubmissionResults submitJdl(final String jdlFile, final String vo)
             throws IOException {
         this.count++;
-        final Object id = new Integer(this.count);
+        final Object id = Integer.valueOf(this.count);
         final JobUid juid = new JobUid(this, id);
         final JobDescription desc = new JDLJobDescription(jdlFile);
         final LocalProcess p = new LocalProcess(this.state, juid, desc);
@@ -92,4 +99,10 @@ public class LocalBackend implements Backend {
     public String toString() {
         return "Local";
     }
+
+    public boolean supportsDeploy() {
+        // TODO
+        return false;
+    }
+
 }

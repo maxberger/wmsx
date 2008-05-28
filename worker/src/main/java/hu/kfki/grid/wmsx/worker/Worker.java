@@ -65,6 +65,10 @@ public final class Worker {
         this.alive = new Alive(cont, this.uuid);
     }
 
+    private void logWithTime(final String base) {
+        Worker.LOGGER.info(base + " ( " + System.currentTimeMillis() + " )");
+    }
+
     public void start() {
 
         boolean terminate = false;
@@ -73,8 +77,7 @@ public final class Worker {
         Worker.LOGGER.info("Worker started, Uuid is " + this.uuid);
         try {
             while (!terminate) {
-                Worker.LOGGER.info("Checking for work ( "
-                        + System.currentTimeMillis() + " )");
+                this.logWithTime("Checking for work");
 
                 final WorkDescription todo = this.controller
                         .retrieveWork(this.uuid);
@@ -89,8 +92,7 @@ public final class Worker {
                         lastChecked = 0;
                     }
                 } else {
-                    Worker.LOGGER.info("Sleeping ( "
-                            + System.currentTimeMillis() + " )");
+                    this.logWithTime("Sleeping");
                     this.alive.stop();
                     lastChecked += delay;
                     if (lastChecked < Worker.MAX_WAIT) {
@@ -116,8 +118,7 @@ public final class Worker {
     @SuppressWarnings("unchecked")
     private void performWork(final WorkDescription todo) throws RemoteException {
         this.alive.start();
-        Worker.LOGGER.info("Assigned work: " + todo.getId() + " ( "
-                + System.currentTimeMillis() + " )");
+        this.logWithTime("Assigned work: " + todo.getId());
         final File currentDir = new File(".").getAbsoluteFile();
         final File workDir;
         File wd;
@@ -130,35 +131,58 @@ public final class Worker {
             } else {
                 wd = File.createTempFile("swork", "", currentDir)
                         .getCanonicalFile();
-                wd.delete();
+                if (!wd.delete()) {
+                    throw new IOException("Failed to delete workdir file: "
+                            + wd.getAbsolutePath());
+                }
             }
-            wd.mkdirs();
+            if (!wd.exists() && !wd.mkdirs()) {
+                throw new IOException("Failed to create workdir: "
+                        + wd.getAbsolutePath());
+            }
         } catch (final IOException ioe) {
             Worker.LOGGER.info(ioe.getMessage());
             wd = currentDir;
         }
         workDir = wd;
-        Worker.LOGGER.fine("Retrieving sandbox to WorkDir: " + workDir + " ( "
-                + System.currentTimeMillis() + " )");
+        this.logWithTime("Retrieving sandbox to WorkDir: " + workDir);
 
         FileUtil.retrieveSandbox(todo.getInputSandbox(), workDir);
 
-        final List<String> arguments = todo.getArguments();
-        final List<String> cmdArray = new Vector<String>(1 + arguments.size());
-        cmdArray.add(new File(workDir, todo.getExecutable()).getAbsolutePath());
-        cmdArray.addAll(arguments);
+        this.launchDeploy(todo, workDir);
 
-        Worker.LOGGER.info("Launching ( " + System.currentTimeMillis() + " )");
-        ScriptLauncher.getInstance().launchScript(
-                cmdArray.toArray(new String[0]), todo.getStdout(),
-                todo.getStderr(), workDir);
-        Worker.LOGGER.info("Submitting results ( " + System.currentTimeMillis()
-                + " )");
+        this.launchExec(todo, workDir);
+        this.logWithTime("Submitting results");
         this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
                 .createSandbox(todo.getOutputSandbox(), workDir)), this.uuid);
         if (!currentDir.equals(workDir)) {
             FileUtil.cleanDir(workDir, partOfWf);
         }
+    }
+
+    private void launchDeploy(final WorkDescription todo, final File workDir) {
+        final String deploy = todo.getDeploy();
+        if (deploy != null) {
+            final String completePath = new File(workDir, deploy)
+                    .getAbsolutePath();
+            this.logWithTime("Deploying");
+            ScriptLauncher.getInstance().launchScript(
+                    new String[] { completePath, }, todo.getStdout(),
+                    todo.getStderr(), workDir);
+
+        }
+    }
+
+    private void launchExec(final WorkDescription todo, final File workDir) {
+        final List<String> arguments = todo.getArguments();
+        final List<String> cmdArray = new Vector<String>(1 + arguments.size());
+        cmdArray.add(new File(workDir, todo.getExecutable()).getAbsolutePath());
+        cmdArray.addAll(arguments);
+
+        this.logWithTime("Launching");
+        ScriptLauncher.getInstance().launchScript(
+                cmdArray.toArray(new String[0]), todo.getStdout(),
+                todo.getStderr(), workDir);
     }
 
     public static void main(final String[] args) {

@@ -50,7 +50,19 @@ public final class FileUtil {
     private FileUtil() {
     };
 
-    public static void copy(final InputStream fin, final OutputStream fout,
+    /**
+     * Copy from one Stream to another.
+     * 
+     * @param fin
+     *            Input Stream
+     * @param fout
+     *            Output Stream
+     * @param ia
+     *            IOException to throw in case the operation fails, may be null
+     * @throws IOException
+     *             if the operation fails.
+     */
+    private static void copy(final InputStream fin, final OutputStream fout,
             final IOException ia) throws IOException {
         try {
             final byte[] b = new byte[FileUtil.BUFSIZE];
@@ -77,12 +89,32 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Store Data from an Input Stream info a file.
+     * 
+     * @param fin
+     *            InputStream to read from.
+     * @param out
+     *            File to store into.
+     * @throws IOException
+     *             if anything goes wrong.
+     */
     public static void copy(final InputStream fin, final File out)
             throws IOException {
         final FileOutputStream fout = new FileOutputStream(out);
         FileUtil.copy(fin, fout, null);
     }
 
+    /**
+     * Efficiently copy from file A to file B.
+     * 
+     * @param in
+     *            File to read.
+     * @param out
+     *            File to write.
+     * @throws IOException
+     *             if anything goes wrong.
+     */
     public static void copy(final File in, final File out) throws IOException {
 
         final FileInputStream fin = new FileInputStream(in);
@@ -157,6 +189,16 @@ public final class FileUtil {
 
     }
 
+    /**
+     * Create a Sandbox from a list of given files. Note that all pathnames are
+     * erased.
+     * 
+     * @param files
+     *            list of Files to load
+     * @param dir
+     *            basedir for relative file names
+     * @return a Sandbox Map.
+     */
     public static Map<String, byte[]> createSandbox(final List<String> files,
             final File dir) {
         final Map<String, byte[]> sandbox = new TreeMap<String, byte[]>();
@@ -181,6 +223,14 @@ public final class FileUtil {
         return buf;
     }
 
+    /**
+     * Store files from SandBox into a given directory.
+     * 
+     * @param sandbox
+     *            the SandBox.
+     * @param dir
+     *            Directory to store into.
+     */
     public static void retrieveSandbox(final Map<String, byte[]> sandbox,
             final File dir) {
         for (final Map.Entry<String, byte[]> entry : sandbox.entrySet()) {
@@ -217,14 +267,16 @@ public final class FileUtil {
             }
         }
         FileUtil.remove(dir, removeOnExit);
-        dir.delete();
     }
 
     private static void remove(final File f, final boolean removeOnExit) {
         if (removeOnExit) {
             f.deleteOnExit();
         } else {
-            f.delete();
+            if (!f.delete()) {
+                FileUtil.LOGGER.warning("Failed to delete: "
+                        + f.getAbsolutePath());
+            }
         }
     }
 

@@ -25,10 +25,12 @@ package hu.kfki.grid.wmsx.util;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -38,23 +40,30 @@ import java.util.logging.Logger;
  * 
  * @version $Revision$
  */
-public class ScriptLauncher {
+public final class ScriptLauncher {
 
-    private final Map<String, OutputStream> streamMap = new TreeMap<String, OutputStream>();
-
-    private static ScriptLauncher instance;
+    private static final String IOEXCEPTION_LAUNCHING_SCRIPT = "IOException launching script: ";
 
     private static final Logger LOGGER = Logger.getLogger(ScriptLauncher.class
             .toString());
 
+    private final Map<String, OutputStream> streamMap = new TreeMap<String, OutputStream>();
+
+    private static final class SingletonHolder {
+        private static final ScriptLauncher INSTANCE = new ScriptLauncher();
+
+        private SingletonHolder() {
+        }
+    }
+
     private ScriptLauncher() {
     }
 
-    public static synchronized ScriptLauncher getInstance() {
-        if (ScriptLauncher.instance == null) {
-            ScriptLauncher.instance = new ScriptLauncher();
-        }
-        return ScriptLauncher.instance;
+    /**
+     * @return the Singleton Instance.
+     */
+    public static ScriptLauncher getInstance() {
+        return ScriptLauncher.SingletonHolder.INSTANCE;
     }
 
     private OutputStream prepareOutput(final String stdout, final File workdir)
@@ -69,14 +78,31 @@ public class ScriptLauncher {
             final String path = stdoutfile.getPath();
             OutputStream out = this.streamMap.get(path);
             if (out == null) {
-                stdoutfile.getParentFile().mkdirs();
-                out = new BufferedOutputStream(new FileOutputStream(stdoutfile));
+                final File parent = stdoutfile.getParentFile();
+                if (!parent.exists() && !parent.mkdirs()) {
+                    throw new FileNotFoundException(parent.getAbsolutePath());
+                }
+                out = new BufferedOutputStream(new FileOutputStream(stdoutfile,
+                        true));
                 this.streamMap.put(path, out);
             }
             return out;
         }
     }
 
+    /**
+     * Launch a script.
+     * 
+     * @param cmdString
+     *            command to execute
+     * @param stdout
+     *            name of file for stdout, relative to dir
+     * @param stderr
+     *            name of file for stderr, relative to dir
+     * @param dir
+     *            directory to work in
+     * @return return value of the execution.
+     */
     public int launchScript(final String cmdString, final File dir,
             final String stdout, final String stderr) {
         int retVal = 0;
@@ -86,12 +112,26 @@ public class ScriptLauncher {
             final Process p = Runtime.getRuntime().exec(cmdString, null, dir);
             retVal = this.wrapProcess(p, o, e);
         } catch (final IOException e) {
-            ScriptLauncher.LOGGER.warning("IOException launching script: "
-                    + e.getMessage());
+            ScriptLauncher.LOGGER
+                    .warning(ScriptLauncher.IOEXCEPTION_LAUNCHING_SCRIPT
+                            + e.getMessage());
         }
         return retVal;
     }
 
+    /**
+     * Launch a script.
+     * 
+     * @param cmdarray
+     *            array of executable and arguments
+     * @param stdout
+     *            name of file for stdout, relative to workdir
+     * @param stderr
+     *            name of file for stderr, relative to workdir
+     * @param workdir
+     *            directory to work in
+     * @return return value of the execution.
+     */
     public int launchScript(final String[] cmdarray, final String stdout,
             final String stderr, final File workdir) {
         int retVal = 0;
@@ -101,21 +141,33 @@ public class ScriptLauncher {
                 final OutputStream e = this.prepareOutput(stderr, workdir);
                 retVal = this.launchScript(cmdarray, o, e, workdir);
             } catch (final IOException e) {
-                ScriptLauncher.LOGGER.warning("IOException launching script: "
-                        + e.getMessage());
+                ScriptLauncher.LOGGER
+                        .warning(ScriptLauncher.IOEXCEPTION_LAUNCHING_SCRIPT
+                                + e.getMessage());
             }
         }
         return retVal;
     }
 
+    /**
+     * Wrap a process with stream listeners and wait for its execution.
+     * 
+     * @param p
+     *            the process to wrap
+     * @param out
+     *            OutputStream to listen to
+     * @param err
+     *            ErrorStream to listen to
+     * @return return value of the process' execution.
+     */
     public int wrapProcess(final Process p, final OutputStream out,
             final OutputStream err) {
         int retVal = 0;
         if (p != null) {
             final InputStream i = new BufferedInputStream(p.getInputStream());
-            StreamListener.listen(i, out);
+            StreamListener.listen(i, out, this);
             StreamListener.listen(new BufferedInputStream(p.getErrorStream()),
-                    err);
+                    err, this);
             try {
                 retVal = p.waitFor();
             } catch (final InterruptedException e) {
@@ -125,6 +177,19 @@ public class ScriptLauncher {
         return retVal;
     }
 
+    /**
+     * Launch a script.
+     * 
+     * @param cmdarray
+     *            array of executable and arguments
+     * @param out
+     *            OutputStream for StdOut
+     * @param err
+     *            OutputStream for StdErr
+     * @param workdir
+     *            directory to work in
+     * @return return value of the execution.
+     */
     public int launchScript(final String[] cmdarray, final OutputStream out,
             final OutputStream err, final File workdir) {
         int retVal = 0;
@@ -134,11 +199,36 @@ public class ScriptLauncher {
                         workdir);
                 retVal = this.wrapProcess(p, out, err);
             } catch (final IOException e) {
-                ScriptLauncher.LOGGER.warning("IOException launching script: "
-                        + e.getMessage());
+                ScriptLauncher.LOGGER
+                        .warning(ScriptLauncher.IOEXCEPTION_LAUNCHING_SCRIPT
+                                + e.getMessage());
             }
         }
         return retVal;
+    }
+
+    /**
+     * Forget about the given stream.
+     * 
+     * @param out
+     *            Stream to forget.
+     */
+    public void forgetStream(final OutputStream out) {
+        synchronized (this.streamMap) {
+            final Iterator<Map.Entry<String, OutputStream>> it = this.streamMap
+                    .entrySet().iterator();
+            String key = null;
+            while (it.hasNext()) {
+                final Map.Entry<String, OutputStream> entry = it.next();
+                if (out == entry.getValue()) {
+                    key = entry.getKey();
+                    break;
+                }
+            }
+            if (key != null) {
+                this.streamMap.remove(key);
+            }
+        }
     }
 
 }

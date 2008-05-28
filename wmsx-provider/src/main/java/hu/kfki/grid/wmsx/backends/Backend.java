@@ -41,8 +41,24 @@ public interface Backend {
     SubmissionResults submitJdl(final String jdlFile, final String vo)
             throws IOException;
 
+    /**
+     * @return true if the jobId represents a URI
+     */
     boolean jobIdIsURI();
 
+    /**
+     * Retrieves the current state of the job.
+     * 
+     * @param uid
+     *            Job Id.
+     * @return {@link JobState} of the job.
+     */
     JobState getState(final JobUid uid);
+
+    /**
+     * @return true if this backend supports
+     *         {@link hu.kfki.grid.wmsx.job.description.JobDescription#DEPLOY}.
+     */
+    boolean supportsDeploy();
 
 }

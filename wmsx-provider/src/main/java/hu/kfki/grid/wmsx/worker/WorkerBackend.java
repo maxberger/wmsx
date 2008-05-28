@@ -32,24 +32,31 @@ import hu.kfki.grid.wmsx.job.description.JobDescription;
 import java.io.File;
 import java.io.IOException;
 
-public class WorkerBackend implements Backend {
+/**
+ * This backend sends all jobs to worker tasks.
+ * 
+ * @version $Revision$
+ */
+public final class WorkerBackend implements Backend {
 
-    private int count = 0;
-
-    private static WorkerBackend instance;
+    private int count;
 
     private final ControllerImpl controllerImpl;
+
+    private static final class SingletonHolder {
+        private static final WorkerBackend INSTANCE = new WorkerBackend();
+
+        private SingletonHolder() {
+        }
+    }
 
     private WorkerBackend() {
         this.controllerImpl = ControllerServer.getInstance()
                 .getControllerImpl();
     }
 
-    public static synchronized WorkerBackend getInstance() {
-        if (WorkerBackend.instance == null) {
-            WorkerBackend.instance = new WorkerBackend();
-        }
-        return WorkerBackend.instance;
+    public static WorkerBackend getInstance() {
+        return WorkerBackend.SingletonHolder.INSTANCE;
     }
 
     public JobState getState(final JobUid uid) {
@@ -73,7 +80,7 @@ public class WorkerBackend implements Backend {
     public SubmissionResults submitJdl(final String jdlFile, final String vo)
             throws IOException {
         this.count++;
-        final Object id = new Integer(this.count);
+        final Object id = Integer.valueOf(this.count);
         final JobDescription desc = new JDLJobDescription(jdlFile);
         this.controllerImpl.addWork(new ControllerWorkDescription(id, desc));
         return new SubmissionResults(this.controllerImpl.getJuidForId(id),
@@ -83,6 +90,10 @@ public class WorkerBackend implements Backend {
     @Override
     public String toString() {
         return "Worker";
+    }
+
+    public boolean supportsDeploy() {
+        return true;
     }
 
 }

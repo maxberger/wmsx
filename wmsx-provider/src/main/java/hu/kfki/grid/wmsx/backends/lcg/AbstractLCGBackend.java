@@ -34,6 +34,8 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.globus.gsi.GlobusCredentialException;
+
 import edg.workload.userinterface.jclient.Job;
 import edg.workload.userinterface.jclient.JobId;
 import edg.workload.userinterface.jclient.JobStatus;
@@ -165,10 +167,18 @@ public abstract class AbstractLCGBackend implements Backend {
                 retVal = JobState.SUCCESS;
             }
 
-        } catch (final Exception e) {
+        } catch (final IOException e) {
+            AbstractLCGBackend.LOGGER.warning(e.getMessage());
+            retVal = JobState.FAILED;
+        } catch (final GlobusCredentialException e) {
             AbstractLCGBackend.LOGGER.warning(e.getMessage());
             retVal = JobState.FAILED;
         }
         return retVal;
     }
+
+    public boolean supportsDeploy() {
+        return false;
+    }
+
 }
