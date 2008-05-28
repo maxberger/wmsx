@@ -18,20 +18,14 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.worker;
 
-import hu.kfki.grid.wmsx.util.FileUtil;
-import hu.kfki.grid.wmsx.util.ScriptLauncher;
-
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import net.jini.id.Uuid;
@@ -69,8 +63,8 @@ public final class Worker {
         Worker.LOGGER.info(base + " ( " + System.currentTimeMillis() + " )");
     }
 
-    public void start() {
-
+    private void start() {
+        final WorkPerformer performer = WorkPerformer.getInstance();
         boolean terminate = false;
         long lastChecked = 0;
         long delay = Worker.START_DELAY;
@@ -87,7 +81,8 @@ public final class Worker {
                     if ("shutdown".equals(todo.getId())) {
                         terminate = true;
                     } else {
-                        this.performWork(todo);
+                        this.alive.start();
+                        performer.performWork(todo, this.controller, this.uuid);
                         delay = Worker.START_DELAY;
                         lastChecked = 0;
                     }
@@ -115,76 +110,12 @@ public final class Worker {
         Worker.LOGGER.info("Shutting down.");
     }
 
-    @SuppressWarnings("unchecked")
-    private void performWork(final WorkDescription todo) throws RemoteException {
-        this.alive.start();
-        this.logWithTime("Assigned work: " + todo.getId());
-        final File currentDir = new File(".").getAbsoluteFile();
-        final File workDir;
-        File wd;
-        final String wfid = todo.getWorkflowId();
-        final boolean partOfWf = wfid != null;
-        try {
-
-            if (partOfWf) {
-                wd = new File(currentDir, "wfwork" + wfid).getCanonicalFile();
-            } else {
-                wd = File.createTempFile("swork", "", currentDir)
-                        .getCanonicalFile();
-                if (!wd.delete()) {
-                    throw new IOException("Failed to delete workdir file: "
-                            + wd.getAbsolutePath());
-                }
-            }
-            if (!wd.exists() && !wd.mkdirs()) {
-                throw new IOException("Failed to create workdir: "
-                        + wd.getAbsolutePath());
-            }
-        } catch (final IOException ioe) {
-            Worker.LOGGER.info(ioe.getMessage());
-            wd = currentDir;
-        }
-        workDir = wd;
-        this.logWithTime("Retrieving sandbox to WorkDir: " + workDir);
-
-        FileUtil.retrieveSandbox(todo.getInputSandbox(), workDir);
-
-        this.launchDeploy(todo, workDir);
-
-        this.launchExec(todo, workDir);
-        this.logWithTime("Submitting results");
-        this.controller.doneWith(todo.getId(), new ResultDescription(FileUtil
-                .createSandbox(todo.getOutputSandbox(), workDir)), this.uuid);
-        if (!currentDir.equals(workDir)) {
-            FileUtil.cleanDir(workDir, partOfWf);
-        }
-    }
-
-    private void launchDeploy(final WorkDescription todo, final File workDir) {
-        final String deploy = todo.getDeploy();
-        if (deploy != null) {
-            final String completePath = new File(workDir, deploy)
-                    .getAbsolutePath();
-            this.logWithTime("Deploying");
-            ScriptLauncher.getInstance().launchScript(
-                    new String[] { completePath, }, todo.getStdout(),
-                    todo.getStderr(), workDir);
-
-        }
-    }
-
-    private void launchExec(final WorkDescription todo, final File workDir) {
-        final List<String> arguments = todo.getArguments();
-        final List<String> cmdArray = new Vector<String>(1 + arguments.size());
-        cmdArray.add(new File(workDir, todo.getExecutable()).getAbsolutePath());
-        cmdArray.addAll(arguments);
-
-        this.logWithTime("Launching");
-        ScriptLauncher.getInstance().launchScript(
-                cmdArray.toArray(new String[0]), todo.getStdout(),
-                todo.getStderr(), workDir);
-    }
-
+    /**
+     * Main Method. To be called from on the client.
+     * 
+     * @param args
+     *            location of the proxyfile
+     */
     public static void main(final String[] args) {
         Worker.LOGGER.info("Initializing worker...");
         if (System.getSecurityManager() == null) {
