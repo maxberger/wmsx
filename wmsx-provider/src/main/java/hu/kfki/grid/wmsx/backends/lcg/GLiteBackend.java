@@ -18,13 +18,18 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends.lcg;
 
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * Backend for gLite 3.0.
+ * 
+ * @version $Revision$
+ */
 public final class GLiteBackend extends AbstractLCGBackend {
 
     private static GLiteBackend instance;
@@ -32,6 +37,9 @@ public final class GLiteBackend extends AbstractLCGBackend {
     private GLiteBackend() {
     }
 
+    /**
+     * @return the Singleton instance.
+     */
     public static synchronized GLiteBackend getInstance() {
         if (GLiteBackend.instance == null) {
             GLiteBackend.instance = new GLiteBackend();
@@ -39,6 +47,7 @@ public final class GLiteBackend extends AbstractLCGBackend {
         return GLiteBackend.instance;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> jobOutputCommand(final String absolutePath,
             final String idString) {
@@ -51,11 +60,12 @@ public final class GLiteBackend extends AbstractLCGBackend {
         return commandLine;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> retreiveLogCommand(final String jobId,
             final String filename) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add("/opt/edg/bin/glite-job-logging-info");
+        commandLine.add("/opt/glite/bin/glite-job-logging-info");
         commandLine.add("-o");
         commandLine.add(filename);
         commandLine.add(AbstractLCGBackend.NOINT);
@@ -63,6 +73,7 @@ public final class GLiteBackend extends AbstractLCGBackend {
         return commandLine;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> submitJdlCommand(final String jdlFile, final String vo) {
         final List<String> commandLine = new Vector<String>();
@@ -77,6 +88,7 @@ public final class GLiteBackend extends AbstractLCGBackend {
         return commandLine;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "GLite";
