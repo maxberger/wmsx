@@ -1,6 +1,7 @@
 [
 JobType = "Workflow";
 Executable = "lapw0-g.sh";
+Deploy = "basesetup.sh";
 Arguments = "CASENAME";
 StdOutput = "StdOut-lapw0";
 StdError = "StdOut-lapw0";
