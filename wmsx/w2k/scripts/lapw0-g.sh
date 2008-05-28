@@ -2,11 +2,11 @@
 date +"%s.%N"
 export MAIN=$PWD
 casename=$1
-mkdir $PWD/$casename
-export SCRATCH=$PWD/$casename
+export SCRATCH=$MAIN/$casename
+mkdir -p $SCRATCH
 mv $casename* $SCRATCH/
-cd $MAIN
-. ./basesetup.sh
+export WIENROOT=$PWD/WIEN2K
+export PATH=$WIENROOT:$PATH
 cd $SCRATCH
 
 date +"%s.%N"
