@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.worker;
 
@@ -33,6 +33,7 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -41,11 +42,27 @@ import java.util.logging.Logger;
 
 import net.jini.id.Uuid;
 
+/**
+ * Controller for worker jobs.
+ * 
+ * @version $Revision$
+ */
 public class ControllerImpl implements Controller, Runnable {
+
+    private static final int STARTUP_DELAY = 30;
+
+    private static final int MAX_TIME_WITHOUT_PING = 120;
+
+    private static final int MAX_TIME_RUNNING = 600;
+
+    private static final int MSEC_TO_SEC = 1000;
+
+    private static final Logger LOGGER = Logger.getLogger(ControllerImpl.class
+            .toString());
 
     private final Map<Object, JobUid> juidMap = new TreeMap<Object, JobUid>();
 
-    private final LinkedList<ControllerWorkDescription> pending = new LinkedList<ControllerWorkDescription>();
+    private final List<ControllerWorkDescription> pending = new LinkedList<ControllerWorkDescription>();
 
     private final Map<Object, ControllerWorkDescription> running = new TreeMap<Object, ControllerWorkDescription>();
 
@@ -65,15 +82,13 @@ public class ControllerImpl implements Controller, Runnable {
 
     private boolean shutdownState;
 
-    private static final Logger LOGGER = Logger.getLogger(ControllerImpl.class
-            .toString());
-
     ControllerImpl() {
         this.shutdownState = false;
         this.shutdownWorkDescription = new ControllerWorkDescription(
                 "shutdown", new EmptyJobDescription()).getWorkDescription();
     }
 
+    /** {@inheritDoc} */
     public WorkDescription retrieveWork(final Uuid uuid) {
         if (this.shutdownState) {
             return this.shutdownWorkDescription;
@@ -85,19 +100,19 @@ public class ControllerImpl implements Controller, Runnable {
             if (this.pending.isEmpty()) {
                 return null;
             }
-            cwd = this.pending.removeFirst();
+            cwd = this.pending.remove(0);
             jobid = cwd.getWorkDescription().getId();
             this.running.put(jobid, cwd);
             this.assignedTo.put(jobid, uuid);
-            this.assignedAt.put(jobid, new Long(System.currentTimeMillis()));
+            this.assignedAt
+                    .put(jobid, Long.valueOf(System.currentTimeMillis()));
         }
         ControllerImpl.LOGGER.info("Assigning job " + jobid + " to worker "
                 + uuid);
-        JobWatcher.getWatcher().checkWithState(this.getJuidForId(jobid),
+        JobWatcher.getInstance().checkWithState(this.getJuidForId(jobid),
                 JobState.RUNNING);
         this.startPendingCheck();
         return cwd.getWorkDescription();
-
     }
 
     private void startPendingCheck() {
@@ -107,19 +122,24 @@ public class ControllerImpl implements Controller, Runnable {
                 new Thread(this).start();
             }
         }
-
     }
 
+    /**
+     * Add new work to be done.
+     * 
+     * @param newWork
+     *            work description.
+     */
     public void addWork(final ControllerWorkDescription newWork) {
         synchronized (this.pending) {
             this.pending.add(newWork);
         }
-        JobWatcher.getWatcher().checkWithState(
+        JobWatcher.getInstance().checkWithState(
                 this.getJuidForId(newWork.getWorkDescription().getId()),
                 JobState.STARTUP);
     }
 
-    @SuppressWarnings("unchecked")
+    /** {@inheritDoc} */
     public void doneWith(final Object id, final ResultDescription result,
             final Uuid uuid) throws RemoteException {
         final boolean isNew;
@@ -135,43 +155,67 @@ public class ControllerImpl implements Controller, Runnable {
                         .info("Retrieved duplicate result for job " + id + " ("
                                 + uuid + ")");
             }
+            this.pending.remove(id);
         }
         if (isNew) {
             ControllerImpl.LOGGER.info("Done with worker Job " + id + " ("
                     + uuid + ")");
-            JobWatcher.getWatcher().checkWithState(this.getJuidForId(id),
+            JobWatcher.getInstance().checkWithState(this.getJuidForId(id),
                     JobState.SUCCESS);
         }
     }
 
+    /**
+     * Check job status.
+     * 
+     * @param id
+     *            Internal Id
+     * @return current {@link JobState}.
+     */
     public JobState getState(final Object id) {
+        JobState retVal = JobState.NONE;
         synchronized (this.pending) {
             if (this.failed.contains(id)) {
-                return JobState.FAILED;
-            }
-            if (this.success.keySet().contains(id)) {
-                return JobState.SUCCESS;
-            }
-            if (this.running.keySet().contains(id)) {
-                return JobState.RUNNING;
-            }
-            for (final ControllerWorkDescription cwd : this.pending) {
-                if (cwd.getWorkDescription().getId().equals(id)) {
-                    return JobState.STARTUP;
+                retVal = JobState.FAILED;
+            } else if (this.success.keySet().contains(id)) {
+                retVal = JobState.SUCCESS;
+            } else if (this.running.keySet().contains(id)) {
+                retVal = JobState.RUNNING;
+            } else {
+                for (final ControllerWorkDescription cwd : this.pending) {
+                    if (cwd.getWorkDescription().getId().equals(id)) {
+                        retVal = JobState.STARTUP;
+                        break;
+                    }
                 }
             }
         }
-        return JobState.NONE;
+        return retVal;
     }
 
+    /**
+     * Store the Sandbox from a given job into a given directory.
+     * 
+     * @param id
+     *            Id of the (finished) job.
+     * @param dir
+     *            Directory to store into.
+     */
     public void retrieveSandbox(final Object id, final File dir) {
-        Map<String, byte[]> sandbox;
+        final Map<String, byte[]> sandbox;
         synchronized (this.pending) {
             sandbox = this.success.get(id);
         }
         FileUtil.retrieveSandbox(sandbox, dir);
     }
 
+    /**
+     * convert internal id to JobUid.
+     * 
+     * @param id
+     *            internal id
+     * @return a JobUid
+     */
     public JobUid getJuidForId(final Object id) {
         JobUid j;
         synchronized (this.juidMap) {
@@ -184,55 +228,26 @@ public class ControllerImpl implements Controller, Runnable {
         return j;
     }
 
+    /** {@inheritDoc} */
     public void ping(final Uuid uuid) {
         synchronized (this.lastSeen) {
-            this.lastSeen.put(uuid, new Long(System.currentTimeMillis()));
+            this.lastSeen.put(uuid, Long.valueOf(System.currentTimeMillis()));
         }
     }
 
+    /** pending checker. */
     public void run() {
         boolean goon = true;
         while (goon) {
             try {
-                Thread.sleep(30 * 1000);
+                Thread.sleep(ControllerImpl.STARTUP_DELAY
+                        * ControllerImpl.MSEC_TO_SEC);
             } catch (final InterruptedException e) {
                 // ignore
             }
             synchronized (this.pending) {
-
-                final Set<Object> suspicous = new TreeSet<Object>();
-
-                synchronized (this.lastSeen) {
-                    final long now = System.currentTimeMillis();
-                    for (final Object id : this.running.keySet()) {
-                        final Uuid uuid = this.assignedTo.get(id);
-                        final long seen = this.lastSeen.get(uuid).longValue();
-                        final long alive = now - seen;
-                        if (alive > 90 * 1000) {
-                            suspicous.add(id);
-                        }
-                        final long timerunning = now
-                                - this.assignedAt.get(id).longValue();
-                        if (timerunning > 120 * 1000) {
-                            suspicous.add(id);
-                        }
-                    }
-                }
-
-                for (final Object id : suspicous) {
-                    boolean found = false;
-                    for (final ControllerWorkDescription w : this.pending) {
-                        if (w.getWorkDescription().getId().equals(id)) {
-                            found = true;
-                        }
-                    }
-                    if (!found) {
-                        ControllerImpl.LOGGER
-                                .info("Rescheduling suspicious Job " + id);
-                        this.pending.add(this.running.get(id));
-                    }
-                }
-
+                final Set<Object> suspicous = this.findSuspicious();
+                this.rescheduleSuspicous(suspicous);
                 goon = !this.running.isEmpty();
                 if (!goon) {
                     this.pendingCheckRunning = false;
@@ -241,6 +256,51 @@ public class ControllerImpl implements Controller, Runnable {
         }
     }
 
+    private void rescheduleSuspicous(final Set<Object> suspicous) {
+        for (final Object id : suspicous) {
+            boolean found = false;
+            for (final ControllerWorkDescription w : this.pending) {
+                if (w.getWorkDescription().getId().equals(id)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                ControllerImpl.LOGGER.info("Rescheduling suspicious Job " + id);
+                this.pending.add(this.running.get(id));
+            }
+        }
+    }
+
+    private Set<Object> findSuspicious() {
+        final Set<Object> suspicous = new TreeSet<Object>();
+
+        synchronized (this.lastSeen) {
+            final long now = System.currentTimeMillis();
+            for (final Object id : this.running.keySet()) {
+                final Uuid uuid = this.assignedTo.get(id);
+                final long seen = this.lastSeen.get(uuid).longValue();
+                final long alive = now - seen;
+                if (alive > ControllerImpl.MAX_TIME_WITHOUT_PING
+                        * ControllerImpl.MSEC_TO_SEC) {
+                    suspicous.add(id);
+                }
+                final long timerunning = now
+                        - this.assignedAt.get(id).longValue();
+                if (timerunning > ControllerImpl.MAX_TIME_RUNNING
+                        * ControllerImpl.MSEC_TO_SEC) {
+                    suspicous.add(id);
+                }
+            }
+        }
+        return suspicous;
+    }
+
+    /**
+     * set shutdown state.
+     * 
+     * @param newShutdown
+     *            new state. If true it shuts down.
+     */
     public void setShutdownState(final boolean newShutdown) {
         this.shutdownState = newShutdown;
     }

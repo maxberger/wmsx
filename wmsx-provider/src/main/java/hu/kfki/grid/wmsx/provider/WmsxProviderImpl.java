@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.provider;
 
@@ -65,6 +65,12 @@ import com.sun.jini.admin.DestroyAdmin;
  */
 public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         JobListener, Runnable {
+
+    private static final int WAIT_BEFORE_FORGET_GRID_MIN = 5;
+
+    private static final int SEC_TO_MS = 1000;
+
+    private static final int MIN_TO_SEC = 60;
 
     private static final int MAX_WORKERS_PER_CALL = 50;
 
@@ -126,8 +132,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 final File existing = this.dirs.get(canon);
                 if (existing == null) {
                     this.dirs.put(canon, dirFile);
-                    if (!dirFile.exists()) {
-                        dirFile.mkdirs();
+                    if (!dirFile.exists() && !dirFile.mkdirs()) {
+                        throw new IOException("Failed to create " + dirFile);
                     }
                 } else {
                     dirFile = existing;
@@ -143,9 +149,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         return WmsxProviderImpl.instance;
     }
 
+    /** {@inheritDoc} */
     public synchronized String submitJdl(final String jdlFile,
             final String output, final String resultDir) {
-        final int current = JobWatcher.getWatcher().getNumJobsRunning();
+        final int current = JobWatcher.getInstance().getNumJobsRunning();
         final int avail = this.maxJobs - current;
         final String result;
         if (avail > 0) {
@@ -168,20 +175,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     private JobUid reallySubmitJdl(final JdlJob job, final Backend backend) {
         final String jdlFile = job.getJdlFile();
         final String output = job.getOutput();
-        final String preexec = job.getPreexec();
-        if (preexec != null) {
-            WmsxProviderImpl.LOGGER.info("Running " + preexec);
-
-            final List<String> cmdVec = new Vector<String>();
-            cmdVec.add(preexec);
-            cmdVec.add(job.getCommand());
-            cmdVec.add(job.getResultDir());
-            cmdVec.addAll(Arrays.asList(job.getArgs()));
-
-            ScriptLauncher.getInstance().launchScript(
-                    cmdVec.toArray(new String[0]), output + "_preexec",
-                    output + "_preexec", new File(job.getResultDir()));
-        }
+        this.runPreexec(job, output);
         WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
         SubmissionResults result;
         try {
@@ -190,11 +184,11 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             if (result != null) {
                 id = result.getJobId();
                 WmsxProviderImpl.LOGGER.info("Job id is: " + id);
-                JobWatcher.getWatcher().addWatch(id,
+                JobWatcher.getInstance().addWatch(id,
                         LogListener.getLogListener());
-                JobWatcher.getWatcher().addWatch(id, this);
+                JobWatcher.getInstance().addWatch(id, this);
                 if (ResultListener.getResultListener().setJob(id, job)) {
-                    JobWatcher.getWatcher().addWatch(id,
+                    JobWatcher.getInstance().addWatch(id,
                             ResultListener.getResultListener());
                 }
                 final WritableByteChannel oChannel;
@@ -204,7 +198,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 } else {
                     oChannel = null;
                 }
-                JobWatcher.getWatcher().addWatch(id,
+                JobWatcher.getInstance().addWatch(id,
                         ShadowListener.listen(result, oChannel));
                 synchronized (this.workDir) {
                     this.appendURILine(id, new File(this.workDir,
@@ -223,6 +217,23 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                     + e.getStackTrace()[0].toString());
         }
         return null;
+    }
+
+    private void runPreexec(final JdlJob job, final String output) {
+        final String preexec = job.getPreexec();
+        if (preexec != null) {
+            WmsxProviderImpl.LOGGER.info("Running " + preexec);
+
+            final List<String> cmdVec = new Vector<String>();
+            cmdVec.add(preexec);
+            cmdVec.add(job.getCommand());
+            cmdVec.add(job.getResultDir());
+            cmdVec.addAll(Arrays.asList(job.getArgs()));
+
+            ScriptLauncher.getInstance().launchScript(
+                    cmdVec.toArray(new String[0]), output + "_preexec",
+                    output + "_preexec", new File(job.getResultDir()));
+        }
     }
 
     private void removeURILine(final JobUid uid, final File file) {
@@ -274,7 +285,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
             public void run() {
                 try {
-                    JobWatcher.getWatcher().shutdown();
+                    JobWatcher.getInstance().shutdown();
                     Thread.sleep(1000);
                     WmsxProviderImpl.this.destroyAdmin.destroy();
                 } catch (final RemoteException e) {
@@ -286,12 +297,14 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }).start();
     }
 
-    public void setMaxJobs(final int maxj) {
+    /** {@inheritDoc} */
+    public synchronized void setMaxJobs(final int maxj) {
         WmsxProviderImpl.LOGGER.info("setMaxJobs to " + maxj);
         this.maxJobs = maxj;
         this.investigateLater();
     }
 
+    /** {@inheritDoc} */
     public void startWorkers(final int num) {
         int n;
         if (num > WmsxProviderImpl.MAX_WORKERS_PER_CALL) {
@@ -306,18 +319,21 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private synchronized void investigateNumJobs() {
         if (this.pendingJobFactories.isEmpty()
-                && JobWatcher.getWatcher().getNumJobsRunning() == 0) {
+                && JobWatcher.getInstance().getNumJobsRunning() == 0) {
             new Thread(new Runnable() {
 
                 public void run() {
                     try {
-                        Thread.sleep(5 * 60 * 1000);
+                        Thread
+                                .sleep(WmsxProviderImpl.WAIT_BEFORE_FORGET_GRID_MIN
+                                        * WmsxProviderImpl.MIN_TO_SEC
+                                        * WmsxProviderImpl.SEC_TO_MS);
                     } catch (final InterruptedException e) {
                         // ignore
                     }
                     synchronized (WmsxProviderImpl.this) {
                         if (WmsxProviderImpl.this.pendingJobFactories.isEmpty()
-                                && JobWatcher.getWatcher().getNumJobsRunning() == 0) {
+                                && JobWatcher.getInstance().getNumJobsRunning() == 0) {
                             WmsxProviderImpl.this.forgetGrid();
                         }
                     }
@@ -325,7 +341,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             }).start();
         }
         while (!this.pendingJobFactories.isEmpty()
-                && this.maxJobs - JobWatcher.getWatcher().getNumJobsRunning() > 0) {
+                && this.maxJobs - JobWatcher.getInstance().getNumJobsRunning() > 0) {
             final JobFactory jf = this.pendingJobFactories.remove(0);
             final JdlJob jd = jf.createJdlJob();
             this.reallySubmitJdl(jd, jf.getBackend());
@@ -337,6 +353,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
+    /** {@inheritDoc} */
     public void done(final JobUid id, final boolean success) {
         this.investigateLater();
         synchronized (this.workDir) {
@@ -352,18 +369,27 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
+    /** {@inheritDoc} */
     public void running(final JobUid id) {
         // ignore
     }
 
+    /** {@inheritDoc} */
     public void startup(final JobUid id) {
         // ignore
     }
 
+    /** {@inheritDoc} */
     public void ping() throws RemoteException {
         // do nothing.
     }
 
+    /**
+     * Add a new JobFactory.
+     * 
+     * @param f
+     *            JobFactory to add.
+     */
     public void addJobFactory(final JobFactory f) {
         synchronized (this) {
             this.pendingJobFactories.add(f);
@@ -371,6 +397,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         this.investigateLater();
     }
 
+    /** {@inheritDoc} */
     public synchronized void submitLaszlo(
             final List<IRemoteWmsxProvider.LaszloCommand> commands,
             final boolean interactive, final String prefix, final String name) {
@@ -411,10 +438,12 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         new Thread(this).start();
     }
 
+    /** {@inheritDoc} */
     public void run() {
         this.investigateNumJobs();
     }
 
+    /** {@inheritDoc} */
     public synchronized void forgetAfs() throws RemoteException {
         if (this.afsRenewer != null) {
             WmsxProviderImpl.LOGGER.info("Forgetting AFS Password");
@@ -432,6 +461,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
+    /** {@inheritDoc} */
     public synchronized boolean rememberAfs(final String password)
             throws RemoteException {
         WmsxProviderImpl.LOGGER.info("New AFS Remeberer");
@@ -471,7 +501,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     /** {@inheritDoc} */
-    public void setVo(final String newVo) {
+    public synchronized void setVo(final String newVo) {
         this.vo = newVo;
         if (newVo == null) {
             WmsxProviderImpl.LOGGER.info("VO unset");
@@ -502,6 +532,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     }
 
+    /** {@inheritDoc} */
     public void shutdownWorkers() {
         ControllerServer.getInstance().shutdownWorkers();
     }

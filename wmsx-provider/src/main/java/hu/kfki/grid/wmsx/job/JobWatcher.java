@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.job;
 
@@ -31,7 +31,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class JobWatcher implements Runnable {
+/**
+ * Watches currently running jobs.
+ * 
+ * @version $Revision$
+ */
+public final class JobWatcher implements Runnable {
+    private static final int TIME_BETWEEN_CHECKS_MS = 10000;
+
     private static final Logger LOGGER = Logger.getLogger(JobWatcher.class
             .toString());
 
@@ -41,9 +48,14 @@ public class JobWatcher implements Runnable {
 
     private Thread runThread;
 
-    private static JobWatcher jobWatcher;
-
     private boolean shutdown;
+
+    private static final class SingletonHolder {
+        private static final JobWatcher INSTANCE = new JobWatcher();
+
+        private SingletonHolder() {
+        }
+    }
 
     private JobWatcher() {
         this.runThread = null;
@@ -58,13 +70,21 @@ public class JobWatcher implements Runnable {
         }
     }
 
-    public static synchronized JobWatcher getWatcher() {
-        if (JobWatcher.jobWatcher == null) {
-            JobWatcher.jobWatcher = new JobWatcher();
-        }
-        return JobWatcher.jobWatcher;
+    /**
+     * @return Singleton instance.
+     */
+    public static synchronized JobWatcher getInstance() {
+        return JobWatcher.SingletonHolder.INSTANCE;
     }
 
+    /**
+     * Add a watcher for the given JobId.
+     * 
+     * @param jobId
+     *            JobId to watcher
+     * @param listener
+     *            The watcher to add.
+     */
     public void addWatch(final JobUid jobId, final JobListener listener) {
         JobState stateNow;
         synchronized (this) {
@@ -102,6 +122,9 @@ public class JobWatcher implements Runnable {
         }
     }
 
+    /**
+     * Initiate shutdown.
+     */
     public synchronized void shutdown() {
         this.shutdown = true;
         if (this.runThread != null) {
@@ -109,13 +132,14 @@ public class JobWatcher implements Runnable {
         }
     }
 
+    /** Constantly watches jobs. */
     public void run() {
 
         boolean done = false;
 
         while (!done) {
             try {
-                Thread.sleep(10000);
+                Thread.sleep(JobWatcher.TIME_BETWEEN_CHECKS_MS);
             } catch (final InterruptedException e) {
                 JobWatcher.LOGGER.fine(e.getMessage());
             }
@@ -130,10 +154,14 @@ public class JobWatcher implements Runnable {
                 final JobUid jobId = it.next();
 
                 JobState stateNow;
-                if (!this.shutdown) {
-                    stateNow = jobId.getBackend().getState(jobId);
-                } else {
+                final boolean terminate;
+                synchronized (this) {
+                    terminate = this.shutdown;
+                }
+                if (terminate) {
                     stateNow = JobState.FAILED;
+                } else {
+                    stateNow = jobId.getBackend().getState(jobId);
                 }
                 if (stateNow == null) {
                     stateNow = JobState.NONE;
@@ -149,9 +177,16 @@ public class JobWatcher implements Runnable {
                 }
             }
         }
-        System.gc();
     }
 
+    /**
+     * Push method if state has changed.
+     * 
+     * @param jobId
+     *            Id of the job
+     * @param stateNow
+     *            new state.
+     */
     public void checkWithState(final JobUid jobId, final JobState stateNow) {
         boolean differs;
         synchronized (this.jobstate) {
@@ -192,6 +227,11 @@ public class JobWatcher implements Runnable {
         }
     }
 
+    /**
+     * get the number of running jobs.
+     * 
+     * @return number of running jobs.
+     */
     public synchronized int getNumJobsRunning() {
         return this.joblisteners.size();
     }

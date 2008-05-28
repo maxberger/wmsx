@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.provider;
 
@@ -32,7 +32,7 @@ import java.util.List;
  * 
  * @version $Revision$
  */
-public interface IRemoteWmsxProvider extends Serializable, Remote {
+public interface IRemoteWmsxProvider extends Remote {
 
     /**
      * Describes an arglist command.
@@ -66,10 +66,37 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
 
     }
 
+    /**
+     * Simple ping method.
+     * 
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     void ping() throws RemoteException;
 
+    /**
+     * Start a # of workers on the current backend.
+     * 
+     * @param number
+     *            number of workers to start
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     void startWorkers(int number) throws RemoteException;
 
+    /**
+     * Submit an existing jdl file.
+     * 
+     * @param jdlFile
+     *            name of the file
+     * @param output
+     *            file where to store stdout if interactive
+     * @param resultDir
+     *            directory where to retrieve the result to
+     * @return a jobid
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     String submitJdl(String jdlFile, String output, String resultDir)
             throws RemoteException;
 
@@ -77,18 +104,71 @@ public interface IRemoteWmsxProvider extends Serializable, Remote {
             boolean interactive, String prefix, String name)
             throws RemoteException;
 
+    /**
+     * Set number of concurrent running jobs.
+     * 
+     * @param maxJobs
+     *            new number of running jobs
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     void setMaxJobs(int maxJobs) throws RemoteException;
 
+    /**
+     * Keep AFS token alive.
+     * 
+     * @param password
+     *            AFS password
+     * @return true if pw can be remembered
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     boolean rememberAfs(String password) throws RemoteException;
 
+    /**
+     * Keep Grid token alive.
+     * 
+     * @param password
+     *            Grid password
+     * @return true if pw can be remembered
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     boolean rememberGrid(String password) throws RemoteException;
 
+    /**
+     * Forget AFS password.
+     * 
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     void forgetAfs() throws RemoteException;
 
+    /**
+     * Vo to use for all following operations.
+     * 
+     * @param newVo
+     *            new VO.
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     void setVo(String newVo) throws RemoteException;
 
+    /**
+     * Backend to use for all following operations.
+     * 
+     * @param backend
+     *            new backend.
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     void setBackend(String backend) throws RemoteException;
 
+    /**
+     * Kill all running workers.
+     * 
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     void shutdownWorkers() throws RemoteException;
-
 }
