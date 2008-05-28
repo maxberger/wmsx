@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.worker;
 
@@ -44,7 +44,12 @@ import net.jini.jeri.tcp.TcpServerEndpoint;
 
 public final class ControllerServer {
 
-    private static ControllerServer instance;
+    private static final class SingletonHolder {
+        private static final ControllerServer INSTANCE = new ControllerServer();
+
+        private SingletonHolder() {
+        }
+    }
 
     private static final Logger LOGGER = Logger
             .getLogger(ControllerServer.class.toString());
@@ -57,7 +62,7 @@ public final class ControllerServer {
 
     private File tmpDir;
 
-    private int workerCount = 0;
+    private int workerCount;
 
     private ControllerServer() {
 
@@ -134,8 +139,8 @@ public final class ControllerServer {
             this.controller.setShutdownState(false);
             this.workerCount++;
             final JobFactory fac = new JdlJobFactory(this.jdlPath, null,
-                    new File(this.tmpDir, new Integer(this.workerCount)
-                            .toString()).getAbsolutePath(), submitTo);
+                    new File(this.tmpDir, Integer.toString(this.workerCount))
+                            .getAbsolutePath(), submitTo);
             WmsxProviderImpl.getInstance().addJobFactory(fac);
         } else {
             ControllerServer.LOGGER.warning("Worker not initialized!");
@@ -146,11 +151,11 @@ public final class ControllerServer {
         this.controller.setShutdownState(true);
     }
 
-    public static synchronized ControllerServer getInstance() {
-        if (ControllerServer.instance == null) {
-            ControllerServer.instance = new ControllerServer();
-        }
-        return ControllerServer.instance;
+    /**
+     * @return Singleton instance.
+     */
+    public static ControllerServer getInstance() {
+        return ControllerServer.SingletonHolder.INSTANCE;
     }
 
 }

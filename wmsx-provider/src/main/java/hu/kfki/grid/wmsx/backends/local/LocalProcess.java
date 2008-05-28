@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends.local;
 
@@ -54,6 +54,16 @@ public class LocalProcess implements Runnable {
 
     private final JobDescription job;
 
+    /**
+     * Create a localProcess wrapper.
+     * 
+     * @param state
+     *            jobstate to update
+     * @param id
+     *            id of the job
+     * @param desc
+     *            jobdescription.
+     */
     public LocalProcess(final Map<JobUid, JobState> state, final JobUid id,
             final JobDescription desc) {
         state.put(id, JobState.NONE);
@@ -63,27 +73,32 @@ public class LocalProcess implements Runnable {
         this.workdir = null;
     }
 
+    /** runs the job. */
     public synchronized void run() {
         this.stateMap.put(this.uid, JobState.STARTUP);
-        JobWatcher.getWatcher().checkWithState(this.uid, JobState.STARTUP);
+        JobWatcher.getInstance().checkWithState(this.uid, JobState.STARTUP);
         try {
             this.startup();
             this.stateMap.put(this.uid, JobState.RUNNING);
-            JobWatcher.getWatcher().checkWithState(this.uid, JobState.RUNNING);
+            JobWatcher.getInstance().checkWithState(this.uid, JobState.RUNNING);
             this.running();
             this.stateMap.put(this.uid, JobState.SUCCESS);
-            JobWatcher.getWatcher().checkWithState(this.uid, JobState.SUCCESS);
+            JobWatcher.getInstance().checkWithState(this.uid, JobState.SUCCESS);
         } catch (final IOException e) {
             LocalProcess.LOGGER.warning(e.getMessage());
             this.stateMap.put(this.uid, JobState.FAILED);
-            JobWatcher.getWatcher().checkWithState(this.uid, JobState.FAILED);
+            JobWatcher.getInstance().checkWithState(this.uid, JobState.FAILED);
         }
     }
 
     private void startup() throws IOException {
         this.workdir = File.createTempFile("wmsx", null);
-        this.workdir.delete();
-        this.workdir.mkdirs();
+        if (!this.workdir.delete()) {
+            throw new IOException("Failed to delete: " + this.workdir);
+        }
+        if (!this.workdir.mkdirs()) {
+            throw new IOException("Failed to create tempdir: " + this.workdir);
+        }
         LocalProcess.LOGGER.info(this.workdir.toString());
 
         final List<String> inputList = this.job
@@ -141,12 +156,20 @@ public class LocalProcess implements Runnable {
                 stdout, stderr);
     }
 
+    /**
+     * Retrieve the output and store it in dir.
+     * 
+     * @param dir
+     *            directory to store into.
+     */
     public synchronized void retrieveOutput(final File dir) {
         if (this.workdir == null) {
             return;
         }
         final File realTarget = new File(dir, "sub" + this.uid.getBackendId());
-        realTarget.mkdirs();
+        if (!realTarget.mkdirs()) {
+            LocalProcess.LOGGER.warning("Failed to create " + realTarget);
+        }
         final List<String> list = this.job
                 .getListEntry(JobDescription.OUTPUTSANDBOX);
         try {
