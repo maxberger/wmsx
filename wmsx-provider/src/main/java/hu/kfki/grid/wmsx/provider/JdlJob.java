@@ -34,6 +34,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.logging.Logger;
 
+/**
+ * Describes a singe Job based on a JDL job description.
+ * 
+ * @version $Revision$
+ */
 public class JdlJob {
 
     private static final Logger LOGGER = Logger.getLogger(JdlJob.class
@@ -63,6 +68,22 @@ public class JdlJob {
 
     private final int appId;
 
+    /**
+     * Default constructor.
+     * 
+     * @param theJdlFile
+     *            actual JDL file
+     * @param theOutput
+     *            Where to write Stdout to (file)
+     * @param resultDir
+     *            Where to collect the results to (dir)
+     * @param wf
+     *            Workflow, if this is part of one, or null.
+     * @param backend
+     *            Backend for this submission.
+     * @param applicationId
+     *            application id or 0.
+     */
     public JdlJob(final String theJdlFile, final String theOutput,
             final String resultDir, final Workflow wf, final Backend backend,
             final int applicationId) {
@@ -70,8 +91,8 @@ public class JdlJob {
         this.result = resultDir;
         this.workflow = wf;
         this.args = new String[0];
-        this.jdlFile = this.filterJdlFile(theJdlFile, backend);
         this.appId = applicationId;
+        this.jdlFile = this.filterJdlFile(theJdlFile, backend);
 
     }
 
@@ -285,14 +306,23 @@ public class JdlJob {
         return this.workflow;
     }
 
+    /**
+     * @return the Jdl File.
+     */
     public String getJdlFile() {
         return this.jdlFile;
     }
 
+    /**
+     * @return the name of the stdout file.
+     */
     public String getOutput() {
         return this.output;
     }
 
+    /**
+     * @return direcotry where the results are retrieved to.
+     */
     public String getResultDir() {
         return this.result;
     }
@@ -328,18 +358,32 @@ public class JdlJob {
         this.chain = newChain;
     }
 
+    /**
+     * @return prefix to distinguish between the same jobs
+     */
     public final String getPrefix() {
         return this.prefix;
     }
 
+    /**
+     * @param nprefix
+     *            prefix to distinguish between the same jobs.
+     */
     public final void setPrefix(final String nprefix) {
         this.prefix = nprefix;
     }
 
+    /**
+     * @return name of this activity.
+     */
     public final String getName() {
         return this.name;
     }
 
+    /**
+     * @param newName
+     *            name of this activity.
+     */
     public final void setName(final String newName) {
         this.name = newName;
     }
