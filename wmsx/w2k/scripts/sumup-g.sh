@@ -18,7 +18,7 @@ cat $casename.scf2p >> $casename.scf2
 x -d lcore
 lcore lcore.def
 
-cat $casename.scf0 $casename.scf1_1 $casename.scf2 $casename.scfc > $casename.scf
+cat $casename.scf0 $casename.scf1_1 $casename.scf2 $casename.scfc >> $casename.scf
 cp $casename.clmsum $casename.clmsum_old
 x -d mixer
 mixer mixer.def
