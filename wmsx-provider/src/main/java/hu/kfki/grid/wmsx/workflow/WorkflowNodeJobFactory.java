@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.workflow;
 
@@ -28,24 +28,39 @@ import hu.kfki.grid.wmsx.provider.JobFactory;
 
 import java.io.File;
 
+/**
+ * Create a new (next) node in an existing workflow.
+ * 
+ * @version $Revision$
+ */
 public class WorkflowNodeJobFactory implements JobFactory {
 
     private final Workflow workflow;
 
     private final String name;
 
+    /**
+     * Default constructor.
+     * 
+     * @param workflo
+     *            Workflow to attach this node to
+     * @param node
+     *            name of the node.
+     */
     public WorkflowNodeJobFactory(final Workflow workflo, final String node) {
         this.workflow = workflo;
         this.name = node;
     }
 
+    /** {@inheritDoc} */
     public JdlJob createJdlJob() {
         final File workdir = this.workflow.getDirectory();
         return new JdlJob(new File(workdir, this.name).getAbsolutePath(), null,
                 workdir.getAbsolutePath(), this.workflow, this.workflow
-                        .getBackend());
+                        .getBackend(), this.workflow.getApplicationId());
     }
 
+    /** {@inheritDoc} */
     public Backend getBackend() {
         return this.workflow.getBackend();
     }

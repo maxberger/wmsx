@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.workflow;
 
@@ -59,12 +59,19 @@ public final class WorkflowFactory {
      *            Directory to work with
      * @param back
      *            Backend to use for this workflow
+     * @param appId
+     *            if != 0, use this as an application id.
      * @return an instance of {@link Workflow}
      */
-    public Workflow createWorkflow(final File dir, final Backend back) {
+    public Workflow createWorkflow(final File dir, final Backend back,
+            final int appId) {
         final int id;
-        synchronized (this) {
-            id = ++this.currentId;
+        if (appId != 0) {
+            id = appId;
+        } else {
+            synchronized (this) {
+                id = ++this.currentId;
+            }
         }
         return new Workflow(dir, back, id);
     }

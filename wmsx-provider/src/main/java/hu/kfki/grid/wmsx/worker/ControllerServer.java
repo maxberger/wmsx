@@ -42,6 +42,11 @@ import net.jini.jeri.InvocationLayerFactory;
 import net.jini.jeri.ServerEndpoint;
 import net.jini.jeri.tcp.TcpServerEndpoint;
 
+/**
+ * Starterclass for an actual worker controller.
+ * 
+ * @version $Revision$
+ */
 public final class ControllerServer {
 
     private static final class SingletonHolder {
@@ -89,10 +94,21 @@ public final class ControllerServer {
         this.controllerStub = stub;
     }
 
+    /**
+     * @return the actual Controller
+     */
     public ControllerImpl getControllerImpl() {
         return this.controller;
     }
 
+    /**
+     * Write out the proxy which connects with the controller.
+     * 
+     * @param where
+     *            file to write to.
+     * @throws IOException
+     *             if the file cannot be written.
+     */
     public void writeProxy(final File where) throws IOException {
         final FileOutputStream fos = new FileOutputStream(where);
         final ObjectOutputStream out = new ObjectOutputStream(fos);
@@ -100,6 +116,12 @@ public final class ControllerServer {
         out.close();
     }
 
+    /**
+     * Prepare the necessary files for a worker in the given directory.
+     * 
+     * @param tmpDirForWorker
+     *            the directory to use.
+     */
     public void prepareWorker(final File tmpDirForWorker) {
         this.tmpDir = tmpDirForWorker;
 
@@ -128,6 +150,12 @@ public final class ControllerServer {
         }
     }
 
+    /**
+     * Submit a new worker to the given backend.
+     * 
+     * @param backend
+     *            Backend to use.
+     */
     public void submitWorker(final Backend backend) {
         final Backend submitTo;
         if (Backends.WORKER.equals(backend)) {
@@ -140,13 +168,16 @@ public final class ControllerServer {
             this.workerCount++;
             final JobFactory fac = new JdlJobFactory(this.jdlPath, null,
                     new File(this.tmpDir, Integer.toString(this.workerCount))
-                            .getAbsolutePath(), submitTo);
+                            .getAbsolutePath(), submitTo, 0);
             WmsxProviderImpl.getInstance().addJobFactory(fac);
         } else {
             ControllerServer.LOGGER.warning("Worker not initialized!");
         }
     }
 
+    /**
+     * Terminate all workers.
+     */
     public void shutdownWorkers() {
         this.controller.setShutdownState(true);
     }

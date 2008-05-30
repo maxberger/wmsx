@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.provider;
 
@@ -61,13 +61,18 @@ public class JdlJob {
 
     private Workflow workflow;
 
+    private final int appId;
+
     public JdlJob(final String theJdlFile, final String theOutput,
-            final String resultDir, final Workflow wf, final Backend backend) {
+            final String resultDir, final Workflow wf, final Backend backend,
+            final int applicationId) {
         this.output = theOutput;
         this.result = resultDir;
         this.workflow = wf;
         this.args = new String[0];
         this.jdlFile = this.filterJdlFile(theJdlFile, backend);
+        this.appId = applicationId;
+
     }
 
     /**
@@ -162,7 +167,7 @@ public class JdlJob {
                     .getAbsoluteFile();
             if (this.workflow == null) {
                 this.workflow = WorkflowFactory.getInstance().createWorkflow(
-                        jdlFileFile.getParentFile(), backend);
+                        jdlFileFile.getParentFile(), backend, this.appId);
             }
             final String newname = jdlFileFile.getName();
             this.setName(newname);
@@ -175,7 +180,7 @@ public class JdlJob {
             job.removeEntry(JobDescription.NEXT);
             job.removeEntry(JobDescription.PREV);
             job.replaceEntry(JobDescription.WORKFLOWID, Integer
-                    .toString(this.workflow.getId()));
+                    .toString(this.workflow.getApplicationId()));
             return true;
         }
         return isFiltered;
