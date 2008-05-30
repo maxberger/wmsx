@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.provider.arglist;
 
@@ -118,7 +118,7 @@ public class LaszloJobFactory implements JobFactory {
             final String output = new File(resultDir, LaszloJobFactory.STD_OUT)
                     .getAbsolutePath();
             final JdlJob job = new JdlJob(jdlFilename, output, resultDir, null,
-                    this.backend);
+                    this.backend, 0);
             job.setPreexec(this.cmdWithPath + "_preexec");
             job.setPostexec(this.cmdWithPath + "_postexec");
             job.setChain(this.cmdWithPath + "_chain");

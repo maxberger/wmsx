@@ -150,14 +150,33 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     /** {@inheritDoc} */
+    public String submitJdl(final String jdlFile, final String output,
+            final String resultDir) {
+        return this.submitJdl(jdlFile, output, resultDir, 0);
+    }
+
+    /**
+     * /** Submit an existing jdl file.
+     * 
+     * @param jdlFile
+     *            name of the file
+     * @param output
+     *            file where to store stdout if interactive
+     * @param resultDir
+     *            directory where to retrieve the result to *
+     * @param appId
+     *            if not 0, use this as an application id for new workflows.
+     * @return a jobid
+     */
     public synchronized String submitJdl(final String jdlFile,
-            final String output, final String resultDir) {
+            final String output, final String resultDir, final int appId) {
         final int current = JobWatcher.getInstance().getNumJobsRunning();
         final int avail = this.maxJobs - current;
         final String result;
+        final JobFactory factory = new JdlJobFactory(jdlFile, output,
+                resultDir, this.currentBackend, appId);
         if (avail > 0) {
-            final JobUid id = this.reallySubmitJdl(new JdlJobFactory(jdlFile,
-                    output, resultDir, this.currentBackend).createJdlJob(),
+            final JobUid id = this.reallySubmitJdl(factory.createJdlJob(),
                     this.currentBackend);
             if (id != null) {
                 result = id.getBackendId().toString();
@@ -165,8 +184,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 result = "failed";
             }
         } else {
-            this.pendingJobFactories.add(new JdlJobFactory(jdlFile, output,
-                    resultDir, this.currentBackend));
+            this.pendingJobFactories.add(factory);
             result = "pending";
         }
         return result;

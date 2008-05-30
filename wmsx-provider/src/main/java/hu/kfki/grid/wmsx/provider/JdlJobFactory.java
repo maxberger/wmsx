@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.provider;
 
@@ -31,6 +31,8 @@ public class JdlJobFactory implements JobFactory {
 
     private final String result;
 
+    private final int appId;
+
     private Backend backend;
 
     /**
@@ -42,18 +44,21 @@ public class JdlJobFactory implements JobFactory {
      *            path to directory for retrieving results.
      * @param back
      *            backend to use.
+     * @param applicationId
+     *            Application if the JDL file represents a workflow.
      */
     public JdlJobFactory(final String jdl, final String out,
-            final String resultDir, final Backend back) {
+            final String resultDir, final Backend back, final int applicationId) {
         this.jdlFile = jdl;
         this.output = out;
         this.result = resultDir;
         this.backend = back;
+        this.appId = applicationId;
     }
 
     public JdlJob createJdlJob() {
         return new JdlJob(this.jdlFile, this.output, this.result, null,
-                this.backend);
+                this.backend, this.appId);
     }
 
     public Backend getBackend() {

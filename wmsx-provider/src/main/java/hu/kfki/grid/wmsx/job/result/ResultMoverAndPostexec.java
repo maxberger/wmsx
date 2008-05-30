@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.job.result;
 
@@ -43,12 +43,18 @@ import java.util.logging.Logger;
 
 public class ResultMoverAndPostexec implements Runnable {
 
-    private final Process process;
+    private static final String POSTEXEC_SUFFIX = "_postexec";
 
-    private final File dir;
+    private static final String RUNNING = "Running ";
+
+    private static final String CHAIN_RETURNED = "Chain returned ";
 
     private static final Logger LOGGER = Logger
             .getLogger(ResultMoverAndPostexec.class.toString());
+
+    private final Process process;
+
+    private final File dir;
 
     private final JdlJob job;
 
@@ -91,7 +97,8 @@ public class ResultMoverAndPostexec implements Runnable {
         final String postexec = this.job.getPostexec();
         if (postexec != null) {
             final String output = this.job.getOutput();
-            ResultMoverAndPostexec.LOGGER.info("Running " + postexec);
+            ResultMoverAndPostexec.LOGGER.info(ResultMoverAndPostexec.RUNNING
+                    + postexec);
 
             final List<String> cmdVec = new Vector<String>();
             cmdVec.add(postexec);
@@ -100,18 +107,20 @@ public class ResultMoverAndPostexec implements Runnable {
             cmdVec.addAll(Arrays.asList(this.job.getArgs()));
 
             final int postRetVal = ScriptLauncher.getInstance().launchScript(
-                    cmdVec.toArray(new String[0]), output + "_postexec",
-                    output + "_postexec", this.dir);
+                    cmdVec.toArray(new String[0]),
+                    output + ResultMoverAndPostexec.POSTEXEC_SUFFIX,
+                    output + ResultMoverAndPostexec.POSTEXEC_SUFFIX, this.dir);
             if (postRetVal == 1) {
                 final String chain = this.job.getChain();
-                ResultMoverAndPostexec.LOGGER.info("Running " + chain);
+                ResultMoverAndPostexec.LOGGER
+                        .info(ResultMoverAndPostexec.RUNNING + chain);
                 cmdVec.set(0, chain);
                 this.runchain(cmdVec);
             }
         }
         final Workflow wf = this.job.getWorkflow();
         if (wf != null) {
-            wf.isDone(this.job);
+            wf.activityHasFinished(this.job);
         }
     }
 
@@ -126,6 +135,62 @@ public class ResultMoverAndPostexec implements Runnable {
 
         final String output = this.job.getOutput();
 
+        this.runChainAndCollectOutput(r, l, j, output);
+
+        boolean did = false;
+        did |= this.createNewJdlJobs(j);
+        did |= this.createLaszloJobs(l);
+        if (!did) {
+            ResultMoverAndPostexec.LOGGER.info("Chain returned no new jobs");
+        }
+
+    }
+
+    private boolean createLaszloJobs(
+            final List<IRemoteWmsxProvider.LaszloCommand> l) {
+        if (!l.isEmpty()) {
+            ResultMoverAndPostexec.LOGGER
+                    .info(ResultMoverAndPostexec.CHAIN_RETURNED + l.size()
+                            + " new Laszlo job(s).");
+            WmsxProviderImpl.getInstance().submitLaszlo(l, false,
+                    this.job.getPrefix(), this.job.getName());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean createNewJdlJobs(final List<String> j) {
+        if (!j.isEmpty()) {
+            ResultMoverAndPostexec.LOGGER
+                    .info(ResultMoverAndPostexec.CHAIN_RETURNED + j.size()
+                            + " new JDL job(s).");
+            for (final String jdl : j) {
+                final String nextJdl;
+                if (new File(jdl).isAbsolute()) {
+                    nextJdl = jdl;
+                } else {
+                    nextJdl = new File(this.dir, jdl).getAbsolutePath();
+                }
+                final int id;
+                final Workflow wf = this.job.getWorkflow();
+                if (wf != null) {
+                    id = wf.getApplicationId();
+                } else {
+                    id = 0;
+                }
+                WmsxProviderImpl.getInstance().submitJdl(nextJdl, null, null,
+                        id);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void runChainAndCollectOutput(final BufferedReader r,
+            final List<IRemoteWmsxProvider.LaszloCommand> l,
+            final List<String> j, final String output) {
         try {
             final BufferedWriter debugWriter = new BufferedWriter(
                     new FileWriter(output + "_chain"));
@@ -151,32 +216,5 @@ public class ResultMoverAndPostexec implements Runnable {
             ResultMoverAndPostexec.LOGGER
                     .fine("IOException: " + e.getMessage());
         }
-
-        boolean did = false;
-        if (!j.isEmpty()) {
-            ResultMoverAndPostexec.LOGGER.info("Chain returned " + j.size()
-                    + " new JDL job(s).");
-            for (final String jdl : j) {
-                final String nextJdl;
-                if (new File(jdl).isAbsolute()) {
-                    nextJdl = jdl;
-                } else {
-                    nextJdl = new File(this.dir, jdl).getAbsolutePath();
-                }
-                WmsxProviderImpl.getInstance().submitJdl(nextJdl, null, null);
-            }
-            did = true;
-        }
-        if (!l.isEmpty()) {
-            ResultMoverAndPostexec.LOGGER.info("Chain returned " + l.size()
-                    + " new Laszlo job(s).");
-            WmsxProviderImpl.getInstance().submitLaszlo(l, false,
-                    this.job.getPrefix(), this.job.getName());
-            did = true;
-        }
-        if (!did) {
-            ResultMoverAndPostexec.LOGGER.info("Chain returned no new jobs");
-        }
-
     }
 }

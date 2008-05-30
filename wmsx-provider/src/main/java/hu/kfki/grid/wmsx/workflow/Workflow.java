@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.workflow;
 
@@ -61,19 +61,36 @@ public class Workflow {
 
     private final Backend backend;
 
-    private final int id;
+    private final int appId;
 
-    Workflow(final File dir, final Backend back, final int wfid) {
+    /**
+     * Create a new workflow.
+     * 
+     * @param dir
+     *            work directory.
+     * @param back
+     *            Backend for individual activities
+     * @param applicationId
+     *            Application Id for this wf. If shared among different WFs,
+     *            they must represent the same application.
+     */
+    Workflow(final File dir, final Backend back, final int applicationId) {
         this.directory = dir;
         this.nextNodes = new HashMap<String, List<String>>();
         this.prevNodes = new HashMap<String, List<String>>();
         this.potentialTodo = new HashSet<String>();
         this.done = new HashSet<String>();
         this.backend = back;
-        this.id = wfid;
+        this.appId = applicationId;
     }
 
-    public synchronized void isDone(final JdlJob jdlJob) {
+    /**
+     * To be called whenever an activity has finished.
+     * 
+     * @param jdlJob
+     *            Description of the activity.
+     */
+    public synchronized void activityHasFinished(final JdlJob jdlJob) {
         final String name = jdlJob.getName();
         Workflow.LOGGER.info("Done with: " + name);
         this.done.add(name);
@@ -117,6 +134,14 @@ public class Workflow {
                 new WorkflowNodeJobFactory(this, node));
     }
 
+    /**
+     * Set the "next nodes" for a given activity.
+     * 
+     * @param name
+     *            Name of the activity
+     * @param listEntry
+     *            List of nodes to follow
+     */
     public void setNextNodes(final String name, final List<String> listEntry) {
         synchronized (this.nextNodes) {
             this.nextNodes.put(name, listEntry);
@@ -158,9 +183,9 @@ public class Workflow {
     }
 
     /**
-     * @return the uinique Id of this workflow.
+     * @return the application Id of this workflow.
      */
-    public int getId() {
-        return this.id;
+    public int getApplicationId() {
+        return this.appId;
     }
 }
