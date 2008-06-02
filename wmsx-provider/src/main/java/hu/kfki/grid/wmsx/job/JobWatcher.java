@@ -73,7 +73,7 @@ public final class JobWatcher implements Runnable {
     /**
      * @return Singleton instance.
      */
-    public static synchronized JobWatcher getInstance() {
+    public static JobWatcher getInstance() {
         return JobWatcher.SingletonHolder.INSTANCE;
     }
 
@@ -222,6 +222,13 @@ public final class JobWatcher implements Runnable {
                     listener.done(jobId, true);
                 } else if (JobState.FAILED.equals(stateNow)) {
                     listener.done(jobId, false);
+                }
+            }
+
+            if (JobState.SUCCESS.equals(stateNow)
+                    || JobState.FAILED.equals(stateNow)) {
+                synchronized (this) {
+                    this.joblisteners.remove(jobId);
                 }
             }
         }
