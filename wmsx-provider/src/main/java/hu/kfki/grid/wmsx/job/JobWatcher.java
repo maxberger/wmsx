@@ -188,6 +188,54 @@ public final class JobWatcher implements Runnable {
      *            new state.
      */
     public void checkWithState(final JobUid jobId, final JobState stateNow) {
+        final boolean differs = this.hasStateChanged(jobId, stateNow);
+        if (differs) {
+            final Set<JobListener> listeners = this
+                    .getSafeCopyOfJobListeners(jobId);
+            this.notifyListeners(jobId, stateNow, listeners);
+            this.removeDoneStates(jobId, stateNow);
+        }
+    }
+
+    private void removeDoneStates(final JobUid jobId, final JobState stateNow) {
+        if (JobState.SUCCESS.equals(stateNow)
+                || JobState.FAILED.equals(stateNow)) {
+            synchronized (this) {
+                this.joblisteners.remove(jobId);
+            }
+        }
+    }
+
+    private void notifyListeners(final JobUid jobId, final JobState stateNow,
+            final Set<JobListener> listeners) {
+        final Iterator<JobListener> li = listeners.iterator();
+        while (li.hasNext()) {
+            final JobListener listener = li.next();
+            if (JobState.STARTUP.equals(stateNow)) {
+                listener.startup(jobId);
+            } else if (JobState.RUNNING.equals(stateNow)) {
+                listener.running(jobId);
+            } else if (JobState.SUCCESS.equals(stateNow)) {
+                listener.done(jobId, true);
+            } else if (JobState.FAILED.equals(stateNow)) {
+                listener.done(jobId, false);
+            }
+        }
+    }
+
+    private synchronized Set<JobListener> getSafeCopyOfJobListeners(
+            final JobUid jobId) {
+        Set<JobListener> listeners;
+        final Set<JobListener> gset = this.joblisteners.get(jobId);
+        if (gset == null) {
+            listeners = new HashSet<JobListener>();
+        } else {
+            listeners = new HashSet<JobListener>(gset);
+        }
+        return listeners;
+    }
+
+    private boolean hasStateChanged(final JobUid jobId, final JobState stateNow) {
         boolean differs;
         synchronized (this.jobstate) {
             JobState oldState = this.jobstate.get(jobId);
@@ -199,39 +247,7 @@ public final class JobWatcher implements Runnable {
                 this.jobstate.put(jobId, stateNow);
             }
         }
-
-        if (differs) {
-            Set<JobListener> listeners;
-            synchronized (this) {
-                final Set<JobListener> gset = this.joblisteners.get(jobId);
-                if (gset == null) {
-                    listeners = new HashSet<JobListener>();
-                } else {
-                    listeners = new HashSet<JobListener>(gset);
-                }
-            }
-
-            final Iterator<JobListener> li = listeners.iterator();
-            while (li.hasNext()) {
-                final JobListener listener = li.next();
-                if (JobState.STARTUP.equals(stateNow)) {
-                    listener.startup(jobId);
-                } else if (JobState.RUNNING.equals(stateNow)) {
-                    listener.running(jobId);
-                } else if (JobState.SUCCESS.equals(stateNow)) {
-                    listener.done(jobId, true);
-                } else if (JobState.FAILED.equals(stateNow)) {
-                    listener.done(jobId, false);
-                }
-            }
-
-            if (JobState.SUCCESS.equals(stateNow)
-                    || JobState.FAILED.equals(stateNow)) {
-                synchronized (this) {
-                    this.joblisteners.remove(jobId);
-                }
-            }
-        }
+        return differs;
     }
 
     /**

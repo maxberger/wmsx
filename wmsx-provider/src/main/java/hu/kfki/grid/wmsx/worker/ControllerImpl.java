@@ -207,6 +207,9 @@ public class ControllerImpl implements Controller, Runnable {
             sandbox = this.success.get(id);
         }
         FileUtil.retrieveSandbox(sandbox, dir);
+        synchronized (this.pending) {
+            this.success.remove(id);
+        }
     }
 
     /**
