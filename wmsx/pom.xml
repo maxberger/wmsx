@@ -24,14 +24,14 @@
   </dependencies>
   <pluginRepositories>
     <pluginRepository>
-      <id>codehaus-snapshot-plugins</id>
-      <name>codehaus-shapshot-plugins</name>
-      <url>http://snapshots.repository.codehaus.org/</url>
+      <id>codehaus-plugins</id>
+      <name>codehaus-plugins</name>
+      <url>http://repository.codehaus.org/</url>
       <snapshots>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </snapshots>
       <releases>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
       </releases>
     </pluginRepository>
   </pluginRepositories>
