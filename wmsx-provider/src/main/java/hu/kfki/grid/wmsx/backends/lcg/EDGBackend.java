@@ -18,13 +18,18 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends.lcg;
 
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * Backend for gLite 2.7.
+ * 
+ * @version $Revision$
+ */
 public final class EDGBackend extends AbstractLCGBackend {
 
     private static EDGBackend instance;
@@ -32,6 +37,9 @@ public final class EDGBackend extends AbstractLCGBackend {
     private EDGBackend() {
     }
 
+    /**
+     * @return the Singleton instance.
+     */
     public static synchronized EDGBackend getInstance() {
         if (EDGBackend.instance == null) {
             EDGBackend.instance = new EDGBackend();
@@ -39,11 +47,13 @@ public final class EDGBackend extends AbstractLCGBackend {
         return EDGBackend.instance;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> jobOutputCommand(final String absolutePath,
             final String idString) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add("/opt/edg/bin/edg-job-get-output");
+        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add("edg-job-get-output");
         commandLine.add("--dir");
         commandLine.add(absolutePath);
         commandLine.add(AbstractLCGBackend.NOINT);
@@ -51,11 +61,13 @@ public final class EDGBackend extends AbstractLCGBackend {
         return commandLine;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> retreiveLogCommand(final String jobId,
             final String filename) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add("/opt/edg/bin/edg-job-get-logging-info");
+        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add("edg-job-get-logging-info");
         commandLine.add("-o");
         commandLine.add(filename);
         commandLine.add(AbstractLCGBackend.NOINT);
@@ -63,10 +75,12 @@ public final class EDGBackend extends AbstractLCGBackend {
         return commandLine;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> submitJdlCommand(final String jdlFile, final String vo) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add("/opt/edg/bin/edg-job-submit");
+        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add("edg-job-submit");
         commandLine.add("--nolisten");
         if (vo != null) {
             commandLine.add("--vo");
@@ -76,6 +90,7 @@ public final class EDGBackend extends AbstractLCGBackend {
         return commandLine;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "EDG";

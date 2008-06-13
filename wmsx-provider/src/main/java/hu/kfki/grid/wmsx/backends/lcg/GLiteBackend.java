@@ -52,7 +52,8 @@ public final class GLiteBackend extends AbstractLCGBackend {
     public List<String> jobOutputCommand(final String absolutePath,
             final String idString) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add("/opt/glite/bin/glite-job-output");
+        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add("glite-job-output");
         commandLine.add("--dir");
         commandLine.add(absolutePath);
         commandLine.add(AbstractLCGBackend.NOINT);
@@ -65,7 +66,8 @@ public final class GLiteBackend extends AbstractLCGBackend {
     public List<String> retreiveLogCommand(final String jobId,
             final String filename) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add("/opt/glite/bin/glite-job-logging-info");
+        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add("glite-job-logging-info");
         commandLine.add("-o");
         commandLine.add(filename);
         commandLine.add(AbstractLCGBackend.NOINT);
@@ -77,7 +79,8 @@ public final class GLiteBackend extends AbstractLCGBackend {
     @Override
     public List<String> submitJdlCommand(final String jdlFile, final String vo) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add("/opt/glite/bin/glite-job-submit");
+        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add("glite-job-submit");
         commandLine.add("--nolisten");
         commandLine.add(AbstractLCGBackend.NOINT);
         if (vo != null) {

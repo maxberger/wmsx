@@ -53,6 +53,11 @@ public abstract class AbstractLCGBackend implements Backend {
      */
     protected static final String NOINT = "--noint";
 
+    /**
+     * Absolute path to the "env" program on most unix system.
+     */
+    protected static final String ENV = "/usr/bin/env";
+
     private static final Logger LOGGER = Logger
             .getLogger(AbstractLCGBackend.class.toString());
 
@@ -98,14 +103,42 @@ public abstract class AbstractLCGBackend implements Backend {
         // }
     }
 
+    /**
+     * Command line to run to retrieve the job output.
+     * 
+     * @param absolutePath
+     *            target directory. A subdir will be created here.
+     * @param string
+     *            jobId as string.
+     * @return List of commands to execute.
+     */
     protected abstract List<String> jobOutputCommand(String absolutePath,
             String string);
 
+    /**
+     * Command line to run submit a jdl file.
+     * 
+     * @param jdlFile
+     *            jdl to submit
+     * @param vo
+     *            vo parameter or null.
+     * @return List of commands to execute.
+     */
     protected abstract List<String> submitJdlCommand(String jdlFile, String vo);
 
+    /**
+     * Command line to run to retrieve the log file.
+     * 
+     * @param filename
+     *            where to store the log to.
+     * @param jobId
+     *            jobId as string.
+     * @return List of commands to execute.
+     */
     protected abstract List<String> retreiveLogCommand(String jobId,
             String filename);
 
+    /** {@inheritDoc} */
     public Process retrieveResult(final JobUid id, final File dir) {
         try {
             final List<String> commandLine = this.jobOutputCommand(dir
@@ -121,6 +154,7 @@ public abstract class AbstractLCGBackend implements Backend {
 
     }
 
+    /** {@inheritDoc} */
     public SubmissionResults submitJdl(final String jdlFile, final String vo)
             throws IOException {
         final List<String> commandLine = this.submitJdlCommand(jdlFile, vo);
@@ -143,10 +177,12 @@ public abstract class AbstractLCGBackend implements Backend {
         return result;
     }
 
+    /** {@inheritDoc} */
     public boolean jobIdIsURI() {
         return true;
     }
 
+    /** {@inheritDoc} */
     public JobState getState(final JobUid uid) {
         final Job job = new Job((JobId) uid.getBackendId());
         JobState retVal = JobState.FAILED;
@@ -190,6 +226,7 @@ public abstract class AbstractLCGBackend implements Backend {
         return retVal;
     }
 
+    /** {@inheritDoc} */
     public boolean supportsDeploy() {
         return false;
     }
