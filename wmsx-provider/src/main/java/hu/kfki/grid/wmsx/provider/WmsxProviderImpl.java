@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -65,6 +66,12 @@ import com.sun.jini.admin.DestroyAdmin;
  */
 public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         JobListener, Runnable {
+
+    private static final String PREEXEC_SUFFIX = "_preexec";
+
+    private static final int WAIT_TIME_BEFORE_SHUTDOWN = 1000;
+
+    private static final int WAIT_TIME_BETWEEN_SUBMISSIONS = 100;
 
     private static final int WAIT_BEFORE_FORGET_GRID_MIN = 5;
 
@@ -111,8 +118,16 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private final Map<String, File> dirs = new HashMap<String, File>();
 
-    private Backend currentBackend = Backends.EDG;
+    private Backend currentBackend = Backends.GLITEWMS;
 
+    /**
+     * Default constructor.
+     * 
+     * @param dadm
+     *            reference to DestroyAdmin for shutdown.
+     * @param workdir
+     *            Work directory.
+     */
     public WmsxProviderImpl(final DestroyAdmin dadm, final File workdir) {
         this.destroyAdmin = dadm;
         this.workDir = workdir;
@@ -145,6 +160,9 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         return dirFile;
     }
 
+    /**
+     * @return the singleton instance.
+     */
     public static WmsxProviderImpl getInstance() {
         return WmsxProviderImpl.instance;
     }
@@ -249,8 +267,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             cmdVec.addAll(Arrays.asList(job.getArgs()));
 
             ScriptLauncher.getInstance().launchScript(
-                    cmdVec.toArray(new String[0]), output + "_preexec",
-                    output + "_preexec", new File(job.getResultDir()));
+                    cmdVec.toArray(new String[0]),
+                    output + WmsxProviderImpl.PREEXEC_SUFFIX,
+                    output + WmsxProviderImpl.PREEXEC_SUFFIX,
+                    new File(job.getResultDir()));
         }
     }
 
@@ -298,13 +318,14 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
     }
 
+    /** {@inheritDoc} */
     public void destroy() throws RemoteException {
         new Thread(new Runnable() {
 
             public void run() {
                 try {
                     JobWatcher.getInstance().shutdown();
-                    Thread.sleep(1000);
+                    Thread.sleep(WmsxProviderImpl.WAIT_TIME_BEFORE_SHUTDOWN);
                     WmsxProviderImpl.this.destroyAdmin.destroy();
                 } catch (final RemoteException e) {
                     // ignore
@@ -364,7 +385,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             final JdlJob jd = jf.createJdlJob();
             this.reallySubmitJdl(jd, jf.getBackend());
             try {
-                this.wait(100);
+                this.wait(WmsxProviderImpl.WAIT_TIME_BETWEEN_SUBMISSIONS);
             } catch (final InterruptedException e) {
                 // Ignore
             }
@@ -531,22 +552,27 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     /** {@inheritDoc} */
     public void setBackend(final String newBackend) {
         WmsxProviderImpl.LOGGER.info("Setting backend to: " + newBackend);
-        if ("glite".compareToIgnoreCase(newBackend) == 0) {
+        final String backendLowerIntern = newBackend
+                .toLowerCase(Locale.ENGLISH).intern();
+        // CHECKSTYLE:OFF
+        // == is allowed due to .intern() !
+        if ("glite" == backendLowerIntern) {
             this.currentBackend = Backends.GLITE;
-        } else if ("glitewms".compareToIgnoreCase(newBackend) == 0) {
+        } else if ("glitewms" == backendLowerIntern) {
             this.currentBackend = Backends.GLITEWMS;
-        } else if ("edg".compareToIgnoreCase(newBackend) == 0) {
+        } else if ("edg" == backendLowerIntern) {
             this.currentBackend = Backends.EDG;
-        } else if ("fake".compareToIgnoreCase(newBackend) == 0) {
+        } else if ("fake" == backendLowerIntern) {
             this.currentBackend = Backends.FAKE;
-        } else if ("local".compareToIgnoreCase(newBackend) == 0) {
+        } else if ("local" == backendLowerIntern) {
             this.currentBackend = Backends.LOCAL;
-        } else if ("worker".compareToIgnoreCase(newBackend) == 0) {
+        } else if ("worker" == backendLowerIntern) {
             this.currentBackend = Backends.WORKER;
         } else {
             WmsxProviderImpl.LOGGER.warning("Unsupported backend: "
                     + newBackend);
         }
+        // CHECKSTYLE:ON
 
     }
 
