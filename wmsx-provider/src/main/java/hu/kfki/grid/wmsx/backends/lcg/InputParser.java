@@ -18,31 +18,51 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends.lcg;
 
 import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
+import hu.kfki.grid.wmsx.job.JobState;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.Locale;
 import java.util.logging.Logger;
 
-import edg.workload.userinterface.jclient.JobId;
-
-public class InputParser {
+/**
+ * Helper class to support output parsing of gLites command line tools.
+ * 
+ * @version $Revision$
+ */
+public final class InputParser {
 
     private static final Logger LOGGER = Logger.getLogger(InputParser.class
             .toString());
 
-    public static SubmissionResults parse(final InputStream inStream,
-            final PrintStream outStream, final Backend backend) {
+    private InputParser() {
+        // Empty on purpose.
+    }
 
+    /**
+     * Parse the result of a jdl submission via gLite command line tools.
+     * 
+     * @param inStream
+     *            Input Stream to parse
+     * @param outStream
+     *            where to print the output to.
+     * @param backend
+     *            Backend which was in use.
+     * @return A {@link SubmissionResults} object containing the parsed
+     *         submission, or null.
+     */
+    public static SubmissionResults parseSubmission(final InputStream inStream,
+            final PrintStream outStream, final Backend backend) {
         String jobId = null;
         String iStream = null;
         String oStream = null;
@@ -93,19 +113,57 @@ public class InputParser {
             InputParser.LOGGER.fine(e.getMessage());
         }
 
-        if (jobId != null) {
-            try {
-                new JobId(jobId);
-            } catch (final IllegalArgumentException iae) {
-                jobId = null;
-            }
-        }
-
         if (jobId == null) {
             return null;
         } else {
-            return new SubmissionResults(new JobUid(backend, new JobId(jobId)),
-                    iStream, oStream, eStream, shadowpid, port);
+            return new SubmissionResults(new JobUid(backend, jobId), iStream,
+                    oStream, eStream, shadowpid, port);
         }
+    }
+
+    /**
+     * Parse the status output of a given input Stream.
+     * 
+     * @param i
+     *            InputStream to parse
+     * @return a JobState with the current status.
+     */
+    public static JobState parseStatus(final InputStream i) {
+        JobState retVal = JobState.NONE;
+        try {
+            final BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(i));
+            String line = reader.readLine();
+            boolean found = false;
+            while (line != null && !found) {
+                line = line.toLowerCase(Locale.ENGLISH);
+                if (line.startsWith("current status:")) {
+                    final String statusStr = line.split(":")[1].trim();
+                    if ("submitted".equals(statusStr)
+                            || "scheduled".equals(statusStr)
+                            || "ready".equals(statusStr)
+                            || "waiting".equals(statusStr)) {
+                        retVal = JobState.STARTUP;
+                    } else if ("running".equals(statusStr)) {
+                        retVal = JobState.RUNNING;
+                    } else if ("done (success)".equals(statusStr)
+                            || "cleared".equals(statusStr)) {
+                        retVal = JobState.SUCCESS;
+                    } else if ("aborted".equals(statusStr)
+                            || "cancelled".equals(statusStr)
+                            || "done (failed)".equals(statusStr)) {
+                        retVal = JobState.FAILED;
+                    } else {
+                        InputParser.LOGGER.warning("Unknown State: "
+                                + statusStr);
+                    }
+                    found = true;
+                }
+                line = reader.readLine();
+            }
+        } catch (final IOException io) {
+            InputParser.LOGGER.warning(io.getMessage());
+        }
+        return retVal;
     }
 }
