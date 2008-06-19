@@ -94,6 +94,16 @@ public final class GLiteWmsBackend extends AbstractLCGBackend {
 
     /** {@inheritDoc} */
     @Override
+    public List<String> getStatusCommand(final String jobId) {
+        final List<String> commandLine = new Vector<String>();
+        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add("glite-wms-job-status");
+        commandLine.add(jobId);
+        return commandLine;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "GLiteWms";
     }

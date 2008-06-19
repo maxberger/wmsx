@@ -34,13 +34,6 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.globus.gsi.GlobusCredentialException;
-
-import edg.workload.userinterface.jclient.Job;
-import edg.workload.userinterface.jclient.JobId;
-import edg.workload.userinterface.jclient.JobStatus;
-import edg.workload.userinterface.jclient.Result;
-
 /**
  * Common backend for all LCG (EDG and gLite) targets.
  * 
@@ -64,13 +57,13 @@ public abstract class AbstractLCGBackend implements Backend {
     /** {@inheritDoc} */
     public void retrieveLog(final JobUid id, final File dir) {
         try {
-            final JobId jobId = (JobId) id.getBackendId();
+            final String jobId = (String) id.getBackendId();
             if (!dir.exists() && !dir.mkdirs()) {
                 throw new IOException("Failed to create: " + dir);
             }
             final File logFile = new File(dir, "log");
-            final List<String> commandLine = this.retreiveLogCommand(jobId
-                    .toString(), logFile.getAbsolutePath());
+            final List<String> commandLine = this.retreiveLogCommand(jobId,
+                    logFile.getAbsolutePath());
             final Process p = Runtime.getRuntime().exec(
                     commandLine.toArray(new String[commandLine.size()]), null,
                     dir);
@@ -138,6 +131,15 @@ public abstract class AbstractLCGBackend implements Backend {
     protected abstract List<String> retreiveLogCommand(String jobId,
             String filename);
 
+    /**
+     * Command line to get the status output.
+     * 
+     * @param jobId
+     *            jobId as String
+     * @return List of commands to execute.
+     */
+    protected abstract List<String> getStatusCommand(String jobId);
+
     /** {@inheritDoc} */
     public Process retrieveResult(final JobUid id, final File dir) {
         try {
@@ -164,8 +166,8 @@ public abstract class AbstractLCGBackend implements Backend {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final PrintStream parserOutput = new PrintStream(baos);
         // final PrintStream parserOutput = System.out;
-        final SubmissionResults result = InputParser.parse(p.getInputStream(),
-                parserOutput, this);
+        final SubmissionResults result = InputParser.parseSubmission(p
+                .getInputStream(), parserOutput, this);
 
         if (result == null) {
             AbstractLCGBackend.LOGGER.warning("Failed to submit Job.");
@@ -184,46 +186,59 @@ public abstract class AbstractLCGBackend implements Backend {
 
     /** {@inheritDoc} */
     public JobState getState(final JobUid uid) {
-        final Job job = new Job((JobId) uid.getBackendId());
-        JobState retVal = JobState.FAILED;
+
+        JobState retVal = JobState.NONE;
+        final List<String> commandLine = this.getStatusCommand(uid
+                .getBackendId().toString());
         try {
-
-            final Result result = job.getStatus(false);
-
-            final JobStatus status = (JobStatus) result.getResult();
-
-            final int statusInt = status.code();
-
-            final boolean startupPhase = statusInt == JobStatus.SUBMITTED
-                    || statusInt == JobStatus.WAITING
-                    || statusInt == JobStatus.READY
-                    || statusInt == JobStatus.SCHEDULED;
-
-            final boolean active = statusInt == JobStatus.RUNNING;
-
-            // boolean done = (statusInt == JobStatus.DONE)
-            // || (statusInt == JobStatus.CLEARED)
-            // || (statusInt == JobStatus.ABORTED)
-            // || (statusInt == JobStatus.CANCELLED);
-            final boolean success = statusInt == JobStatus.DONE
-                    || statusInt == JobStatus.CLEARED;
-
-            if (startupPhase) {
-                retVal = JobState.STARTUP;
-            } else if (active) {
-                retVal = JobState.RUNNING;
-            } else if (success) {
-                retVal = JobState.SUCCESS;
-            }
-
-        } catch (final IOException e) {
-            AbstractLCGBackend.LOGGER.warning(e.getMessage());
-            retVal = JobState.FAILED;
-        } catch (final GlobusCredentialException e) {
-            AbstractLCGBackend.LOGGER.warning(e.getMessage());
-            retVal = JobState.FAILED;
+            final Process p = Runtime.getRuntime().exec(
+                    commandLine.toArray(new String[commandLine.size()]));
+            retVal = InputParser.parseStatus(p.getInputStream());
+        } catch (final IOException io) {
+            AbstractLCGBackend.LOGGER.warning(io.getMessage());
         }
         return retVal;
+
+        // final Job job = new Job(new JobId(uid.getBackendId().toString()));
+        // JobState retVal = JobState.FAILED;
+        // try {
+        //
+        // final Result result = job.getStatus(false);
+        //
+        // final JobStatus status = (JobStatus) result.getResult();
+        //
+        // final int statusInt = status.code();
+        //
+        // final boolean startupPhase = statusInt == JobStatus.SUBMITTED
+        // || statusInt == JobStatus.WAITING
+        // || statusInt == JobStatus.READY
+        // || statusInt == JobStatus.SCHEDULED;
+        //
+        // final boolean active = statusInt == JobStatus.RUNNING;
+        //
+        // // boolean done = (statusInt == JobStatus.DONE)
+        // // || (statusInt == JobStatus.CLEARED)
+        // // || (statusInt == JobStatus.ABORTED)
+        // // || (statusInt == JobStatus.CANCELLED);
+        // final boolean success = statusInt == JobStatus.DONE
+        // || statusInt == JobStatus.CLEARED;
+        //
+        // if (startupPhase) {
+        // retVal = JobState.STARTUP;
+        // } else if (active) {
+        // retVal = JobState.RUNNING;
+        // } else if (success) {
+        // retVal = JobState.SUCCESS;
+        // }
+        //
+        // } catch (final IOException e) {
+        // AbstractLCGBackend.LOGGER.warning(e.getMessage());
+        // retVal = JobState.FAILED;
+        // } catch (final GlobusCredentialException e) {
+        // AbstractLCGBackend.LOGGER.warning(e.getMessage());
+        // retVal = JobState.FAILED;
+        // }
+        // return retVal;
     }
 
     /** {@inheritDoc} */

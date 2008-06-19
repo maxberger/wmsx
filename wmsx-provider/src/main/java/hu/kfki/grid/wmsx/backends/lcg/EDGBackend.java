@@ -92,6 +92,16 @@ public final class EDGBackend extends AbstractLCGBackend {
 
     /** {@inheritDoc} */
     @Override
+    public List<String> getStatusCommand(final String jobId) {
+        final List<String> commandLine = new Vector<String>();
+        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add("edg-job-status");
+        commandLine.add(jobId);
+        return commandLine;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "EDG";
     }
