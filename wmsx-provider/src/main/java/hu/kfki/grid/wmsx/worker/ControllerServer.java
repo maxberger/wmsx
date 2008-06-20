@@ -27,23 +27,17 @@ import hu.kfki.grid.wmsx.backends.Backends;
 import hu.kfki.grid.wmsx.provider.JdlJobFactory;
 import hu.kfki.grid.wmsx.provider.JobFactory;
 import hu.kfki.grid.wmsx.provider.WmsxProviderImpl;
+import hu.kfki.grid.wmsx.util.Exporter;
 import hu.kfki.grid.wmsx.util.FileUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.rmi.server.ExportException;
 import java.util.logging.Logger;
 
-import net.jini.jeri.BasicILFactory;
-import net.jini.jeri.BasicJeriExporter;
-import net.jini.jeri.InvocationLayerFactory;
-import net.jini.jeri.ServerEndpoint;
-import net.jini.jeri.tcp.TcpServerEndpoint;
-
 /**
- * Starterclass for an actual worker controller.
+ * Starter class for an actual worker controller.
  * 
  * @version $Revision$
  */
@@ -70,28 +64,8 @@ public final class ControllerServer {
     private int workerCount;
 
     private ControllerServer() {
-
         this.controller = new ControllerImpl();
-
-        final InvocationLayerFactory invocationLayerFactory = new BasicILFactory();
-
-        Controller stub = null;
-        int port = GlobusTcp.getInstance().getMinTcp();
-        final int max = GlobusTcp.getInstance().getMaxTcp();
-        while (stub == null && port <= max) {
-            try {
-                final ServerEndpoint endpoint = TcpServerEndpoint
-                        .getInstance(port);
-                stub = (Controller) new BasicJeriExporter(endpoint,
-                        invocationLayerFactory, false, true)
-                        .export(this.controller);
-            } catch (final ExportException e) {
-                port++;
-                stub = null;
-            }
-
-        }
-        this.controllerStub = stub;
+        this.controllerStub = (Controller) Exporter.export(this.controller);
     }
 
     /**

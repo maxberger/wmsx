@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.worker;
 
@@ -27,11 +27,58 @@ import java.rmi.RemoteException;
 
 import net.jini.id.Uuid;
 
+/**
+ * Interface to the Controller.
+ * 
+ * @version $Revision$
+ */
 public interface Controller extends Remote {
+    /**
+     * Retrieve a work chunk.
+     * 
+     * @param uuid
+     *            id of the worker.
+     * @return description of work to do.
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     WorkDescription retrieveWork(Uuid uuid) throws RemoteException;
 
+    /**
+     * Worker is done with a job.
+     * 
+     * @param id
+     *            id of the work chunk.
+     * @param result
+     *            the result (output sandbox).
+     * @param uuid
+     *            id of the worker.
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     void doneWith(Object id, ResultDescription result, Uuid uuid)
             throws RemoteException;
 
+    /**
+     * Shows that this worker is still alive.
+     * 
+     * @param uuid
+     *            id of the worker.
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     void ping(Uuid uuid) throws RemoteException;
+
+    /**
+     * Register a worker with the controller.
+     * 
+     * @param uuid
+     *            id of the worker.
+     * @param worker
+     *            the remote proxy to this worker.
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
+    void registerWorker(Uuid uuid, Worker worker) throws RemoteException;
+
 }
