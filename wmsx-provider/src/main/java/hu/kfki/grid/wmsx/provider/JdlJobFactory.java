@@ -24,6 +24,11 @@ package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.backends.Backend;
 
+/**
+ * Job Factory for standard jobs (defined through a standard JDL file).
+ * 
+ * @version $Revision$
+ */
 public class JdlJobFactory implements JobFactory {
     private final String jdlFile;
 
@@ -33,7 +38,7 @@ public class JdlJobFactory implements JobFactory {
 
     private final int appId;
 
-    private Backend backend;
+    private final Backend backend;
 
     /**
      * @param jdl
@@ -56,17 +61,10 @@ public class JdlJobFactory implements JobFactory {
         this.appId = applicationId;
     }
 
+    /** {@inheritDoc} */
     public JdlJob createJdlJob() {
         return new JdlJob(this.jdlFile, this.output, this.result, null,
                 this.backend, this.appId);
-    }
-
-    public Backend getBackend() {
-        return this.backend;
-    }
-
-    public void setBackend(final Backend newBackend) {
-        this.backend = newBackend;
     }
 
 }
