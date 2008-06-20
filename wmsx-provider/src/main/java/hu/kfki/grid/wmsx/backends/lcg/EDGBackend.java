@@ -32,19 +32,11 @@ import java.util.Vector;
  */
 public final class EDGBackend extends AbstractLCGBackend {
 
-    private static EDGBackend instance;
-
-    private EDGBackend() {
-    }
-
     /**
-     * @return the Singleton instance.
+     * Default constructor.
      */
-    public static synchronized EDGBackend getInstance() {
-        if (EDGBackend.instance == null) {
-            EDGBackend.instance = new EDGBackend();
-        }
-        return EDGBackend.instance;
+    public EDGBackend() {
+        // Empty on purpose
     }
 
     /** {@inheritDoc} */

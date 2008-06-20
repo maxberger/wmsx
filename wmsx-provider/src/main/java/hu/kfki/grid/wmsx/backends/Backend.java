@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends;
 
@@ -34,10 +34,38 @@ import java.io.IOException;
  */
 public interface Backend {
 
+    /**
+     * Retrieve the log file.
+     * 
+     * @param id
+     *            Job Id.
+     * @param dir
+     *            directory where to store the log file to.
+     */
     void retrieveLog(final JobUid id, final File dir);
 
+    /**
+     * Retrieve the results.
+     * 
+     * @param id
+     *            Job Id.
+     * @param dir
+     *            directory where to store the results file to.
+     * @return a process to wait for, or null
+     */
     Process retrieveResult(final JobUid id, final File dir);
 
+    /**
+     * Submit a JDL file.
+     * 
+     * @param jdlFile
+     *            path to the JDL File
+     * @param vo
+     *            VO to submit to, or null
+     * @return the {@link SubmissionResults}.
+     * @throws IOException
+     *             if the submission fails.
+     */
     SubmissionResults submitJdl(final String jdlFile, final String vo)
             throws IOException;
 

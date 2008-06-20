@@ -32,19 +32,11 @@ import java.util.Vector;
  */
 public final class GLiteWmsBackend extends AbstractLCGBackend {
 
-    private static GLiteWmsBackend instance;
-
-    private GLiteWmsBackend() {
-    }
-
     /**
-     * @return the Singleton instance.
+     * Default constructor.
      */
-    public static synchronized GLiteWmsBackend getInstance() {
-        if (GLiteWmsBackend.instance == null) {
-            GLiteWmsBackend.instance = new GLiteWmsBackend();
-        }
-        return GLiteWmsBackend.instance;
+    public GLiteWmsBackend() {
+        // Empty on purpose
     }
 
     /** {@inheritDoc} */

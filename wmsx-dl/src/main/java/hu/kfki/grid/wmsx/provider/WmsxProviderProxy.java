@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.provider;
 
@@ -59,6 +59,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         this.remoteService = (IRemoteWmsxProvider) remote;
     }
 
+    /** {@inheritDoc} */
     public String submitJdl(final String jdlFile, final String output,
             final String resultDir) throws IOException {
         try {
@@ -92,10 +93,12 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    /** {@inheritDoc} */
     public Object getAdmin() throws RemoteException {
         return this.remoteService;
     }
 
+    /** {@inheritDoc} */
     public void setMaxJobs(final int maxJobs) {
         try {
             this.remoteService.setMaxJobs(maxJobs);
@@ -104,6 +107,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    /** {@inheritDoc} */
     public void startWorkers(final int num) {
         if (num < 1) {
             return;
@@ -115,6 +119,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    /** {@inheritDoc} */
     public boolean ping(final boolean remote) {
         if (remote) {
             try {
@@ -127,6 +132,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         return true;
     }
 
+    /** {@inheritDoc} */
     public void submitLaszlo(final String argFile, final boolean interactive,
             final String name) throws IOException {
         final File f = new File(argFile).getCanonicalFile();
@@ -167,6 +173,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    /** {@inheritDoc} */
     public void forgetAfs() {
         try {
             this.remoteService.forgetAfs();
@@ -175,6 +182,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    /** {@inheritDoc} */
     public boolean rememberAfs(final String password) {
         try {
             return this.remoteService.rememberAfs(password);
@@ -184,6 +192,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    /** {@inheritDoc} */
     public boolean rememberGrid(final String password) {
         try {
             return this.remoteService.rememberGrid(password);
@@ -193,6 +202,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    /** {@inheritDoc} */
     public void setVo(final String newVo) {
         try {
             this.remoteService.setVo(newVo);
@@ -201,6 +211,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    /** {@inheritDoc} */
     public void setBackend(final String backend) {
         try {
             this.remoteService.setBackend(backend);
@@ -209,6 +220,18 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         }
     }
 
+    /** {@inheritDoc} */
+    public String listBackends() {
+        String s = "";
+        try {
+            s = this.remoteService.listBackends();
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
+        return s;
+    }
+
+    /** {@inheritDoc} */
     public void shutdownWorkers() {
         try {
             this.remoteService.shutdownWorkers();

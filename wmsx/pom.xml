@@ -53,6 +53,7 @@
               <name>wmsx-requestor</name>
             </program>
           </programs>
+          <repositoryLayout>flat</repositoryLayout>
         </configuration>
         <executions>
           <execution>

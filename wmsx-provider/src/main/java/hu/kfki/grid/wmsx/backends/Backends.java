@@ -18,16 +18,17 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends;
 
-import hu.kfki.grid.wmsx.backends.lcg.EDGBackend;
-import hu.kfki.grid.wmsx.backends.lcg.GLiteBackend;
-import hu.kfki.grid.wmsx.backends.lcg.GLiteWmsBackend;
-import hu.kfki.grid.wmsx.backends.local.FakeBackend;
-import hu.kfki.grid.wmsx.backends.local.LocalBackend;
-import hu.kfki.grid.wmsx.worker.WorkerBackend;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import org.apache.commons.discovery.tools.Service;
 
 /**
  * Constant list of backends implemented.
@@ -36,18 +37,46 @@ import hu.kfki.grid.wmsx.worker.WorkerBackend;
  */
 public final class Backends {
 
-    public static final Backend EDG = EDGBackend.getInstance();
+    private final Map<String, Backend> backends = new TreeMap<String, Backend>();
 
-    public static final Backend GLITE = GLiteBackend.getInstance();
+    private static final class SingletonHolder {
+        protected static final Backends INSTANCE = new Backends();
 
-    public static final Backend GLITEWMS = GLiteWmsBackend.getInstance();
+        private SingletonHolder() {
+        }
+    }
 
-    public static final Backend FAKE = FakeBackend.getInstance();
-
-    public static final Backend LOCAL = LocalBackend.getInstance();
-
-    public static final Backend WORKER = WorkerBackend.getInstance();
-
+    @SuppressWarnings("unchecked")
     private Backends() {
+        final Enumeration<Backend> e = Service.providers(Backend.class);
+        while (e.hasMoreElements()) {
+            final Backend b = e.nextElement();
+            this.backends.put(b.toString().toLowerCase(Locale.ENGLISH), b);
+        }
+    }
+
+    /**
+     * @return the Singleton instance.
+     */
+    public static Backends getInstance() {
+        return Backends.SingletonHolder.INSTANCE;
+    }
+
+    /**
+     * Retrieve a backend.
+     * 
+     * @param name
+     *            name of backend (must be lower case!)
+     * @return the backend.
+     */
+    public Backend get(final String name) {
+        return this.backends.get(name);
+    }
+
+    /**
+     * @return the set of loaded backends.
+     */
+    public Set<String> listBackends() {
+        return this.backends.keySet();
     }
 }

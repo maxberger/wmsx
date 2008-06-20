@@ -18,14 +18,14 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx;
 
 import java.io.IOException;
 
 /**
- * My Jini Service Interface!
+ * WMSX Service Interface.
  * 
  * @version $Revision$
  */
@@ -52,6 +52,8 @@ public interface Wmsx {
     void setVo(String newVo);
 
     void setBackend(String backend);
+
+    String listBackends();
 
     void shutdownWorkers();
 }

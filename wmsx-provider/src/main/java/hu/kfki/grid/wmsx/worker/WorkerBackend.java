@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.worker;
 
@@ -43,40 +43,37 @@ public final class WorkerBackend implements Backend {
 
     private final ControllerImpl controllerImpl;
 
-    private static final class SingletonHolder {
-        private static final WorkerBackend INSTANCE = new WorkerBackend();
-
-        private SingletonHolder() {
-        }
-    }
-
-    private WorkerBackend() {
+    /**
+     * Default constructor.
+     */
+    public WorkerBackend() {
         this.controllerImpl = ControllerServer.getInstance()
                 .getControllerImpl();
     }
 
-    public static WorkerBackend getInstance() {
-        return WorkerBackend.SingletonHolder.INSTANCE;
-    }
-
+    /** {@inheritDoc} */
     public JobState getState(final JobUid uid) {
         return this.controllerImpl.getState(uid.getBackendId());
     }
 
+    /** {@inheritDoc} */
     public boolean jobIdIsURI() {
         return false;
     }
 
+    /** {@inheritDoc} */
     public void retrieveLog(final JobUid id, final File dir) {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public Process retrieveResult(final JobUid id, final File dir) {
         this.controllerImpl.retrieveSandbox(id.getBackendId(), dir);
         return null;
     }
 
+    /** {@inheritDoc} */
     public SubmissionResults submitJdl(final String jdlFile, final String vo)
             throws IOException {
         this.count++;
@@ -87,11 +84,13 @@ public final class WorkerBackend implements Backend {
                 null, null, null, 0, 0);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Worker";
     }
 
+    /** {@inheritDoc} */
     public boolean supportsDeploy() {
         return true;
     }

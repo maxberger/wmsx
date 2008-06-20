@@ -165,6 +165,15 @@ public interface IRemoteWmsxProvider extends Remote {
     void setBackend(String backend) throws RemoteException;
 
     /**
+     * List the available backends.
+     * 
+     * @return a String with a list of backends.
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
+    String listBackends() throws RemoteException;
+
+    /**
      * Kill all running workers.
      * 
      * @throws RemoteException
