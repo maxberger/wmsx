@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.requestor;
 
@@ -73,6 +73,8 @@ public class App implements DiscoveryListener {
 
     private static final String SHUTDOWN_WORKERS = "shutdownworkers";
 
+    private static final String LISTBACKENDS = "listbackends";
+
     private static final String NAME = "name";
 
     private static final Logger LOGGER = Logger.getLogger(App.class.toString());
@@ -102,6 +104,8 @@ public class App implements DiscoveryListener {
     private static final int CMD_WORKERS = 11;
 
     private static final int CMD_SHUTDOWNWORKERS = 12;
+
+    private static final int CMD_LISTBACK = 13;
 
     private final List<Integer> commands;
 
@@ -154,7 +158,9 @@ public class App implements DiscoveryListener {
                 .addOption(new Option(App.NAME, true, "Name for this execution"));
         options.addOption(new Option(App.VO, true, "VO for job submissions"));
         options.addOption(new Option(App.BACKEND, true,
-                "Backend for job submissions (edg/glite/wms)"));
+                "Backend for job submissions, use listbackends to get a list"));
+        options.addOption(new Option(App.LISTBACKENDS, false,
+                "lists possible backends"));
 
         final CommandLineParser parser = new GnuParser();
         try {
@@ -174,6 +180,9 @@ public class App implements DiscoveryListener {
             }
             if (cmd.hasOption(App.VO)) {
                 cmds.add(new Integer(App.CMD_VO));
+            }
+            if (cmd.hasOption(App.LISTBACKENDS)) {
+                cmds.add(new Integer(App.CMD_LISTBACK));
             }
             if (cmd.hasOption(App.BACKEND)) {
                 cmds.add(new Integer(App.CMD_BACKEND));
@@ -414,6 +423,10 @@ public class App implements DiscoveryListener {
                 case CMD_BACKEND:
                     myService.setBackend(this.commandLine
                             .getOptionValue(App.BACKEND));
+                    break;
+                case CMD_LISTBACK:
+                    final String bs = myService.listBackends();
+                    System.out.println(bs);
                     break;
                 default:
                     App.LOGGER.warning("Invalid Command encountered: "

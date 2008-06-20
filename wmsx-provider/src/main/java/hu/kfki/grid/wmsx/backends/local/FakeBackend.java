@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends.local;
 
@@ -39,26 +39,18 @@ import java.util.Map;
  */
 public final class FakeBackend implements Backend {
 
-    private static final class SingletonHolder {
-        private static final FakeBackend INSTANCE = new FakeBackend();
-
-        private SingletonHolder() {
-        }
-    }
-
     private int count;
 
-    /** <Integer,JobState> */
     private final Map<Object, JobState> state;
 
-    private FakeBackend() {
+    /**
+     * Default constructor.
+     */
+    public FakeBackend() {
         this.state = new HashMap<Object, JobState>();
     };
 
-    public static FakeBackend getInstance() {
-        return FakeBackend.SingletonHolder.INSTANCE;
-    }
-
+    /** {@inheritDoc} */
     public JobState getState(final JobUid uid) {
         JobState newState = JobState.SUCCESS;
         final Object key = uid.getBackendId();
@@ -72,19 +64,23 @@ public final class FakeBackend implements Backend {
         return newState;
     }
 
+    /** {@inheritDoc} */
     public boolean jobIdIsURI() {
         return false;
     }
 
+    /** {@inheritDoc} */
     public void retrieveLog(final JobUid id, final File dir) {
         // Do nothing
     }
 
+    /** {@inheritDoc} */
     public Process retrieveResult(final JobUid id, final File dir) {
         // Do nothing
         return null;
     }
 
+    /** {@inheritDoc} */
     public SubmissionResults submitJdl(final String jdlFile, final String vo)
             throws IOException {
         this.count++;
@@ -94,11 +90,13 @@ public final class FakeBackend implements Backend {
                 0);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Fake";
     }
 
+    /** {@inheritDoc} */
     public boolean supportsDeploy() {
         return false;
     }

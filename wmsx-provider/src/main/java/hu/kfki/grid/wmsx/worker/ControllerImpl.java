@@ -224,7 +224,7 @@ public class ControllerImpl implements Controller, Runnable {
         synchronized (this.juidMap) {
             j = this.juidMap.get(id);
             if (j == null) {
-                j = new JobUid(Backends.WORKER, id);
+                j = new JobUid(Backends.getInstance().get("worker"), id);
                 this.juidMap.put(id, j);
             }
         }

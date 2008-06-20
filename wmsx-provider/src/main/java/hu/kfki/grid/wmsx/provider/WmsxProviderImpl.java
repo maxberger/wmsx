@@ -118,7 +118,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private final Map<String, File> dirs = new HashMap<String, File>();
 
-    private Backend currentBackend = Backends.GLITEWMS;
+    private Backend currentBackend = Backends.getInstance().get("glitewms");
 
     /**
      * Default constructor.
@@ -550,35 +550,26 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     /** {@inheritDoc} */
-    public void setBackend(final String newBackend) {
+    public synchronized void setBackend(final String newBackend) {
         WmsxProviderImpl.LOGGER.info("Setting backend to: " + newBackend);
-        final String backendLowerIntern = newBackend
-                .toLowerCase(Locale.ENGLISH).intern();
-        // CHECKSTYLE:OFF
-        // == is allowed due to .intern() !
-        if ("glite" == backendLowerIntern) {
-            this.currentBackend = Backends.GLITE;
-        } else if ("glitewms" == backendLowerIntern) {
-            this.currentBackend = Backends.GLITEWMS;
-        } else if ("edg" == backendLowerIntern) {
-            this.currentBackend = Backends.EDG;
-        } else if ("fake" == backendLowerIntern) {
-            this.currentBackend = Backends.FAKE;
-        } else if ("local" == backendLowerIntern) {
-            this.currentBackend = Backends.LOCAL;
-        } else if ("worker" == backendLowerIntern) {
-            this.currentBackend = Backends.WORKER;
-        } else {
+        final Backend newBack = Backends.getInstance().get(
+                newBackend.toLowerCase(Locale.ENGLISH));
+        if (newBack == null) {
             WmsxProviderImpl.LOGGER.warning("Unsupported backend: "
                     + newBackend);
+        } else {
+            this.currentBackend = newBack;
         }
-        // CHECKSTYLE:ON
-
     }
 
     /** {@inheritDoc} */
     public void shutdownWorkers() {
         ControllerServer.getInstance().shutdownWorkers();
+    }
+
+    /** {@inheritDoc} */
+    public String listBackends() throws RemoteException {
+        return Backends.getInstance().listBackends().toString();
     }
 
 }

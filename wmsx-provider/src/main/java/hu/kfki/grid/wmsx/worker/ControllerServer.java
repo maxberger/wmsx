@@ -158,8 +158,8 @@ public final class ControllerServer {
      */
     public void submitWorker(final Backend backend) {
         final Backend submitTo;
-        if (Backends.WORKER.equals(backend)) {
-            submitTo = Backends.LOCAL;
+        if (Backends.getInstance().get("worker").equals(backend)) {
+            submitTo = Backends.getInstance().get("local");
         } else {
             submitTo = backend;
         }

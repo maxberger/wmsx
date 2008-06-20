@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends.local;
 
@@ -47,34 +47,30 @@ public final class LocalBackend implements Backend {
 
     private final Map<JobUid, LocalProcess> processes;
 
-    private static final class SingletonHolder {
-        private static final LocalBackend INSTANCE = new LocalBackend();
-
-        private SingletonHolder() {
-        }
-    }
-
-    private LocalBackend() {
+    /**
+     * Default constructor.
+     */
+    public LocalBackend() {
         this.state = new Hashtable<JobUid, JobState>();
         this.processes = new Hashtable<JobUid, LocalProcess>();
     };
 
-    public static LocalBackend getInstance() {
-        return LocalBackend.SingletonHolder.INSTANCE;
-    }
-
+    /** {@inheritDoc} */
     public JobState getState(final JobUid uid) {
         return this.state.get(uid);
     }
 
+    /** {@inheritDoc} */
     public boolean jobIdIsURI() {
         return false;
     }
 
+    /** {@inheritDoc} */
     public void retrieveLog(final JobUid id, final File dir) {
         // Ignore
     }
 
+    /** {@inheritDoc} */
     public Process retrieveResult(final JobUid id, final File dir) {
         final LocalProcess lp = this.processes.get(id);
         if (lp != null) {
@@ -83,6 +79,7 @@ public final class LocalBackend implements Backend {
         return null;
     }
 
+    /** {@inheritDoc} */
     public SubmissionResults submitJdl(final String jdlFile, final String vo)
             throws IOException {
         this.count++;
@@ -95,13 +92,14 @@ public final class LocalBackend implements Backend {
         return new SubmissionResults(juid, null, null, null, 0, 0);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Local";
     }
 
+    /** {@inheritDoc} */
     public boolean supportsDeploy() {
-        // TODO
         return false;
     }
 

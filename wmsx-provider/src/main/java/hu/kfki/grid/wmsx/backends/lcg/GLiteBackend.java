@@ -32,19 +32,11 @@ import java.util.Vector;
  */
 public final class GLiteBackend extends AbstractLCGBackend {
 
-    private static GLiteBackend instance;
-
-    private GLiteBackend() {
-    }
-
     /**
-     * @return the Singleton instance.
+     * Default constructor.
      */
-    public static synchronized GLiteBackend getInstance() {
-        if (GLiteBackend.instance == null) {
-            GLiteBackend.instance = new GLiteBackend();
-        }
-        return GLiteBackend.instance;
+    public GLiteBackend() {
+        // Empty on purpose
     }
 
     /** {@inheritDoc} */
