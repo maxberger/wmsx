@@ -32,6 +32,7 @@ import hu.kfki.grid.wmsx.util.FileUtil;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,8 @@ public class ControllerImpl implements Controller, Runnable {
     private final Map<Uuid, Long> lastSeen = new HashMap<Uuid, Long>();
 
     private final WorkDescription shutdownWorkDescription;
+
+    private final Set<Worker> registeredWorkers = new HashSet<Worker>();
 
     private boolean pendingCheckRunning;
 
@@ -137,6 +140,28 @@ public class ControllerImpl implements Controller, Runnable {
         JobWatcher.getInstance().checkWithState(
                 this.getJuidForId(newWork.getWorkDescription().getId()),
                 JobState.STARTUP);
+        this.notifyAllWorkers();
+    }
+
+    private void notifyAllWorkers() {
+        new Thread(new Runnable() {
+            public void run() {
+                final Set<Worker> workersToNotify;
+                synchronized (ControllerImpl.this.registeredWorkers) {
+                    workersToNotify = new HashSet<Worker>(
+                            ControllerImpl.this.registeredWorkers);
+                }
+                for (final Worker w : workersToNotify) {
+                    try {
+                        w.newWork();
+                    } catch (final RemoteException r) {
+                        synchronized (ControllerImpl.this.registeredWorkers) {
+                            ControllerImpl.this.registeredWorkers.remove(w);
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 
     /** {@inheritDoc} */
@@ -306,5 +331,14 @@ public class ControllerImpl implements Controller, Runnable {
      */
     public void setShutdownState(final boolean newShutdown) {
         this.shutdownState = newShutdown;
+    }
+
+    /** {@inheritDoc} */
+    public void registerWorker(final Uuid uuid, final Worker worker)
+            throws RemoteException {
+        ControllerImpl.LOGGER.info("Worker is registering: " + uuid);
+        synchronized (this.registeredWorkers) {
+            this.registeredWorkers.add(worker);
+        }
     }
 }

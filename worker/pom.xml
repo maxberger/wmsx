@@ -37,7 +37,7 @@
         <configuration>
           <programs>
             <program>
-              <mainClass>hu.kfki.grid.wmsx.worker.Worker</mainClass>
+              <mainClass>hu.kfki.grid.wmsx.worker.WorkerImpl</mainClass>
               <name>worker</name>
             </program>
           </programs>

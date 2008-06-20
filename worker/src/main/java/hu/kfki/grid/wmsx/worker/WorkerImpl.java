@@ -22,6 +22,8 @@
 
 package hu.kfki.grid.wmsx.worker;
 
+import hu.kfki.grid.wmsx.util.Exporter;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,7 +38,7 @@ import net.jini.id.UuidFactory;
  * 
  * @version $Revision$
  */
-public final class Worker {
+public final class WorkerImpl implements Worker {
 
     private static final int START_DELAY = 5;
 
@@ -44,7 +46,7 @@ public final class Worker {
 
     private static final int MAX_WAIT = 45 * 60;
 
-    private static final Logger LOGGER = Logger.getLogger(Worker.class
+    private static final Logger LOGGER = Logger.getLogger(WorkerImpl.class
             .toString());
 
     private final Uuid uuid;
@@ -53,23 +55,26 @@ public final class Worker {
 
     private final Alive alive;
 
-    private Worker(final Controller cont) {
+    private WorkerImpl(final Controller cont) {
         this.controller = cont;
         this.uuid = UuidFactory.generate();
         this.alive = new Alive(cont, this.uuid);
     }
 
     private void logWithTime(final String base) {
-        Worker.LOGGER.info(base + " ( " + System.currentTimeMillis() + " )");
+        WorkerImpl.LOGGER
+                .info(base + " ( " + System.currentTimeMillis() + " )");
     }
 
     private void start() {
         final WorkPerformer performer = WorkPerformer.getInstance();
         boolean terminate = false;
         long lastChecked = 0;
-        long delay = Worker.START_DELAY;
-        Worker.LOGGER.info("Worker started, Uuid is " + this.uuid);
+        long delay = WorkerImpl.START_DELAY;
+        WorkerImpl.LOGGER.info("Worker started, Uuid is " + this.uuid);
         try {
+            this.controller.registerWorker(this.uuid, (Worker) Exporter
+                    .export(this));
             while (!terminate) {
                 this.logWithTime("Checking for work");
 
@@ -83,31 +88,33 @@ public final class Worker {
                     } else {
                         this.alive.start();
                         performer.performWork(todo, this.controller, this.uuid);
-                        delay = Worker.START_DELAY;
+                        delay = WorkerImpl.START_DELAY;
                         lastChecked = 0;
                     }
                 } else {
                     this.logWithTime("Sleeping");
                     this.alive.stop();
                     lastChecked += delay;
-                    if (lastChecked < Worker.MAX_WAIT) {
-                        try {
-                            Thread.sleep(delay * Worker.MSTOSECONDS);
-                        } catch (final InterruptedException e) {
-                            // ignore
+                    if (lastChecked < WorkerImpl.MAX_WAIT) {
+                        synchronized (this) {
+                            try {
+                                this.wait(delay * WorkerImpl.MSTOSECONDS);
+                            } catch (final InterruptedException e) {
+                                // ignore
+                            }
                         }
                     }
                     delay += Math.random() / 2.0 * delay;
-                    if (lastChecked >= Worker.MAX_WAIT) {
+                    if (lastChecked >= WorkerImpl.MAX_WAIT) {
                         terminate = true;
                     }
                 }
             }
         } catch (final RemoteException re) {
-            Worker.LOGGER.warning(re.getMessage());
+            WorkerImpl.LOGGER.warning(re.getMessage());
         }
         this.alive.stop();
-        Worker.LOGGER.info("Shutting down.");
+        WorkerImpl.LOGGER.info("Shutting down.");
     }
 
     /**
@@ -117,7 +124,7 @@ public final class Worker {
      *            location of the proxyfile
      */
     public static void main(final String[] args) {
-        Worker.LOGGER.info("Initializing worker...");
+        WorkerImpl.LOGGER.info("Initializing worker...");
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new AllSecurityManager());
         }
@@ -132,12 +139,17 @@ public final class Worker {
             final ObjectInputStream in = new ObjectInputStream(fis);
             final Controller comp = (Controller) in.readObject();
             in.close();
-            new Worker(comp).start();
+            new WorkerImpl(comp).start();
         } catch (final IOException e) {
-            Worker.LOGGER.warning(e.getMessage());
+            WorkerImpl.LOGGER.warning(e.getMessage());
         } catch (final ClassNotFoundException e) {
-            Worker.LOGGER.warning(e.getMessage());
+            WorkerImpl.LOGGER.warning(e.getMessage());
         }
-        Worker.LOGGER.info("Shutting down");
+        WorkerImpl.LOGGER.info("Shutting down");
+    }
+
+    /** {@inheritDoc} */
+    public synchronized void newWork() throws RemoteException {
+        this.notifyAll();
     }
 }
