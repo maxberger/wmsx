@@ -38,6 +38,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Creates jobs based on a list format by Andras Laszlo.
+ * 
+ * @version $Revision$
+ */
 public class LaszloJobFactory implements JobFactory {
 
     private static final Logger LOGGER = Logger
@@ -63,6 +68,28 @@ public class LaszloJobFactory implements JobFactory {
 
     private final Backend backend;
 
+    /**
+     * Default constructor.
+     * 
+     * @param command
+     *            Command to execute
+     * @param arguments
+     *            its arguments
+     * @param outputDir
+     *            where to store the output files
+     * @param tempDir
+     *            where to store temporary files
+     * @param number
+     *            consecutive number if the same name is used.
+     * @param isInteractive
+     *            true if the job is supposed to be run interactive
+     * @param addtlPrefix
+     *            additional prefix when running chains
+     * @param jobName
+     *            name of this job
+     * @param back
+     *            backend to use.
+     */
     public LaszloJobFactory(final String command, final String arguments,
             final File outputDir, final File tempDir, final int number,
             final boolean isInteractive, final String addtlPrefix,
@@ -82,6 +109,7 @@ public class LaszloJobFactory implements JobFactory {
         this.backend = back;
     }
 
+    /** {@inheritDoc} */
     public JdlJob createJdlJob() {
 
         final String cmd = this.getCmd();
@@ -257,11 +285,6 @@ public class LaszloJobFactory implements JobFactory {
                 }
             }
         }
-    }
-
-    /** {@inheritDoc} */
-    public Backend getBackend() {
-        return this.backend;
     }
 
 }

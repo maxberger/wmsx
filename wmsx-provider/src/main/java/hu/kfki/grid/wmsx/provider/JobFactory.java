@@ -18,15 +18,21 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.provider;
 
-import hu.kfki.grid.wmsx.backends.Backend;
-
+/**
+ * Interface for job factories.
+ * 
+ * @version $Revision$
+ */
 public interface JobFactory {
 
-    Backend getBackend();
-
+    /**
+     * actually create the described job.
+     * 
+     * @return a JdlJob
+     */
     JdlJob createJdlJob();
 }

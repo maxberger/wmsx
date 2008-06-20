@@ -68,6 +68,8 @@ public class JdlJob {
 
     private final int appId;
 
+    private final Backend back;
+
     /**
      * Default constructor.
      * 
@@ -92,8 +94,8 @@ public class JdlJob {
         this.workflow = wf;
         this.args = new String[0];
         this.appId = applicationId;
-        this.jdlFile = this.filterJdlFile(theJdlFile, backend);
-
+        this.back = backend;
+        this.jdlFile = this.filterJdlFile(theJdlFile);
     }
 
     /**
@@ -126,8 +128,7 @@ public class JdlJob {
         this.args = argss.clone();
     }
 
-    private String filterJdlFile(final String jdlFileToFilter,
-            final Backend backend) {
+    private String filterJdlFile(final String jdlFileToFilter) {
         String retVal;
         boolean isFiltered = false;
         try {
@@ -139,9 +140,8 @@ public class JdlJob {
             isFiltered = this.filterResultDir(isFiltered, job, jdlFileDir);
             isFiltered = this.filterChainCommands(isFiltered, job, jdlFileDir);
             this.makeStdoutAbsolute(job, jdlFileDir);
-            isFiltered = this.filterWorkflow(jdlFileToFilter, backend,
-                    isFiltered, job);
-            isFiltered |= this.filterDeploy(job, backend);
+            isFiltered = this.filterWorkflow(jdlFileToFilter, isFiltered, job);
+            isFiltered |= this.filterDeploy(job);
 
             if (isFiltered) {
                 retVal = this.createFilteredJdl(jdlFileToFilter, job);
@@ -155,12 +155,12 @@ public class JdlJob {
         return retVal;
     }
 
-    private boolean filterDeploy(final JobDescription job, final Backend backend) {
+    private boolean filterDeploy(final JobDescription job) {
         final String deploy = job.getStringEntry(JobDescription.DEPLOY);
         if (deploy != null) {
-            if (!backend.supportsDeploy()) {
-                JdlJob.LOGGER
-                        .warning(backend + " does not yet support Deploy!");
+            if (!this.back.supportsDeploy()) {
+                JdlJob.LOGGER.warning(this.back
+                        + " does not yet support Deploy!");
                 // TODO: Create Yet-Another-Wrapper
             }
         }
@@ -180,15 +180,14 @@ public class JdlJob {
     }
 
     private boolean filterWorkflow(final String jdlFileToFilter,
-            final Backend backend, final boolean isFiltered,
-            final JobDescription job) {
+            final boolean isFiltered, final JobDescription job) {
         final String jobType = job.getStringEntry(JobDescription.JOBTYPE);
         if ("workflow".equalsIgnoreCase(jobType)) {
             final File jdlFileFile = new File(jdlFileToFilter)
                     .getAbsoluteFile();
             if (this.workflow == null) {
                 this.workflow = WorkflowFactory.getInstance().createWorkflow(
-                        jdlFileFile.getParentFile(), backend, this.appId);
+                        jdlFileFile.getParentFile(), this.back, this.appId);
             }
             final String newname = jdlFileFile.getName();
             this.setName(newname);
@@ -386,6 +385,13 @@ public class JdlJob {
      */
     public final void setName(final String newName) {
         this.name = newName;
+    }
+
+    /**
+     * @return the Backend in use
+     */
+    public Backend getBackend() {
+        return this.back;
     }
 
 }

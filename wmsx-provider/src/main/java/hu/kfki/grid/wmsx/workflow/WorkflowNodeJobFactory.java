@@ -22,7 +22,6 @@
 
 package hu.kfki.grid.wmsx.workflow;
 
-import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.provider.JdlJob;
 import hu.kfki.grid.wmsx.provider.JobFactory;
 
@@ -60,8 +59,4 @@ public class WorkflowNodeJobFactory implements JobFactory {
                         .getBackend(), this.workflow.getApplicationId());
     }
 
-    /** {@inheritDoc} */
-    public Backend getBackend() {
-        return this.workflow.getBackend();
-    }
 }

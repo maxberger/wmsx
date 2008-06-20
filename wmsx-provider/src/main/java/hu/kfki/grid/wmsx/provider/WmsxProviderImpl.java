@@ -383,7 +383,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 && this.maxJobs - JobWatcher.getInstance().getNumJobsRunning() > 0) {
             final JobFactory jf = this.pendingJobFactories.remove(0);
             final JdlJob jd = jf.createJdlJob();
-            this.reallySubmitJdl(jd, jf.getBackend());
+            this.reallySubmitJdl(jd, jd.getBackend());
             try {
                 this.wait(WmsxProviderImpl.WAIT_TIME_BETWEEN_SUBMISSIONS);
             } catch (final InterruptedException e) {
