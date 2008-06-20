@@ -232,25 +232,34 @@ public class LaszloJobFactory implements JobFactory {
     }
 
     private void copyFromStarterBase(final BufferedWriter jobStarter) {
+        BufferedReader reader = null;
         try {
             final InputStream in = ClassLoader
                     .getSystemResourceAsStream("starter_base.sh");
             final Reader freader = new InputStreamReader(in);
-            final BufferedReader reader = new BufferedReader(freader);
+            reader = new BufferedReader(freader);
             String line = reader.readLine();
             while (line != null) {
                 jobStarter.write(line);
                 jobStarter.newLine();
                 line = reader.readLine();
             }
-            in.close();
         } catch (final IOException e) {
             LaszloJobFactory.LOGGER
                     .warning("Error copying from starter_base.sh: "
                             + e.getMessage());
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (final IOException io) {
+                    // ignore.
+                }
+            }
         }
     }
 
+    /** {@inheritDoc} */
     public Backend getBackend() {
         return this.backend;
     }
