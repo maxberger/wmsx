@@ -109,13 +109,7 @@ public final class ControllerServer {
             final File shFile = new File(this.tmpDir, "worker.sh");
             FileUtil.copy(ClassLoader
                     .getSystemResourceAsStream("worker/worker.sh"), shFile);
-            try {
-                Runtime.getRuntime().exec(
-                        new String[] { "/bin/chmod", "+x",
-                                shFile.getCanonicalPath(), }).waitFor();
-            } catch (final InterruptedException e) {
-                // Ignore
-            }
+            FileUtil.makeExecutable(shFile);
             ControllerServer.getInstance().writeProxy(
                     new File(this.tmpDir, "proxyFile"));
             this.jdlPath = jdlFile.getCanonicalPath();
@@ -132,7 +126,7 @@ public final class ControllerServer {
      */
     public void submitWorker(final Backend backend) {
         final Backend submitTo;
-        if (Backends.getInstance().get("worker").equals(backend)) {
+        if ("worker".equals(backend.toString())) {
             submitTo = Backends.getInstance().get("local");
         } else {
             submitTo = backend;
