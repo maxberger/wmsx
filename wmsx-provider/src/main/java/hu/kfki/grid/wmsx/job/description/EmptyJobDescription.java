@@ -18,36 +18,61 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.job.description;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * Represents an empty job, for cases where a job description is needed to avoid
+ * null-pointer exceptions.
+ * 
+ * @version $Revision$
+ */
 public class EmptyJobDescription extends AbstractJobDescription {
 
+    /**
+     * Default constructor.
+     */
+    public EmptyJobDescription() {
+        // do nothing.
+    }
+
+    /** {@inheritDoc} */
     public List<String> getListEntry(final String key) {
         return new Vector<String>();
     }
 
+    /** {@inheritDoc} */
     public String getStringEntry(final String key) {
         return null;
     }
 
-    public String toJDL() {
-        return "[]";
+    /** {@inheritDoc} */
+    public File toJdl() throws IOException {
+        throw new IOException("Empty Jobs cannot be submitted!");
     }
 
+    /** {@inheritDoc} */
     public void removeEntry(final String entry) {
     }
 
+    /** {@inheritDoc} */
     public void replaceEntry(final String entry, final String value) {
     }
 
+    /** {@inheritDoc} */
     public File getBaseDir() {
         return File.listRoots()[0];
+    }
+
+    /** {@inheritDoc} */
+    public String getName() {
+        return "";
     }
 
 }

@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.provider.test;
 
@@ -58,7 +58,10 @@ public class JdlTest extends TestCase {
     }
 
     /**
-     * Rigourous Test :-).
+     * Rigorous Test :-).
+     * 
+     * @throws Exception
+     *             if the test fails.
      */
     public void testJdl() throws Exception {
         final File jdl = File.createTempFile("wmsxtest", null);
@@ -77,7 +80,7 @@ public class JdlTest extends TestCase {
         w.close();
         jdl.deleteOnExit();
 
-        final JobDescription desc = new JDLJobDescription(jdl.getAbsolutePath());
+        final JobDescription desc = new JDLJobDescription(jdl);
         Assert.assertEquals(desc.getStringEntry(JobDescription.EXECUTABLE),
                 "bla");
         Assert.assertEquals(desc.getStringEntry("Comment"), null);

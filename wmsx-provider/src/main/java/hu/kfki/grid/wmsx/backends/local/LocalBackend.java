@@ -26,7 +26,6 @@ import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
-import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 
 import java.io.File;
@@ -80,12 +79,12 @@ public final class LocalBackend implements Backend {
     }
 
     /** {@inheritDoc} */
-    public SubmissionResults submitJdl(final String jdlFile, final String vo)
+    public SubmissionResults submitJob(final JobDescription job, final String vo)
             throws IOException {
         this.count++;
         final Object id = Integer.valueOf(this.count);
         final JobUid juid = new JobUid(this, id);
-        final JobDescription desc = new JDLJobDescription(jdlFile);
+        final JobDescription desc = job;
         final LocalProcess p = new LocalProcess(this.state, juid, desc);
         this.processes.put(juid, p);
         new Thread(p).start();

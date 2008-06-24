@@ -22,10 +22,13 @@
 
 package hu.kfki.grid.wmsx.workflow;
 
+import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.provider.JdlJob;
 import hu.kfki.grid.wmsx.provider.JobFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Create a new (next) node in an existing workflow.
@@ -33,6 +36,9 @@ import java.io.File;
  * @version $Revision$
  */
 public class WorkflowNodeJobFactory implements JobFactory {
+
+    private static final Logger LOGGER = Logger
+            .getLogger(WorkflowNodeJobFactory.class.toString());
 
     private final Workflow workflow;
 
@@ -54,9 +60,15 @@ public class WorkflowNodeJobFactory implements JobFactory {
     /** {@inheritDoc} */
     public JdlJob createJdlJob() {
         final File workdir = this.workflow.getDirectory();
-        return new JdlJob(new File(workdir, this.name).getAbsolutePath(), null,
-                workdir.getAbsolutePath(), this.workflow, this.workflow
-                        .getBackend(), this.workflow.getApplicationId());
+        try {
+            return new JdlJob(new JDLJobDescription(
+                    new File(workdir, this.name)), null, workdir
+                    .getAbsolutePath(), this.workflow, this.workflow
+                    .getBackend(), this.workflow.getApplicationId());
+        } catch (final IOException e) {
+            WorkflowNodeJobFactory.LOGGER.warning(e.getMessage());
+            return null;
+        }
     }
 
 }

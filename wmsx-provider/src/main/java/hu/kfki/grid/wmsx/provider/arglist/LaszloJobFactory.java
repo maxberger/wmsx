@@ -23,6 +23,7 @@
 package hu.kfki.grid.wmsx.provider.arglist;
 
 import hu.kfki.grid.wmsx.backends.Backend;
+import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.provider.JdlJob;
 import hu.kfki.grid.wmsx.provider.JobFactory;
 
@@ -145,8 +146,8 @@ public class LaszloJobFactory implements JobFactory {
             // .getAbsolutePath();
             final String output = new File(resultDir, LaszloJobFactory.STD_OUT)
                     .getAbsolutePath();
-            final JdlJob job = new JdlJob(jdlFilename, output, resultDir, null,
-                    this.backend, 0);
+            final JdlJob job = new JdlJob(new JDLJobDescription(new File(
+                    jdlFilename)), output, resultDir, null, this.backend, 0);
             job.setPreexec(this.cmdWithPath + "_preexec");
             job.setPostexec(this.cmdWithPath + "_postexec");
             job.setChain(this.cmdWithPath + "_chain");

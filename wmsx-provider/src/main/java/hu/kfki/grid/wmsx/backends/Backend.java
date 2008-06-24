@@ -23,6 +23,7 @@
 package hu.kfki.grid.wmsx.backends;
 
 import hu.kfki.grid.wmsx.job.JobState;
+import hu.kfki.grid.wmsx.job.description.JobDescription;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,15 +59,15 @@ public interface Backend {
     /**
      * Submit a JDL file.
      * 
-     * @param jdlFile
-     *            path to the JDL File
+     * @param job
+     *            the job to submit
      * @param vo
      *            VO to submit to, or null
      * @return the {@link SubmissionResults}.
      * @throws IOException
      *             if the submission fails.
      */
-    SubmissionResults submitJdl(final String jdlFile, final String vo)
+    SubmissionResults submitJob(final JobDescription job, final String vo)
             throws IOException;
 
     /**

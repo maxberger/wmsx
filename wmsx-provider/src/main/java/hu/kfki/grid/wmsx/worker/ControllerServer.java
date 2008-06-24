@@ -24,6 +24,8 @@ package hu.kfki.grid.wmsx.worker;
 
 import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.Backends;
+import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
+import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.provider.JdlJobFactory;
 import hu.kfki.grid.wmsx.provider.JobFactory;
 import hu.kfki.grid.wmsx.provider.WmsxProviderImpl;
@@ -57,7 +59,7 @@ public final class ControllerServer {
 
     private final Controller controllerStub;
 
-    private String jdlPath;
+    private JobDescription jobDesc;
 
     private File tmpDir;
 
@@ -112,7 +114,7 @@ public final class ControllerServer {
             FileUtil.makeExecutable(shFile);
             ControllerServer.getInstance().writeProxy(
                     new File(this.tmpDir, "proxyFile"));
-            this.jdlPath = jdlFile.getCanonicalPath();
+            this.jobDesc = new JDLJobDescription(jdlFile);
         } catch (final IOException e) {
             ControllerServer.LOGGER.warning(e.toString());
         }
@@ -131,10 +133,10 @@ public final class ControllerServer {
         } else {
             submitTo = backend;
         }
-        if (this.jdlPath != null) {
+        if (this.jobDesc != null) {
             this.controller.setShutdownState(false);
             this.workerCount++;
-            final JobFactory fac = new JdlJobFactory(this.jdlPath, null,
+            final JobFactory fac = new JdlJobFactory(this.jobDesc, null,
                     new File(this.tmpDir, Integer.toString(this.workerCount))
                             .getAbsolutePath(), submitTo, 0);
             WmsxProviderImpl.getInstance().addJobFactory(fac);

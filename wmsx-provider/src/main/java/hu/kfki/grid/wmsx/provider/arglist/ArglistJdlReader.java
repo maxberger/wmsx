@@ -18,7 +18,7 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.provider.arglist;
 
@@ -26,11 +26,21 @@ import hu.kfki.grid.wmsx.job.description.EmptyJobDescription;
 import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Read a wjdl file, which gives additional info for jobs executed through
+ * arglist files.
+ * 
+ * @version $Revision$
+ */
 public class ArglistJdlReader {
+
+    private static final Logger LOGGER = Logger
+            .getLogger(ArglistJdlReader.class.toString());
 
     private final String executable;
 
@@ -48,14 +58,19 @@ public class ArglistJdlReader {
 
     private final String requirements;
 
-    private static final Logger LOGGER = Logger
-            .getLogger(ArglistJdlReader.class.toString());
-
+    /**
+     * Read an arglist special jdl file (wjdl).
+     * 
+     * @param jdlFile
+     *            path to the wjdl file.
+     * @param cmdName
+     *            name of the command to execute.
+     */
     public ArglistJdlReader(final String jdlFile, final String cmdName) {
 
         JobDescription desc;
         try {
-            desc = new JDLJobDescription(jdlFile);
+            desc = new JDLJobDescription(new File(jdlFile));
         } catch (final IOException io) {
             ArglistJdlReader.LOGGER.warning("Error Reading JDL file: "
                     + io.getMessage() + ", assuming defaults");
@@ -78,22 +93,37 @@ public class ArglistJdlReader {
         this.requirements = desc.getStringEntry(JobDescription.REQUIREMENTS);
     }
 
+    /**
+     * @return the executable set in this wjdl.
+     */
     public String getExecutable() {
         return this.executable;
     }
 
+    /**
+     * @return the output directory set in this wjdl.
+     */
     public String getOutputDirectory() {
         return this.outputDir;
     }
 
+    /**
+     * @return required software listed in this wjdl.
+     */
     public List<String> getSoftware() {
         return this.software;
     }
 
+    /**
+     * @return true if AFS is required.
+     */
     public boolean getAfs() {
         return this.afs;
     }
 
+    /**
+     * @return true if jobs are to be run interactive.
+     */
     public boolean getInteractive() {
         return this.interactive;
     }

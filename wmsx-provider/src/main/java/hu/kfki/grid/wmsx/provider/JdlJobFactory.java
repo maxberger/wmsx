@@ -23,6 +23,7 @@
 package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.backends.Backend;
+import hu.kfki.grid.wmsx.job.description.JobDescription;
 
 /**
  * Job Factory for standard jobs (defined through a standard JDL file).
@@ -30,7 +31,7 @@ import hu.kfki.grid.wmsx.backends.Backend;
  * @version $Revision$
  */
 public class JdlJobFactory implements JobFactory {
-    private final String jdlFile;
+    private final JobDescription jobDesc;
 
     private final String output;
 
@@ -41,8 +42,8 @@ public class JdlJobFactory implements JobFactory {
     private final Backend backend;
 
     /**
-     * @param jdl
-     *            path to JDL file
+     * @param job
+     *            Job Description
      * @param out
      *            path to stdout file for interactive jobs
      * @param resultDir
@@ -52,9 +53,9 @@ public class JdlJobFactory implements JobFactory {
      * @param applicationId
      *            Application if the JDL file represents a workflow.
      */
-    public JdlJobFactory(final String jdl, final String out,
+    public JdlJobFactory(final JobDescription job, final String out,
             final String resultDir, final Backend back, final int applicationId) {
-        this.jdlFile = jdl;
+        this.jobDesc = job;
         this.output = out;
         this.result = resultDir;
         this.backend = back;
@@ -63,7 +64,7 @@ public class JdlJobFactory implements JobFactory {
 
     /** {@inheritDoc} */
     public JdlJob createJdlJob() {
-        return new JdlJob(this.jdlFile, this.output, this.result, null,
+        return new JdlJob(this.jobDesc, this.output, this.result, null,
                 this.backend, this.appId);
     }
 
