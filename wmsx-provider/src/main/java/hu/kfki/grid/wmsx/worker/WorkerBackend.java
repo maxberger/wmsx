@@ -26,7 +26,6 @@ import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
-import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 
 import java.io.File;
@@ -74,11 +73,11 @@ public final class WorkerBackend implements Backend {
     }
 
     /** {@inheritDoc} */
-    public SubmissionResults submitJdl(final String jdlFile, final String vo)
+    public SubmissionResults submitJob(final JobDescription job, final String vo)
             throws IOException {
         this.count++;
         final Object id = Integer.valueOf(this.count);
-        final JobDescription desc = new JDLJobDescription(jdlFile);
+        final JobDescription desc = job;
         this.controllerImpl.addWork(new ControllerWorkDescription(id, desc));
         return new SubmissionResults(this.controllerImpl.getJuidForId(id),
                 null, null, null, 0, 0);

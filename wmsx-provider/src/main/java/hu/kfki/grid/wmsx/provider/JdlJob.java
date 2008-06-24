@@ -23,15 +23,11 @@
 package hu.kfki.grid.wmsx.provider;
 
 import hu.kfki.grid.wmsx.backends.Backend;
-import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.workflow.Workflow;
 import hu.kfki.grid.wmsx.workflow.WorkflowFactory;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.logging.Logger;
 
 /**
@@ -44,7 +40,7 @@ public class JdlJob {
     private static final Logger LOGGER = Logger.getLogger(JdlJob.class
             .toString());
 
-    private final String jdlFile;
+    private final JobDescription jobDesc;
 
     private String output;
 
@@ -73,8 +69,8 @@ public class JdlJob {
     /**
      * Default constructor.
      * 
-     * @param theJdlFile
-     *            actual JDL file
+     * @param job
+     *            Job Description
      * @param theOutput
      *            Where to write Stdout to (file)
      * @param resultDir
@@ -86,7 +82,7 @@ public class JdlJob {
      * @param applicationId
      *            application id or 0.
      */
-    public JdlJob(final String theJdlFile, final String theOutput,
+    public JdlJob(final JobDescription job, final String theOutput,
             final String resultDir, final Workflow wf, final Backend backend,
             final int applicationId) {
         this.output = theOutput;
@@ -95,7 +91,8 @@ public class JdlJob {
         this.args = new String[0];
         this.appId = applicationId;
         this.back = backend;
-        this.jdlFile = this.filterJdlFile(theJdlFile);
+        this.filterJdlFile(job);
+        this.jobDesc = job;
     }
 
     /**
@@ -128,34 +125,19 @@ public class JdlJob {
         this.args = argss.clone();
     }
 
-    private String filterJdlFile(final String jdlFileToFilter) {
-        String retVal;
-        boolean isFiltered = false;
-        try {
-            final JobDescription job = new JDLJobDescription(jdlFileToFilter);
+    private void filterJdlFile(final JobDescription job) {
 
-            final File jdlFileDir = new File(jdlFileToFilter).getAbsoluteFile()
-                    .getParentFile();
+        final File jdlFileDir = job.getBaseDir();
 
-            isFiltered = this.filterResultDir(isFiltered, job, jdlFileDir);
-            isFiltered = this.filterChainCommands(isFiltered, job, jdlFileDir);
-            this.makeStdoutAbsolute(job, jdlFileDir);
-            isFiltered = this.filterWorkflow(jdlFileToFilter, isFiltered, job);
-            isFiltered |= this.filterDeploy(job);
+        this.filterResultDir(job, jdlFileDir);
+        this.filterChainCommands(job, jdlFileDir);
+        this.makeStdoutAbsolute(job, jdlFileDir);
+        this.filterWorkflow(job);
+        this.filterDeploy(job);
 
-            if (isFiltered) {
-                retVal = this.createFilteredJdl(jdlFileToFilter, job);
-            } else {
-                retVal = jdlFileToFilter;
-            }
-        } catch (final IOException e) {
-            JdlJob.LOGGER.warning(e.getMessage());
-            retVal = jdlFileToFilter;
-        }
-        return retVal;
     }
 
-    private boolean filterDeploy(final JobDescription job) {
+    private void filterDeploy(final JobDescription job) {
         final String deploy = job.getStringEntry(JobDescription.DEPLOY);
         if (deploy != null) {
             if (!this.back.supportsDeploy()) {
@@ -164,32 +146,17 @@ public class JdlJob {
                 // TODO: Create Yet-Another-Wrapper
             }
         }
-        return false;
     }
 
-    private String createFilteredJdl(final String jdlFileToFilter,
-            final JobDescription job) throws IOException {
-        final File dir = new File(jdlFileToFilter).getAbsoluteFile()
-                .getParentFile();
-        final File tmp = File.createTempFile("jdl", null, dir);
-        final Writer w = new FileWriter(tmp);
-        w.write(job.toJDL());
-        w.close();
-        tmp.deleteOnExit();
-        return tmp.getAbsolutePath();
-    }
-
-    private boolean filterWorkflow(final String jdlFileToFilter,
-            final boolean isFiltered, final JobDescription job) {
+    private void filterWorkflow(final JobDescription job) {
         final String jobType = job.getStringEntry(JobDescription.JOBTYPE);
         if ("workflow".equalsIgnoreCase(jobType)) {
-            final File jdlFileFile = new File(jdlFileToFilter)
-                    .getAbsoluteFile();
+
             if (this.workflow == null) {
                 this.workflow = WorkflowFactory.getInstance().createWorkflow(
-                        jdlFileFile.getParentFile(), this.back, this.appId);
+                        job.getBaseDir(), this.back, this.appId);
             }
-            final String newname = jdlFileFile.getName();
+            final String newname = job.getName();
             this.setName(newname);
             if (this.command == null) {
                 this.command = newname;
@@ -201,46 +168,36 @@ public class JdlJob {
             job.removeEntry(JobDescription.PREV);
             job.replaceEntry(JobDescription.WORKFLOWID, Integer
                     .toString(this.workflow.getApplicationId()));
-            return true;
         }
-        return isFiltered;
     }
 
-    private boolean filterResultDir(final boolean isFiltered,
-            final JobDescription job, final File jdlFileDir) {
+    private void filterResultDir(final JobDescription job, final File jdlFileDir) {
         final String resultDir = this.filterJob(jdlFileDir, job,
                 JobDescription.RESULTDIR);
         if (resultDir != null) {
             this.result = resultDir;
-            return true;
         }
-        return isFiltered;
     }
 
-    private boolean filterChainCommands(final boolean isFiltered,
-            final JobDescription job, final File jdlFileDir) {
-        boolean isF = isFiltered;
+    private void filterChainCommands(final JobDescription job,
+            final File jdlFileDir) {
         final String postExec = this.filterJob(jdlFileDir, job,
                 JobDescription.POSTEXEC);
         if (postExec != null) {
             this.postexec = postExec;
-            isF = true;
         }
 
         final String preExec = this.filterJob(jdlFileDir, job,
                 JobDescription.PREEXEC);
         if (preExec != null) {
             this.preexec = preExec;
-            isF = true;
         }
 
         final String chainn = this.filterJob(jdlFileDir, job,
                 JobDescription.CHAIN);
         if (chainn != null) {
             this.chain = chainn;
-            isF = true;
         }
-        return isF;
     }
 
     private void makeStdoutAbsolute(final JobDescription job,
@@ -306,10 +263,10 @@ public class JdlJob {
     }
 
     /**
-     * @return the Jdl File.
+     * @return the Job Description.
      */
-    public String getJdlFile() {
-        return this.jdlFile;
+    public JobDescription getJobDescription() {
+        return this.jobDesc;
     }
 
     /**

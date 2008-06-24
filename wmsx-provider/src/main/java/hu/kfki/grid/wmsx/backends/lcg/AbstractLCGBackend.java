@@ -26,6 +26,7 @@ import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
+import hu.kfki.grid.wmsx.job.description.JobDescription;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -157,8 +158,9 @@ public abstract class AbstractLCGBackend implements Backend {
     }
 
     /** {@inheritDoc} */
-    public SubmissionResults submitJdl(final String jdlFile, final String vo)
-            throws IOException {
+    public SubmissionResults submitJob(final JobDescription jobDesc,
+            final String vo) throws IOException {
+        final String jdlFile = jobDesc.toJdl().getAbsolutePath();
         final List<String> commandLine = this.submitJdlCommand(jdlFile, vo);
         final Process p = Runtime.getRuntime().exec(
                 commandLine.toArray(new String[commandLine.size()]), null,

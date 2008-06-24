@@ -138,11 +138,10 @@ public class LocalProcess implements Runnable {
 
         final String arguments = this.job
                 .getStringEntry(JobDescription.ARGUMENTS);
-        final String commandline;
-        if (arguments == null) {
-            commandline = command;
-        } else {
-            commandline = command + " " + arguments;
+        final StringBuilder commandline = new StringBuilder(command);
+        if (arguments != null) {
+            commandline.append(' ');
+            commandline.append(arguments);
         }
         String stdout = this.job.getStringEntry(JobDescription.STDOUTPUT);
         if (stdout != null) {
@@ -152,8 +151,8 @@ public class LocalProcess implements Runnable {
         if (stderr != null) {
             stderr = new File(this.workdir, stderr).getCanonicalPath();
         }
-        ScriptLauncher.getInstance().launchScript(commandline, this.workdir,
-                stdout, stderr);
+        ScriptLauncher.getInstance().launchScript(commandline.toString(),
+                this.workdir, stdout, stderr);
     }
 
     /**

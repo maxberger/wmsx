@@ -29,6 +29,7 @@ import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.LogListener;
+import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.job.result.ResultListener;
 import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.provider.arglist.LaszloJobFactory;
@@ -190,33 +191,38 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             final String output, final String resultDir, final int appId) {
         final int current = JobWatcher.getInstance().getNumJobsRunning();
         final int avail = this.maxJobs - current;
-        final String result;
-        final JobFactory factory = new JdlJobFactory(jdlFile, output,
-                resultDir, this.currentBackend, appId);
-        if (avail > 0) {
-            final JobUid id = this.reallySubmitJdl(factory.createJdlJob(),
-                    this.currentBackend);
-            if (id != null) {
-                result = id.getBackendId().toString();
+        String result;
+        try {
+            final JobFactory factory = new JdlJobFactory(new JDLJobDescription(
+                    new File(jdlFile)), output, resultDir, this.currentBackend,
+                    appId);
+            if (avail > 0) {
+                final JobUid id = this.reallySubmitJdl(factory.createJdlJob(),
+                        this.currentBackend);
+                if (id != null) {
+                    result = id.getBackendId().toString();
+                } else {
+                    result = "failed";
+                }
             } else {
-                result = "failed";
+                this.pendingJobFactories.add(factory);
+                result = "pending";
             }
-        } else {
-            this.pendingJobFactories.add(factory);
-            result = "pending";
+        } catch (final IOException io) {
+            WmsxProviderImpl.LOGGER.info(io.getMessage());
+            result = "Error opening " + jdlFile;
         }
         return result;
     }
 
     private JobUid reallySubmitJdl(final JdlJob job, final Backend backend) {
-        final String jdlFile = job.getJdlFile();
         final String output = job.getOutput();
         this.runPreexec(job, output);
-        WmsxProviderImpl.LOGGER.info("Submitting " + jdlFile);
+        WmsxProviderImpl.LOGGER.info("Submitting " + job);
         SubmissionResults result;
         try {
             final JobUid id;
-            result = backend.submitJdl(jdlFile, this.vo);
+            result = backend.submitJob(job.getJobDescription(), this.vo);
             if (result != null) {
                 id = result.getJobId();
                 WmsxProviderImpl.LOGGER.info("Job id is: " + id);

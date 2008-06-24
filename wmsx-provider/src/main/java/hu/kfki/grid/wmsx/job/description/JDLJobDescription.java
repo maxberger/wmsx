@@ -18,15 +18,17 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.job.description;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import condor.classad.ClassAdParser;
 import condor.classad.Constant;
@@ -34,14 +36,33 @@ import condor.classad.Expr;
 import condor.classad.ListExpr;
 import condor.classad.RecordExpr;
 
+/**
+ * JobDescription backed by a JDL file.
+ * 
+ * @version $Revision$
+ */
 public class JDLJobDescription extends AbstractJobDescription {
 
     private final RecordExpr erecord;
 
-    final File baseDir;
+    private final File origin;
 
-    public JDLJobDescription(final String jdlFile) throws IOException {
-        this.baseDir = new File(jdlFile).getAbsoluteFile().getParentFile();
+    private final File baseDir;
+
+    private boolean changed;
+
+    /**
+     * Creates a new JDLJobDescription.
+     * 
+     * @param jdlFile
+     *            file to load.
+     * @throws IOException
+     *             if the file cannot be loaded.
+     */
+    public JDLJobDescription(final File jdlFile) throws IOException {
+        this.origin = jdlFile.getCanonicalFile();
+        this.baseDir = this.origin.getParentFile();
+        this.changed = false;
         final ClassAdParser parser = new ClassAdParser(new NoHashReader(
                 new FileReader(jdlFile)));
         final Expr e = parser.parse();
@@ -52,19 +73,24 @@ public class JDLJobDescription extends AbstractJobDescription {
         }
     }
 
+    /** {@inheritDoc} */
     public String getStringEntry(final String key) {
         final Expr eval = this.erecord.lookup(key);
+        final String retVal;
         if (eval instanceof Constant) {
             final Constant econst = (Constant) eval;
-            return econst.stringValue();
+            retVal = econst.stringValue();
         } else if (eval != null) {
-            return eval.toString();
+            retVal = eval.toString();
+        } else {
+            retVal = null;
         }
-        return null;
+        return retVal;
     }
 
+    /** {@inheritDoc} */
     public List<String> getListEntry(final String key) {
-        final List<String> theList = new Vector<String>();
+        final List<String> theList = new ArrayList<String>();
         final Expr eval = this.erecord.lookup(key);
         if (eval instanceof ListExpr) {
             final ListExpr elist = (ListExpr) eval;
@@ -82,16 +108,30 @@ public class JDLJobDescription extends AbstractJobDescription {
         return theList;
     }
 
-    public String toJDL() {
+    /** {@inheritDoc} */
+    public File toJdl() throws IOException {
+        final File jdl;
+        if (this.changed) {
+            jdl = File.createTempFile("jdl", null, this.baseDir);
+            final Writer w = new FileWriter(jdl);
+            w.write(this.toString());
+            w.close();
+            jdl.deleteOnExit();
+        } else {
+            jdl = this.origin;
+        }
+        return jdl;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
         return this.erecord.toString();
     }
 
-    @Override
-    public String toString() {
-        return this.toJDL();
-    }
-
+    /** {@inheritDoc} */
     public void removeEntry(final String entry) {
+        this.changed = true;
         try {
             this.erecord.removeAttribute(entry);
         } catch (final IllegalArgumentException e) {
@@ -99,13 +139,21 @@ public class JDLJobDescription extends AbstractJobDescription {
         }
     }
 
+    /** {@inheritDoc} */
     public void replaceEntry(final String entry, final String value) {
+        this.changed = true;
         this.removeEntry(entry);
         this.erecord.insertAttribute(entry, Constant.getInstance(value));
     }
 
+    /** {@inheritDoc} */
     public File getBaseDir() {
         return this.baseDir;
+    }
+
+    /** {@inheritDoc} */
+    public String getName() {
+        return this.origin.getName();
     }
 
 }

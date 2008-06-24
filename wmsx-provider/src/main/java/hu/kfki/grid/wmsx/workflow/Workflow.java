@@ -156,8 +156,7 @@ public class Workflow {
             if (!this.prevNodes.containsKey(nodeName)) {
                 try {
                     final JobDescription nodeJob = new JDLJobDescription(
-                            new File(this.directory, nodeName)
-                                    .getAbsolutePath());
+                            new File(this.directory, nodeName));
                     final List<String> prevs = nodeJob.getListEntry("Prev");
                     this.prevNodes.put(nodeName, prevs);
                 } catch (final IOException e) {

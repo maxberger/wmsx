@@ -26,6 +26,7 @@ import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
+import hu.kfki.grid.wmsx.job.description.JobDescription;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +82,7 @@ public final class FakeBackend implements Backend {
     }
 
     /** {@inheritDoc} */
-    public SubmissionResults submitJdl(final String jdlFile, final String vo)
+    public SubmissionResults submitJob(final JobDescription job, final String vo)
             throws IOException {
         this.count++;
         final Integer in = Integer.valueOf(this.count);
