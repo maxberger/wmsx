@@ -18,12 +18,18 @@
  * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.job.description;
 
+/**
+ * Implements generic JobDescription tasks by calling other functions.
+ * 
+ * @version $Revision$
+ */
 public abstract class AbstractJobDescription implements JobDescription {
 
+    /** {@inheritDoc} */
     public String getStringEntry(final String key, final String defaultValue) {
         final String value = this.getStringEntry(key);
         if (value == null) {
@@ -35,13 +41,22 @@ public abstract class AbstractJobDescription implements JobDescription {
     }
 
     private String unquote(final String value) {
+        final String retVal;
         if (value.length() < 2) {
-            return value;
+            retVal = value;
+        } else if (value.charAt(0) == '"'
+                && value.charAt(value.length() - 1) == '"') {
+            retVal = value.substring(1, value.length() - 1);
+        } else {
+            retVal = value;
         }
-        if (value.charAt(0) == '"' && value.charAt(value.length() - 1) == '"') {
-            return value.substring(1, value.length() - 1);
-        }
-        return value;
+        return retVal;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public JobDescription clone() throws CloneNotSupportedException {
+        return (JobDescription) super.clone();
     }
 
 }

@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -39,6 +38,9 @@ import java.util.Map;
  * @version $Revision$
  */
 public final class LocalBackend implements Backend {
+
+    /** Id of the local backend. */
+    public static final String LOCAL = "local";
 
     private int count;
 
@@ -94,7 +96,7 @@ public final class LocalBackend implements Backend {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Local";
+        return LocalBackend.LOCAL;
     }
 
     /** {@inheritDoc} */

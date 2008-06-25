@@ -55,9 +55,9 @@ public final class WorkerImpl implements Worker {
 
     private final Alive alive;
 
-    private WorkerImpl(final Controller cont) {
+    private WorkerImpl(final Controller cont, final Uuid id) {
         this.controller = cont;
-        this.uuid = UuidFactory.generate();
+        this.uuid = id;
         this.alive = new Alive(cont, this.uuid);
     }
 
@@ -135,11 +135,18 @@ public final class WorkerImpl implements Worker {
             } else {
                 proxyFile = "proxyFile";
             }
+            final Uuid id;
+            if (args.length > 1) {
+                WorkerImpl.LOGGER.info("Using predefined Uuid: " + args[1]);
+                id = UuidFactory.create(args[1]);
+            } else {
+                id = UuidFactory.generate();
+            }
             final FileInputStream fis = new FileInputStream(proxyFile);
             final ObjectInputStream in = new ObjectInputStream(fis);
             final Controller comp = (Controller) in.readObject();
             in.close();
-            new WorkerImpl(comp).start();
+            new WorkerImpl(comp, id).start();
         } catch (final IOException e) {
             WorkerImpl.LOGGER.warning(e.getMessage());
         } catch (final ClassNotFoundException e) {

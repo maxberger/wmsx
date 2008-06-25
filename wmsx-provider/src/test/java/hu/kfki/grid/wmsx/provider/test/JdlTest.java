@@ -81,9 +81,15 @@ public class JdlTest extends TestCase {
         jdl.deleteOnExit();
 
         final JobDescription desc = new JDLJobDescription(jdl);
-        Assert.assertEquals(desc.getStringEntry(JobDescription.EXECUTABLE),
-                "bla");
-        Assert.assertEquals(desc.getStringEntry("Comment"), null);
+        Assert.assertEquals("bla", desc
+                .getStringEntry(JobDescription.EXECUTABLE));
+        Assert.assertEquals(null, desc.getStringEntry("Comment"));
+
+        final JobDescription desc2 = desc.clone();
+        desc.replaceEntry(JobDescription.EXECUTABLE, "Hahaha!");
+        Assert.assertEquals("bla", desc2
+                .getStringEntry(JobDescription.EXECUTABLE));
+        Assert.assertEquals(null, desc2.getStringEntry("Comment"));
 
     }
 }

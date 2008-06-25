@@ -38,6 +38,9 @@ import java.io.IOException;
  */
 public final class WorkerBackend implements Backend {
 
+    /** Id for worker backend. */
+    public static final String WORKER = "worker";
+
     private int count;
 
     private final ControllerImpl controllerImpl;
@@ -86,7 +89,7 @@ public final class WorkerBackend implements Backend {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Worker";
+        return WorkerBackend.WORKER;
     }
 
     /** {@inheritDoc} */

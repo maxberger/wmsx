@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -24,6 +23,7 @@ package hu.kfki.grid.wmsx.worker;
 
 import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.Backends;
+import hu.kfki.grid.wmsx.backends.local.LocalBackend;
 import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.provider.JdlJobFactory;
@@ -37,6 +37,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.logging.Logger;
+
+import net.jini.id.UuidFactory;
 
 /**
  * Starter class for an actual worker controller.
@@ -128,18 +130,29 @@ public final class ControllerServer {
      */
     public void submitWorker(final Backend backend) {
         final Backend submitTo;
-        if ("worker".equals(backend.toString())) {
-            submitTo = Backends.getInstance().get("local");
+        if (WorkerBackend.WORKER.equals(backend.toString())) {
+            submitTo = Backends.getInstance().get(LocalBackend.LOCAL);
         } else {
             submitTo = backend;
         }
         if (this.jobDesc != null) {
-            this.controller.setShutdownState(false);
-            this.workerCount++;
-            final JobFactory fac = new JdlJobFactory(this.jobDesc, null,
-                    new File(this.tmpDir, Integer.toString(this.workerCount))
+            try {
+                final JobDescription jd = this.jobDesc.clone();
+                this.controller.setShutdownState(false);
+                final JobFactory fac;
+                jd.replaceEntry(JobDescription.ARGUMENTS, "proxyFile "
+                        + UuidFactory.generate());
+                synchronized (this) {
+                    this.workerCount++;
+                    fac = new JdlJobFactory(jd, null, new File(this.tmpDir,
+                            Integer.toString(this.workerCount))
                             .getAbsolutePath(), submitTo, 0);
-            WmsxProviderImpl.getInstance().addJobFactory(fac);
+                }
+                WmsxProviderImpl.getInstance().addJobFactory(fac);
+            } catch (final CloneNotSupportedException e) {
+                ControllerServer.LOGGER.warning("Internal error: "
+                        + e.getMessage());
+            }
         } else {
             ControllerServer.LOGGER.warning("Worker not initialized!");
         }
