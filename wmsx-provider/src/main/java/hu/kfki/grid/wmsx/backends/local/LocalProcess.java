@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -138,6 +137,7 @@ public class LocalProcess implements Runnable {
 
         final String arguments = this.job
                 .getStringEntry(JobDescription.ARGUMENTS);
+
         final StringBuilder commandline = new StringBuilder(command);
         if (arguments != null) {
             commandline.append(' ');

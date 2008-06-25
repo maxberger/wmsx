@@ -6,5 +6,6 @@
     <fileset name="Alle" enabled="true" check-config-name="WMSX-Checkstyle" local="true">
         <file-match-pattern match-pattern="." include-pattern="true"/>
     </fileset>
+    <filter name="UnOpenedFiles" enabled="true"/>
     <filter name="FilesInSync2" enabled="true"/>
 </fileset-config>

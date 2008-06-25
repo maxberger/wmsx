@@ -28,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import condor.classad.ClassAdParser;
@@ -43,11 +44,11 @@ import condor.classad.RecordExpr;
  */
 public class JDLJobDescription extends AbstractJobDescription {
 
-    private final RecordExpr erecord;
+    private RecordExpr erecord;
 
-    private final File origin;
+    private File origin;
 
-    private final File baseDir;
+    private File baseDir;
 
     private boolean changed;
 
@@ -117,6 +118,8 @@ public class JDLJobDescription extends AbstractJobDescription {
             w.write(this.toString());
             w.close();
             jdl.deleteOnExit();
+            this.changed = false;
+            this.origin = jdl;
         } else {
             jdl = this.origin;
         }
@@ -154,6 +157,24 @@ public class JDLJobDescription extends AbstractJobDescription {
     /** {@inheritDoc} */
     public String getName() {
         return this.origin.getName();
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
+    @Override
+    public JobDescription clone() throws CloneNotSupportedException {
+        final JDLJobDescription newDesc = (JDLJobDescription) super.clone();
+        newDesc.origin = null;
+        newDesc.changed = true;
+        newDesc.erecord = new RecordExpr();
+        newDesc.baseDir = this.baseDir;
+        final Iterator<String> it = this.erecord.attributes();
+        while (it.hasNext()) {
+            final String attr = it.next();
+            final Expr value = this.erecord.lookup(attr);
+            newDesc.erecord.insertAttribute(attr, value);
+        }
+        return newDesc;
     }
 
 }

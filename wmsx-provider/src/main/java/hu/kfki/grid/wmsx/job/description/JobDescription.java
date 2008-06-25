@@ -31,7 +31,7 @@ import java.util.List;
  * 
  * @version $Revision$
  */
-public interface JobDescription {
+public interface JobDescription extends Cloneable {
 
     /** Main executable. */
     String EXECUTABLE = "Executable";
@@ -172,4 +172,10 @@ public interface JobDescription {
      */
     String getName();
 
+    /**
+     * @return a clone of this JobDescription.
+     * @throws CloneNotSupportedException
+     *             if this JobDescrition does not support cloning.
+     */
+    JobDescription clone() throws CloneNotSupportedException;
 }

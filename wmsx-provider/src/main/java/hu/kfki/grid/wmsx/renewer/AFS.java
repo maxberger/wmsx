@@ -15,25 +15,31 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.renewer;
 
+/**
+ * Renewer for AFS passwords.
+ * 
+ * @version $Revision$
+ */
 public class AFS extends Renewer {
 
     public AFS(final String password) {
         super(password);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean exec(final String password) {
         return PasswordAppLauncher.getInstance().launch(
                 new String[] { "kinit" }, password);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void postexec() {
         PasswordAppLauncher.getInstance()
