@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -74,7 +73,7 @@ public final class WorkerImpl implements Worker {
         WorkerImpl.LOGGER.info("Worker started, Uuid is " + this.uuid);
         try {
             this.controller.registerWorker(this.uuid, (Worker) Exporter
-                    .export(this));
+                    .getInstance().export(this));
             while (!terminate) {
                 this.logWithTime("Checking for work");
 
@@ -114,7 +113,8 @@ public final class WorkerImpl implements Worker {
             WorkerImpl.LOGGER.warning(re.getMessage());
         }
         this.alive.stop();
-        WorkerImpl.LOGGER.info("Shutting down.");
+        WorkerImpl.LOGGER.info("Unexporting");
+        Exporter.getInstance().unexport();
     }
 
     /**

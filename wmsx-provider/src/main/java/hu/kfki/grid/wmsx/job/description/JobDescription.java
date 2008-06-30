@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -106,6 +105,11 @@ public interface JobDescription extends Cloneable {
      * Id of the workflow. Used internally for Worker Task.
      */
     String WORKFLOWID = "WorkflowId";
+
+    /**
+     * Jdl parameter for preference to run locally.
+     */
+    String LOCAL = "Local";
 
     /**
      * Retrieve value for a String entry.

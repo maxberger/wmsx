@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.logging.Logger;
 
+import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
 
 /**
@@ -69,7 +70,8 @@ public final class ControllerServer {
 
     private ControllerServer() {
         this.controller = new ControllerImpl();
-        this.controllerStub = (Controller) Exporter.export(this.controller);
+        this.controllerStub = (Controller) Exporter.getInstance().export(
+                this.controller);
     }
 
     /**
@@ -140,8 +142,11 @@ public final class ControllerServer {
                 final JobDescription jd = this.jobDesc.clone();
                 this.controller.setShutdownState(false);
                 final JobFactory fac;
-                jd.replaceEntry(JobDescription.ARGUMENTS, "proxyFile "
-                        + UuidFactory.generate());
+                final Uuid uuid = UuidFactory.generate();
+                if (LocalBackend.LOCAL.equals(backend.toString())) {
+                    this.controller.setIsLocal(uuid);
+                }
+                jd.replaceEntry(JobDescription.ARGUMENTS, "proxyFile " + uuid);
                 synchronized (this) {
                     this.workerCount++;
                     fac = new JdlJobFactory(jd, null, new File(this.tmpDir,

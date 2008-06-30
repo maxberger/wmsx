@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -33,6 +32,7 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +58,8 @@ public class ControllerImpl implements Controller, Runnable {
 
     private static final int MSEC_TO_SEC = 1000;
 
+    private static final long IGNORE_PREFERRED_AFTER = 15000;
+
     private static final Logger LOGGER = Logger.getLogger(ControllerImpl.class
             .toString());
 
@@ -81,6 +83,8 @@ public class ControllerImpl implements Controller, Runnable {
 
     private final Set<Worker> registeredWorkers = new HashSet<Worker>();
 
+    private final Set<String> local = new TreeSet<String>();
+
     private boolean pendingCheckRunning;
 
     private boolean shutdownState;
@@ -96,19 +100,19 @@ public class ControllerImpl implements Controller, Runnable {
         if (this.shutdownState) {
             return this.shutdownWorkDescription;
         }
-        final ControllerWorkDescription cwd;
         final Object jobid;
         this.ping(uuid);
+        final ControllerWorkDescription cwd;
         synchronized (this.pending) {
-            if (this.pending.isEmpty()) {
+            final long now = System.currentTimeMillis();
+            cwd = this.getWorkdescriptionForUuid(uuid, now);
+            if (cwd == null) {
                 return null;
             }
-            cwd = this.pending.remove(0);
             jobid = cwd.getWorkDescription().getId();
             this.running.put(jobid, cwd);
             this.assignedTo.put(jobid, uuid);
-            this.assignedAt
-                    .put(jobid, Long.valueOf(System.currentTimeMillis()));
+            this.assignedAt.put(jobid, Long.valueOf(now));
         }
         ControllerImpl.LOGGER.info("Assigning job " + jobid + " to worker "
                 + uuid);
@@ -116,6 +120,27 @@ public class ControllerImpl implements Controller, Runnable {
                 JobState.RUNNING);
         this.startPendingCheck();
         return cwd.getWorkDescription();
+    }
+
+    private ControllerWorkDescription getWorkdescriptionForUuid(
+            final Uuid uuid, final long now) {
+        ControllerWorkDescription cwd = null;
+        synchronized (this.local) {
+            final Iterator<ControllerWorkDescription> it = this.pending
+                    .iterator();
+            while (it.hasNext() && cwd == null) {
+                final ControllerWorkDescription cwdCur = it.next();
+                final Boolean prefLocal = cwdCur.getPreferLocal();
+                if (prefLocal == null
+                        || now - cwdCur.getCreationTime() > ControllerImpl.IGNORE_PREFERRED_AFTER
+                        || prefLocal.booleanValue() == this.local.contains(uuid
+                                .toString())) {
+                    cwd = cwdCur;
+                    it.remove();
+                }
+            }
+        }
+        return cwd;
     }
 
     private void startPendingCheck() {
@@ -332,6 +357,7 @@ public class ControllerImpl implements Controller, Runnable {
      */
     public void setShutdownState(final boolean newShutdown) {
         this.shutdownState = newShutdown;
+        this.notifyAllWorkers();
     }
 
     /** {@inheritDoc} */
@@ -342,4 +368,17 @@ public class ControllerImpl implements Controller, Runnable {
             this.registeredWorkers.add(worker);
         }
     }
+
+    /**
+     * Set this worker as a "local" worker.
+     * 
+     * @param uuid
+     *            Uuid of the worker
+     */
+    public void setIsLocal(final Uuid uuid) {
+        synchronized (this.local) {
+            this.local.add(uuid.toString());
+        }
+    }
+
 }

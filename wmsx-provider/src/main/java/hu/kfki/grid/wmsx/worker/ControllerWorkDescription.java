@@ -15,10 +15,9 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.worker;
 
@@ -29,10 +28,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+/**
+ * Describes work with additional attributes needed by the controller.
+ * 
+ * @version $Revision$
+ */
 public class ControllerWorkDescription {
 
     private final WorkDescription workDescription;
 
+    private final long creationTime;
+
+    private final Boolean preferLocal;
+
+    /**
+     * Default constructor.
+     * 
+     * @param uid
+     *            (worker) backend specific uid.
+     * @param jobDesc
+     *            work description.
+     */
     public ControllerWorkDescription(final Object uid,
             final JobDescription jobDesc) {
         final Map<String, byte[]> inputSandbox = FileUtil.createSandbox(jobDesc
@@ -56,9 +72,33 @@ public class ControllerWorkDescription {
                 .getStringEntry(JobDescription.STDOUTPUT), jobDesc
                 .getStringEntry(JobDescription.STDERROR), jobDesc
                 .getStringEntry(JobDescription.WORKFLOWID));
+        this.creationTime = System.currentTimeMillis();
+        final String pLocal = jobDesc.getStringEntry(JobDescription.LOCAL);
+        if (pLocal != null) {
+            this.preferLocal = Boolean.valueOf(pLocal);
+        } else {
+            this.preferLocal = null;
+        }
     }
 
+    /**
+     * @return The work description to send to the client.
+     */
     public WorkDescription getWorkDescription() {
         return this.workDescription;
+    }
+
+    /**
+     * @return The time this work description was created.
+     */
+    public long getCreationTime() {
+        return this.creationTime;
+    }
+
+    /**
+     * @return if local execution is preferred;
+     */
+    public Boolean getPreferLocal() {
+        return this.preferLocal;
     }
 }
