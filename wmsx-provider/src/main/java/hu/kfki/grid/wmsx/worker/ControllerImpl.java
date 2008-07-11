@@ -88,6 +88,8 @@ public class ControllerImpl implements Controller, Runnable {
 
     private boolean shutdownState;
 
+    private final FileManager fileManager = new FileManager();
+
     ControllerImpl() {
         this.shutdownState = false;
         this.shutdownWorkDescription = new ControllerWorkDescription(
@@ -108,10 +110,12 @@ public class ControllerImpl implements Controller, Runnable {
             if (cwd == null) {
                 return null;
             }
-            jobid = cwd.getWorkDescription().getId();
+            final WorkDescription wd = cwd.getWorkDescription();
+            jobid = wd.getId();
             this.running.put(jobid, cwd);
             this.assignedTo.put(jobid, uuid);
             this.assignedAt.put(jobid, Long.valueOf(now));
+            this.fileManager.modifyInputSandbox(uuid, wd.getInputSandbox());
         }
         ControllerImpl.LOGGER.info("Assigning job " + jobid + " to worker "
                 + uuid);
@@ -202,7 +206,10 @@ public class ControllerImpl implements Controller, Runnable {
             if (this.running.containsKey(id)) {
                 this.running.remove(id);
                 this.assignedTo.remove(id);
-                this.success.put(id, result.getOutputSandbox());
+                final Map<String, byte[]> outputSandbox = result
+                        .getOutputSandbox();
+                this.success.put(id, outputSandbox);
+                this.fileManager.parseOutputSandbox(uuid, outputSandbox);
                 isNew = true;
             } else {
                 isNew = false;
