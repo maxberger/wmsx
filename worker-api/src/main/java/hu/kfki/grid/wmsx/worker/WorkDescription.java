@@ -15,10 +15,9 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.worker;
 
@@ -101,6 +100,9 @@ public class WorkDescription implements Serializable {
         return this.id;
     }
 
+    /**
+     * @return The input sandbox for this job.
+     */
     public Map<String, byte[]> getInputSandbox() {
         return this.inputSandbox;
     }
