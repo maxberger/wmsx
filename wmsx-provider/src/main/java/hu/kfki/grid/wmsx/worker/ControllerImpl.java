@@ -32,7 +32,6 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -124,23 +123,29 @@ public class ControllerImpl implements Controller, Runnable {
 
     private ControllerWorkDescription getWorkdescriptionForUuid(
             final Uuid uuid, final long now) {
-        ControllerWorkDescription cwd = null;
-        synchronized (this.local) {
-            final Iterator<ControllerWorkDescription> it = this.pending
-                    .iterator();
-            while (it.hasNext() && cwd == null) {
-                final ControllerWorkDescription cwdCur = it.next();
-                final Boolean prefLocal = cwdCur.getPreferLocal();
-                if (prefLocal == null
-                        || now - cwdCur.getCreationTime() > ControllerImpl.IGNORE_PREFERRED_AFTER
-                        || prefLocal.booleanValue() == this.local.contains(uuid
-                                .toString())) {
-                    cwd = cwdCur;
-                    it.remove();
-                }
-            }
+        // ControllerWorkDescription cwd = null;
+        // synchronized (this.local) {
+        // final Iterator<ControllerWorkDescription> it = this.pending
+        // .iterator();
+        // while (it.hasNext() && cwd == null) {
+        // final ControllerWorkDescription cwdCur = it.next();
+        // final Boolean prefLocal = cwdCur.getPreferLocal();
+        // if (prefLocal == null
+        // || now - cwdCur.getCreationTime() >
+        // ControllerImpl.IGNORE_PREFERRED_AFTER
+        // || prefLocal.booleanValue() == this.local.contains(uuid
+        // .toString())) {
+        // cwd = cwdCur;
+        // it.remove();
+        // }
+        // }
+        // }
+        // return cwd;
+        if (this.pending.isEmpty()) {
+            return null;
+        } else {
+            return this.pending.remove(0);
         }
-        return cwd;
     }
 
     private void startPendingCheck() {
