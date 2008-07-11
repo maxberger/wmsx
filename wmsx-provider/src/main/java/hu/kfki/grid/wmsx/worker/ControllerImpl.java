@@ -57,7 +57,7 @@ public class ControllerImpl implements Controller, Runnable {
 
     private static final int MSEC_TO_SEC = 1000;
 
-    private static final long IGNORE_PREFERRED_AFTER = 15000;
+    // private static final long IGNORE_PREFERRED_AFTER = 15000;
 
     private static final Logger LOGGER = Logger.getLogger(ControllerImpl.class
             .toString());
