@@ -72,11 +72,11 @@ public class App {
 
         try {
             execScript = GAT.createFile(context, new URI("file:/home/berger/input/twocat.sh"));
-            fileout = GAT.createFile(context, new URI("jobsubmit_out.txt"));
-            fileerr = GAT.createFile(context, new URI("jobsubmit_err.txt"));
+            fileout = GAT.createFile(context, new URI("file:/home/berger/output/jobsubmit_out.txt"));
+            fileerr = GAT.createFile(context, new URI("file:/home/berger/output/jobsubmit_err.txt"));
             input1 = GAT.createFile(context, new URI("file:/home/berger/input/hello"));
             input2 = GAT.createFile(context, new URI("file:/home/berger/input/world"));
-            output1 = GAT.createFile(context, new URI("output.txt"));
+            output1 = GAT.createFile(context, new URI("file:/home/berger/output/output.txt"));
         } catch (Exception e) {
             e.printStackTrace();
         }
