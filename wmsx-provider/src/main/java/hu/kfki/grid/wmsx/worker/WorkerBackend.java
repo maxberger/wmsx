@@ -81,8 +81,7 @@ public final class WorkerBackend implements Backend {
         final Object id = Integer.valueOf(this.count);
         final JobDescription desc = job;
         this.controllerImpl.addWork(new ControllerWorkDescription(id, desc));
-        return new SubmissionResults(this.controllerImpl.getJuidForId(id),
-                null, null, null, 0, 0);
+        return new SubmissionResults(this.controllerImpl.getJuidForId(id));
     }
 
     /** {@inheritDoc} */

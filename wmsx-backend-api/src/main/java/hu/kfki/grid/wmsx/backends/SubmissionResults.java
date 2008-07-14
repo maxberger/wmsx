@@ -15,36 +15,44 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends;
 
+/**
+ * Carries the results from a job submission back to the backend.
+ * 
+ * @version $Revision$
+ */
 public class SubmissionResults {
-    final JobUid jobId;
+    private final JobUid jobId;
 
-    final String iStream;
+    private final String iStream;
 
-    final String oStream;
+    private final String oStream;
 
-    final String eStream;
+    private final String eStream;
 
-    final int shadowpid;
+    private final int shadowpid;
 
-    final int port;
+    private final int port;
 
-    public SubmissionResults(final JobUid jobId, final String stream,
+    public SubmissionResults(final JobUid jobUid, final String stream,
             final String stream2, final String stream3, final int pid,
             final int portNum) {
         super();
-        this.jobId = jobId;
+        this.jobId = jobUid;
         this.iStream = stream;
         this.oStream = stream2;
         this.eStream = stream3;
         this.shadowpid = pid;
         this.port = portNum;
+    }
+
+    public SubmissionResults(final JobUid jobUid) {
+        this(jobUid, null, null, null, 0, 0);
     }
 
     public String getEStream() {
