@@ -90,7 +90,7 @@ public final class LocalBackend implements Backend {
         final LocalProcess p = new LocalProcess(this.state, juid, desc);
         this.processes.put(juid, p);
         new Thread(p).start();
-        return new SubmissionResults(juid, null, null, null, 0, 0);
+        return new SubmissionResults(juid);
     }
 
     /** {@inheritDoc} */

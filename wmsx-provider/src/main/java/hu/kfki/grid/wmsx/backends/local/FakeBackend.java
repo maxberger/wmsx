@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -87,8 +86,7 @@ public final class FakeBackend implements Backend {
         this.count++;
         final Integer in = Integer.valueOf(this.count);
         this.state.put(in, JobState.NONE);
-        return new SubmissionResults(new JobUid(this, in), null, null, null, 0,
-                0);
+        return new SubmissionResults(new JobUid(this, in));
     }
 
     /** {@inheritDoc} */
