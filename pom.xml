@@ -39,6 +39,7 @@
   <modules>
     <module>worker-api</module>
     <module>wmsx-api</module>
+    <module>wmsx-backend-api</module>
     <module>wmsx-common</module>
     <module>worker</module>
     <module>wmsx-dl</module>
