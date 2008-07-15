@@ -173,9 +173,12 @@ public class GatBackend implements Backend {
                 .getStringEntry(JobDescription.EXECUTABLE));
 
         final String argumentStr = job.getStringEntry(JobDescription.ARGUMENTS);
-        final String[] arguments = argumentStr.split(" ");
-
-        swDescription.setArguments(arguments);
+        if (argumentStr != null) {
+            final String[] arguments = argumentStr.split(" ");
+            swDescription.setArguments(arguments);
+        } else {
+            swDescription.setArguments("");
+        }
 
         final File baseDir = job.getBaseDir();
         for (final String fileName : job
