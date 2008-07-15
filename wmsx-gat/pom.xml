@@ -25,6 +25,10 @@
           <extraJvmArguments>-Xmx1024m</extraJvmArguments>
           <programs>
             <program>
+              <mainClass>at.ac.uibk.dps.wmsx.gat.App</mainClass>
+              <name>app</name>
+            </program>
+            <program>
               <mainClass>at.ac.uibk.dps.wmsx.gat.App2</mainClass>
               <name>app2</name>
             </program>
@@ -50,12 +54,16 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-<dependency>
-  <groupId>hu.kfki.grid</groupId>
+    <dependency>
+      <groupId>hu.kfki.grid</groupId>
       <artifactId>wmsx-backend-api</artifactId>
       <version>1.1-SNAPSHOT</version>
-
-</dependency>
+    </dependency>
+    <dependency>
+      <groupId>hu.kfki.grid</groupId>
+      <artifactId>wmsx-provider</artifactId>
+      <version>1.1-SNAPSHOT</version>
+    </dependency>
 <!--    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
