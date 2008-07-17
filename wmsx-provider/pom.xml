@@ -123,11 +123,11 @@
       <artifactId>commons-cli</artifactId>
       <version>1.0</version>
     </dependency>
-    <dependency>
+<!--    <dependency>
       <groupId>bouncycastle</groupId>
       <artifactId>bcprov-jdk14</artifactId>
       <version>136</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
