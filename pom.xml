@@ -46,6 +46,8 @@
     <module>wmsx-provider</module>
     <module>wmsx-requestor</module>
     <module>wmsx</module>
+    <module>wmsx-gat</module>
+    <module>wmsx-ng</module>
   </modules>
   <distributionManagement>
     <site>
