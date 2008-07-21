@@ -228,9 +228,9 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 JobWatcher.getInstance().addWatch(id,
                         LogListener.getLogListener());
                 JobWatcher.getInstance().addWatch(id, this);
-                if (ResultListener.getResultListener().setJob(id, job)) {
+                if (ResultListener.getInstance().setJob(id, job)) {
                     JobWatcher.getInstance().addWatch(id,
-                            ResultListener.getResultListener());
+                            ResultListener.getInstance());
                 }
                 final WritableByteChannel oChannel;
                 if (output != null && result.getOStream() != null) {

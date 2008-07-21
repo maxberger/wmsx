@@ -15,13 +15,13 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.job.result;
 
+import hu.kfki.grid.wmsx.backends.DelayedExecution;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.provider.JdlJob;
@@ -32,7 +32,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class ResultListener implements JobListener {
+/**
+ * Listens to job status and receives the result or the error log once the job
+ * is done.
+ * 
+ * @version $Revision$
+ * 
+ */
+public final class ResultListener implements JobListener {
 
     private static ResultListener resultListener;
 
@@ -44,13 +51,25 @@ public class ResultListener implements JobListener {
     private ResultListener() {
     }
 
-    public static synchronized ResultListener getResultListener() {
+    /**
+     * @return The Singleton Instance
+     */
+    public static synchronized ResultListener getInstance() {
         if (ResultListener.resultListener == null) {
             ResultListener.resultListener = new ResultListener();
         }
         return ResultListener.resultListener;
     }
 
+    /**
+     * Associate the given jobid with the appropriate job description.
+     * 
+     * @param id
+     *            JobUID
+     * @param job
+     *            Job Description.
+     * @return true if the job description was not empty.
+     */
     public boolean setJob(final JobUid id, final JdlJob job) {
         if (job != null) {
             this.resultJobs.put(id, job);
@@ -59,6 +78,7 @@ public class ResultListener implements JobListener {
         return false;
     }
 
+    /** {@inheritDoc} */
     public void done(final JobUid id, final boolean success) {
         final JdlJob job = this.resultJobs.get(id);
         if (job == null) {
@@ -82,20 +102,24 @@ public class ResultListener implements JobListener {
 
     private File prepareResultDir(final JdlJob job) throws IOException {
         final File dir = new File(job.getResultDir()).getCanonicalFile();
-        dir.mkdirs();
+        if (!dir.mkdirs() && !dir.exists()) {
+            throw new IOException(dir + " could not be created");
+        }
         return dir;
     }
 
     private void retrieveResult(final JobUid id, final JdlJob job,
             final File dir) {
-        final Process p = id.getBackend().retrieveResult(id, dir);
+        final DelayedExecution p = id.getBackend().retrieveResult(id, dir);
         new Thread(new ResultMoverAndPostexec(p, dir, job)).start();
     }
 
+    /** {@inheritDoc} */
     public void running(final JobUid id) {
         // Empty
     }
 
+    /** {@inheritDoc} */
     public void startup(final JobUid id) {
         // Empty
     }

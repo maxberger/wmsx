@@ -30,7 +30,6 @@ import hu.kfki.grid.wmsx.util.ScriptLauncher;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -91,38 +90,12 @@ public class LocalProcess implements Runnable {
     }
 
     private void startup() throws IOException {
-        this.workdir = File.createTempFile("wmsx", null);
-        if (!this.workdir.delete()) {
-            throw new IOException("Failed to delete: " + this.workdir);
-        }
-        if (!this.workdir.mkdirs()) {
-            throw new IOException("Failed to create tempdir: " + this.workdir);
-        }
+        this.workdir = FileUtil.createTempDir();
         LocalProcess.LOGGER.info(this.workdir.toString());
 
         final List<String> inputList = this.job
                 .getListEntry(JobDescription.INPUTSANDBOX);
-        this.copyList(inputList, this.job.getBaseDir(), this.workdir);
-    }
-
-    private void copyList(final List<String> inputList, final File from,
-            final File to) throws IOException {
-        IOException ex = null;
-        final Iterator<String> it = inputList.iterator();
-        while (it.hasNext()) {
-            final String fileName = it.next();
-            final File inputFile = FileUtil.resolveFile(from, fileName);
-            final File toFile = new File(to, inputFile.getName());
-            try {
-                FileUtil.copy(inputFile, toFile);
-            } catch (final IOException e) {
-                LocalProcess.LOGGER.warning(e.getMessage());
-                ex = e;
-            }
-        }
-        if (ex != null) {
-            throw new IOException("Error copying some files");
-        }
+        FileUtil.copyList(inputList, this.job.getBaseDir(), this.workdir);
     }
 
     private void running() throws IOException {
@@ -172,7 +145,7 @@ public class LocalProcess implements Runnable {
         final List<String> list = this.job
                 .getListEntry(JobDescription.OUTPUTSANDBOX);
         try {
-            this.copyList(list, this.workdir, realTarget);
+            FileUtil.copyList(list, this.workdir, realTarget);
         } catch (final IOException e) {
             LocalProcess.LOGGER.warning(e.getMessage());
         }

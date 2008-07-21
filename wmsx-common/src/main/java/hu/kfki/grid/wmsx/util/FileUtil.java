@@ -15,10 +15,9 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.util;
 
@@ -29,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -40,6 +40,8 @@ import java.util.logging.Logger;
  * @version $Revision$
  */
 public final class FileUtil {
+    private static final String FAILED_TO_DELETE = "Failed to delete: ";
+
     private static final String BIN_CHMOD = "/bin/chmod";
 
     private static final int BUFSIZE = 4096;
@@ -274,9 +276,61 @@ public final class FileUtil {
             f.deleteOnExit();
         } else {
             if (!f.delete()) {
-                FileUtil.LOGGER.warning("Failed to delete: "
+                FileUtil.LOGGER.warning(FileUtil.FAILED_TO_DELETE
                         + f.getAbsolutePath());
             }
+        }
+    }
+
+    /**
+     * Creates a temporary directory for use. Note: You need to delete it after
+     * use
+     * 
+     * @return a File object pointing to the new directory.
+     * @throws IOException
+     *             if anything goes wrong.
+     * @see {@link #cleanDir(File, boolean)}
+     */
+    public static File createTempDir() throws IOException {
+        final File wd = File.createTempFile("wmsx", null);
+        if (!wd.delete()) {
+            throw new IOException(FileUtil.FAILED_TO_DELETE + wd);
+        }
+        if (!wd.mkdirs()) {
+            throw new IOException("Failed to create tempdir: " + wd);
+        }
+        return wd;
+    }
+
+    /**
+     * Copy a list of files from a to b.
+     * 
+     * @param inputList
+     *            list of filenames, may contain path elements
+     * @param from
+     *            source directory
+     * @param to
+     *            target directory
+     * @throws IOException
+     *             if anything goes wrong.
+     */
+    public static void copyList(final List<String> inputList, final File from,
+            final File to) throws IOException {
+        IOException ex = null;
+        final Iterator<String> it = inputList.iterator();
+        while (it.hasNext()) {
+            final String fileName = it.next();
+            final File inputFile = FileUtil.resolveFile(from, fileName);
+            final File toFile = new File(to, inputFile.getName());
+            try {
+                FileUtil.copy(inputFile, toFile);
+            } catch (final IOException e) {
+                FileUtil.LOGGER.warning(e.getMessage());
+                ex = e;
+            }
+        }
+        if (ex != null) {
+            throw new IOException("Error copying some files");
         }
     }
 

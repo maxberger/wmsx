@@ -163,7 +163,7 @@ public class JDLJobDescription extends AbstractJobDescription {
     @Override
     public JobDescription clone() throws CloneNotSupportedException {
         final JDLJobDescription newDesc = (JDLJobDescription) super.clone();
-        newDesc.origin = null;
+        newDesc.origin = this.origin;
         newDesc.changed = true;
         newDesc.erecord = new RecordExpr();
         newDesc.baseDir = this.baseDir;

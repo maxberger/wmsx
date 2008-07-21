@@ -53,7 +53,7 @@ public interface Backend {
      *            directory where to store the results file to.
      * @return a process to wait for, or null
      */
-    Process retrieveResult(final JobUid id, final File dir);
+    DelayedExecution retrieveResult(final JobUid id, final File dir);
 
     /**
      * Submit a JDL file.
