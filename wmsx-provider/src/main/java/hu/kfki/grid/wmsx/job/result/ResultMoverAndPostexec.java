@@ -15,13 +15,13 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
 
 package hu.kfki.grid.wmsx.job.result;
 
+import hu.kfki.grid.wmsx.backends.DelayedExecution;
 import hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider;
 import hu.kfki.grid.wmsx.provider.JdlJob;
 import hu.kfki.grid.wmsx.provider.WmsxProviderImpl;
@@ -41,6 +41,12 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+/**
+ * Waits for the results to be downloaded, moves then to the right directory,
+ * and then executes "postexecs" for this job.
+ * 
+ * @version $Revision$
+ */
 public class ResultMoverAndPostexec implements Runnable {
 
     private static final String POSTEXEC_SUFFIX = "_postexec";
@@ -52,30 +58,38 @@ public class ResultMoverAndPostexec implements Runnable {
     private static final Logger LOGGER = Logger
             .getLogger(ResultMoverAndPostexec.class.toString());
 
-    private final Process process;
+    private final DelayedExecution process;
 
     private final File dir;
 
     private final JdlJob job;
 
-    public ResultMoverAndPostexec(final Process p, final File d, final JdlJob j) {
+    /**
+     * Default constructor.
+     * 
+     * @param p
+     *            DelayedExecution to wait for.
+     * @param d
+     *            directory to move files to.
+     * @param j
+     *            Job description.
+     */
+    public ResultMoverAndPostexec(final DelayedExecution p, final File d,
+            final JdlJob j) {
         this.process = p;
         this.dir = d;
         this.job = j;
     }
 
+    /**
+     * Start the actual moving and postexec process.
+     */
     public void run() {
-        try {
-            if (this.process != null) {
-                this.process.waitFor();
-            }
-            this.moveResult();
-            this.postExec();
-
-        } catch (final InterruptedException e) {
-            ResultMoverAndPostexec.LOGGER.warning(e.getMessage());
+        if (this.process != null) {
+            this.process.waitFor();
         }
-
+        this.moveResult();
+        this.postExec();
     }
 
     private void moveResult() {

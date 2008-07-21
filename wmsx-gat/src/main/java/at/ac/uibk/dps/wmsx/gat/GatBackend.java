@@ -22,6 +22,7 @@
 package at.ac.uibk.dps.wmsx.gat;
 
 import hu.kfki.grid.wmsx.backends.Backend;
+import hu.kfki.grid.wmsx.backends.DelayedExecution;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
@@ -31,8 +32,10 @@ import hu.kfki.grid.wmsx.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import org.gridlab.gat.GAT;
@@ -49,17 +52,23 @@ import org.gridlab.gat.resources.SoftwareDescription;
 import org.gridlab.gat.security.CertificateSecurityContext;
 
 /**
- * gLite backend based on GAT.
+ * gLite back-end based on GAT.
  * 
  * @version $Revision$
  */
+// CHECKSTYLE:OFF
 public class GatBackend implements Backend {
+    // CHECKSTYLE:ON
     private static final Logger LOGGER = Logger.getLogger(GatBackend.class
             .toString());
-    private static final String BACKEND_NAME = "Glite";
+
+    private static final String GAT_BACKEND_NAME = "Glite";
 
     private final GATContext context;
+
     private final ResourceBroker broker;
+
+    private final Map<Job, File> tempDir = new ConcurrentHashMap<Job, File>();
 
     /**
      * Default constructor.
@@ -68,15 +77,18 @@ public class GatBackend implements Backend {
         this.context = new GATContext();
         final Preferences globalPrefs = new Preferences();
 
-        globalPrefs.put("ResourceBroker.adaptor.name", GatBackend.BACKEND_NAME);
-        globalPrefs.put("AdvertService.adaptor.name", GatBackend.BACKEND_NAME);
+        globalPrefs.put("ResourceBroker.adaptor.name",
+                GatBackend.GAT_BACKEND_NAME);
+        globalPrefs.put("AdvertService.adaptor.name",
+                GatBackend.GAT_BACKEND_NAME);
 
         // e.g. /home/tom/workspace/thomas/lib/adaptors
         System.setProperty("gat.adaptor.path",
                 GliteTestsConstants.GAT_ADAPTOR_PATH);
 
         // System.setProperty("gat.debug", "true");
-        System.setProperty("gat.verbose", "true");
+        // System.setProperty("gat.verbose", "true");
+        System.setProperty("gat.verbose", "false");
 
         /** ************************************************* */
         /** Information necessary for VOMS proxy creation ** */
@@ -158,10 +170,50 @@ public class GatBackend implements Backend {
         // TODO
     }
 
+    private static class GatDelayedExecution implements DelayedExecution {
+
+        private static final int POST_STAGE_SLEEP_TIME = 3000;
+
+        private final Job job;
+
+        private final File source;
+
+        private final File dest;
+
+        public GatDelayedExecution(final Job j, final File s, final File d) {
+            this.job = j;
+            this.source = s;
+            this.dest = d;
+        }
+
+        public void waitFor() {
+            if (this.source == null) {
+                return;
+            }
+
+            while (this.job.getState() == Job.POST_STAGING) {
+                try {
+                    Thread
+                            .sleep(GatBackend.GatDelayedExecution.POST_STAGE_SLEEP_TIME);
+                } catch (final InterruptedException ie) {
+                    // ignore
+                }
+            }
+
+            try {
+                FileUtil.copyList(Arrays.asList(this.source.list()),
+                        this.source, this.dest);
+                FileUtil.cleanDir(this.source, false);
+            } catch (final IOException e) {
+                GatBackend.LOGGER.warning(e.getMessage());
+            }
+        }
+    }
+
     /** {@inheritDoc} */
-    public Process retrieveResult(final JobUid id, final File dir) {
-        // TODO
-        return null;
+    public DelayedExecution retrieveResult(final JobUid id, final File dir) {
+        final Job job = (Job) id.getBackendId();
+        return new GatDelayedExecution(job, this.tempDir.remove(job), dir);
     }
 
     /** {@inheritDoc} */
@@ -180,20 +232,21 @@ public class GatBackend implements Backend {
             swDescription.setArguments("");
         }
 
-        final File baseDir = job.getBaseDir();
+        final File sourceDir = job.getBaseDir();
+        final File targetDir = FileUtil.createTempDir();
         for (final String fileName : job
                 .getListEntry(JobDescription.INPUTSANDBOX)) {
-            swDescription.addPreStagedFile(this
-                    .createGatFile(baseDir, fileName));
+            swDescription.addPreStagedFile(this.createGatFile(sourceDir,
+                    fileName, false));
         }
-        swDescription.setStdout(this.createGatFile(baseDir, job
-                .getStringEntry(JobDescription.STDOUTPUT)));
-        swDescription.setStdout(this.createGatFile(baseDir, job
-                .getStringEntry(JobDescription.STDERROR)));
+        swDescription.setStdout(this.createGatFile(targetDir, job
+                .getStringEntry(JobDescription.STDOUTPUT), true));
+        swDescription.setStdout(this.createGatFile(targetDir, job
+                .getStringEntry(JobDescription.STDERROR), true));
         for (final String fileName : job
                 .getListEntry(JobDescription.OUTPUTSANDBOX)) {
-            swDescription.addPostStagedFile(this.createGatFile(baseDir,
-                    fileName));
+            swDescription.addPostStagedFile(this.createGatFile(targetDir,
+                    fileName, true));
         }
 
         final Map<String, Object> hwrAttrib = new HashMap<String, Object>();
@@ -205,17 +258,25 @@ public class GatBackend implements Backend {
 
         try {
             final Job jobResult = this.broker.submitJob(jobDescription);
+            this.tempDir.put(jobResult, targetDir);
             return new SubmissionResults(new JobUid(this, jobResult));
         } catch (final GATInvocationException e) {
+            FileUtil.cleanDir(targetDir, false);
             throw new IOException(e.getMessage());
         }
 
     }
 
     private org.gridlab.gat.io.File createGatFile(final File baseDir,
-            final String fileName) throws IOException {
+            final String fileName, final boolean removeFilePath)
+            throws IOException {
         try {
-            final File inputFile = FileUtil.resolveFile(baseDir, fileName);
+            final File inputFile;
+            if (removeFilePath) {
+                inputFile = new File(baseDir, new File(fileName).getName());
+            } else {
+                inputFile = FileUtil.resolveFile(baseDir, fileName);
+            }
             final org.gridlab.gat.io.File inputFileG = GAT.createFile(
                     this.context, new URI("file:"
                             + inputFile.getCanonicalPath()));

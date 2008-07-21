@@ -22,6 +22,7 @@
 package hu.kfki.grid.wmsx.worker;
 
 import hu.kfki.grid.wmsx.backends.Backend;
+import hu.kfki.grid.wmsx.backends.DelayedExecution;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
@@ -69,7 +70,7 @@ public final class WorkerBackend implements Backend {
     }
 
     /** {@inheritDoc} */
-    public Process retrieveResult(final JobUid id, final File dir) {
+    public DelayedExecution retrieveResult(final JobUid id, final File dir) {
         this.controllerImpl.retrieveSandbox(id.getBackendId(), dir);
         return null;
     }

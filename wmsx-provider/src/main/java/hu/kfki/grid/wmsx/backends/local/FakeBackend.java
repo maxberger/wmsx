@@ -22,6 +22,7 @@
 package hu.kfki.grid.wmsx.backends.local;
 
 import hu.kfki.grid.wmsx.backends.Backend;
+import hu.kfki.grid.wmsx.backends.DelayedExecution;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
@@ -75,7 +76,7 @@ public final class FakeBackend implements Backend {
     }
 
     /** {@inheritDoc} */
-    public Process retrieveResult(final JobUid id, final File dir) {
+    public DelayedExecution retrieveResult(final JobUid id, final File dir) {
         // Do nothing
         return null;
     }

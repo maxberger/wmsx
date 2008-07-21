@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -23,7 +22,9 @@
 package hu.kfki.grid.wmsx.backends.lcg;
 
 import hu.kfki.grid.wmsx.backends.Backend;
+import hu.kfki.grid.wmsx.backends.DelayedExecution;
 import hu.kfki.grid.wmsx.backends.JobUid;
+import hu.kfki.grid.wmsx.backends.ProcessDelayedExecution;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
@@ -142,14 +143,14 @@ public abstract class AbstractLCGBackend implements Backend {
     protected abstract List<String> getStatusCommand(String jobId);
 
     /** {@inheritDoc} */
-    public Process retrieveResult(final JobUid id, final File dir) {
+    public DelayedExecution retrieveResult(final JobUid id, final File dir) {
         try {
             final List<String> commandLine = this.jobOutputCommand(dir
                     .getAbsolutePath(), id.getBackendId().toString());
             final Process p = Runtime.getRuntime().exec(
                     commandLine.toArray(new String[commandLine.size()]), null,
                     dir);
-            return p;
+            return new ProcessDelayedExecution(p);
         } catch (final IOException e) {
             AbstractLCGBackend.LOGGER.warning(e.getMessage());
             return null;
