@@ -26,8 +26,10 @@ import hu.kfki.grid.wmsx.backends.DelayedExecution;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
+import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.util.FileUtil;
+import hu.kfki.grid.wmsx.util.LogUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +46,10 @@ import org.gridlab.gat.GATInvocationException;
 import org.gridlab.gat.GATObjectCreationException;
 import org.gridlab.gat.Preferences;
 import org.gridlab.gat.URI;
+import org.gridlab.gat.monitoring.Metric;
+import org.gridlab.gat.monitoring.MetricDefinition;
+import org.gridlab.gat.monitoring.MetricEvent;
+import org.gridlab.gat.monitoring.MetricListener;
 import org.gridlab.gat.resources.HardwareResourceDescription;
 import org.gridlab.gat.resources.Job;
 import org.gridlab.gat.resources.ResourceBroker;
@@ -57,7 +63,7 @@ import org.gridlab.gat.security.CertificateSecurityContext;
  * @version $Revision$
  */
 // CHECKSTYLE:OFF
-public class GatBackend implements Backend {
+public class GatBackend implements Backend, MetricListener {
     // CHECKSTYLE:ON
     private static final Logger LOGGER = Logger.getLogger(GatBackend.class
             .toString());
@@ -70,10 +76,14 @@ public class GatBackend implements Backend {
 
     private final Map<Job, File> tempDir = new ConcurrentHashMap<Job, File>();
 
+    private final Map<String, JobUid> jobForId = new ConcurrentHashMap<String, JobUid>();
+
     /**
      * Default constructor.
      */
     public GatBackend() {
+        System.setProperty("glite.deleteJDL", "true");
+        System.setProperty("glite.pollIntervalSecs", "15");
         this.context = new GATContext();
         final Preferences globalPrefs = new Preferences();
 
@@ -112,6 +122,7 @@ public class GatBackend implements Backend {
                     GliteTestsConstants.X509_KEY_PASSWORD);
             this.context.addSecurityContext(secContext);
         } catch (final URISyntaxException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
             throw new RuntimeException(e);
         }
 
@@ -123,8 +134,10 @@ public class GatBackend implements Backend {
                             new URI(
                                     "https://skurut67-6.cesnet.cz:7443/glite_wms_wmproxy_server"));
         } catch (final GATObjectCreationException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
             throw new RuntimeException(e);
         } catch (final URISyntaxException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
             throw new RuntimeException(e);
         }
 
@@ -205,7 +218,7 @@ public class GatBackend implements Backend {
                         this.source, this.dest);
                 FileUtil.cleanDir(this.source, false);
             } catch (final IOException e) {
-                GatBackend.LOGGER.warning(e.getMessage());
+                GatBackend.LOGGER.warning(LogUtil.logException(e));
             }
         }
     }
@@ -248,6 +261,10 @@ public class GatBackend implements Backend {
             swDescription.addPostStagedFile(this.createGatFile(targetDir,
                     fileName, true));
         }
+        final String retryCount = job.getStringEntry(JobDescription.RETRYCOUNT);
+        if (retryCount != null) {
+            swDescription.addAttribute("glite.retryCount", retryCount);
+        }
 
         final Map<String, Object> hwrAttrib = new HashMap<String, Object>();
         // hwrAttrib.put("memory.size", 1.0f);
@@ -258,9 +275,16 @@ public class GatBackend implements Backend {
 
         try {
             final Job jobResult = this.broker.submitJob(jobDescription);
+            final JobUid jobUid = new JobUid(this, jobResult);
+            this.jobForId.put(jobResult.getJobID(), jobUid);
+            final MetricDefinition md = jobResult
+                    .getMetricDefinitionByName("job.status");
+            final Metric polledMetric = new Metric(md, null);
+            jobResult.addMetricListener(this, polledMetric);
             this.tempDir.put(jobResult, targetDir);
-            return new SubmissionResults(new JobUid(this, jobResult));
+            return new SubmissionResults(jobUid);
         } catch (final GATInvocationException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
             FileUtil.cleanDir(targetDir, false);
             throw new IOException(e.getMessage());
         }
@@ -282,8 +306,10 @@ public class GatBackend implements Backend {
                             + inputFile.getCanonicalPath()));
             return inputFileG;
         } catch (final URISyntaxException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
             throw new IOException(e.getMessage());
         } catch (final GATObjectCreationException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
             throw new IOException(e.getMessage());
         }
     }
@@ -297,5 +323,21 @@ public class GatBackend implements Backend {
     @Override
     public String toString() {
         return "Gat";
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
+    public void processMetricEvent(final MetricEvent val) {
+        try {
+            final Map<String, Object> info = (Map<String, Object>) val
+                    .getValue();
+            final String jid = (String) info.get("jobID");
+            final JobUid juid = this.jobForId.get(jid);
+            JobWatcher.getInstance().checkWithState(juid, this.getState(juid));
+        } catch (final ClassCastException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
+        } catch (final NullPointerException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
+        }
     }
 }

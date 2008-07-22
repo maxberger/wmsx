@@ -210,11 +210,11 @@
       <artifactId>cryptix</artifactId>
       <version>0.1</version>
     </dependency>
-    <dependency>
+<!--    <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>GliteAdaptor</artifactId>
       <version>0.1</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>glite-jdl-api-java</artifactId>
