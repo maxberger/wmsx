@@ -35,6 +35,7 @@ import hu.kfki.grid.wmsx.provider.arglist.LaszloJobFactory;
 import hu.kfki.grid.wmsx.renewer.AFS;
 import hu.kfki.grid.wmsx.renewer.Renewer;
 import hu.kfki.grid.wmsx.renewer.VOMS;
+import hu.kfki.grid.wmsx.util.LogUtil;
 import hu.kfki.grid.wmsx.util.ScriptLauncher;
 import hu.kfki.grid.wmsx.worker.ControllerServer;
 
@@ -155,7 +156,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 }
             }
         } catch (final IOException e) {
-            WmsxProviderImpl.LOGGER.warning("IOError: " + e.getMessage());
+            WmsxProviderImpl.LOGGER.warning(LogUtil.logException(e));
         }
         return dirFile;
     }
@@ -208,7 +209,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 result = "pending";
             }
         } catch (final IOException io) {
-            WmsxProviderImpl.LOGGER.info(io.getMessage());
+            WmsxProviderImpl.LOGGER.info(LogUtil.logException(io));
             result = "Error opening " + jdlFile;
         }
         return result;
@@ -252,10 +253,9 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             }
             return id;
         } catch (final IOException e) {
-            WmsxProviderImpl.LOGGER.warning(e.getMessage());
+            WmsxProviderImpl.LOGGER.warning(LogUtil.logException(e));
         } catch (final NullPointerException e) {
-            WmsxProviderImpl.LOGGER.warning(e.getMessage() + " at "
-                    + e.getStackTrace()[0].toString());
+            WmsxProviderImpl.LOGGER.warning(LogUtil.logException(e));
         }
         return null;
     }
@@ -304,7 +304,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 }
                 out.close();
             } catch (final IOException e) {
-                WmsxProviderImpl.LOGGER.warning(e.getMessage());
+                WmsxProviderImpl.LOGGER.warning(LogUtil.logException(e));
             }
         }
     }
@@ -318,7 +318,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 out.newLine();
                 out.close();
             } catch (final IOException e) {
-                WmsxProviderImpl.LOGGER.warning(e.getMessage());
+                WmsxProviderImpl.LOGGER.warning(LogUtil.logException(e));
             }
         }
     }

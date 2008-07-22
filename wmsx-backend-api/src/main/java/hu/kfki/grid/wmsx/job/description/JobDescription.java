@@ -111,6 +111,9 @@ public interface JobDescription extends Cloneable {
      */
     String LOCAL = "Local";
 
+    /** Retry count. (String, gLite) */
+    String RETRYCOUNT = "RetryCount";
+
     /**
      * Retrieve value for a String entry.
      * 
