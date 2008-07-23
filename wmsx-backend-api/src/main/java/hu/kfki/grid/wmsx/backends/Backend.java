@@ -70,9 +70,13 @@ public interface Backend {
             throws IOException;
 
     /**
-     * @return true if the jobId represents a URI
+     * Convert a jobID to an URI.
+     * 
+     * @param uid
+     *            JobUid.
+     * @return a uri for this job or null.
      */
-    boolean jobIdIsURI();
+    String jobUidToUri(JobUid uid);
 
     /**
      * Retrieves the current state of the job.

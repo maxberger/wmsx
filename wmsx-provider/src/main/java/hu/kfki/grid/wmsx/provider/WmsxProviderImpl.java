@@ -227,7 +227,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                 id = result.getJobId();
                 WmsxProviderImpl.LOGGER.info("Job id is: " + id);
                 JobWatcher.getInstance().addWatch(id,
-                        LogListener.getLogListener());
+                        LogListener.getInstance());
                 JobWatcher.getInstance().addWatch(id, this);
                 if (ResultListener.getInstance().setJob(id, job)) {
                     JobWatcher.getInstance().addWatch(id,
@@ -280,8 +280,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     private void removeURILine(final JobUid uid, final File file) {
-        if (uid.getBackend().jobIdIsURI()) {
-            final String line = uid.getBackendId().toString();
+        final String line = uid.getBackend().jobUidToUri(uid);
+        if (line != null) {
             try {
                 final List<String> lines = new Vector<String>();
                 final BufferedReader in = new BufferedReader(new FileReader(
@@ -310,11 +310,12 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     private void appendURILine(final JobUid uid, final File file) {
-        if (uid.getBackend().jobIdIsURI()) {
+        final String uri = uid.getBackend().jobUidToUri(uid);
+        if (uri != null) {
             try {
                 final BufferedWriter out = new BufferedWriter(new FileWriter(
                         file, true));
-                out.write(uid.getBackendId().toString());
+                out.write(uri);
                 out.newLine();
                 out.close();
             } catch (final IOException e) {

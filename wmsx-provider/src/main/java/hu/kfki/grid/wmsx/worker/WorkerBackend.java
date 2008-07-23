@@ -59,8 +59,8 @@ public final class WorkerBackend implements Backend {
     }
 
     /** {@inheritDoc} */
-    public boolean jobIdIsURI() {
-        return false;
+    public String jobUidToUri(final JobUid uid) {
+        return null;
     }
 
     /** {@inheritDoc} */

@@ -76,10 +76,14 @@ public class JDLJobDescription extends AbstractJobDescription {
     /** {@inheritDoc} */
     public String getStringEntry(final String key) {
         final Expr eval = this.erecord.lookup(key);
-        final String retVal;
+        String retVal;
         if (eval instanceof Constant) {
             final Constant econst = (Constant) eval;
-            retVal = econst.stringValue();
+            try {
+                retVal = econst.stringValue();
+            } catch (final ArithmeticException ae) {
+                retVal = econst.toString();
+            }
         } else if (eval != null) {
             retVal = eval.toString();
         } else {

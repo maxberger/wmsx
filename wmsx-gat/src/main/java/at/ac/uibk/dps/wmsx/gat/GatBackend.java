@@ -173,9 +173,14 @@ public class GatBackend implements Backend, MetricListener {
     }
 
     /** {@inheritDoc} */
-    public boolean jobIdIsURI() {
-        // TODO: Should be true!
-        return false;
+    public String jobUidToUri(final JobUid uid) {
+        final Job job = (Job) uid.getBackendId();
+        try {
+            return job.getJobID();
+        } catch (final GATInvocationException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
+            return null;
+        }
     }
 
     /** {@inheritDoc} */
