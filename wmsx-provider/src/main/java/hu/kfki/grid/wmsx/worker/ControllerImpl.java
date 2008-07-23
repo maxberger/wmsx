@@ -115,7 +115,8 @@ public class ControllerImpl implements Controller, Runnable {
             this.running.put(jobid, cwd);
             this.assignedTo.put(jobid, uuid);
             this.assignedAt.put(jobid, Long.valueOf(now));
-            this.fileManager.modifyInputSandbox(uuid, wd.getInputSandbox());
+            this.fileManager.modifyInputSandbox(uuid, wd.getWorkflowId(), wd
+                    .getInputSandbox());
         }
         ControllerImpl.LOGGER.info("Assigning job " + jobid + " to worker "
                 + uuid);
@@ -204,12 +205,13 @@ public class ControllerImpl implements Controller, Runnable {
         final boolean isNew;
         synchronized (this.pending) {
             if (this.running.containsKey(id)) {
-                this.running.remove(id);
+                final ControllerWorkDescription cwd = this.running.remove(id);
                 this.assignedTo.remove(id);
                 final Map<String, byte[]> outputSandbox = result
                         .getOutputSandbox();
                 this.success.put(id, outputSandbox);
-                this.fileManager.parseOutputSandbox(uuid, outputSandbox);
+                this.fileManager.parseOutputSandbox(uuid, cwd
+                        .getWorkDescription().getWorkflowId(), outputSandbox);
                 isNew = true;
             } else {
                 isNew = false;

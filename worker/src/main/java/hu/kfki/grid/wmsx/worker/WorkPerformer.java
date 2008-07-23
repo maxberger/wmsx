@@ -90,7 +90,8 @@ public final class WorkPerformer {
         final String wfid = todo.getWorkflowId();
         final boolean partOfWf = wfid != null;
         workDir = this.prepareWorkdir(currentDir, wfid, partOfWf);
-        this.logWithTime("Retrieving sandbox to WorkDir: " + workDir);
+        this.logWithTime("Retrieving sandbox to WorkDir: " + workDir + " "
+                + todo.getInputSandbox().keySet());
 
         FileUtil.retrieveSandbox(todo.getInputSandbox(), workDir);
 
