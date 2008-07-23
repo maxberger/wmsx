@@ -10,4 +10,5 @@ OutputSandbox = {"StdOut-lapw0","CASENAME/CASENAME.clmsum","CASENAME/CASENAME.in
 ResultDir = "CASENAME";
 Next = {LAPW1};
 PreExec = "pre.sh";
+Local = "false";
 ]
