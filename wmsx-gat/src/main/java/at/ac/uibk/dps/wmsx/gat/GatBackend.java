@@ -299,8 +299,9 @@ public class GatBackend implements Backend, MetricListener {
         }
         for (final String fileName : job
                 .getListEntry(JobDescription.OUTPUTSANDBOX)) {
-            swDescription.addPostStagedFile(this.createGatFile(targetDir,
-                    fileName, true));
+            final org.gridlab.gat.io.File gatFile = this.createGatFile(
+                    targetDir, fileName, true);
+            swDescription.addPostStagedFile(gatFile, gatFile);
         }
         final String retryCount = job.getStringEntry(JobDescription.RETRYCOUNT);
         if (retryCount != null) {
