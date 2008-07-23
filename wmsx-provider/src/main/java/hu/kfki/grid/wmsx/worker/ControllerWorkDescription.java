@@ -41,6 +41,8 @@ public class ControllerWorkDescription {
 
     private final Boolean preferLocal;
 
+    final Map<String, byte[]> inputSandbox;
+
     /**
      * Default constructor.
      * 
@@ -51,7 +53,7 @@ public class ControllerWorkDescription {
      */
     public ControllerWorkDescription(final Object uid,
             final JobDescription jobDesc) {
-        final Map<String, byte[]> inputSandbox = FileUtil.createSandbox(jobDesc
+        this.inputSandbox = FileUtil.createSandbox(jobDesc
                 .getListEntry(JobDescription.INPUTSANDBOX), jobDesc
                 .getBaseDir());
 
@@ -65,7 +67,7 @@ public class ControllerWorkDescription {
             }
         }
 
-        this.workDescription = new WorkDescription(uid, inputSandbox, jobDesc
+        this.workDescription = new WorkDescription(uid, jobDesc
                 .getListEntry(JobDescription.OUTPUTSANDBOX), jobDesc
                 .getStringEntry(JobDescription.EXECUTABLE), jobDesc
                 .getStringEntry(JobDescription.DEPLOY), args, jobDesc
@@ -100,5 +102,12 @@ public class ControllerWorkDescription {
      */
     public Boolean getPreferLocal() {
         return this.preferLocal;
+    }
+
+    /**
+     * @return The input sandbox.
+     */
+    public Map<String, byte[]> getInputSandbox() {
+        return this.inputSandbox;
     }
 }

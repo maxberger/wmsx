@@ -115,8 +115,8 @@ public class ControllerImpl implements Controller, Runnable {
             this.running.put(jobid, cwd);
             this.assignedTo.put(jobid, uuid);
             this.assignedAt.put(jobid, Long.valueOf(now));
-            this.fileManager.modifyInputSandbox(uuid, wd.getWorkflowId(), wd
-                    .getInputSandbox());
+            this.fileManager.modifyInputSandbox(uuid, wd.getWorkflowId(), cwd
+                    .getInputSandbox(), wd.getInputSandbox());
         }
         ControllerImpl.LOGGER.info("Assigning job " + jobid + " to worker "
                 + uuid);

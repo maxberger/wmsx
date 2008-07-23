@@ -210,15 +210,6 @@ public final class FileUtil {
         for (final String fileName : files) {
             try {
                 final File f = FileUtil.resolveFile(dir, fileName);
-
-                // Maybe workaround for files sometimes not completely written.
-                // if (!f.exists()) {
-                // try {
-                // Thread.sleep(FileUtil.SLEEP_IF_FILE_DOES_NOT_EXIST);
-                // } catch (final InterruptedException e) {
-                // // ignore
-                // }
-                // }
                 sandbox.put(f.getName(), FileUtil.loadFile(f));
             } catch (final IOException io) {
                 FileUtil.LOGGER.warning(io.getMessage());

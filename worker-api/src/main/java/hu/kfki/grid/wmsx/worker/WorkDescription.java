@@ -24,6 +24,7 @@ package hu.kfki.grid.wmsx.worker;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Describes the work sent to worker.
@@ -61,8 +62,6 @@ public class WorkDescription implements Serializable {
      * 
      * @param jobId
      *            Id of the job.
-     * @param input
-     *            Input Sandbox.
      * @param output
      *            List of files for output sandbox.
      * @param exec
@@ -78,12 +77,11 @@ public class WorkDescription implements Serializable {
      * @param wfId
      *            Id of the workflow or null.
      */
-    public WorkDescription(final Object jobId, final Map<String, byte[]> input,
-            final List<String> output, final String exec,
-            final String deployexec, final List<String> arg, final String out,
-            final String err, final String wfId) {
+    public WorkDescription(final Object jobId, final List<String> output,
+            final String exec, final String deployexec, final List<String> arg,
+            final String out, final String err, final String wfId) {
         this.id = jobId;
-        this.inputSandbox = input;
+        this.inputSandbox = new TreeMap<String, byte[]>();
         this.outputSandbox = output;
         this.executable = exec;
         this.deploy = deployexec;
