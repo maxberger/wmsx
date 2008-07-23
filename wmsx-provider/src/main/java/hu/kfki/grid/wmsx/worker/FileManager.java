@@ -35,7 +35,7 @@ import net.jini.id.Uuid;
  */
 public final class FileManager {
 
-    private final Map<String, Set<Uuid>> fileAvailAt = new HashMap<String, Set<Uuid>>();
+    private final Map<String, Set<String>> fileAvailAt = new HashMap<String, Set<String>>();
 
     /**
      * Default constructor.
@@ -49,22 +49,28 @@ public final class FileManager {
      * 
      * @param workerId
      *            Id of the assigned worker
+     * @param wfid
+     *            Id of the workflow
      * @param sandbox
      *            Sandbox to modify.
      */
-    public void modifyInputSandbox(final Uuid workerId,
+    public void modifyInputSandbox(final Uuid workerId, final String wfid,
             final Map<String, byte[]> sandbox) {
-        final HashSet<String> filenames = new HashSet<String>(sandbox.keySet());
+        if (wfid == null) {
+            return;
+        }
+        final String completeId = wfid + workerId;
+        final Set<String> filenames = new HashSet<String>(sandbox.keySet());
         for (final String file : filenames) {
-            Set<Uuid> avail = this.fileAvailAt.get(file);
+            Set<String> avail = this.fileAvailAt.get(file);
             if (avail == null) {
-                avail = new HashSet<Uuid>();
+                avail = new HashSet<String>();
                 this.fileAvailAt.put(file, avail);
             }
-            if (avail.contains(workerId)) {
+            if (avail.contains(completeId)) {
                 sandbox.remove(file);
             } else {
-                avail.add(workerId);
+                avail.add(completeId);
             }
         }
     }
@@ -74,14 +80,20 @@ public final class FileManager {
      * 
      * @param workerId
      *            id of the worker
+     * @param wfid
+     *            Id of the workflow
      * @param sandbox
      *            output sandbox.
      */
-    public void parseOutputSandbox(final Uuid workerId,
+    public void parseOutputSandbox(final Uuid workerId, final String wfid,
             final Map<String, byte[]> sandbox) {
+        if (wfid == null) {
+            return;
+        }
+        final String completeId = wfid + workerId;
         for (final String file : sandbox.keySet()) {
-            final Set<Uuid> newSet = new HashSet<Uuid>();
-            newSet.add(workerId);
+            final Set<String> newSet = new HashSet<String>();
+            newSet.add(completeId);
             this.fileAvailAt.put(file, newSet);
         }
     }
