@@ -183,8 +183,8 @@ public abstract class AbstractLCGBackend implements Backend {
     }
 
     /** {@inheritDoc} */
-    public boolean jobIdIsURI() {
-        return true;
+    public String jobUidToUri(final JobUid uid) {
+        return uid.getBackendId().toString();
     }
 
     /** {@inheritDoc} */

@@ -15,10 +15,9 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.job;
 
@@ -26,7 +25,12 @@ import hu.kfki.grid.wmsx.backends.JobUid;
 
 import java.util.logging.Logger;
 
-public class LogListener implements JobListener {
+/**
+ * A listener which just records log messages.
+ * 
+ * @version $Revision$
+ */
+public final class LogListener implements JobListener {
     private static final Logger LOGGER = Logger.getLogger(LogListener.class
             .toString());
 
@@ -35,13 +39,17 @@ public class LogListener implements JobListener {
     private LogListener() {
     }
 
-    static synchronized public LogListener getLogListener() {
+    /**
+     * @return the singleton instance.
+     */
+    public static synchronized LogListener getInstance() {
         if (LogListener.logListener == null) {
             LogListener.logListener = new LogListener();
         }
         return LogListener.logListener;
     }
 
+    /** {@inheritDoc} */
     public void done(final JobUid jobId, final boolean success) {
         if (success) {
             LogListener.LOGGER.info("DONE/SUCCESS: " + jobId);
@@ -50,10 +58,12 @@ public class LogListener implements JobListener {
         }
     }
 
+    /** {@inheritDoc} */
     public void running(final JobUid jobId) {
         LogListener.LOGGER.info("RUNNING: " + jobId);
     }
 
+    /** {@inheritDoc} */
     public void startup(final JobUid jobId) {
         LogListener.LOGGER.info("STARTUP: " + jobId);
     }

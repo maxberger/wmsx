@@ -15,36 +15,64 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.backends;
 
+/**
+ * Uniquely describe a job and its backend.
+ * 
+ * @version $Revision$
+ */
 public class JobUid {
     private final Backend backend;
 
     private final Object realId;
 
+    /**
+     * Default constructor.
+     * 
+     * @param back
+     *            backend for this job.
+     * @param id
+     *            backend dependent id.
+     */
     public JobUid(final Backend back, final Object id) {
         this.backend = back;
         this.realId = id;
     }
 
+    /**
+     * @return the backend for this job.
+     */
     public Backend getBackend() {
         return this.backend;
     }
 
+    /**
+     * @return the backend dependent id.
+     */
     public Object getBackendId() {
         return this.realId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
-        return this.backend + "/" + this.realId;
+        final StringBuilder b = new StringBuilder(this.backend.toString());
+        b.append('/');
+        final String backendUri = this.backend.jobUidToUri(this);
+        if (backendUri == null) {
+            b.append(this.realId.toString());
+        } else {
+            b.append(backendUri);
+        }
+        return b.toString();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -56,6 +84,7 @@ public class JobUid {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

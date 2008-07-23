@@ -63,8 +63,8 @@ public final class LocalBackend implements Backend {
     }
 
     /** {@inheritDoc} */
-    public boolean jobIdIsURI() {
-        return false;
+    public String jobUidToUri(final JobUid uid) {
+        return null;
     }
 
     /** {@inheritDoc} */
