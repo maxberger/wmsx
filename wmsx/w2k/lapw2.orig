@@ -8,4 +8,5 @@ InputSandbox = {"scripts/lapw2-g.sh","scripts/basesetup.sh","CASENAME/CASENAME.v
 OutputSandbox = {"StdOut-lapw2_IDX","CASENAME/CASENAME.clmval_IDX","CASENAME/CASENAME.scf2_IDX","CASENAME/lapw2_IDX.error"};
 ResultDir = "CASENAME";
 Next = {"sumup.jdl"};
+Local = "false";
 ]

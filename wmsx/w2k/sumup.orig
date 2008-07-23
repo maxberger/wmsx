@@ -10,4 +10,5 @@ ResultDir = "CASENAME";
 Prev = {LAPW2};
 PostExec = "postexec.sh";
 Chain = "chain.sh";
+Local = "true";
 ]

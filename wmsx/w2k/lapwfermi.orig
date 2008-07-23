@@ -9,4 +9,5 @@ OutputSandbox = {"StdOut-lapwfermi","CASENAME/CASENAME.recprlist","CASENAME/CASE
 ResultDir = "CASENAME";
 Prev = {LAPW1};
 Next = {LAPW2};
+Local = "false";
 ]
