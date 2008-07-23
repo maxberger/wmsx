@@ -45,31 +45,36 @@ public final class FileManager {
     }
 
     /**
-     * Modify the input sandbox to remove items not needed.
+     * Copy files from sourceSandbox to TargetSandbox, removing those already
+     * existent.
      * 
      * @param workerId
      *            Id of the assigned worker
      * @param wfid
      *            Id of the workflow
-     * @param sandbox
+     * @param sourceSandbox
+     *            Sandbox to modify.
+     * @param targetSandbox
      *            Sandbox to modify.
      */
     public void modifyInputSandbox(final Uuid workerId, final String wfid,
-            final Map<String, byte[]> sandbox) {
+            final Map<String, byte[]> sourceSandbox,
+            final Map<String, byte[]> targetSandbox) {
+        targetSandbox.clear();
         if (wfid == null) {
+            targetSandbox.putAll(sourceSandbox);
             return;
         }
         final String completeId = wfid + workerId;
-        final Set<String> filenames = new HashSet<String>(sandbox.keySet());
-        for (final String file : filenames) {
+        for (final Map.Entry<String, byte[]> entry : sourceSandbox.entrySet()) {
+            final String file = entry.getKey();
             Set<String> avail = this.fileAvailAt.get(file);
             if (avail == null) {
                 avail = new HashSet<String>();
                 this.fileAvailAt.put(file, avail);
             }
-            if (avail.contains(completeId)) {
-                sandbox.remove(file);
-            } else {
+            if (!avail.contains(completeId)) {
+                targetSandbox.put(file, entry.getValue());
                 avail.add(completeId);
             }
         }
