@@ -233,38 +233,9 @@ public class GatBackend implements Backend, MetricListener {
     public SubmissionResults submitJob(final JobDescription job, final String vo)
             throws IOException {
 
-        final SoftwareDescription swDescription = new SoftwareDescription();
-        swDescription.setExecutable(job
-                .getStringEntry(JobDescription.EXECUTABLE));
-
-        final String argumentStr = job.getStringEntry(JobDescription.ARGUMENTS);
-        if (argumentStr != null) {
-            final String[] arguments = argumentStr.split(" ");
-            swDescription.setArguments(arguments);
-        } else {
-            swDescription.setArguments("");
-        }
-
-        final File sourceDir = job.getBaseDir();
         final File targetDir = FileUtil.createTempDir();
-        for (final String fileName : job
-                .getListEntry(JobDescription.INPUTSANDBOX)) {
-            swDescription.addPreStagedFile(this.createGatFile(sourceDir,
-                    fileName, false));
-        }
-        swDescription.setStdout(this.createGatFile(targetDir, job
-                .getStringEntry(JobDescription.STDOUTPUT), true));
-        swDescription.setStdout(this.createGatFile(targetDir, job
-                .getStringEntry(JobDescription.STDERROR), true));
-        for (final String fileName : job
-                .getListEntry(JobDescription.OUTPUTSANDBOX)) {
-            swDescription.addPostStagedFile(this.createGatFile(targetDir,
-                    fileName, true));
-        }
-        final String retryCount = job.getStringEntry(JobDescription.RETRYCOUNT);
-        if (retryCount != null) {
-            swDescription.addAttribute("glite.retryCount", retryCount);
-        }
+        final SoftwareDescription swDescription = this.createSwDescription(job,
+                targetDir);
 
         final Map<String, Object> hwrAttrib = new HashMap<String, Object>();
         // hwrAttrib.put("memory.size", 1.0f);
@@ -289,6 +260,48 @@ public class GatBackend implements Backend, MetricListener {
             throw new IOException(e.getMessage());
         }
 
+    }
+
+    private SoftwareDescription createSwDescription(final JobDescription job,
+            final File targetDir) throws IOException {
+        final SoftwareDescription swDescription = new SoftwareDescription();
+        swDescription.setExecutable(job
+                .getStringEntry(JobDescription.EXECUTABLE));
+
+        final String argumentStr = job.getStringEntry(JobDescription.ARGUMENTS);
+        if (argumentStr != null) {
+            final String[] arguments = argumentStr.split(" ");
+            swDescription.setArguments(arguments);
+        } else {
+            swDescription.setArguments("");
+        }
+        final File sourceDir = job.getBaseDir();
+        for (final String fileName : job
+                .getListEntry(JobDescription.INPUTSANDBOX)) {
+            swDescription.addPreStagedFile(this.createGatFile(sourceDir,
+                    fileName, false));
+        }
+
+        final String stdOut = job.getStringEntry(JobDescription.STDOUTPUT);
+        if (stdOut != null) {
+            swDescription
+                    .setStdout(this.createGatFile(targetDir, stdOut, true));
+        }
+        final String stdErr = job.getStringEntry(JobDescription.STDERROR);
+        if (stdErr != null) {
+            swDescription
+                    .setStderr(this.createGatFile(targetDir, stdErr, true));
+        }
+        for (final String fileName : job
+                .getListEntry(JobDescription.OUTPUTSANDBOX)) {
+            swDescription.addPostStagedFile(this.createGatFile(targetDir,
+                    fileName, true));
+        }
+        final String retryCount = job.getStringEntry(JobDescription.RETRYCOUNT);
+        if (retryCount != null) {
+            swDescription.addAttribute("glite.retryCount", retryCount);
+        }
+        return swDescription;
     }
 
     private org.gridlab.gat.io.File createGatFile(final File baseDir,
