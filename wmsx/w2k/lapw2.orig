@@ -9,4 +9,5 @@ OutputSandbox = {"StdOut-lapw2_IDX","CASENAME/CASENAME.clmval_IDX","CASENAME/CAS
 ResultDir = "CASENAME";
 Next = {"sumup.jdl"};
 Local = "false";
+RetryCount = 10;
 ]

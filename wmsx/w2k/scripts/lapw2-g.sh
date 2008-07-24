@@ -19,3 +19,11 @@ sed s/output2\'/output2_$Idx\'/ lapw2.defx | sed s/clmval\'/clmval_$Idx\'/ | sed
 lapw2 lapw2_$Idx.def $Idx
 
 date +"%s.%N"
+
+[ -f $casename.clmval_$Idx ] || exit 1
+[ -f $casename.scf2_$Idx ] || exit 1
+[ -f lapw2_$Idx.error ] || exit 1
+[ -s lapw2_$Idx.error ] && exit 1
+
+exit 0
+

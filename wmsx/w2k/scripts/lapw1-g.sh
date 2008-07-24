@@ -25,3 +25,12 @@ fi
 
 lapw1 lapw1_$Idx.def
 date +"%s.%N"
+
+[ -f $casename.energy_$Idx ] || exit 1
+[ -f $casename.scf1_$Idx ] || exit 1
+[ -f $casename.vector_$Idx ] || exit 1
+[ -f lapw1_$Idx.error ] || exit 1
+[ -s lapw1_$Idx.error ] && exit 1
+
+exit 0
+

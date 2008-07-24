@@ -11,4 +11,5 @@ ResultDir = "CASENAME";
 Next = {LAPW1};
 PreExec = "pre.sh";
 Local = "false";
+RetryCount = 10;
 ]

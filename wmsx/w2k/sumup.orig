@@ -11,4 +11,5 @@ Prev = {LAPW2};
 PostExec = "postexec.sh";
 Chain = "chain.sh";
 Local = "true";
+RetryCount = 10;
 ]
