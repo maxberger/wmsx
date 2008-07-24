@@ -30,6 +30,7 @@ import hu.kfki.grid.wmsx.util.FileUtil;
 
 import java.io.File;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -334,7 +335,16 @@ public class ControllerImpl implements Controller, Runnable {
             }
             if (!found) {
                 ControllerImpl.LOGGER.info("Rescheduling suspicious Job " + id);
-                this.pending.add(this.running.get(id));
+                final ControllerWorkDescription cwd = this.running.get(id);
+                if (cwd.decreaseRetry()) {
+                    this.pending.add(cwd);
+                } else {
+                    ControllerImpl.LOGGER.info("No more retries for " + id);
+                    this.running.remove(id);
+                    this.failed.add(id);
+                    JobWatcher.getInstance().checkWithState(
+                            this.getJuidForId(id), JobState.FAILED);
+                }
             }
         }
     }
@@ -392,6 +402,15 @@ public class ControllerImpl implements Controller, Runnable {
     public void setIsLocal(final Uuid uuid) {
         synchronized (this.local) {
             this.local.add(uuid.toString());
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void failed(final Object id, final Uuid uuid) throws RemoteException {
+        synchronized (this.pending) {
+            final Set<Object> suspicous = Collections.singleton(id);
+            this.rescheduleSuspicous(suspicous);
+            // TODO: Maybe mark uuid ?
         }
     }
 

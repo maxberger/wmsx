@@ -110,10 +110,15 @@ public final class WorkPerformer {
             this.launchDeploy(todo, workDir);
         }
 
-        this.launchExec(todo, workDir);
-        this.logWithTime("Submitting results");
-        controller.doneWith(todo.getId(), new ResultDescription(FileUtil
-                .createSandbox(todo.getOutputSandbox(), workDir)), uuid);
+        final int retVal = this.launchExec(todo, workDir);
+        if (retVal == 0) {
+            this.logWithTime("Submitting results");
+            controller.doneWith(todo.getId(), new ResultDescription(FileUtil
+                    .createSandbox(todo.getOutputSandbox(), workDir)), uuid);
+        } else {
+            this.logWithTime("Failed");
+            controller.failed(todo.getId(), uuid);
+        }
         if (!currentDir.equals(workDir)) {
             FileUtil.cleanDir(workDir, partOfWf);
         }
@@ -157,14 +162,14 @@ public final class WorkPerformer {
         }
     }
 
-    private void launchExec(final WorkDescription todo, final File workDir) {
+    private int launchExec(final WorkDescription todo, final File workDir) {
         final List<String> arguments = todo.getArguments();
         final List<String> cmdArray = new Vector<String>(1 + arguments.size());
         cmdArray.add(new File(workDir, todo.getExecutable()).getAbsolutePath());
         cmdArray.addAll(arguments);
 
         this.logWithTime("Launching");
-        ScriptLauncher.getInstance().launchScript(
+        return ScriptLauncher.getInstance().launchScript(
                 cmdArray.toArray(new String[0]), todo.getStdout(),
                 todo.getStderr(), workDir);
     }

@@ -35,13 +35,17 @@ import java.util.Vector;
  */
 public class ControllerWorkDescription {
 
+    private static final int DEFAULT_RETRIES = 5;
+
     private final WorkDescription workDescription;
 
     private final long creationTime;
 
     private final Boolean preferLocal;
 
-    final Map<String, byte[]> inputSandbox;
+    private final Map<String, byte[]> inputSandbox;
+
+    private int retriesLeft;
 
     /**
      * Default constructor.
@@ -65,6 +69,14 @@ public class ControllerWorkDescription {
             if (sa2.length() > 0) {
                 args.add(sa2);
             }
+        }
+
+        try {
+            this.retriesLeft = Integer.parseInt(jobDesc
+                    .getStringEntry(JobDescription.RETRYCOUNT),
+                    ControllerWorkDescription.DEFAULT_RETRIES);
+        } catch (final NumberFormatException nfe) {
+            this.retriesLeft = ControllerWorkDescription.DEFAULT_RETRIES;
         }
 
         this.workDescription = new WorkDescription(uid, jobDesc
@@ -109,5 +121,15 @@ public class ControllerWorkDescription {
      */
     public Map<String, byte[]> getInputSandbox() {
         return this.inputSandbox;
+    }
+
+    /**
+     * Decreases the RetryCounter and returns true if the job should be retried.
+     * 
+     * @return true if retries are left.
+     */
+    public boolean decreaseRetry() {
+        this.retriesLeft--;
+        return this.retriesLeft >= 0;
     }
 }

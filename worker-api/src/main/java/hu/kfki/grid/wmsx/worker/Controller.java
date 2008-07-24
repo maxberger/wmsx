@@ -59,6 +59,18 @@ public interface Controller extends Remote {
             throws RemoteException;
 
     /**
+     * Worker failed to execute a job.
+     * 
+     * @param id
+     *            id of the work chunk.
+     * @param uuid
+     *            id of the worker.
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
+    void failed(Object id, Uuid uuid) throws RemoteException;
+
+    /**
      * Shows that this worker is still alive.
      * 
      * @param uuid
