@@ -15,16 +15,20 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.worker;
 
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * Describes the result sent back to the controller.
+ * 
+ * @version $Revision$
+ */
 public class ResultDescription implements Serializable {
 
     /**
@@ -34,10 +38,19 @@ public class ResultDescription implements Serializable {
 
     private final Map<String, byte[]> outputSandbox;
 
+    /**
+     * Default constructor.
+     * 
+     * @param output
+     *            Output sandbox.
+     */
     public ResultDescription(final Map<String, byte[]> output) {
         this.outputSandbox = output;
     }
 
+    /**
+     * @return the output sandbox.
+     */
     public Map<String, byte[]> getOutputSandbox() {
         return this.outputSandbox;
     }

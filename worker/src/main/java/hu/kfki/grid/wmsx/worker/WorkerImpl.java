@@ -156,7 +156,9 @@ public final class WorkerImpl implements Worker {
     }
 
     /** {@inheritDoc} */
-    public synchronized void newWork() throws RemoteException {
-        this.notifyAll();
+    public void newWork() throws RemoteException {
+        synchronized (this) {
+            this.notify();
+        }
     }
 }
