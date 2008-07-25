@@ -175,7 +175,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     /**
-     * /** Submit an existing jdl file.
+     * Submit an existing jdl file.
      * 
      * @param jdlFile
      *            name of the file
@@ -226,8 +226,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             if (result != null) {
                 id = result.getJobId();
                 WmsxProviderImpl.LOGGER.info("Job id is: " + id);
-                JobWatcher.getInstance().addWatch(id,
-                        LogListener.getInstance());
+                JobWatcher.getInstance()
+                        .addWatch(id, LogListener.getInstance());
                 JobWatcher.getInstance().addWatch(id, this);
                 if (ResultListener.getInstance().setJob(id, job)) {
                     JobWatcher.getInstance().addWatch(id,
@@ -351,15 +351,9 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     /** {@inheritDoc} */
     public void startWorkers(final int num) {
-        int n;
-        if (num > WmsxProviderImpl.MAX_WORKERS_PER_CALL) {
-            n = WmsxProviderImpl.MAX_WORKERS_PER_CALL;
-        } else {
-            n = num;
-        }
-        for (int i = 0; i < n; i++) {
-            ControllerServer.getInstance().submitWorker(this.currentBackend);
-        }
+        final int n = Math.max(1, Math.min(
+                WmsxProviderImpl.MAX_WORKERS_PER_CALL, num));
+        ControllerServer.getInstance().submitWorkers(this.currentBackend, n);
     }
 
     private synchronized void investigateNumJobs() {
