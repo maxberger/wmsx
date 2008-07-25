@@ -23,7 +23,7 @@ cp $casename.clmsum $casename.clmsum_old
 x -d mixer
 mixer mixer.def
 cat $casename.scfm >>$casename.scf
-result=`testconv -p :ENE -c 0.01 |cut -c1`
+result=`testconv -p :ENE -c 0.05 |cut -c1`
 echo $result > result
 
 date +"%s.%N"
