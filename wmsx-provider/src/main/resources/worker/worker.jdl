@@ -6,7 +6,7 @@ RetryCount = 10;
 StdOutput = "worker.out";
 StdError = "worker.out";
 Requirements = (
-!(other.GlueCEUniqueID=="skurut17.cesnet.cz:2119/jobmanager-lcgpbs-egee_voce") &&
-!(other.GlueCEUniqueID=="pearl.amu.edu.pl:2119/jobmanager-lcgpbs-voce")
+!(other.GlueCEUniqueID=="pearl.amu.edu.pl:2119/jobmanager-lcgpbs-voce") &&
+!(other.GlueCEUniqueID=="ce.cyf-kr.edu.pl:2119/jobmanager-pbs-voce")
 );
 ]
