@@ -12,7 +12,7 @@
 	<classpathentry kind="src" output="wmsx-requestor/target/classes" path="wmsx-requestor/src/main/java"/>
 	<classpathentry kind="src" output="wmsx-requestor/target/test-classes" path="wmsx-requestor/src/test/java"/>
 	<classpathentry kind="src" output="wmsx-gat/target/classes" path="wmsx-gat/src/main/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.5.0_04"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER/modules"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
