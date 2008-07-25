@@ -77,13 +77,9 @@ public class ControllerImpl implements Controller, Runnable {
 
     private final Set<Object> failed = new TreeSet<Object>();
 
-    private final Map<Uuid, Long> lastSeen = new HashMap<Uuid, Long>();
+    private final Map<Uuid, WorkerInfo> workerInfo = new HashMap<Uuid, WorkerInfo>();
 
     private final WorkDescription shutdownWorkDescription;
-
-    private final Set<Worker> registeredWorkers = new HashSet<Worker>();
-
-    private final Set<String> local = new TreeSet<String>();
 
     private boolean pendingCheckRunning;
 
@@ -129,6 +125,14 @@ public class ControllerImpl implements Controller, Runnable {
 
     private ControllerWorkDescription getWorkdescriptionForUuid(
             final Uuid uuid, final long now) {
+
+        synchronized (this.workerInfo) {
+            final WorkerInfo i = this.workerInfo.get(uuid);
+            if (!i.hasRetries()) {
+                return null;
+            }
+        }
+
         // ControllerWorkDescription cwd = null;
         // synchronized (this.local) {
         // final Iterator<ControllerWorkDescription> it = this.pending
@@ -182,17 +186,20 @@ public class ControllerImpl implements Controller, Runnable {
     private void notifyAllWorkers() {
         new Thread(new Runnable() {
             public void run() {
-                final Set<Worker> workersToNotify;
-                synchronized (ControllerImpl.this.registeredWorkers) {
-                    workersToNotify = new HashSet<Worker>(
-                            ControllerImpl.this.registeredWorkers);
+                final Set<Map.Entry<Uuid, WorkerInfo>> workersToNotify;
+                synchronized (ControllerImpl.this.workerInfo) {
+                    workersToNotify = new HashSet<Map.Entry<Uuid, WorkerInfo>>(
+                            ControllerImpl.this.workerInfo.entrySet());
                 }
-                for (final Worker w : workersToNotify) {
+                for (final Map.Entry<Uuid, WorkerInfo> w : workersToNotify) {
                     try {
-                        w.newWork();
+                        final Worker proxy = w.getValue().getProxy();
+                        if (proxy != null) {
+                            proxy.newWork();
+                        }
                     } catch (final RemoteException r) {
-                        synchronized (ControllerImpl.this.registeredWorkers) {
-                            ControllerImpl.this.registeredWorkers.remove(w);
+                        synchronized (ControllerImpl.this.workerInfo) {
+                            ControllerImpl.this.workerInfo.remove(w.getKey());
                         }
                     }
                 }
@@ -222,6 +229,10 @@ public class ControllerImpl implements Controller, Runnable {
             }
             this.pending.remove(id);
         }
+        synchronized (this.workerInfo) {
+            this.getWorkerInfo(uuid).resetRetries();
+        }
+
         if (isNew) {
             ControllerImpl.LOGGER.info("Done with worker Job " + id + " ("
                     + uuid + ")");
@@ -299,8 +310,20 @@ public class ControllerImpl implements Controller, Runnable {
 
     /** {@inheritDoc} */
     public void ping(final Uuid uuid) {
-        synchronized (this.lastSeen) {
-            this.lastSeen.put(uuid, Long.valueOf(System.currentTimeMillis()));
+        synchronized (this.workerInfo) {
+            final WorkerInfo info = this.getWorkerInfo(uuid);
+            info.updateLastSeen();
+        }
+    }
+
+    private WorkerInfo getWorkerInfo(final Uuid uuid) {
+        final WorkerInfo w = this.workerInfo.get(uuid);
+        if (w == null) {
+            final WorkerInfo n = new WorkerInfo();
+            this.workerInfo.put(uuid, n);
+            return n;
+        } else {
+            return w;
         }
     }
 
@@ -352,11 +375,12 @@ public class ControllerImpl implements Controller, Runnable {
     private Set<Object> findSuspicious() {
         final Set<Object> suspicous = new TreeSet<Object>();
 
-        synchronized (this.lastSeen) {
+        synchronized (this.workerInfo) {
             final long now = System.currentTimeMillis();
             for (final Object id : this.running.keySet()) {
                 final Uuid uuid = this.assignedTo.get(id);
-                final long seen = this.lastSeen.get(uuid).longValue();
+                final WorkerInfo info = this.getWorkerInfo(uuid);
+                final long seen = info.getLastSeen();
                 final long alive = now - seen;
                 if (alive > ControllerImpl.MAX_TIME_WITHOUT_PING
                         * ControllerImpl.MSEC_TO_SEC) {
@@ -367,6 +391,7 @@ public class ControllerImpl implements Controller, Runnable {
                 if (timerunning > ControllerImpl.MAX_TIME_RUNNING
                         * ControllerImpl.MSEC_TO_SEC) {
                     suspicous.add(id);
+                    info.decreaseRetries();
                 }
             }
         }
@@ -388,8 +413,9 @@ public class ControllerImpl implements Controller, Runnable {
     public void registerWorker(final Uuid uuid, final Worker worker)
             throws RemoteException {
         ControllerImpl.LOGGER.info("Worker is registering: " + uuid);
-        synchronized (this.registeredWorkers) {
-            this.registeredWorkers.add(worker);
+        synchronized (this.workerInfo) {
+            final WorkerInfo info = this.getWorkerInfo(uuid);
+            info.setProxy(worker);
         }
     }
 
@@ -400,17 +426,20 @@ public class ControllerImpl implements Controller, Runnable {
      *            Uuid of the worker
      */
     public void setIsLocal(final Uuid uuid) {
-        synchronized (this.local) {
-            this.local.add(uuid.toString());
+        synchronized (this.workerInfo) {
+            final WorkerInfo info = this.getWorkerInfo(uuid);
+            info.setIsLocal();
         }
     }
 
     /** {@inheritDoc} */
     public void failed(final Object id, final Uuid uuid) throws RemoteException {
+        synchronized (this.workerInfo) {
+            this.getWorkerInfo(uuid).decreaseRetries();
+        }
         synchronized (this.pending) {
             final Set<Object> suspicous = Collections.singleton(id);
             this.rescheduleSuspicous(suspicous);
-            // TODO: Maybe mark uuid ?
         }
     }
 
