@@ -83,7 +83,7 @@ public class GatBackend implements Backend, MetricListener {
      */
     public GatBackend() {
         System.setProperty("glite.deleteJDL", "true");
-        System.setProperty("glite.pollIntervalSecs", "15");
+        System.setProperty("glite.pollIntervalSecs", "90");
         this.context = new GATContext();
         final Preferences globalPrefs = new Preferences();
 
