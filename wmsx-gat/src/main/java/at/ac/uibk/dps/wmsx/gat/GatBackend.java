@@ -242,10 +242,8 @@ public class GatBackend implements Backend, MetricListener {
         final SoftwareDescription swDescription = this.createSwDescription(job,
                 targetDir);
 
-        final Map<String, Object> hwrAttrib = new HashMap<String, Object>();
-        // hwrAttrib.put("memory.size", 1.0f);
-        final ResourceDescription hwrDescription = new HardwareResourceDescription(
-                hwrAttrib);
+        final ResourceDescription hwrDescription = this
+                .createHwDescription(job);
         final org.gridlab.gat.resources.JobDescription jobDescription = new org.gridlab.gat.resources.JobDescription(
                 swDescription, hwrDescription);
 
@@ -265,6 +263,21 @@ public class GatBackend implements Backend, MetricListener {
             throw new IOException(e.getMessage());
         }
 
+    }
+
+    private ResourceDescription createHwDescription(final JobDescription job) {
+        final Map<String, Object> hwrAttrib = new HashMap<String, Object>();
+
+        final String requirements = job
+                .getStringEntry(JobDescription.REQUIREMENTS);
+        if (requirements != null) {
+            hwrAttrib.put("glite.other", requirements);
+        }
+
+        // hwrAttrib.put("memory.size", 1.0f);
+        final ResourceDescription hwrDescription = new HardwareResourceDescription(
+                hwrAttrib);
+        return hwrDescription;
     }
 
     private SoftwareDescription createSwDescription(final JobDescription job,
