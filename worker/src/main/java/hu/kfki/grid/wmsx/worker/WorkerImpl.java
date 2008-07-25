@@ -22,6 +22,7 @@
 package hu.kfki.grid.wmsx.worker;
 
 import hu.kfki.grid.wmsx.util.Exporter;
+import hu.kfki.grid.wmsx.util.LogUtil;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -48,6 +49,8 @@ public final class WorkerImpl implements Worker {
     private static final Logger LOGGER = Logger.getLogger(WorkerImpl.class
             .toString());
 
+    private static final int RETRY_COUNT = 5;
+
     private final Uuid uuid;
 
     private final Controller controller;
@@ -70,42 +73,55 @@ public final class WorkerImpl implements Worker {
         boolean terminate = false;
         long lastChecked = 0;
         long delay = WorkerImpl.START_DELAY;
+        int count = WorkerImpl.RETRY_COUNT;
         WorkerImpl.LOGGER.info("Worker started, Uuid is " + this.uuid);
         try {
             this.controller.registerWorker(this.uuid, (Worker) Exporter
                     .getInstance().export(this));
+        } catch (final RemoteException r) {
+            WorkerImpl.LOGGER.info(LogUtil.logException(r));
+        }
+        try {
             while (!terminate) {
                 this.logWithTime("Checking for work");
+                try {
+                    final WorkDescription todo = this.controller
+                            .retrieveWork(this.uuid);
 
-                final WorkDescription todo = this.controller
-                        .retrieveWork(this.uuid);
+                    if (todo != null) {
 
-                if (todo != null) {
-
-                    if ("shutdown".equals(todo.getId())) {
-                        terminate = true;
+                        if ("shutdown".equals(todo.getId())) {
+                            terminate = true;
+                        } else {
+                            this.alive.start();
+                            performer.performWork(todo, this.controller,
+                                    this.uuid);
+                            delay = WorkerImpl.START_DELAY;
+                            lastChecked = 0;
+                        }
                     } else {
-                        this.alive.start();
-                        performer.performWork(todo, this.controller, this.uuid);
-                        delay = WorkerImpl.START_DELAY;
-                        lastChecked = 0;
-                    }
-                } else {
-                    this.logWithTime("Sleeping");
-                    this.alive.stop();
-                    lastChecked += delay;
-                    if (lastChecked < WorkerImpl.MAX_WAIT) {
-                        synchronized (this) {
-                            try {
-                                this.wait(delay * WorkerImpl.MSTOSECONDS);
-                            } catch (final InterruptedException e) {
-                                // ignore
+                        this.logWithTime("Sleeping");
+                        this.alive.stop();
+                        lastChecked += delay;
+                        if (lastChecked < WorkerImpl.MAX_WAIT) {
+                            synchronized (this) {
+                                try {
+                                    this.wait(delay * WorkerImpl.MSTOSECONDS);
+                                } catch (final InterruptedException e) {
+                                    // ignore
+                                }
                             }
                         }
+                        delay += Math.random() / 2.0 * delay;
+                        if (lastChecked >= WorkerImpl.MAX_WAIT) {
+                            terminate = true;
+                        }
                     }
-                    delay += Math.random() / 2.0 * delay;
-                    if (lastChecked >= WorkerImpl.MAX_WAIT) {
-                        terminate = true;
+                } catch (final RemoteException e) {
+                    WorkerImpl.LOGGER.warning(e.getMessage());
+                    count--;
+                    if (count < 0) {
+                        throw e;
                     }
                 }
             }

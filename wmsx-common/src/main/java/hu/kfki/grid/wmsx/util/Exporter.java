@@ -21,10 +21,18 @@
 
 package hu.kfki.grid.wmsx.util;
 
+import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.rmi.Remote;
 import java.rmi.server.ExportException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.jini.jeri.BasicILFactory;
 import net.jini.jeri.BasicJeriExporter;
@@ -56,6 +64,34 @@ public final class Exporter {
         return Exporter.INSTANCE;
     }
 
+    private static InetAddress getLocalHost() throws UnknownHostException {
+        final Set<InetAddress> addresses = new HashSet<InetAddress>();
+        try {
+            final Enumeration<NetworkInterface> ifaces = NetworkInterface
+                    .getNetworkInterfaces();
+            while (ifaces.hasMoreElements()) {
+                final NetworkInterface ni = ifaces.nextElement();
+                final Enumeration<InetAddress> addrs = ni.getInetAddresses();
+                while (addrs.hasMoreElements()) {
+                    final InetAddress ia = addrs.nextElement();
+                    if (!ia.isAnyLocalAddress() && !ia.isLoopbackAddress()
+                            && !ia.isSiteLocalAddress()
+                            && ia instanceof Inet4Address) {
+                        addresses.add(ia);
+                    }
+                }
+            }
+        } catch (final IOException e) {
+            // ignore
+        }
+
+        if (addresses.isEmpty()) {
+            return InetAddress.getLocalHost();
+        } else {
+            return addresses.iterator().next();
+        }
+    }
+
     /**
      * Export an object through RMI in the allowed Globus port ranges.
      * 
@@ -64,6 +100,13 @@ public final class Exporter {
      * @return a remote proxy.
      */
     public Object export(final Remote impl) {
+        String hostname;
+        try {
+            hostname = Exporter.getLocalHost().getHostAddress();
+        } catch (final UnknownHostException ue) {
+            return null;
+        }
+
         Object stub = null;
         int port = GlobusTcp.getInstance().getMinTcp();
         final int max = GlobusTcp.getInstance().getMaxTcp();
@@ -71,7 +114,7 @@ public final class Exporter {
             while (stub == null && port <= max) {
                 try {
                     final ServerEndpoint endpoint = TcpServerEndpoint
-                            .getInstance(port);
+                            .getInstance(hostname, port);
                     final net.jini.export.Exporter ex = new BasicJeriExporter(
                             endpoint, this.invocationLayerFactory, false, true);
                     stub = ex.export(impl);

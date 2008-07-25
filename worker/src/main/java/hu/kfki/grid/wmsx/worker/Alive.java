@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -23,6 +22,7 @@
 package hu.kfki.grid.wmsx.worker;
 
 import java.rmi.RemoteException;
+import java.util.logging.Logger;
 
 import net.jini.id.Uuid;
 
@@ -33,6 +33,11 @@ import net.jini.id.Uuid;
  * 
  */
 public class Alive implements Runnable {
+    private static final Logger LOGGER = Logger.getLogger(Alive.class
+            .toString());
+
+    private static final int RETRY_COUNT = 5;
+
     private static final int PING_INTERVAL = 30 * 1000;
 
     private final Controller controller;
@@ -61,6 +66,7 @@ public class Alive implements Runnable {
     /** {@inheritDoc} */
     public void run() {
         boolean goon = true;
+        int count = Alive.RETRY_COUNT;
 
         while (goon) {
             try {
@@ -71,8 +77,12 @@ public class Alive implements Runnable {
             try {
                 this.controller.ping(this.uuid);
             } catch (final RemoteException e) {
-                synchronized (this) {
-                    this.shutdown = true;
+                Alive.LOGGER.warning(e.getMessage());
+                count--;
+                if (count <= 0) {
+                    synchronized (this) {
+                        this.shutdown = true;
+                    }
                 }
             }
             synchronized (this) {

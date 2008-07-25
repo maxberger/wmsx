@@ -434,6 +434,9 @@ public class ControllerImpl implements Controller, Runnable {
 
     /** {@inheritDoc} */
     public void failed(final Object id, final Uuid uuid) throws RemoteException {
+        ControllerImpl.LOGGER.info("Worker job failed " + id + " (" + uuid
+                + ")");
+
         synchronized (this.workerInfo) {
             this.getWorkerInfo(uuid).decreaseRetries();
         }
