@@ -15,10 +15,9 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.util;
 
@@ -52,6 +51,7 @@ public final class StreamListener implements Runnable {
         this.launcher = l;
     }
 
+    /** {@inheritDoc} */
     public void run() {
         try {
             if (this.out != null) {

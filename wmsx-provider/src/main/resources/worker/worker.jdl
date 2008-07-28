@@ -7,7 +7,6 @@ StdOutput = "worker.out";
 StdError = "worker.out";
 Requirements = (
 !(other.GlueCEUniqueID=="pearl.amu.edu.pl:2119/jobmanager-lcgpbs-voce") &&
-!(other.GlueCEUniqueID=="hephygr.oeaw.ac.at:2119/jobmanager-lcgpbs-voce") &&
-!(other.GlueCEUniqueID=="ce.cyf-kr.edu.pl:2119/jobmanager-pbs-voce")
+!(other.GlueCEUniqueID=="hephygr.oeaw.ac.at:2119/jobmanager-lcgpbs-voce")
 );
 ]
