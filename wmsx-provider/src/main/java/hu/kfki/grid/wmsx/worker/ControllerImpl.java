@@ -441,6 +441,9 @@ public class ControllerImpl implements Controller, Runnable {
             this.getWorkerInfo(uuid).decreaseRetries();
         }
         synchronized (this.pending) {
+            final ControllerWorkDescription cwd = this.running.get(id);
+            final String wfid = cwd.getWorkDescription().getWorkflowId();
+            this.fileManager.clearWorker(uuid, wfid);
             final Set<Object> suspicous = Collections.singleton(id);
             this.rescheduleSuspicous(suspicous);
         }
