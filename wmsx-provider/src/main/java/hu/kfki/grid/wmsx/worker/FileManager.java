@@ -102,4 +102,20 @@ public final class FileManager {
             this.fileAvailAt.put(file, newSet);
         }
     }
+
+    /**
+     * Clear the knowledge about this worker.
+     * 
+     * @param uuid
+     *            id of the worker
+     * @param wfid
+     *            Id of the workflow
+     */
+    public void clearWorker(final Uuid uuid, final String wfid) {
+        final String completeId = wfid + uuid;
+        for (final Set<String> workers : this.fileAvailAt.values()) {
+            workers.remove(completeId);
+        }
+
+    }
 }

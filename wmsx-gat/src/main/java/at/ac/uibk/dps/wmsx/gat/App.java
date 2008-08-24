@@ -21,7 +21,7 @@
 
 package at.ac.uibk.dps.wmsx.gat;
 
-//~--- non-JDK imports --------------------------------------------------------
+// ~--- non-JDK imports --------------------------------------------------------
 import java.net.URISyntaxException;
 import java.util.Hashtable;
 import java.util.Map;
@@ -150,7 +150,7 @@ public class App {
 
         while (true) {
             try {
-                final Map info = job.getInfo();
+                final Map<String, Object> info = job.getInfo();
 
                 System.err.print("job info: ");
                 System.err.println(info);
