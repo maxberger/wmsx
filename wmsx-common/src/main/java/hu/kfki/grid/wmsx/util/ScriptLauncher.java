@@ -173,6 +173,20 @@ public final class ScriptLauncher {
                 // Ignore
             }
         }
+        try {
+            if (out != null) {
+                out.flush();
+            }
+        } catch (final IOException io) {
+            // ignore
+        }
+        try {
+            if (err != null) {
+                err.flush();
+            }
+        } catch (final IOException io) {
+            // ignore
+        }
         return retVal;
     }
 
