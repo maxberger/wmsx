@@ -77,12 +77,12 @@
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>gat-api</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>gat-engine</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
 <!--    <dependency>
       <groupId>org.apache.axis</groupId>
@@ -102,22 +102,22 @@
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>cryptix</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>cryptix-asn1</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>cryptix32</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>puretls</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>wsdl4j</groupId>
@@ -163,147 +163,147 @@
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>activation</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>addressing-1.0</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>axis1.4</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>bcprov-jdk15-133</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>cog-jglobus-1.4</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>commons-discovery</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>commons-logging-1.1</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>cryptix32</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>cryptix-asn1</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>cryptix</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
 <!--    <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>GliteAdaptor</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency> -->
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>glite-jdl-api-java</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>glite-security-delegation-java</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>glite-security-trustmanager</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>glite-security-util-java</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>globus_wsrf_mds_aggregator_stubs</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>gram-stubs</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>jaxrpc</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>lb_1.5.3</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>log4j-1.2.13</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>mail</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>puretls</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>saaj</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>servlet</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>wms3.1</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>wsdl4j</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>wsrf_core</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>wsrf_core_stubs</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>wss4j</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
   </dependencies>
 </project>
