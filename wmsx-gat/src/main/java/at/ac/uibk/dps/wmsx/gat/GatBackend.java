@@ -64,6 +64,8 @@ import org.gridlab.gat.security.CertificateSecurityContext;
  */
 // CHECKSTYLE:OFF
 public class GatBackend implements Backend, MetricListener {
+    private static final String GLITE_JOB_ID = "glite.jobID";
+
     // CHECKSTYLE:ON
     private static final Logger LOGGER = Logger.getLogger(GatBackend.class
             .toString());
@@ -97,8 +99,8 @@ public class GatBackend implements Backend, MetricListener {
                 GliteTestsConstants.GAT_ADAPTOR_PATH);
 
         // System.setProperty("gat.debug", "true");
-        // System.setProperty("gat.verbose", "true");
-        System.setProperty("gat.verbose", "false");
+        System.setProperty("gat.verbose", "true");
+        // System.setProperty("gat.verbose", "false");
 
         /** ************************************************* */
         /** Information necessary for VOMS proxy creation ** */
@@ -113,6 +115,7 @@ public class GatBackend implements Backend, MetricListener {
         globalPrefs.put("vomsServerPort", "7001");
         globalPrefs.put("vomsHostDN",
                 "/DC=cz/DC=cesnet-ca/O=CESNET/CN=skurut19.cesnet.cz");
+        globalPrefs.put("File.adaptor.name", "Local,GridFTP,!sftp");
 
         CertificateSecurityContext secContext;
         try {
@@ -146,26 +149,26 @@ public class GatBackend implements Backend, MetricListener {
     /** {@inheritDoc} */
     public JobState getState(final JobUid uid) {
         final Job job = (Job) uid.getBackendId();
-        final int istate = job.getState();
+        final Job.JobState istate = job.getState();
         final JobState state;
         switch (istate) {
-        case Job.INITIAL:
-        case Job.SCHEDULED:
-        case Job.PRE_STAGING:
-        case Job.ON_HOLD:
+        case INITIAL:
+        case SCHEDULED:
+        case PRE_STAGING:
+        case ON_HOLD:
             state = JobState.STARTUP;
             break;
-        case Job.RUNNING:
+        case RUNNING:
             state = JobState.RUNNING;
             break;
-        case Job.STOPPED:
-        case Job.POST_STAGING:
+        case STOPPED:
+        case POST_STAGING:
             state = JobState.SUCCESS;
             break;
-        case Job.SUBMISSION_ERROR:
+        case SUBMISSION_ERROR:
             state = JobState.FAILED;
             break;
-        case Job.UNKNOWN:
+        case UNKNOWN:
         default:
             state = JobState.NONE;
         }
@@ -176,7 +179,7 @@ public class GatBackend implements Backend, MetricListener {
     public String jobUidToUri(final JobUid uid) {
         final Job job = (Job) uid.getBackendId();
         try {
-            return job.getJobID();
+            return (String) job.getInfo().get(GatBackend.GLITE_JOB_ID);
         } catch (final GATInvocationException e) {
             GatBackend.LOGGER.warning(LogUtil.logException(e));
             return null;
@@ -209,7 +212,7 @@ public class GatBackend implements Backend, MetricListener {
                 return;
             }
 
-            while (this.job.getState() == Job.POST_STAGING) {
+            while (this.job.getState() == Job.JobState.POST_STAGING) {
                 try {
                     Thread
                             .sleep(GatBackend.GatDelayedExecution.POST_STAGE_SLEEP_TIME);
@@ -250,7 +253,8 @@ public class GatBackend implements Backend, MetricListener {
         try {
             final Job jobResult = this.broker.submitJob(jobDescription);
             final JobUid jobUid = new JobUid(this, jobResult);
-            this.jobForId.put(jobResult.getJobID(), jobUid);
+            this.jobForId.put((String) jobResult.getInfo().get(
+                    GatBackend.GLITE_JOB_ID), jobUid);
             final MetricDefinition md = jobResult
                     .getMetricDefinitionByName("job.status");
             final Metric polledMetric = new Metric(md, null);
@@ -358,17 +362,18 @@ public class GatBackend implements Backend, MetricListener {
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     public void processMetricEvent(final MetricEvent val) {
         try {
-            final Map<String, Object> info = (Map<String, Object>) val
-                    .getValue();
-            final String jid = (String) info.get("jobID");
+            final Job job = (Job) val.getSource();
+            final Map<String, Object> info = job.getInfo();
+            final String jid = (String) info.get(GatBackend.GLITE_JOB_ID);
             final JobUid juid = this.jobForId.get(jid);
             JobWatcher.getInstance().checkWithState(juid, this.getState(juid));
         } catch (final ClassCastException e) {
             GatBackend.LOGGER.warning(LogUtil.logException(e));
         } catch (final NullPointerException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
+        } catch (final GATInvocationException e) {
             GatBackend.LOGGER.warning(LogUtil.logException(e));
         }
     }
