@@ -99,8 +99,8 @@ public class GatBackend implements Backend, MetricListener {
                 GliteTestsConstants.GAT_ADAPTOR_PATH);
 
         // System.setProperty("gat.debug", "true");
-        System.setProperty("gat.verbose", "true");
-        // System.setProperty("gat.verbose", "false");
+        // System.setProperty("gat.verbose", "true");
+        System.setProperty("gat.verbose", "false");
 
         /** ************************************************* */
         /** Information necessary for VOMS proxy creation ** */
