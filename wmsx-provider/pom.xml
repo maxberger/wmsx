@@ -33,16 +33,18 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>retrotranslator-maven-plugin</artifactId>
-       <executions>
-        <execution>
+        <version>1.0-alpha-4</version>
+        <executions>
+          <execution>
             <goals>
-                <goal>translate-project</goal>
+              <goal>translate-project</goal>
             </goals>
             <configuration>
-                <replace>true</replace>
+              <replace>true</replace>
             </configuration>
-        </execution>
-    </executions></plugin>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo.groovy</groupId>
         <artifactId>groovy-maven-plugin</artifactId>
@@ -77,7 +79,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -131,12 +133,12 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.1</version>
+      <version>1.1.1</version>
     </dependency>
     <dependency>
       <groupId>commons-discovery</groupId>
       <artifactId>commons-discovery</artifactId>
-      <version>0.4</version>
+      <version>20040218.194635</version>
     </dependency>
 <!--    <dependency>
       <groupId>hu.kfki.grid</groupId>
@@ -148,11 +150,11 @@
       <artifactId>classad</artifactId>
       <version>lcg</version>
     </dependency>
-<dependency>
-    <groupId>net.sf.retrotranslator</groupId>
-    <artifactId>retrotranslator-runtime</artifactId>
-    <version>1.2.4</version>
-<scope>runtime</scope>
-</dependency>
+    <dependency>
+      <groupId>net.sf.retrotranslator</groupId>
+      <artifactId>retrotranslator-runtime</artifactId>
+      <version>1.2.7</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 </project>

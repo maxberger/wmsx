@@ -20,7 +20,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>appassembler-maven-plugin</artifactId>
-        <version>1.0-beta-1</version>
+        <version>1.0-beta-2</version>
         <configuration>
           <extraJvmArguments>-Xmx1024m</extraJvmArguments>
           <programs>
@@ -252,7 +252,7 @@
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
-      <artifactId>lb_1.5.3</artifactId>
+      <artifactId>lb</artifactId>
       <version>0.2</version>
     </dependency>
     <dependency>
