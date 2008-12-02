@@ -171,7 +171,12 @@ public abstract class AbstractLCGBackend implements Backend {
         // final PrintStream parserOutput = System.out;
         final SubmissionResults result = InputParser.parseSubmission(p
                 .getInputStream(), parserOutput, this);
-
+        try {
+            p.waitFor();
+        } catch (final InterruptedException e) {
+            AbstractLCGBackend.LOGGER.log(java.util.logging.Level.FINE,
+                    "Error waiting for process", e);
+        }
         if (result == null) {
             AbstractLCGBackend.LOGGER.warning("Failed to submit Job.");
             AbstractLCGBackend.LOGGER.info(baos.toString());
@@ -197,6 +202,12 @@ public abstract class AbstractLCGBackend implements Backend {
             final Process p = Runtime.getRuntime().exec(
                     commandLine.toArray(new String[commandLine.size()]));
             retVal = InputParser.parseStatus(p.getInputStream());
+            try {
+                p.waitFor();
+            } catch (final InterruptedException e) {
+                AbstractLCGBackend.LOGGER.log(java.util.logging.Level.FINE,
+                        "Error waiting for process", e);
+            }
         } catch (final IOException io) {
             AbstractLCGBackend.LOGGER.warning(io.getMessage());
         }
