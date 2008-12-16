@@ -79,4 +79,14 @@ public class SubmissionResults {
         return this.port;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder b = new StringBuilder();
+        b.append(this.jobId).append(' ').append(this.port).append(' ').append(
+                this.shadowpid).append(' ').append(this.iStream).append(' ')
+                .append(this.oStream).append(' ').append(this.eStream);
+        return b.toString();
+    }
+
 }
