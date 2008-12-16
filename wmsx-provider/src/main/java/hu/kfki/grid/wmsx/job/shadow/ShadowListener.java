@@ -15,10 +15,9 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.job.shadow;
 
@@ -45,25 +44,25 @@ public class ShadowListener implements Runnable, JobListener {
     private static final Logger LOGGER = Logger.getLogger(ShadowListener.class
             .toString());
 
-    File iFile;
+    private File iFile;
 
-    File oFile;
+    private File oFile;
 
-    File eFile;
+    private File eFile;
 
-    ReadableByteChannel oChannel;
+    private ReadableByteChannel oChannel;
 
-    ReadableByteChannel eChannel;
+    private ReadableByteChannel eChannel;
 
-    int listenerPid;
+    private int listenerPid;
 
-    boolean termination;
+    private boolean termination;
 
-    Thread runThread;
+    private Thread runThread;
 
-    final WritableByteChannel appOutput;
+    private final WritableByteChannel appOutput;
 
-    int port;
+    private int port;
 
     private ShadowListener(final SubmissionResults result,
             final WritableByteChannel outputStream) {
@@ -103,8 +102,9 @@ public class ShadowListener implements Runnable, JobListener {
     }
 
     @Override
-    protected void finalize() {
+    protected void finalize() throws Throwable {
         this.cleanup();
+        super.finalize();
     }
 
     private void killer(final boolean serious) {
