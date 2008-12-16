@@ -1,3 +1,24 @@
+/*
+ * WMSX - Workload Management Extensions for gLite
+ * 
+ * Copyright (C) 2007-2008 Max Berger
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see http://www.gnu.org/licenses/.
+ */
+
+/* $Id$ */
+
 package hu.kfki.grid.wmsx.job.description;
 
 import java.io.BufferedReader;
@@ -6,11 +27,11 @@ import java.io.Reader;
 
 public class NoHashReader extends Reader {
 
-    final BufferedReader in;
+    private final BufferedReader in;
 
-    String buffer;
+    private String buffer;
 
-    int bufpos;
+    private int bufpos;
 
     public NoHashReader(final Reader orig) {
         this.in = new BufferedReader(orig);
@@ -47,4 +68,18 @@ public class NoHashReader extends Reader {
 
         return toRead;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    // CHECKSTYLE:OFF
+    protected void finalize() throws Throwable {
+        // CHECKSTYLE:ON
+        try {
+            this.close();
+        } catch (final IOException e) {
+            // Ignore
+        }
+        super.finalize();
+    }
+
 }
