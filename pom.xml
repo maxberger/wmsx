@@ -6,7 +6,11 @@
   <packaging>pom</packaging>
   <name>WMS-X</name>
   <version>1.1-SNAPSHOT</version>
-  <url>http://www.grid.kfki.hu</url>
+  <url>http://wmsx.max.berger.name</url>
+  <issueManagement>
+    <system>trac</system>
+    <url>http://wmsx.max.berger.name/trac</url>
+  </issueManagement>
   <build>
     <plugins>
       <plugin>
@@ -49,11 +53,25 @@
     <module>wmsx-gat</module>
     <module>wmsx-ng</module>
   </modules>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <tracUser>maven</tracUser>
+          <tracPassword>maven</tracPassword>
+          <query>status!=closed</query>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   <distributionManagement>
     <site>
-      <id>afs</id>
-      <name>Website for WMSX in AFS</name>
-      <url>file:///afs/kfki.hu/home/berger/public/wmsx</url>
+      <id>wmsx</id>
+      <name>Website for WMSX</name>
+      <url>sftp://wmsx.max.berger.name/home/trac/www</url>
     </site>
   </distributionManagement>
 </project>
