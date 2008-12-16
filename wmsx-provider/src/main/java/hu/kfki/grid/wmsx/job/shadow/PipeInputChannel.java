@@ -37,8 +37,8 @@ public class PipeInputChannel implements ReadableByteChannel {
         this(new File(fileName));
     }
 
-    public PipeInputChannel(final File file) {
-        this.file = file;
+    public PipeInputChannel(final File nfile) {
+        this.file = nfile;
         this.channel = null;
     }
 
@@ -66,6 +66,19 @@ public class PipeInputChannel implements ReadableByteChannel {
         } else {
             return this.channel.isOpen();
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    // CHECKSTYLE:OFF
+    protected void finalize() throws Throwable {
+        // CHECKSTYLE:ON
+        try {
+            this.close();
+        } catch (final IOException e) {
+            // Ignore
+        }
+        super.finalize();
     }
 
 }

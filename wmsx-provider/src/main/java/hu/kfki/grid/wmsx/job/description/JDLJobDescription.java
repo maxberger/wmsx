@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -63,9 +64,10 @@ public class JDLJobDescription extends AbstractJobDescription {
         this.origin = jdlFile.getCanonicalFile();
         this.baseDir = this.origin.getParentFile();
         this.changed = false;
-        final ClassAdParser parser = new ClassAdParser(new NoHashReader(
-                new FileReader(jdlFile)));
+        final Reader reader = new NoHashReader(new FileReader(jdlFile));
+        final ClassAdParser parser = new ClassAdParser(reader);
         final Expr e = parser.parse();
+        reader.close();
         if (e instanceof RecordExpr) {
             this.erecord = (RecordExpr) e;
         } else {
