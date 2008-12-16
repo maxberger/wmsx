@@ -101,8 +101,11 @@ public class ShadowListener implements Runnable, JobListener {
         return l;
     }
 
+    /** {@inheritDoc} */
     @Override
+    // CHECKSTYLE:OFF
     protected void finalize() throws Throwable {
+        // CHECKSTYLE:ON
         this.cleanup();
         super.finalize();
     }
