@@ -11,6 +11,9 @@
     <system>trac</system>
     <url>http://wmsx.max.berger.name/trac</url>
   </issueManagement>
+  <scm>
+    <connection>scm:hg:http://wmsx.max.berger.name/hg/wmsx</connection>
+  </scm>
   <build>
     <plugins>
       <plugin>
@@ -29,7 +32,7 @@
           </descriptors>
           <attach>false</attach>
         </configuration>
-<!--        <executions>
+        <!--        <executions>
           <execution>
             <phase>package</phase>
             <goals>
