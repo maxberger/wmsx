@@ -71,6 +71,9 @@ public interface JobDescription extends Cloneable {
     /** Jobtype interactive. */
     String INTERACTIVE = "Interactive";
 
+    /** Jobtype interactive. */
+    String NORMAL = "Normal";
+
     /** software requirements within arglist app (list). */
     String SOFTWARE = "Software";
 
