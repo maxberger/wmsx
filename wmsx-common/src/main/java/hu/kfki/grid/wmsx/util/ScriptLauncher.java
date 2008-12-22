@@ -187,6 +187,7 @@ public final class ScriptLauncher {
         } catch (final IOException io) {
             // ignore
         }
+        ProcessHelper.cleanupProcess(p);
         return retVal;
     }
 

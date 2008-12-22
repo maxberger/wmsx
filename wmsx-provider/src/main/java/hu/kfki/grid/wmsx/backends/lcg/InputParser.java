@@ -108,6 +108,7 @@ public final class InputParser {
                 }
                 line = reader.readLine();
             }
+            reader.close();
         } catch (final IOException e) {
             InputParser.LOGGER.fine(e.getMessage());
         }
@@ -160,6 +161,7 @@ public final class InputParser {
                 }
                 line = reader.readLine();
             }
+            reader.close();
         } catch (final IOException io) {
             InputParser.LOGGER.warning(io.getMessage());
         }

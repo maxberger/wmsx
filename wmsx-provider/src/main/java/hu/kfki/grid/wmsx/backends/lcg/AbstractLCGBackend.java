@@ -28,6 +28,7 @@ import hu.kfki.grid.wmsx.backends.ProcessDelayedExecution;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
+import hu.kfki.grid.wmsx.util.ProcessHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -69,11 +70,9 @@ public abstract class AbstractLCGBackend implements Backend {
             final Process p = Runtime.getRuntime().exec(
                     commandLine.toArray(new String[commandLine.size()]), null,
                     dir);
-            p.waitFor();
+            ProcessHelper.cleanupProcess(p);
         } catch (final IOException e) {
             AbstractLCGBackend.LOGGER.warning(e.getMessage());
-        } catch (final InterruptedException e) {
-            // ignore
         }
 
         // TODO: Re-enable!
@@ -172,27 +171,7 @@ public abstract class AbstractLCGBackend implements Backend {
         final SubmissionResults result = InputParser.parseSubmission(p
                 .getInputStream(), parserOutput, this);
         AbstractLCGBackend.LOGGER.finer("Submission Results: " + result);
-        try {
-            p.waitFor();
-        } catch (final InterruptedException e) {
-            AbstractLCGBackend.LOGGER.log(java.util.logging.Level.FINE,
-                    "Error waiting for process", e);
-        }
-        try {
-            p.getInputStream().close();
-        } catch (final IOException io) {
-            AbstractLCGBackend.LOGGER.finer(io.toString());
-        }
-        try {
-            p.getOutputStream().close();
-        } catch (final IOException io) {
-            AbstractLCGBackend.LOGGER.finer(io.toString());
-        }
-        try {
-            p.getErrorStream().close();
-        } catch (final IOException io) {
-            AbstractLCGBackend.LOGGER.finer(io.toString());
-        }
+        ProcessHelper.cleanupProcess(p);
         if (result == null) {
             AbstractLCGBackend.LOGGER.warning("Failed to submit Job.");
             AbstractLCGBackend.LOGGER.info(baos.toString());
@@ -218,12 +197,7 @@ public abstract class AbstractLCGBackend implements Backend {
             final Process p = Runtime.getRuntime().exec(
                     commandLine.toArray(new String[commandLine.size()]));
             retVal = InputParser.parseStatus(p.getInputStream());
-            try {
-                p.waitFor();
-            } catch (final InterruptedException e) {
-                AbstractLCGBackend.LOGGER.log(java.util.logging.Level.FINE,
-                        "Error waiting for process", e);
-            }
+            ProcessHelper.cleanupProcess(p);
         } catch (final IOException io) {
             AbstractLCGBackend.LOGGER.warning(io.getMessage());
         }

@@ -21,6 +21,8 @@
 
 package hu.kfki.grid.wmsx.backends;
 
+import hu.kfki.grid.wmsx.util.ProcessHelper;
+
 import java.util.logging.Logger;
 
 /**
@@ -46,13 +48,6 @@ public class ProcessDelayedExecution implements DelayedExecution {
 
     /** {@inheritDoc} */
     public void waitFor() {
-        try {
-            if (this.process != null) {
-                this.process.waitFor();
-            }
-        } catch (final InterruptedException e) {
-            ProcessDelayedExecution.LOGGER.warning(e.getMessage());
-        }
-
+        ProcessHelper.cleanupProcess(this.process);
     }
 }
