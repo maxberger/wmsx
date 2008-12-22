@@ -10,7 +10,6 @@
   <artifactId>wmsx-requestor</artifactId>
   <name>WMS-X Requestor</name>
   <version>1.1-SNAPSHOT</version>
-  <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
