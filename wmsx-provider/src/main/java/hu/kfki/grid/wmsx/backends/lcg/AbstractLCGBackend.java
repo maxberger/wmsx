@@ -141,6 +141,11 @@ public abstract class AbstractLCGBackend implements Backend {
      */
     protected abstract List<String> getStatusCommand(String jobId);
 
+    /**
+     * @return true if this type contains error streams for interactive jobs.
+     */
+    protected abstract boolean needsError();
+
     /** {@inheritDoc} */
     public DelayedExecution retrieveResult(final JobUid id, final File dir) {
         try {
@@ -168,8 +173,12 @@ public abstract class AbstractLCGBackend implements Backend {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final PrintStream parserOutput = new PrintStream(baos);
         // final PrintStream parserOutput = System.out;
+        final boolean interactive = JobDescription.INTERACTIVE
+                .equalsIgnoreCase(jobDesc.getStringEntry(
+                        JobDescription.JOBTYPE, JobDescription.NORMAL));
         final SubmissionResults result = InputParser.parseSubmission(p
-                .getInputStream(), parserOutput, this);
+                .getInputStream(), parserOutput, this, interactive, this
+                .needsError());
         AbstractLCGBackend.LOGGER.finer("Submission Results: " + result);
         ProcessHelper.cleanupProcess(p);
         if (result == null) {

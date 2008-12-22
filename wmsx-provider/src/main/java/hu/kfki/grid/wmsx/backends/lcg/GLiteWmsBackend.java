@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -99,4 +98,11 @@ public final class GLiteWmsBackend extends AbstractLCGBackend {
     public String toString() {
         return "GLiteWms";
     }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean needsError() {
+        return false;
+    }
+
 }
