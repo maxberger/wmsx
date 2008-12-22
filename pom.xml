@@ -14,7 +14,7 @@
   <scm>
     <connection>scm:hg:http://wmsx.max.berger.name/hg/wmsx</connection>
     <developerConnection>scm:hg:https://wmsx.max.berger.name/hg/wmsx</developerConnection>
-    <url>scm:hg:http://wmsx.max.berger.name/hg/wmsx</url>
+    <url>http://wmsx.max.berger.name/hg/wmsx</url>
   </scm>
   <build>
     <plugins>
