@@ -13,6 +13,8 @@
   </issueManagement>
   <scm>
     <connection>scm:hg:http://wmsx.max.berger.name/hg/wmsx</connection>
+    <developerConnection>scm:hg:https://wmsx.max.berger.name/hg/wmsx</developerConnection>
+    <url>scm:hg:http://wmsx.max.berger.name/hg/wmsx</url>
   </scm>
   <build>
     <plugins>
@@ -32,14 +34,6 @@
           </descriptors>
           <attach>false</attach>
         </configuration>
-        <!--        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>attached</goal>
-            </goals>
-          </execution>
-        </executions> -->
       </plugin>
     </plugins>
   </build>
@@ -74,7 +68,7 @@
     <site>
       <id>wmsx</id>
       <name>Website for WMSX</name>
-      <url>sftp://wmsx.max.berger.name/home/trac/www</url>
+      <url>sftp://wmsx.max.berger.name/home/wmsx/www</url>
     </site>
   </distributionManagement>
 </project>
