@@ -23,16 +23,12 @@ package hu.kfki.grid.wmsx.backends;
 
 import hu.kfki.grid.wmsx.util.ProcessHelper;
 
-import java.util.logging.Logger;
-
 /**
  * Delayed execution which depends on a {@link Process} executing.
  * 
  * @version $Revision$
  */
 public class ProcessDelayedExecution implements DelayedExecution {
-    private static final Logger LOGGER = Logger
-            .getLogger(ProcessDelayedExecution.class.toString());
 
     private final Process process;
 
