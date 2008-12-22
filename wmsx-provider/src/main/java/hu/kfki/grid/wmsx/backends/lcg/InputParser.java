@@ -41,6 +41,25 @@ import java.util.logging.Logger;
  */
 public final class InputParser {
 
+    private static final int EDG_CONTENT_START_INDEX = 25;
+
+    private static final int HAVE_JOBID = 0x01;
+
+    private static final int HAVE_SHADOW = 0x02;
+
+    private static final int HAVE_INPUT = 0x04;
+
+    private static final int HAVE_OUTPUT = 0x08;
+
+    private static final int HAVE_ERROR = 0x10;
+
+    private static final int HAVE_PORT = 0x20;
+
+    private static final int HAVE_ALL = InputParser.HAVE_JOBID
+            | InputParser.HAVE_SHADOW | InputParser.HAVE_INPUT
+            | InputParser.HAVE_OUTPUT | InputParser.HAVE_ERROR
+            | InputParser.HAVE_PORT;
+
     private static final Logger LOGGER = Logger.getLogger(InputParser.class
             .toString());
 
@@ -57,11 +76,16 @@ public final class InputParser {
      *            where to print the output to.
      * @param backend
      *            Backend which was in use.
+     * @param isInteractive
+     *            if true, look for lines important to interactive jobs
+     * @param needError
+     *            if true, look for error stream on interactive jobs.
      * @return A {@link SubmissionResults} object containing the parsed
      *         submission, or null.
      */
     public static SubmissionResults parseSubmission(final InputStream inStream,
-            final PrintStream outStream, final Backend backend) {
+            final PrintStream outStream, final Backend backend,
+            final boolean isInteractive, final boolean needError) {
         String jobId = null;
         String iStream = null;
         String oStream = null;
@@ -69,37 +93,64 @@ public final class InputParser {
         int shadowpid = 0;
         int port = 0;
         try {
-
             final BufferedReader reader = new BufferedReader(
                     new InputStreamReader(inStream));
             String line = reader.readLine();
 
             int have = 0;
-            while (line != null && have != 0x3f) {
+            if (!isInteractive) {
+                have |= InputParser.HAVE_ERROR | InputParser.HAVE_INPUT
+                        | InputParser.HAVE_OUTPUT | InputParser.HAVE_PORT
+                        | InputParser.HAVE_SHADOW;
+            }
+            if (!needError) {
+                have |= InputParser.HAVE_ERROR;
+            }
+            while (line != null && have != InputParser.HAVE_ALL) {
                 outStream.println(line);
                 line = line.trim();
+                InputParser.LOGGER.finest(line);
                 try {
-                    if (line.charAt(0) == '-' && jobId == null) {
+                    if (line.length() > 0 && line.charAt(0) == '-'
+                            && jobId == null) {
                         jobId = line.substring(2).trim();
-                        have |= 0x01;
+                        have |= InputParser.HAVE_JOBID;
                     } else if (line.startsWith("Shadow process")) {
-                        shadowpid = Integer.parseInt(line.substring(25).trim());
-                        have |= 0x02;
+                        shadowpid = Integer.parseInt(line.substring(
+                                InputParser.EDG_CONTENT_START_INDEX).trim());
+                        have |= InputParser.HAVE_SHADOW;
                     } else if (line.startsWith("Port")) {
-                        port = Integer.parseInt(line.substring(25).trim());
-                        have |= 0x20;
+                        port = Integer.parseInt(line.substring(
+                                InputParser.EDG_CONTENT_START_INDEX).trim());
+                        have |= InputParser.HAVE_PORT;
                     } else if (line.startsWith("Input Stream")) {
-                        iStream = line.substring(25).trim();
-                        have |= 0x04;
+                        iStream = line.substring(
+                                InputParser.EDG_CONTENT_START_INDEX).trim();
+                        have |= InputParser.HAVE_INPUT;
                     } else if (line.startsWith("Output Stream")) {
-                        oStream = line.substring(25).trim();
-                        have |= 0x08;
+                        oStream = line.substring(
+                                InputParser.EDG_CONTENT_START_INDEX).trim();
+                        have |= InputParser.HAVE_OUTPUT;
                     } else if (line.startsWith("Error Stream")) {
-                        eStream = line.substring(25).trim();
-                        have |= 0x10;
+                        eStream = line.substring(
+                                InputParser.EDG_CONTENT_START_INDEX).trim();
+                        have |= InputParser.HAVE_ERROR;
                     } else if (line.startsWith("https://")) {
                         jobId = line.trim();
-                        have |= 0x01;
+                        have |= InputParser.HAVE_JOBID;
+                    } else if (line.startsWith("- Port")) {
+                        port = Integer.parseInt(InputParser.splitcolon(line));
+                        have |= InputParser.HAVE_PORT;
+                    } else if (line.startsWith("- Shadow")) {
+                        shadowpid = Integer.parseInt(InputParser
+                                .splitcolon(line));
+                        have |= InputParser.HAVE_SHADOW;
+                    } else if (line.startsWith("- Input")) {
+                        iStream = InputParser.splitcolon(line);
+                        have |= InputParser.HAVE_INPUT;
+                    } else if (line.startsWith("- Output")) {
+                        oStream = InputParser.splitcolon(line);
+                        have |= InputParser.HAVE_OUTPUT;
                     }
                 } catch (final NumberFormatException nfe) {
                     InputParser.LOGGER.fine(nfe.getMessage());
@@ -112,13 +163,16 @@ public final class InputParser {
         } catch (final IOException e) {
             InputParser.LOGGER.fine(e.getMessage());
         }
-
         if (jobId == null) {
             return null;
         } else {
             return new SubmissionResults(new JobUid(backend, jobId), iStream,
                     oStream, eStream, shadowpid, port);
         }
+    }
+
+    private static String splitcolon(final String line) {
+        return line.split(":")[1].trim();
     }
 
     /**
@@ -151,6 +205,7 @@ public final class InputParser {
                         retVal = JobState.SUCCESS;
                     } else if ("aborted".equals(statusStr)
                             || "cancelled".equals(statusStr)
+                            || "done (exit code !=0)".equals(statusStr)
                             || "done (failed)".equals(statusStr)) {
                         retVal = JobState.FAILED;
                     } else {
