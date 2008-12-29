@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="worker-api/target/classes" path="worker-api/src/main/java"/>
+	<classpathentry kind="src" output="wmsx-api/target/classes" path="wmsx-api/src/main/java"/>
+	<classpathentry kind="src" output="wmsx-backend-api/target/classes" path="wmsx-backend-api/src/main/java"/>
+	<classpathentry kind="src" output="wmsx-common/target/classes" path="wmsx-common/src/main/java"/>
+	<classpathentry kind="src" output="worker/target/classes" path="worker/src/main/java"/>
+	<classpathentry kind="src" output="wmsx-dl/target/classes" path="wmsx-dl/src/main/java"/>
+	<classpathentry kind="src" output="wmsx-provider/target/classes" path="wmsx-provider/src/main/java"/>
+	<classpathentry kind="src" output="wmsx-provider/target/test-classes" path="wmsx-provider/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="wmsx-provider/target/classes" path="wmsx-provider/src/main/resources"/>
+	<classpathentry kind="src" output="wmsx-requestor/target/classes" path="wmsx-requestor/src/main/java"/>
+	<classpathentry kind="src" output="wmsx-requestor/target/test-classes" path="wmsx-requestor/src/test/java"/>
+	<classpathentry kind="src" output="wmsx-gat/target/classes" path="wmsx-gat/src/main/java"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER/modules"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

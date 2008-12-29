@@ -1,0 +1,23 @@
+#!/bin/sh
+
+### First argument: absolute path to the jdl or tarball file base name.
+ABSCOMMAND=$1
+### Second argument: absolute path to the generated output directory.
+OUTDIR=$2
+### Remaining arguments: command line arguments of the job executable.
+shift 2
+ARGS=$*
+NARGS=$#
+
+### Debug text:
+echo "Hello, postexec!"
+echo "Absolute command: $ABSCOMMAND"
+echo "Output retrieval directory: $OUTDIR"
+echo "Job executable arguments: $ARGS"
+
+### Extracting output:
+OLDDIR=$PWD
+cd $OUTDIR
+tar -xzf out.tar.gz
+rm -f out.tar.gz
+cd $OLDDIR
