@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>hu.kfki.grid</groupId>
   <artifactId>wmsx-parent</artifactId>
@@ -16,6 +17,13 @@
     <developerConnection>scm:hg:https://wmsx.max.berger.name/hg/wmsx</developerConnection>
     <url>http://wmsx.max.berger.name/hg/wmsx</url>
   </scm>
+  <licenses>
+    <license>
+      <name>GNU General Public License, Version 3.0</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0-standalone.html</url>
+      <distribution>manual</distribution>
+    </license>
+  </licenses>
   <build>
     <plugins>
       <plugin>
