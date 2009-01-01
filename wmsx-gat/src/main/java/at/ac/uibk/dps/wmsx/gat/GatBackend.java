@@ -135,7 +135,7 @@ public class GatBackend implements Backend, MetricListener {
                     .createResourceBroker(
                             this.context,
                             new URI(
-                                    "https://skurut67-6.cesnet.cz:7443/glite_wms_wmproxy_server"));
+                                    "https://wms2.egee.cesnet.cz:7443/glite_wms_wmproxy_server"));
         } catch (final GATObjectCreationException e) {
             GatBackend.LOGGER.warning(LogUtil.logException(e));
             throw new RuntimeException(e);
