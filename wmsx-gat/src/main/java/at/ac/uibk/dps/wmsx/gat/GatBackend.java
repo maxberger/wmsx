@@ -338,7 +338,7 @@ public class GatBackend implements Backend, MetricListener {
                 inputFile = FileUtil.resolveFile(baseDir, fileName);
             }
             final org.gridlab.gat.io.File inputFileG = GAT.createFile(
-                    this.context, new URI("file:"
+                    this.context, new URI("file:///"
                             + inputFile.getCanonicalPath()));
             return inputFileG;
         } catch (final URISyntaxException e) {
