@@ -47,7 +47,7 @@
         <artifactId>appassembler-maven-plugin</artifactId>
         <version>1.0-beta-2</version>
         <configuration>
-          <extraJvmArguments>-Xmx1024m</extraJvmArguments>
+          <extraJvmArguments>-Xmx1024m -Dgat.adaptor.path=$BASEDIR/adaptors</extraJvmArguments>
           <programs>
             <program>
               <mainClass>hu.kfki.grid.wmsx.provider.WmsxProviderServer</mainClass>

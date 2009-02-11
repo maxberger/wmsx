@@ -95,8 +95,8 @@ public class GatBackend implements Backend, MetricListener {
                 GatBackend.GAT_BACKEND_NAME);
 
         // e.g. /home/tom/workspace/thomas/lib/adaptors
-        System.setProperty("gat.adaptor.path",
-                GliteTestsConstants.GAT_ADAPTOR_PATH);
+        // System.setProperty("gat.adaptor.path",
+        // GliteTestsConstants.GAT_ADAPTOR_PATH);
 
         // System.setProperty("gat.debug", "true");
         // System.setProperty("gat.verbose", "true");
