@@ -28,6 +28,9 @@ import hu.kfki.grid.wmsx.backends.ProcessDelayedExecution;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
+import hu.kfki.grid.wmsx.renewer.Renewer;
+import hu.kfki.grid.wmsx.renewer.RenewerUtil;
+import hu.kfki.grid.wmsx.renewer.VOMS;
 import hu.kfki.grid.wmsx.util.ProcessHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -56,6 +59,8 @@ public abstract class AbstractLCGBackend implements Backend {
 
     private static final Logger LOGGER = Logger
             .getLogger(AbstractLCGBackend.class.toString());
+
+    private static Renewer lcgRenewer;
 
     /** {@inheritDoc} */
     public void retrieveLog(final JobUid id, final File dir) {
@@ -259,4 +264,30 @@ public abstract class AbstractLCGBackend implements Backend {
         return false;
     }
 
+    /** {@inheritDoc} */
+    public void forgetPassword() {
+        synchronized (AbstractLCGBackend.class) {
+            if (AbstractLCGBackend.lcgRenewer != null) {
+                AbstractLCGBackend.LOGGER.info("Forgetting Grid Password");
+                AbstractLCGBackend.lcgRenewer.shutdown();
+                AbstractLCGBackend.lcgRenewer = null;
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean provideCredentials(final String pass, final String vo) {
+        synchronized (AbstractLCGBackend.class) {
+            AbstractLCGBackend.LOGGER.info("New Grid Password Rememberer");
+            this.forgetPassword();
+            AbstractLCGBackend.lcgRenewer = new VOMS(pass, vo);
+            final boolean success = RenewerUtil
+                    .startupRenewer(AbstractLCGBackend.lcgRenewer);
+            if (!success) {
+                AbstractLCGBackend.LOGGER.info("Grid Password failed");
+                AbstractLCGBackend.lcgRenewer = null;
+            }
+            return success;
+        }
+    }
 }

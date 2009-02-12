@@ -74,19 +74,19 @@ public class GatBackend implements Backend, MetricListener {
 
     private final GATContext context;
 
-    private final ResourceBroker broker;
+    private ResourceBroker broker;
 
     private final Map<Job, File> tempDir = new ConcurrentHashMap<Job, File>();
 
     private final Map<String, JobUid> jobForId = new ConcurrentHashMap<String, JobUid>();
 
+    private CertificateSecurityContext secContext;
+
     /**
      * Default constructor.
      */
     public GatBackend() {
-        System.setProperty("glite.deleteJDL", "true");
-        System.setProperty("glite.pollIntervalSecs", "90");
-        this.context = new GATContext();
+        this.context = GAT.getDefaultGATContext();
         final Preferences globalPrefs = new Preferences();
 
         globalPrefs.put("ResourceBroker.adaptor.name",
@@ -94,56 +94,42 @@ public class GatBackend implements Backend, MetricListener {
         globalPrefs.put("AdvertService.adaptor.name",
                 GatBackend.GAT_BACKEND_NAME);
 
-        // e.g. /home/tom/workspace/thomas/lib/adaptors
-        // System.setProperty("gat.adaptor.path",
-        // GliteTestsConstants.GAT_ADAPTOR_PATH);
-
         // System.setProperty("gat.debug", "true");
         // System.setProperty("gat.verbose", "true");
-        System.setProperty("gat.verbose", "false");
+        globalPrefs.put("gat.verbose", "false");
 
-        /** ************************************************* */
-        /** Information necessary for VOMS proxy creation ** */
-        /** ************************************************* */
-        // globalPrefs.put("VirtualOrganisation", "compchem");
-        // globalPrefs.put("vomsServerURL", "voms.cnaf.infn.it");
-        // globalPrefs.put("vomsServerPort", "15003");
-        // globalPrefs.put("vomsHostDN",
-        // "/C=IT/O=INFN/OU=Host/L=CNAF/CN=voms.cnaf.infn.it");
-        globalPrefs.put("VirtualOrganisation", "voce");
-        globalPrefs.put("vomsServerURL", "skurut19.cesnet.cz");
-        globalPrefs.put("vomsServerPort", "7001");
-        globalPrefs.put("vomsHostDN",
-                "/DC=cz/DC=cesnet-ca/O=CESNET/CN=skurut19.cesnet.cz");
+        globalPrefs.put("glite.deleteJDL", "true");
+        globalPrefs.put("glite.pollIntervalSecs", "30");
+
         globalPrefs.put("File.adaptor.name", "Local,GridFTP,!sftp");
 
-        CertificateSecurityContext secContext;
         try {
-            secContext = new CertificateSecurityContext(new URI(
-                    GliteTestsConstants.X509_KEY_PATH), new URI(
-                    GliteTestsConstants.X509_CERT_PATH),
-                    GliteTestsConstants.X509_KEY_PASSWORD);
-            this.context.addSecurityContext(secContext);
+            final String globusDir = System.getProperty("user.home")
+                    + File.separatorChar + ".globus" + File.separatorChar;
+            this.secContext = new CertificateSecurityContext(new URI(globusDir
+                    + "userkey.pem"), new URI(globusDir + "usercert.pem"), "");
         } catch (final URISyntaxException e) {
             GatBackend.LOGGER.warning(LogUtil.logException(e));
             throw new RuntimeException(e);
         }
-
+        this.context.addSecurityContext(this.secContext);
         this.context.addPreferences(globalPrefs);
-        try {
-            this.broker = GAT
-                    .createResourceBroker(
-                            this.context,
-                            new URI(
-                                    "https://wms2.egee.cesnet.cz:7443/glite_wms_wmproxy_server"));
-        } catch (final GATObjectCreationException e) {
-            GatBackend.LOGGER.warning(LogUtil.logException(e));
-            throw new RuntimeException(e);
-        } catch (final URISyntaxException e) {
-            GatBackend.LOGGER.warning(LogUtil.logException(e));
-            throw new RuntimeException(e);
-        }
 
+    }
+
+    private void ensureBroker() throws IOException {
+        if (this.broker == null) {
+            try {
+                this.broker = GAT.createResourceBroker(this.context, new URI(
+                        "ldap:///"));
+            } catch (final GATObjectCreationException e) {
+                GatBackend.LOGGER.warning(LogUtil.logException(e));
+                throw new IOException("Failed to load broker");
+            } catch (final URISyntaxException e) {
+                GatBackend.LOGGER.warning(LogUtil.logException(e));
+                throw new IOException("Failed to construct broker URI");
+            }
+        }
     }
 
     /** {@inheritDoc} */
@@ -241,6 +227,7 @@ public class GatBackend implements Backend, MetricListener {
     public SubmissionResults submitJob(final JobDescription job, final String vo)
             throws IOException {
 
+        this.ensureBroker();
         final File targetDir = FileUtil.createTempDir();
         final SoftwareDescription swDescription = this.createSwDescription(job,
                 targetDir);
@@ -377,4 +364,23 @@ public class GatBackend implements Backend, MetricListener {
             GatBackend.LOGGER.warning(LogUtil.logException(e));
         }
     }
+
+    /** {@inheritDoc} */
+    public void forgetPassword() {
+        this.secContext.setPassword("");
+    }
+
+    /** {@inheritDoc} */
+    public boolean provideCredentials(final String pass, final String vo) {
+        this.secContext.setPassword(pass);
+        VoData.getInstance().addToContext(vo, this.context);
+        try {
+            this.ensureBroker();
+        } catch (final IOException r) {
+            GatBackend.LOGGER.warning(LogUtil.logException(r));
+            return false;
+        }
+        return true;
+    }
+
 }

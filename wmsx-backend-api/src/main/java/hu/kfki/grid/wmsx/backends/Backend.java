@@ -93,4 +93,20 @@ public interface Backend {
      */
     boolean supportsDeploy();
 
+    /**
+     * Provide (continuus) credentials to this backend.
+     * 
+     * @param password
+     *            The password to rememeber.
+     * @param vo
+     *            Virtual Organization
+     * @return false in case of any error.
+     */
+    boolean provideCredentials(final String password, final String vo);
+
+    /**
+     * Forget any previous remembered password.
+     */
+    void forgetPassword();
+
 }

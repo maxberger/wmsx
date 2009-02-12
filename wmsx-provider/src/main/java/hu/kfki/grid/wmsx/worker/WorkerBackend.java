@@ -96,4 +96,15 @@ public final class WorkerBackend implements Backend {
         return true;
     }
 
+    /** {@inheritDoc} */
+    public void forgetPassword() {
+        // do nothing.
+    }
+
+    /** {@inheritDoc} */
+    public boolean provideCredentials(final String password, final String vo) {
+        // do nothing.
+        return true;
+    }
+
 }

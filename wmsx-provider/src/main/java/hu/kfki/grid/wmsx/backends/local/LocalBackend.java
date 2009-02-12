@@ -105,4 +105,15 @@ public final class LocalBackend implements Backend {
         return false;
     }
 
+    /** {@inheritDoc} */
+    public void forgetPassword() {
+        // do nothing.
+    }
+
+    /** {@inheritDoc} */
+    public boolean provideCredentials(final String password, final String vo) {
+        // do nothing.
+        return true;
+    }
+
 }
