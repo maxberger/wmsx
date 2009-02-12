@@ -100,4 +100,15 @@ public final class FakeBackend implements Backend {
     public boolean supportsDeploy() {
         return false;
     }
+
+    /** {@inheritDoc} */
+    public void forgetPassword() {
+        // do nothing.
+    }
+
+    /** {@inheritDoc} */
+    public boolean provideCredentials(final String password, final String vo) {
+        // do nothing.
+        return true;
+    }
 }

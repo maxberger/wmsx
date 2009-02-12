@@ -34,7 +34,7 @@ import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.provider.arglist.LaszloJobFactory;
 import hu.kfki.grid.wmsx.renewer.AFS;
 import hu.kfki.grid.wmsx.renewer.Renewer;
-import hu.kfki.grid.wmsx.renewer.VOMS;
+import hu.kfki.grid.wmsx.renewer.RenewerUtil;
 import hu.kfki.grid.wmsx.util.LogUtil;
 import hu.kfki.grid.wmsx.util.ScriptLauncher;
 import hu.kfki.grid.wmsx.worker.ControllerServer;
@@ -114,8 +114,6 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     private final List<JobFactory> pendingJobFactories = new LinkedList<JobFactory>();
 
     private Renewer afsRenewer;
-
-    private Renewer gridRenewer;
 
     private final Map<String, File> dirs = new HashMap<String, File>();
 
@@ -373,7 +371,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                     synchronized (WmsxProviderImpl.this) {
                         if (WmsxProviderImpl.this.pendingJobFactories.isEmpty()
                                 && JobWatcher.getInstance().getNumJobsRunning() == 0) {
-                            WmsxProviderImpl.this.forgetGrid();
+                            WmsxProviderImpl.this.currentBackend
+                                    .forgetPassword();
                         }
                     }
                 }
@@ -492,21 +491,13 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     }
 
-    private synchronized void forgetGrid() {
-        if (this.gridRenewer != null) {
-            WmsxProviderImpl.LOGGER.info("Forgetting Grid Password");
-            this.gridRenewer.shutdown();
-            this.gridRenewer = null;
-        }
-    }
-
     /** {@inheritDoc} */
     public synchronized boolean rememberAfs(final String password)
             throws RemoteException {
         WmsxProviderImpl.LOGGER.info("New AFS Remeberer");
         this.forgetAfs();
         this.afsRenewer = new AFS(password);
-        final boolean success = this.startupRenewer(this.afsRenewer);
+        final boolean success = RenewerUtil.startupRenewer(this.afsRenewer);
         if (!success) {
             WmsxProviderImpl.LOGGER.info("AFS Password failed");
             this.afsRenewer = null;
@@ -514,29 +505,10 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         return success;
     }
 
-    private boolean startupRenewer(final Renewer renewer) {
-        final boolean success = renewer.renew();
-        if (success) {
-            final Thread t = new Thread(renewer);
-            t.setDaemon(true);
-            t.start();
-        }
-        return success;
-    }
-
     /** {@inheritDoc} */
     public synchronized boolean rememberGrid(final String password)
             throws RemoteException {
-        WmsxProviderImpl.LOGGER.info("New Grid Remeberer");
-        this.forgetGrid();
-        this.gridRenewer = new VOMS(password, this.vo);
-        final boolean success = this.startupRenewer(this.gridRenewer);
-        if (!success) {
-            WmsxProviderImpl.LOGGER.info("Grid Password failed");
-            this.gridRenewer = null;
-        }
-        return success;
-
+        return this.currentBackend.provideCredentials(password, this.vo);
     }
 
     /** {@inheritDoc} */
