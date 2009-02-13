@@ -85,6 +85,9 @@ public final class JobWatcher implements Runnable {
      *            The watcher to add.
      */
     public void addWatch(final JobUid jobId, final JobListener listener) {
+        if (jobId == null) {
+            return;
+        }
         JobState stateNow;
         synchronized (this) {
             if (!this.shutdown) {
