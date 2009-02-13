@@ -23,7 +23,9 @@ package hu.kfki.grid.wmsx.worker;
 
 import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.Backends;
+import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.local.LocalBackend;
+import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.provider.JdlJobFactory;
@@ -124,6 +126,50 @@ public final class ControllerServer {
         }
     }
 
+    private class WorkerStarter implements Runnable {
+
+        private final Backend submitTo;
+
+        public WorkerStarter(final Backend backend) {
+            if (WorkerBackend.WORKER.equals(backend.toString())) {
+                this.submitTo = Backends.getInstance().get(LocalBackend.LOCAL);
+            } else {
+                this.submitTo = backend;
+            }
+        }
+
+        public void run() {
+            try {
+                final JobDescription jd = ControllerServer.this.jobDesc.clone();
+                final JobFactory fac;
+                final Uuid uuid = UuidFactory.generate();
+                if (LocalBackend.LOCAL.equals(this.submitTo.toString())) {
+                    ControllerServer.this.controller.setIsLocal(uuid);
+                }
+                jd.replaceEntry(JobDescription.ARGUMENTS, "proxyFile " + uuid);
+                synchronized (ControllerServer.this) {
+                    ControllerServer.this.workerCount++;
+                    fac = new JdlJobFactory(
+                            jd,
+                            null,
+                            new File(
+                                    ControllerServer.this.tmpDir,
+                                    Integer
+                                            .toString(ControllerServer.this.workerCount))
+                                    .getAbsolutePath(), this.submitTo, 0);
+                }
+                final JobUid juid = WmsxProviderImpl.getInstance()
+                        .reallySubmitFactory(fac);
+                JobWatcher.getInstance().addWatch(juid,
+                        WorkerListener.getInstance());
+            } catch (final CloneNotSupportedException e) {
+                ControllerServer.LOGGER.warning("Internal error: "
+                        + e.getMessage());
+            }
+
+        }
+    }
+
     /**
      * Submit workers to the given backend.
      * 
@@ -133,48 +179,11 @@ public final class ControllerServer {
      *            number of workers to submit
      */
     public void submitWorkers(final Backend backend, final int count) {
-        final Backend submitTo;
-        if (WorkerBackend.WORKER.equals(backend.toString())) {
-            submitTo = Backends.getInstance().get(LocalBackend.LOCAL);
-        } else {
-            submitTo = backend;
-        }
         if (this.jobDesc != null) {
             this.controller.setShutdownState(false);
 
             for (int i = 0; i < count; i++) {
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            final JobDescription jd = ControllerServer.this.jobDesc
-                                    .clone();
-                            final JobFactory fac;
-                            final Uuid uuid = UuidFactory.generate();
-                            if (LocalBackend.LOCAL.equals(backend.toString())) {
-                                ControllerServer.this.controller
-                                        .setIsLocal(uuid);
-                            }
-                            jd.replaceEntry(JobDescription.ARGUMENTS,
-                                    "proxyFile " + uuid);
-                            synchronized (ControllerServer.this) {
-                                ControllerServer.this.workerCount++;
-                                fac = new JdlJobFactory(
-                                        jd,
-                                        null,
-                                        new File(
-                                                ControllerServer.this.tmpDir,
-                                                Integer
-                                                        .toString(ControllerServer.this.workerCount))
-                                                .getAbsolutePath(), submitTo, 0);
-                            }
-                            WmsxProviderImpl.getInstance().addJobFactory(fac);
-                        } catch (final CloneNotSupportedException e) {
-                            ControllerServer.LOGGER.warning("Internal error: "
-                                    + e.getMessage());
-                        }
-
-                    }
-                }).start();
+                new Thread(new WorkerStarter(backend)).start();
             }
         } else {
             ControllerServer.LOGGER.warning("Worker not initialized!");
