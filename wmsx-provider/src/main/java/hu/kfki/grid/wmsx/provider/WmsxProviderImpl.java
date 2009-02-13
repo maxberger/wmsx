@@ -195,8 +195,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                     new File(jdlFile)), output, resultDir, this.currentBackend,
                     appId);
             if (avail > 0) {
-                final JobUid id = this.reallySubmitJdl(factory.createJdlJob(),
-                        this.currentBackend);
+                final JobUid id = this.reallySubmitFactory(factory);
                 if (id != null) {
                     result = id.getBackendId().toString();
                 } else {
@@ -211,6 +210,18 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             result = "Error opening " + jdlFile;
         }
         return result;
+    }
+
+    /**
+     * Submit a {@link JobFactory} now.
+     * 
+     * @param factory
+     *            The Factory to submit
+     * @return the {@link JobUid} or null if the job failed to submit.
+     */
+    public JobUid reallySubmitFactory(final JobFactory factory) {
+        final JdlJob jd = factory.createJdlJob();
+        return this.reallySubmitJdl(jd, jd.getBackend());
     }
 
     private JobUid reallySubmitJdl(final JdlJob job, final Backend backend) {
@@ -381,8 +392,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         while (!this.pendingJobFactories.isEmpty()
                 && this.maxJobs - JobWatcher.getInstance().getNumJobsRunning() > 0) {
             final JobFactory jf = this.pendingJobFactories.remove(0);
-            final JdlJob jd = jf.createJdlJob();
-            this.reallySubmitJdl(jd, jd.getBackend());
+            this.reallySubmitFactory(jf);
             try {
                 this.wait(WmsxProviderImpl.WAIT_TIME_BETWEEN_SUBMISSIONS);
             } catch (final InterruptedException e) {
