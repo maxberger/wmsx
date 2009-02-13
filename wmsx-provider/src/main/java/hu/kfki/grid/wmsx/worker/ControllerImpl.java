@@ -416,6 +416,8 @@ public class ControllerImpl implements Controller, Runnable {
         synchronized (this.workerInfo) {
             final WorkerInfo info = this.getWorkerInfo(uuid);
             info.setProxy(worker);
+            ControllerImpl.LOGGER.info("Now there are "
+                    + this.workerInfo.size() + " workers.");
         }
     }
 
