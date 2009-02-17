@@ -24,6 +24,8 @@ package hu.kfki.grid.wmsx.worker;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.job.JobListener;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -33,9 +35,12 @@ import java.util.logging.Logger;
  */
 public final class WorkerListener implements JobListener {
 
-    private int pending;
+    private static final Logger LOGGER = Logger.getLogger(WorkerListener.class
+            .toString());
 
-    private int running;
+    private final Set<JobUid> pending = new HashSet<JobUid>();
+
+    private final Set<JobUid> running = new HashSet<JobUid>();
 
     private static final class SingletonHolder {
         private static final WorkerListener INSTANCE = new WorkerListener();
@@ -44,9 +49,6 @@ public final class WorkerListener implements JobListener {
             // empty on purpose.
         }
     }
-
-    private static final Logger LOGGER = Logger.getLogger(WorkerListener.class
-            .toString());
 
     private WorkerListener() {
         // Add code if needed
@@ -60,14 +62,15 @@ public final class WorkerListener implements JobListener {
     }
 
     private void display() {
-        WorkerListener.LOGGER.info("Workerstatus: " + this.pending
-                + " Pending, " + this.running + " Running");
+        WorkerListener.LOGGER.info("Workerstatus: " + this.pending.size()
+                + " Pending, " + this.running.size() + " Running");
     }
 
     /** {@inheritDoc} */
     public void done(final JobUid id, final boolean success) {
         synchronized (this) {
-            this.running--;
+            this.running.remove(id);
+            this.pending.remove(id);
             this.display();
         }
     }
@@ -75,8 +78,8 @@ public final class WorkerListener implements JobListener {
     /** {@inheritDoc} */
     public void running(final JobUid id) {
         synchronized (this) {
-            this.pending--;
-            this.running++;
+            this.pending.remove(id);
+            this.running.add(id);
             this.display();
         }
     }
@@ -84,7 +87,7 @@ public final class WorkerListener implements JobListener {
     /** {@inheritDoc} */
     public void startup(final JobUid id) {
         synchronized (this) {
-            this.pending++;
+            this.pending.add(id);
             this.display();
         }
     }
