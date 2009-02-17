@@ -15,10 +15,9 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
-/* $Id: vasblasd$ */
+/* $Id$ */
 
 package hu.kfki.grid.wmsx.provider;
 
@@ -69,34 +68,100 @@ import org.apache.commons.cli.PosixParser;
 import com.sun.jini.admin.DestroyAdmin;
 import com.sun.jini.lookup.entry.BasicServiceType;
 
+/**
+ * Main server component. This component accepts calls from the requestor and
+ * executes them.
+ * 
+ * @version $Revision$
+ */
 public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         DestroyAdmin {
     private static final Logger LOGGER = Logger
             .getLogger(WmsxProviderServer.class.toString());
 
-    protected LeaseRenewalManager leaseManager = new LeaseRenewalManager();
+    private LeaseRenewalManager leaseManager = new LeaseRenewalManager();
 
-    protected ServiceID serviceID = null;
+    private ServiceID serviceID;
 
-    protected WmsxProviderProxy smartProxy = null;
+    private final WmsxProviderProxy smartProxy;
 
-    protected Remote rmiProxy = null;
+    private Remote rmiProxy;
 
-    protected WmsxProviderImpl impl = null;
+    private final WmsxProviderImpl impl;
 
     private final List<ServiceRegistration> activeRegistrations = new Vector<ServiceRegistration>();
 
     private final Object keepAlive = new Object();
 
-    private LookupDiscovery discover = null;
+    private LookupDiscovery discover;
 
-    private Exporter exporter = null;
+    private Exporter exporter;
 
     private static void printHelp(final Options options) {
         new HelpFormatter().printHelp("wmsx-provider (-h|[-v] workdir)",
                 options);
     }
 
+    /**
+     * Actual Server Starter (Constructor).
+     * 
+     * @param workDir
+     *            Directory that contains temp and other files.
+     */
+    public WmsxProviderServer(final File workDir) {
+        WmsxProviderServer.LOGGER.info("Using workdir: "
+                + workDir.getAbsolutePath());
+
+        // Create the service
+        this.impl = new WmsxProviderImpl(this, workDir);
+
+        // Try to load the service ID from file.
+        // It isn't an error if we can't load it, because
+        // maybe this is the first time this service has run
+        // DataInputStream din = null;
+        //
+        // try {
+        // din = new DataInputStream(new FileInputStream(this.getClass()
+        // .getName()
+        // + ".id"));
+        // this.serviceID = new ServiceID(din);
+        // } catch (final Exception e) {
+        // // ignore
+        // }
+
+        try {
+
+            final InvocationLayerFactory invocationLayerFactory = new BasicILFactory();
+            // ServerEndpoint endpoint = TcpServerEndpoint.getInstance(0);
+            final ServerEndpoint endpoint = TcpServerEndpoint.getInstance(
+                    "127.0.0.1", 0);
+            // ServerEndpoint endpoint = TcpServerEndpoint.getInstance(
+            // "::1", 0);
+            this.exporter = new BasicJeriExporter(endpoint,
+                    invocationLayerFactory, false, true);
+
+            this.rmiProxy = this.exporter.export(this.impl);
+        } catch (final Exception e) {
+            WmsxProviderServer.LOGGER.severe(e.getMessage());
+            System.exit(1);
+        }
+
+        // System.setSecurityManager(new RMISecurityManager());
+
+        // proxy primed with impl
+        this.smartProxy = new WmsxProviderProxy(this.rmiProxy);
+
+        this.registerTmp();
+        // this.registerLocally();
+        // this.registerThroughLookup();
+    }
+
+    /**
+     * Starter method.
+     * 
+     * @param args
+     *            Command line arguments.
+     */
     public static void main(final String args[]) {
 
         final Options options = new Options();
@@ -180,55 +245,6 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         }
     }
 
-    public WmsxProviderServer(final File workDir) {
-
-        WmsxProviderServer.LOGGER.info("Using workdir: "
-                + workDir.getAbsolutePath());
-
-        // Create the service
-        this.impl = new WmsxProviderImpl(this, workDir);
-
-        // Try to load the service ID from file.
-        // It isn't an error if we can't load it, because
-        // maybe this is the first time this service has run
-        // DataInputStream din = null;
-        //
-        // try {
-        // din = new DataInputStream(new FileInputStream(this.getClass()
-        // .getName()
-        // + ".id"));
-        // this.serviceID = new ServiceID(din);
-        // } catch (final Exception e) {
-        // // ignore
-        // }
-
-        try {
-
-            final InvocationLayerFactory invocationLayerFactory = new BasicILFactory();
-            // ServerEndpoint endpoint = TcpServerEndpoint.getInstance(0);
-            final ServerEndpoint endpoint = TcpServerEndpoint.getInstance(
-                    "127.0.0.1", 0);
-            // ServerEndpoint endpoint = TcpServerEndpoint.getInstance(
-            // "::1", 0);
-            this.exporter = new BasicJeriExporter(endpoint,
-                    invocationLayerFactory, false, true);
-
-            this.rmiProxy = this.exporter.export(this.impl);
-        } catch (final Exception e) {
-            WmsxProviderServer.LOGGER.severe(e.getMessage());
-            System.exit(1);
-        }
-
-        // System.setSecurityManager(new RMISecurityManager());
-
-        // proxy primed with impl
-        this.smartProxy = new WmsxProviderProxy(this.rmiProxy);
-
-        this.registerTmp();
-        // this.registerLocally();
-        // this.registerThroughLookup();
-    }
-
     private void registerTmp() {
         try {
             final String proxyFile = "/tmp/wmsx-"
@@ -278,11 +294,15 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
     // }
     // }
 
+    /**
+     * @return ServiceTypes for WMSX Service.
+     */
     public Entry[] getTypes() {
         return new Entry[] { new BasicServiceType("WMS-X"),
                 new WmsxEntry(System.getProperty("user.name")) };
     }
 
+    /** {@inheritDoc} */
     public void discovered(final DiscoveryEvent evt) {
         final ServiceRegistrar[] registrars = evt.getRegistrars();
 
@@ -292,6 +312,12 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         }
     }
 
+    /**
+     * Register at a given ServiceRegistry.
+     * 
+     * @param registrar
+     *            The ServiceRegistry to use.
+     */
     public void register(final ServiceRegistrar registrar) {
         final ServiceItem item = new ServiceItem(this.serviceID,
                 this.smartProxy, this.getTypes());
@@ -333,14 +359,17 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
 
     }
 
+    /** {@inheritDoc} */
     public void notify(final LeaseRenewalEvent evt) {
         WmsxProviderServer.LOGGER.fine("Lease expired " + evt.toString());
     }
 
+    /** {@inheritDoc} */
     public void discarded(final DiscoveryEvent evt) {
         // ignore
     }
 
+    /** {@inheritDoc} */
     public void destroy() throws RemoteException {
         final List<ServiceRegistration> regs;
         if (this.discover != null) {
