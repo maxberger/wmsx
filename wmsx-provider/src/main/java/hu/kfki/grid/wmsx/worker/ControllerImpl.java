@@ -50,6 +50,32 @@ import net.jini.id.Uuid;
  */
 public class ControllerImpl implements Controller, Runnable {
 
+    private final class WorkerNotifyThread implements Runnable {
+        private WorkerNotifyThread() {
+            // empty on purpose.
+        }
+
+        public void run() {
+            final Set<Map.Entry<Uuid, WorkerInfo>> workersToNotify;
+            synchronized (ControllerImpl.this.workerInfo) {
+                workersToNotify = new HashSet<Map.Entry<Uuid, WorkerInfo>>(
+                        ControllerImpl.this.workerInfo.entrySet());
+            }
+            for (final Map.Entry<Uuid, WorkerInfo> w : workersToNotify) {
+                try {
+                    final Worker proxy = w.getValue().getProxy();
+                    if (proxy != null) {
+                        proxy.newWork();
+                    }
+                } catch (final RemoteException r) {
+                    synchronized (ControllerImpl.this.workerInfo) {
+                        ControllerImpl.this.workerInfo.remove(w.getKey());
+                    }
+                }
+            }
+        }
+    }
+
     private static final int STARTUP_DELAY = 30;
 
     private static final int MAX_TIME_WITHOUT_PING = 120;
@@ -184,27 +210,7 @@ public class ControllerImpl implements Controller, Runnable {
     }
 
     private void notifyAllWorkers() {
-        new Thread(new Runnable() {
-            public void run() {
-                final Set<Map.Entry<Uuid, WorkerInfo>> workersToNotify;
-                synchronized (ControllerImpl.this.workerInfo) {
-                    workersToNotify = new HashSet<Map.Entry<Uuid, WorkerInfo>>(
-                            ControllerImpl.this.workerInfo.entrySet());
-                }
-                for (final Map.Entry<Uuid, WorkerInfo> w : workersToNotify) {
-                    try {
-                        final Worker proxy = w.getValue().getProxy();
-                        if (proxy != null) {
-                            proxy.newWork();
-                        }
-                    } catch (final RemoteException r) {
-                        synchronized (ControllerImpl.this.workerInfo) {
-                            ControllerImpl.this.workerInfo.remove(w.getKey());
-                        }
-                    }
-                }
-            }
-        }).start();
+        new Thread(new WorkerNotifyThread()).start();
     }
 
     /** {@inheritDoc} */
@@ -417,7 +423,7 @@ public class ControllerImpl implements Controller, Runnable {
             final WorkerInfo info = this.getWorkerInfo(uuid);
             info.setProxy(worker);
             ControllerImpl.LOGGER.info("Now there are "
-                    + this.workerInfo.size() + " workers.");
+                    + this.workerInfo.size() + " registered workers.");
         }
     }
 
