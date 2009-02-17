@@ -1,0 +1,8 @@
+[ Executable = "doit.sh"; StdOutput = "StdOut"; OutputSandbox = { "StdOut","counter" }; JobType = "workflow";
+InputSandbox = {"wd/counter","doit.sh"};
+PostExec = "post.sh";
+PreExec = "pre.sh";
+Chain = "chain.sh";
+ResultDir = "wd";
+
+ ]

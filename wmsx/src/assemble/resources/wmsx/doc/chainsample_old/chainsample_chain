@@ -1,0 +1,4 @@
+#!/bin/sh
+cd $2
+VALUE=$(cat out/result)
+echo $1 $VALUE

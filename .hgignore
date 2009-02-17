@@ -1,0 +1,8 @@
+syntax: regexp
+
+target/
+^wmsx-gat/src/main/java/at/ac/uibk/dps/wmsx/gat/GliteTestsConstants.java
+^wmsx-provider/src/main/resources/worker/worker.tar.gz
+^.*jdl$
+^wmsx/w2k/atype
+^wmsx/w2k/scripts/basesetup.sh
