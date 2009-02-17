@@ -34,12 +34,17 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 
-public class ShadowListener implements Runnable, JobListener {
+/**
+ * Listens to jobs which have a Shadow port and retrieves stdout and stderr.
+ * 
+ * @version $Revision$
+ */
+public final class ShadowListener implements Runnable, JobListener {
 
     private static final Logger LOGGER = Logger.getLogger(ShadowListener.class
             .toString());
@@ -95,10 +100,18 @@ public class ShadowListener implements Runnable, JobListener {
         return new File(stream);
     }
 
+    /**
+     * Start Listening (if needed).
+     * 
+     * @param result
+     *            The Submission output
+     * @param outputStream
+     *            outputStream to listen to.
+     * @return a shadowlistener instance.
+     */
     public static ShadowListener listen(final SubmissionResults result,
             final WritableByteChannel outputStream) {
-        final ShadowListener l = new ShadowListener(result, outputStream);
-        return l;
+        return new ShadowListener(result, outputStream);
     }
 
     /** {@inheritDoc} */
@@ -113,7 +126,7 @@ public class ShadowListener implements Runnable, JobListener {
     private void killer(final boolean serious) {
 
         boolean safety = true;
-        final List<String> commandLine = new Vector<String>();
+        final List<String> commandLine = new ArrayList<String>();
         commandLine.add("kill");
         if (serious) {
             commandLine.add("-9");
@@ -126,8 +139,8 @@ public class ShadowListener implements Runnable, JobListener {
         if (this.port != 0 && this.oFile != null) {
             final String oName = this.oFile.getAbsolutePath();
             try {
-                final String oBase = oName.substring(0, oName.lastIndexOf("."));
-                final List<String> mustHave = new Vector<String>();
+                final String oBase = oName.substring(0, oName.lastIndexOf('.'));
+                final List<String> mustHave = new ArrayList<String>();
                 mustHave.add(oBase);
                 mustHave.add(Integer.toString(this.port));
                 mustHave.add("edg-wl-grid-console-shadow");
@@ -161,7 +174,7 @@ public class ShadowListener implements Runnable, JobListener {
 
     private List<String> grepLines(final InputStream inputStream,
             final List<String> mustHave) {
-        final List<String> lines = new Vector<String>();
+        final List<String> lines = new ArrayList<String>();
         try {
 
             final BufferedReader reader = new BufferedReader(
@@ -234,6 +247,7 @@ public class ShadowListener implements Runnable, JobListener {
         }
     }
 
+    /** {@inheritDoc} */
     public void run() {
         ShadowListener.LOGGER.info("Shadow listener started");
         try {
@@ -255,6 +269,7 @@ public class ShadowListener implements Runnable, JobListener {
         this.cleanup();
     }
 
+    /** {@inheritDoc} */
     public void done(final JobUid id, final boolean success) {
         // System.out.println("Terminator called!");
         this.termination = true;
@@ -263,10 +278,12 @@ public class ShadowListener implements Runnable, JobListener {
         }
     }
 
+    /** {@inheritDoc} */
     public void running(final JobUid id) {
         // Nothing yet
     }
 
+    /** {@inheritDoc} */
     public void startup(final JobUid id) {
         // Nothing yet
     }
