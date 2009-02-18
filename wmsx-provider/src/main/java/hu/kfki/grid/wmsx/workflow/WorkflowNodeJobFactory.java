@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 /**
  * Create a new (next) node in an existing workflow.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class WorkflowNodeJobFactory implements JobFactory {
 

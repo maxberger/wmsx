@@ -60,7 +60,7 @@ import org.gridlab.gat.security.CertificateSecurityContext;
 /**
  * gLite back-end based on GAT.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 // CHECKSTYLE:OFF
 public class GatBackend implements Backend, MetricListener {

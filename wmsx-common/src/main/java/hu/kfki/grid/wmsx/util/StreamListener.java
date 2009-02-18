@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 /**
  * Listens to to InputStreams and writes to result to an output Stream.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class StreamListener implements Runnable {
 

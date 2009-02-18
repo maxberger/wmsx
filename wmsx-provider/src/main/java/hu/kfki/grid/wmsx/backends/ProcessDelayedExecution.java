@@ -26,7 +26,7 @@ import hu.kfki.grid.wmsx.util.ProcessHelper;
 /**
  * Delayed execution which depends on a {@link Process} executing.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class ProcessDelayedExecution implements DelayedExecution {
 

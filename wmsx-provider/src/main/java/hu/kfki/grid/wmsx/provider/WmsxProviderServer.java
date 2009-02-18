@@ -72,7 +72,7 @@ import com.sun.jini.lookup.entry.BasicServiceType;
  * Main server component. This component accepts calls from the requestor and
  * executes them.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         DestroyAdmin {

@@ -32,7 +32,7 @@ import org.apache.commons.discovery.tools.Service;
 /**
  * Constant list of backends implemented.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class Backends {
 

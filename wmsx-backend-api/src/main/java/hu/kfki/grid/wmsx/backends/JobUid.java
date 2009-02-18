@@ -24,7 +24,7 @@ package hu.kfki.grid.wmsx.backends;
 /**
  * Uniquely describe a job and its backend.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class JobUid {
     private final Backend backend;

@@ -24,7 +24,7 @@ package hu.kfki.grid.wmsx.backends;
 /**
  * Carries the results from a job submission back to the backend.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class SubmissionResults {
     private final JobUid jobId;

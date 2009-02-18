@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Describes a Work job.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public interface JobDescription extends Cloneable {
 

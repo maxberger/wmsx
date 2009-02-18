@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 /**
  * Utilities for file management.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class FileUtil {
     // private static final int SLEEP_IF_FILE_DOES_NOT_EXIST = 1000;

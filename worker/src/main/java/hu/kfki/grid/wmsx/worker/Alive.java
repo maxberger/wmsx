@@ -29,7 +29,7 @@ import net.jini.id.Uuid;
 /**
  * periodically tells server that worker is still alive.
  * 
- * @version $Revision$
+ * @version $Date$
  * 
  */
 public class Alive implements Runnable {

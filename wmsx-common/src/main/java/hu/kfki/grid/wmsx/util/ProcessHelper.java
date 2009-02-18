@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * Launches scripts and binaries.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class ProcessHelper {
 

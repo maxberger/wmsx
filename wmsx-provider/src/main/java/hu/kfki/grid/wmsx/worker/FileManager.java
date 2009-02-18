@@ -31,7 +31,7 @@ import net.jini.id.Uuid;
 /**
  * Support for files on worker clients.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class FileManager {
 

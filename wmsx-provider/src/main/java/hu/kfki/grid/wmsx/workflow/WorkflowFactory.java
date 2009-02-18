@@ -28,7 +28,7 @@ import java.io.File;
 /**
  * Creates instances of {@link Workflow}.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class WorkflowFactory {
 

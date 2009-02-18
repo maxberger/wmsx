@@ -42,7 +42,7 @@ import net.jini.admin.Administrable;
 /**
  * A smart proxy which wraps the remote Jini service calls.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
 

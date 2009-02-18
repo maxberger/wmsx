@@ -27,7 +27,7 @@ import hu.kfki.grid.wmsx.job.description.JobDescription;
 /**
  * Job Factory for standard jobs (defined through a standard JDL file).
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class JdlJobFactory implements JobFactory {
     private final JobDescription jobDesc;

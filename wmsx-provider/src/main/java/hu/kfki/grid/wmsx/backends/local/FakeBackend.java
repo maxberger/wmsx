@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * Fake backend used for testing.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class FakeBackend implements Backend {
 

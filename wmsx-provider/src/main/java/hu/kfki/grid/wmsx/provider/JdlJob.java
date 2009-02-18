@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 /**
  * Describes a singe Job based on a JDL job description.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class JdlJob {
 

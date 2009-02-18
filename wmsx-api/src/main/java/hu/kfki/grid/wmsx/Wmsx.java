@@ -27,7 +27,7 @@ import java.io.IOException;
 /**
  * WMSX Service Interface.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public interface Wmsx {
 

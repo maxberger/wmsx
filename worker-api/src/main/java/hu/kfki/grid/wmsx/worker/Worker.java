@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 /**
  * Interface for workers supporting push notification.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public interface Worker extends Remote {
 

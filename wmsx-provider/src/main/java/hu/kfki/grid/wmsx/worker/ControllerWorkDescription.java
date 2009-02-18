@@ -31,7 +31,7 @@ import java.util.Vector;
 /**
  * Describes work with additional attributes needed by the controller.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class ControllerWorkDescription {
 

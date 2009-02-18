@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 /**
  * Wrapper for a process on the local machine.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class LocalProcess implements Runnable {
 

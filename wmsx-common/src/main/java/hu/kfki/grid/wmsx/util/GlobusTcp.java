@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * Helper class for globus tcp port range.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class GlobusTcp {
 

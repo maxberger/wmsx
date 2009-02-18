@@ -27,7 +27,7 @@ import java.util.Vector;
 /**
  * Backend for gLite 2.7.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class EDGBackend extends AbstractLCGBackend {
 

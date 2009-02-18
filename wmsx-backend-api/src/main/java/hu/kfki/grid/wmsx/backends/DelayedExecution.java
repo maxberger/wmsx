@@ -24,7 +24,7 @@ package hu.kfki.grid.wmsx.backends;
 /**
  * Specifies an execution which runs in parallel.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public interface DelayedExecution {
 

@@ -36,7 +36,7 @@ import net.jini.id.UuidFactory;
 /**
  * Performs work on a remote host.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class WorkerImpl implements Worker {
 

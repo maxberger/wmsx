@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * Listens to job status and receives the result or the error log once the job
  * is done.
  * 
- * @version $Revision$
+ * @version $Date$
  * 
  */
 public final class ResultListener implements JobListener {
