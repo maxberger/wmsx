@@ -24,7 +24,7 @@ package hu.kfki.grid.wmsx.job.description;
 /**
  * Implements generic JobDescription tasks by calling other functions.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public abstract class AbstractJobDescription implements JobDescription {
 

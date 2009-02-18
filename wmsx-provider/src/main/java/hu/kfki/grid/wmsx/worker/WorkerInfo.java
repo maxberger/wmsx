@@ -24,7 +24,7 @@ package hu.kfki.grid.wmsx.worker;
 /**
  * Contains information about 1 worker client.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class WorkerInfo {
 

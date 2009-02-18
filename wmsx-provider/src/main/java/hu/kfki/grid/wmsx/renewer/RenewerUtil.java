@@ -22,7 +22,7 @@
 package hu.kfki.grid.wmsx.renewer;
 
 /**
- * @version $Revision$
+ * @version $Date$
  */
 public final class RenewerUtil {
 

@@ -29,7 +29,7 @@ import java.util.TreeMap;
 /**
  * Describes the work sent to worker.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class WorkDescription implements Serializable {
 

@@ -46,7 +46,7 @@ import net.jini.id.Uuid;
 /**
  * Controller for worker jobs.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class ControllerImpl implements Controller, Runnable {
 

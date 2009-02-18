@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * Describes the result sent back to the controller.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class ResultDescription implements Serializable {
 

@@ -34,7 +34,7 @@ import java.io.IOException;
 /**
  * This backend sends all jobs to worker tasks.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class WorkerBackend implements Backend {
 

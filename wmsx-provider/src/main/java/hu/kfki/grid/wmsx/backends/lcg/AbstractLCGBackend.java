@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 /**
  * Common backend for all LCG (EDG and gLite) targets.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public abstract class AbstractLCGBackend implements Backend {
 

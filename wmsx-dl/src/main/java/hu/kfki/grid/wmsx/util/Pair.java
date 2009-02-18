@@ -27,7 +27,7 @@ import java.util.Map;
 
 /**
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class Pair<K, V> implements Map.Entry<K, V>, Serializable {
 

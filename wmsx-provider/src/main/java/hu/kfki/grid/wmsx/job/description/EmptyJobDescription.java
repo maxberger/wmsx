@@ -30,7 +30,7 @@ import java.util.Vector;
  * Represents an empty job, for cases where a job description is needed to avoid
  * null-pointer exceptions.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class EmptyJobDescription extends AbstractJobDescription {
 

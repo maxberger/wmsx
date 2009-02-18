@@ -45,7 +45,7 @@ import java.util.logging.Logger;
  * Waits for the results to be downloaded, moves then to the right directory,
  * and then executes "postexecs" for this job.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class ResultMoverAndPostexec implements Runnable {
 

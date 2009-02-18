@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 /**
  * Listens to status changes of submitted workers.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class WorkerListener implements JobListener {
 

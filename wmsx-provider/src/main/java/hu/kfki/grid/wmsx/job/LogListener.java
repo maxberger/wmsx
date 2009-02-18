@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * A listener which just records log messages.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class LogListener implements JobListener {
     private static final Logger LOGGER = Logger.getLogger(LogListener.class

@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 /**
  * Helper class to support output parsing of gLites command line tools.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class InputParser {
 

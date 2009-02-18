@@ -31,7 +31,7 @@ import org.gridlab.gat.GATContext;
 /**
  * Provides Data for known VOs.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class VoData {
 

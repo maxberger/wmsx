@@ -24,7 +24,7 @@ package hu.kfki.grid.wmsx.renewer;
 /**
  * Renewer for AFS passwords.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class AFS extends Renewer {
 

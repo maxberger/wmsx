@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  * Read a wjdl file, which gives additional info for jobs executed through
  * arglist files.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class ArglistJdlReader {
 

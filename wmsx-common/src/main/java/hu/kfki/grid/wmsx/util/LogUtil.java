@@ -24,7 +24,7 @@ package hu.kfki.grid.wmsx.util;
 /**
  * Convenience methods for logging.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class LogUtil {
     private static final int MAX_STACKTRACE_ELEMENTS = 10;

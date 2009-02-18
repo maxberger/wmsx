@@ -43,7 +43,7 @@ import net.jini.jeri.tcp.TcpServerEndpoint;
 /**
  * Helper class to create remote proxies.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class Exporter {
 

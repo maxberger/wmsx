@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 /**
  * Watches currently running jobs.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class JobWatcher implements Runnable {
     private static final int TIME_BETWEEN_CHECKS_MS = 10000;

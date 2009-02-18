@@ -40,7 +40,7 @@ import condor.classad.RecordExpr;
 /**
  * JobDescription backed by a JDL file.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class JDLJobDescription extends AbstractJobDescription {
 

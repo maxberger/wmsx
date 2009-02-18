@@ -27,7 +27,7 @@ import java.util.Vector;
 /**
  * Backend for gLite 3.1.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class GLiteWmsBackend extends AbstractLCGBackend {
 

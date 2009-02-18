@@ -29,7 +29,7 @@ import net.jini.id.Uuid;
 /**
  * Interface to the Controller.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public interface Controller extends Remote {
     /**

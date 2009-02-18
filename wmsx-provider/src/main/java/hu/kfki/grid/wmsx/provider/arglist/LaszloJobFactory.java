@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 /**
  * Creates jobs based on a list format by Andras Laszlo.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public class LaszloJobFactory implements JobFactory {
 

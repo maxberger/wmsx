@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * Local backend.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class LocalBackend implements Backend {
 

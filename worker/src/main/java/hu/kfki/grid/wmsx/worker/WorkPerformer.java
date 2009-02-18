@@ -38,7 +38,7 @@ import net.jini.id.Uuid;
 /**
  * Performs the actual work.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class WorkPerformer {
 

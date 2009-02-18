@@ -24,7 +24,7 @@ package hu.kfki.grid.wmsx.provider;
 /**
  * Interface for job factories.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public interface JobFactory {
 

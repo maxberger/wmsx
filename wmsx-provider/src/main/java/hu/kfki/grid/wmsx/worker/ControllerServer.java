@@ -46,7 +46,7 @@ import net.jini.id.UuidFactory;
 /**
  * Starter class for an actual worker controller.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class ControllerServer {
 

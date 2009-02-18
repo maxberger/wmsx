@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 /**
  * Listens to jobs which have a Shadow port and retrieves stdout and stderr.
  * 
- * @version $Revision$
+ * @version $Date$
  */
 public final class ShadowListener implements Runnable, JobListener {
 
