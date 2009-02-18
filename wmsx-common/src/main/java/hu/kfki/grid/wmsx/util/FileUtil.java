@@ -236,7 +236,14 @@ public final class FileUtil {
         return sandbox;
     }
 
-    private static byte[] loadFile(final File f) {
+    /**
+     * Try to load the contents of a given file.
+     * 
+     * @param f
+     *            File handle
+     * @return a byte[] with the file contents.
+     */
+    public static byte[] loadFile(final File f) {
         final int len = (int) f.length();
         final byte[] buf = new byte[len];
         FileInputStream fis = null;

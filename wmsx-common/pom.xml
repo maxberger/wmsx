@@ -44,5 +44,12 @@
       <version>2.1</version>
       <type>jar</type>
     </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.8</version>
+      <scope>test</scope>
+      <classifier>jdk15</classifier>
+    </dependency>
   </dependencies>
 </project>
