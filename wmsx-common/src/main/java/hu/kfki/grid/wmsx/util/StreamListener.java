@@ -72,19 +72,33 @@ public final class StreamListener implements Runnable {
                     + e.getMessage());
         } finally {
             try {
-                this.in.close();
+                if (this.in != null) {
+                    this.in.close();
+                }
             } catch (final IOException e) {
-                // ignore
+                StreamListener.LOGGER.fine(e.getMessage());
             }
             try {
-                this.out.close();
+                if (this.out != null) {
+                    this.out.close();
+                }
             } catch (final IOException e) {
-                // ignore
+                StreamListener.LOGGER.fine(e.getMessage());
             }
             this.launcher.forgetStream(this.out);
         }
     }
 
+    /**
+     * Start a new StreamListener which copies from Input to output Stream.
+     * 
+     * @param i
+     *            InputStream to read from.
+     * @param o
+     *            OutputStream to write to.
+     * @param l
+     *            The ScriptLauncher which is responsible for the streams.
+     */
     public static void listen(final InputStream i, final OutputStream o,
             final ScriptLauncher l) {
         if (i == null) {
