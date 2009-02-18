@@ -116,37 +116,59 @@ public final class FileUtil {
      *            File to read.
      * @param out
      *            File to write.
-     * @throws IOException
-     *             if anything goes wrong.
+     * @return true on success, false on failure.
      */
-    public static void copy(final File in, final File out) throws IOException {
+    public static boolean copy(final File in, final File out) {
 
-        final FileInputStream fin = new FileInputStream(in);
-        final FileOutputStream fout = new FileOutputStream(out);
-        final FileChannel inChannel = fin.getChannel();
-        final FileChannel outChannel = fout.getChannel();
+        FileInputStream fin = null;
+        FileOutputStream fout = null;
         try {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-        } catch (final IOException ia) {
-            // This is due to a bug in Java 1.4
-            FileUtil.copy(fin, fout, ia);
+            fout = new FileOutputStream(out);
+            fin = new FileInputStream(in);
+            final FileChannel inChannel = fin.getChannel();
+            final FileChannel outChannel = fout.getChannel();
+            try {
+                inChannel.transferTo(0, inChannel.size(), outChannel);
+            } catch (final IOException ia) {
+                // This is due to a bug in Java 1.4
+                FileUtil.copy(fin, fout, ia);
+            } finally {
+                if (inChannel != null) {
+                    inChannel.close();
+                }
+                if (outChannel != null) {
+                    outChannel.close();
+                }
+            }
+
+            try {
+                Runtime.getRuntime().exec(
+                        new String[] { FileUtil.BIN_CHMOD,
+                                "--reference=" + in.getCanonicalPath(),
+                                out.getCanonicalPath(), }).waitFor();
+            } catch (final InterruptedException e) {
+                // Ignore
+            }
+        } catch (final IOException io) {
+            FileUtil.LOGGER.warning(io.getMessage());
+            return false;
         } finally {
-            if (inChannel != null) {
-                inChannel.close();
+            try {
+                if (fout != null) {
+                    fout.close();
+                }
+            } catch (final IOException e2) {
+                FileUtil.LOGGER.warning(e2.getMessage());
             }
-            if (outChannel != null) {
-                outChannel.close();
+            try {
+                if (fin != null) {
+                    fin.close();
+                }
+            } catch (final IOException e2) {
+                FileUtil.LOGGER.warning(e2.getMessage());
             }
         }
-
-        try {
-            Runtime.getRuntime().exec(
-                    new String[] { FileUtil.BIN_CHMOD,
-                            "--reference=" + in.getCanonicalPath(),
-                            out.getCanonicalPath(), }).waitFor();
-        } catch (final InterruptedException e) {
-            // Ignore
-        }
+        return true;
     }
 
     /**
@@ -208,22 +230,30 @@ public final class FileUtil {
         final Map<String, byte[]> sandbox = new TreeMap<String, byte[]>();
 
         for (final String fileName : files) {
-            try {
-                final File f = FileUtil.resolveFile(dir, fileName);
-                sandbox.put(f.getName(), FileUtil.loadFile(f));
-            } catch (final IOException io) {
-                FileUtil.LOGGER.warning(io.getMessage());
-            }
+            final File f = FileUtil.resolveFile(dir, fileName);
+            sandbox.put(f.getName(), FileUtil.loadFile(f));
         }
         return sandbox;
     }
 
-    private static byte[] loadFile(final File f) throws IOException {
+    private static byte[] loadFile(final File f) {
         final int len = (int) f.length();
         final byte[] buf = new byte[len];
-        final FileInputStream fis = new FileInputStream(f);
-        fis.read(buf);
-        fis.close();
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(f);
+            fis.read(buf);
+        } catch (final IOException e) {
+            FileUtil.LOGGER.warning(e.getMessage());
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+            } catch (final IOException e) {
+                FileUtil.LOGGER.warning(e.getMessage());
+            }
+        }
         return buf;
     }
 
@@ -318,20 +348,15 @@ public final class FileUtil {
      */
     public static void copyList(final List<String> inputList, final File from,
             final File to) throws IOException {
-        IOException ex = null;
         final Iterator<String> it = inputList.iterator();
+        boolean success = true;
         while (it.hasNext()) {
             final String fileName = it.next();
             final File inputFile = FileUtil.resolveFile(from, fileName);
             final File toFile = new File(to, inputFile.getName());
-            try {
-                FileUtil.copy(inputFile, toFile);
-            } catch (final IOException e) {
-                FileUtil.LOGGER.warning(e.getMessage());
-                ex = e;
-            }
+            success = FileUtil.copy(inputFile, toFile) && success;
         }
-        if (ex != null) {
+        if (!success) {
             throw new IOException("Error copying some files");
         }
     }
