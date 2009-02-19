@@ -94,10 +94,13 @@ public class VirtualFileTest {
         final byte[] b1 = f.getFileContent();
         final byte[] b2 = f2.getFileContent();
         Assert.assertEquals(b2, b1);
+        Assert.assertEquals(f.getName(), this.realFile.getName());
+        Assert.assertEquals(f2.getName(), this.realFile.getName());
     }
 
     private File someTempFile() throws IOException {
         final File serial = File.createTempFile("Test", null);
         return serial;
     }
+
 }
