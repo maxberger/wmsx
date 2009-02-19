@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -75,12 +75,7 @@ public final class WorkerImpl implements Worker {
         long delay = WorkerImpl.START_DELAY;
         int count = WorkerImpl.RETRY_COUNT;
         WorkerImpl.LOGGER.info("Worker started, Uuid is " + this.uuid);
-        try {
-            this.controller.registerWorker(this.uuid, (Worker) Exporter
-                    .getInstance().export(this));
-        } catch (final RemoteException r) {
-            WorkerImpl.LOGGER.info(LogUtil.logException(r));
-        }
+        this.registerWithController();
         try {
             while (!terminate) {
                 this.logWithTime("Checking for work");
@@ -88,18 +83,7 @@ public final class WorkerImpl implements Worker {
                     final WorkDescription todo = this.controller
                             .retrieveWork(this.uuid);
 
-                    if (todo != null) {
-
-                        if ("shutdown".equals(todo.getId())) {
-                            terminate = true;
-                        } else {
-                            this.alive.start();
-                            performer.performWork(todo, this.controller,
-                                    this.uuid);
-                            delay = WorkerImpl.START_DELAY;
-                            lastChecked = 0;
-                        }
-                    } else {
+                    if (todo == null) {
                         this.logWithTime("Sleeping");
                         this.alive.stop();
                         lastChecked += delay;
@@ -116,6 +100,16 @@ public final class WorkerImpl implements Worker {
                         if (lastChecked >= WorkerImpl.MAX_WAIT) {
                             terminate = true;
                         }
+                    } else {
+                        if ("shutdown".equals(todo.getId())) {
+                            terminate = true;
+                        } else {
+                            this.alive.start();
+                            performer.performWork(todo, this.controller,
+                                    this.uuid);
+                            delay = WorkerImpl.START_DELAY;
+                            lastChecked = 0;
+                        }
                     }
                 } catch (final RemoteException e) {
                     WorkerImpl.LOGGER.warning(e.getMessage());
@@ -131,6 +125,15 @@ public final class WorkerImpl implements Worker {
         this.alive.stop();
         WorkerImpl.LOGGER.info("Unexporting");
         Exporter.getInstance().unexport();
+    }
+
+    private void registerWithController() {
+        try {
+            this.controller.registerWorker(this.uuid, (Worker) Exporter
+                    .getInstance().export(this));
+        } catch (final RemoteException r) {
+            WorkerImpl.LOGGER.info(LogUtil.logException(r));
+        }
     }
 
     /**
