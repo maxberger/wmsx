@@ -22,34 +22,23 @@
 package hu.kfki.grid.wmsx.renewer;
 
 /**
- * Renewer for AFS passwords.
+ * Interface for credential renewers.
  * 
  * @version $Date$
+ * 
  */
-public class AFS extends AbstractRenewer {
+public interface Renewer extends Runnable {
 
     /**
-     * Start a new AFS renewer with the given password.
+     * Try to renew the current credential NOW.
      * 
-     * @param password
-     *            The AFS password.
+     * @return true on success.
      */
-    public AFS(final String password) {
-        super(password);
-    }
+    boolean renew();
 
-    /** {@inheritDoc} */
-    @Override
-    protected boolean exec(final String password) {
-        return PasswordAppLauncher.getInstance().launch(
-                new String[] { "kinit" }, password);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void postexec() {
-        PasswordAppLauncher.getInstance()
-                .launch(new String[] { "aklog" }, null);
-    }
+    /**
+     * Ask the renewer to shutdown.
+     */
+    void shutdown();
 
 }

@@ -25,7 +25,7 @@ package hu.kfki.grid.wmsx.renewer;
 import java.util.List;
 import java.util.Vector;
 
-public class VOMS extends Renewer {
+public class VOMS extends AbstractRenewer {
 
     private final String voms;
 
