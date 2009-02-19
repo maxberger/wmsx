@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -28,11 +28,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Logger;
+
+import at.ac.uibk.dps.wmsx.util.VirtualFile;
+import at.ac.uibk.dps.wmsx.util.VirtualFileImpl;
 
 /**
  * Utilities for file management.
@@ -223,15 +225,16 @@ public final class FileUtil {
      *            list of Files to load
      * @param dir
      *            basedir for relative file names
-     * @return a Sandbox Map.
+     * @return a Sandbox List.
      */
-    public static Map<String, byte[]> createSandbox(final List<String> files,
+    public static List<VirtualFile> createSandbox(final List<String> files,
             final File dir) {
-        final Map<String, byte[]> sandbox = new TreeMap<String, byte[]>();
+        final List<VirtualFile> sandbox = new ArrayList<VirtualFile>(files
+                .size());
 
         for (final String fileName : files) {
             final File f = FileUtil.resolveFile(dir, fileName);
-            sandbox.put(f.getName(), FileUtil.loadFile(f));
+            sandbox.add(new VirtualFileImpl(f));
         }
         return sandbox;
     }
@@ -272,18 +275,10 @@ public final class FileUtil {
      * @param dir
      *            Directory to store into.
      */
-    public static void retrieveSandbox(final Map<String, byte[]> sandbox,
+    public static void retrieveSandbox(final List<VirtualFile> sandbox,
             final File dir) {
-        for (final Map.Entry<String, byte[]> entry : sandbox.entrySet()) {
-            try {
-                final File f = new File(dir, entry.getKey());
-                final FileOutputStream fos = new FileOutputStream(f);
-                fos.write(entry.getValue());
-                fos.close();
-                FileUtil.makeExecutable(f);
-            } catch (final IOException ioe) {
-                FileUtil.LOGGER.warning(ioe.getMessage());
-            }
+        for (final VirtualFile entry : sandbox) {
+            entry.storeFile(dir);
         }
     }
 

@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -23,10 +23,12 @@ package hu.kfki.grid.wmsx.worker;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import net.jini.id.Uuid;
+import at.ac.uibk.dps.wmsx.util.VirtualFile;
 
 /**
  * Support for files on worker clients.
@@ -58,23 +60,23 @@ public final class FileManager {
      *            Sandbox to modify.
      */
     public void modifyInputSandbox(final Uuid workerId, final String wfid,
-            final Map<String, byte[]> sourceSandbox,
-            final Map<String, byte[]> targetSandbox) {
+            final List<VirtualFile> sourceSandbox,
+            final List<VirtualFile> targetSandbox) {
         targetSandbox.clear();
         if (wfid == null) {
-            targetSandbox.putAll(sourceSandbox);
+            targetSandbox.addAll(sourceSandbox);
             return;
         }
         final String completeId = wfid + workerId;
-        for (final Map.Entry<String, byte[]> entry : sourceSandbox.entrySet()) {
-            final String file = entry.getKey();
-            Set<String> avail = this.fileAvailAt.get(file);
+        for (final VirtualFile vfile : sourceSandbox) {
+            final String filename = vfile.getName();
+            Set<String> avail = this.fileAvailAt.get(filename);
             if (avail == null) {
                 avail = new HashSet<String>();
-                this.fileAvailAt.put(file, avail);
+                this.fileAvailAt.put(filename, avail);
             }
             if (!avail.contains(completeId)) {
-                targetSandbox.put(file, entry.getValue());
+                targetSandbox.add(vfile);
                 avail.add(completeId);
             }
         }
@@ -91,15 +93,16 @@ public final class FileManager {
      *            output sandbox.
      */
     public void parseOutputSandbox(final Uuid workerId, final String wfid,
-            final Map<String, byte[]> sandbox) {
+            final List<VirtualFile> sandbox) {
         if (wfid == null) {
             return;
         }
         final String completeId = wfid + workerId;
-        for (final String file : sandbox.keySet()) {
+        for (final VirtualFile file : sandbox) {
+            final String fileName = file.getName();
             final Set<String> newSet = new HashSet<String>();
             newSet.add(completeId);
-            this.fileAvailAt.put(file, newSet);
+            this.fileAvailAt.put(fileName, newSet);
         }
     }
 

@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -42,6 +42,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import net.jini.id.Uuid;
+import at.ac.uibk.dps.wmsx.util.VirtualFile;
 
 /**
  * Controller for worker jobs.
@@ -99,7 +100,7 @@ public class ControllerImpl implements Controller, Runnable {
 
     private final Map<Object, Long> assignedAt = new TreeMap<Object, Long>();
 
-    private final Map<Object, Map<String, byte[]>> success = new TreeMap<Object, Map<String, byte[]>>();
+    private final Map<Object, List<VirtualFile>> success = new TreeMap<Object, List<VirtualFile>>();
 
     private final Set<Object> failed = new TreeSet<Object>();
 
@@ -221,7 +222,7 @@ public class ControllerImpl implements Controller, Runnable {
             if (this.running.containsKey(id)) {
                 final ControllerWorkDescription cwd = this.running.remove(id);
                 this.assignedTo.remove(id);
-                final Map<String, byte[]> outputSandbox = result
+                final List<VirtualFile> outputSandbox = result
                         .getOutputSandbox();
                 this.success.put(id, outputSandbox);
                 this.fileManager.parseOutputSandbox(uuid, cwd
@@ -284,7 +285,7 @@ public class ControllerImpl implements Controller, Runnable {
      *            Directory to store into.
      */
     public void retrieveSandbox(final Object id, final File dir) {
-        final Map<String, byte[]> sandbox;
+        final List<VirtualFile> sandbox;
         synchronized (this.pending) {
             sandbox = this.success.get(id);
         }

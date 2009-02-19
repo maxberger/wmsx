@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -91,7 +91,7 @@ public final class WorkPerformer {
         final boolean partOfWf = wfid != null;
         workDir = this.prepareWorkdir(currentDir, wfid, partOfWf);
         this.logWithTime("Retrieving sandbox to WorkDir: " + workDir + " "
-                + todo.getInputSandbox().keySet());
+                + todo.getInputSandbox());
 
         FileUtil.retrieveSandbox(todo.getInputSandbox(), workDir);
 

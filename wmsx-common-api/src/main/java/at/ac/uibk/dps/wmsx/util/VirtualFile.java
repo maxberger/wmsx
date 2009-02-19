@@ -19,42 +19,31 @@
 
 /* $Id$ */
 
-package hu.kfki.grid.wmsx.worker;
+package at.ac.uibk.dps.wmsx.util;
 
+import java.io.File;
 import java.io.Serializable;
-import java.util.List;
-
-import at.ac.uibk.dps.wmsx.util.VirtualFile;
 
 /**
- * Describes the result sent back to the controller.
+ * Management for virtual files.
  * 
  * @version $Date$
  */
-public class ResultDescription implements Serializable {
+public interface VirtualFile extends Serializable {
 
     /**
+     * Retrieve the filename.
      * 
+     * @return Filename without any path components.
      */
-    private static final long serialVersionUID = 1L;
-
-    private final List<VirtualFile> outputSandbox;
+    String getName();
 
     /**
-     * Default constructor.
+     * Stores the file back onto the file system under its name.
      * 
-     * @param output
-     *            Output sandbox.
+     * @param dir
+     *            Directory to store to.
      */
-    public ResultDescription(final List<VirtualFile> output) {
-        this.outputSandbox = output;
-    }
-
-    /**
-     * @return the output sandbox.
-     */
-    public List<VirtualFile> getOutputSandbox() {
-        return this.outputSandbox;
-    }
+    void storeFile(final File dir);
 
 }

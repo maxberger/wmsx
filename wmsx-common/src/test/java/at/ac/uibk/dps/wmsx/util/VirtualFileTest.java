@@ -34,6 +34,8 @@ import java.io.ObjectOutputStream;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import at.ac.uibk.dps.wmsx.util.VirtualFile;
+
 /**
  * Tests for {@link VirtualFile}.
  * 
@@ -67,7 +69,7 @@ public class VirtualFileTest {
      */
     @Test
     public void loadTest() throws Exception {
-        final VirtualFile f = new VirtualFile(this.realFile);
+        final VirtualFileImpl f = new VirtualFileImpl(this.realFile);
         final byte[] b = f.getFileContent();
         Assert.assertEquals(b.length, VirtualFileTest.TESTFILESIZE);
     }
@@ -83,13 +85,13 @@ public class VirtualFileTest {
         final File serial = this.someTempFile();
         final ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(serial));
-        final VirtualFile f = new VirtualFile(this.realFile);
+        final VirtualFileImpl f = new VirtualFileImpl(this.realFile);
         oos.writeObject(f);
         oos.close();
 
         final ObjectInputStream iis = new ObjectInputStream(
                 new FileInputStream(serial));
-        final VirtualFile f2 = (VirtualFile) iis.readObject();
+        final VirtualFileImpl f2 = (VirtualFileImpl) iis.readObject();
         iis.close();
         final byte[] b1 = f.getFileContent();
         final byte[] b2 = f2.getFileContent();
