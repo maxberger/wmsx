@@ -28,7 +28,7 @@ import hu.kfki.grid.wmsx.backends.ProcessDelayedExecution;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
-import hu.kfki.grid.wmsx.renewer.Renewer;
+import hu.kfki.grid.wmsx.renewer.AbstractRenewer;
 import hu.kfki.grid.wmsx.renewer.RenewerUtil;
 import hu.kfki.grid.wmsx.renewer.VOMS;
 import hu.kfki.grid.wmsx.util.ProcessHelper;
@@ -60,7 +60,7 @@ public abstract class AbstractLCGBackend implements Backend {
     private static final Logger LOGGER = Logger
             .getLogger(AbstractLCGBackend.class.toString());
 
-    private static Renewer lcgRenewer;
+    private static AbstractRenewer lcgRenewer;
 
     /** {@inheritDoc} */
     public void retrieveLog(final JobUid id, final File dir) {
