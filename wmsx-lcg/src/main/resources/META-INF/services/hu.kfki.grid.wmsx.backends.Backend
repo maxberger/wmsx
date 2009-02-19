@@ -1,0 +1,3 @@
+hu.kfki.grid.wmsx.backends.lcg.EDGBackend
+hu.kfki.grid.wmsx.backends.lcg.GLiteBackend
+hu.kfki.grid.wmsx.backends.lcg.GLiteWmsBackend

@@ -50,10 +50,12 @@
     <module>wmsx-api</module>
     <module>wmsx-backend-api</module>
     <module>wmsx-common</module>
+    <module>wmsx-provider-common</module>
     <module>worker</module>
     <module>wmsx-dl</module>
     <module>wmsx-provider</module>
     <module>wmsx-requestor</module>
+    <module>wmsx-lcg</module>
     <module>wmsx</module>
     <module>wmsx-gat</module>
     <module>wmsx-ng</module>
