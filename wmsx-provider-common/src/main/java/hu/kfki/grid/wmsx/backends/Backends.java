@@ -50,7 +50,9 @@ public final class Backends {
         final Enumeration<Backend> e = Service.providers(Backend.class);
         while (e.hasMoreElements()) {
             final Backend b = e.nextElement();
-            this.backends.put(b.toString().toLowerCase(Locale.ENGLISH), b);
+            if (b.isAvailable()) {
+                this.backends.put(b.toString().toLowerCase(Locale.ENGLISH), b);
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -104,6 +104,11 @@ public final class WorkerBackend implements Backend {
     /** {@inheritDoc} */
     public boolean provideCredentials(final String password, final String vo) {
         // do nothing.
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isAvailable() {
         return true;
     }
 

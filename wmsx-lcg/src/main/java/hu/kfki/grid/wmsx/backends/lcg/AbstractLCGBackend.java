@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -28,7 +28,7 @@ import hu.kfki.grid.wmsx.backends.ProcessDelayedExecution;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
 import hu.kfki.grid.wmsx.job.JobState;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
-import hu.kfki.grid.wmsx.renewer.AbstractRenewer;
+import hu.kfki.grid.wmsx.renewer.Renewer;
 import hu.kfki.grid.wmsx.renewer.RenewerUtil;
 import hu.kfki.grid.wmsx.renewer.VOMS;
 import hu.kfki.grid.wmsx.util.ProcessHelper;
@@ -37,6 +37,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -60,7 +61,7 @@ public abstract class AbstractLCGBackend implements Backend {
     private static final Logger LOGGER = Logger
             .getLogger(AbstractLCGBackend.class.toString());
 
-    private static AbstractRenewer lcgRenewer;
+    private static Renewer lcgRenewer;
 
     /** {@inheritDoc} */
     public void retrieveLog(final JobUid id, final File dir) {
@@ -289,5 +290,26 @@ public abstract class AbstractLCGBackend implements Backend {
             }
             return success;
         }
+    }
+
+    /** {@inheritDoc} */
+    public boolean isAvailable() {
+        final List<String> cmds = new ArrayList<String>(3);
+        final List<String> submitCmds = this.submitJdlCommand("", "");
+        cmds.add(submitCmds.get(0)); // env command
+        cmds.add("which");
+        cmds.add(submitCmds.get(1)); // the actual command
+        int rv = -1;
+        try {
+            final Process process = Runtime.getRuntime().exec(
+                    cmds.toArray(new String[0]));
+            rv = process.waitFor();
+            ProcessHelper.cleanupProcess(process);
+        } catch (final IOException io) {
+            AbstractLCGBackend.LOGGER.warning(io.getMessage());
+        } catch (final InterruptedException e) {
+            AbstractLCGBackend.LOGGER.warning(e.getMessage());
+        }
+        return rv == 0;
     }
 }

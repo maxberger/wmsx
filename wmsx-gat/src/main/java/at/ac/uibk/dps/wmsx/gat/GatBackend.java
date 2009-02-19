@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -381,6 +381,16 @@ public class GatBackend implements Backend, MetricListener {
             return false;
         }
         return true;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isAvailable() {
+        try {
+            this.ensureBroker();
+        } catch (final IOException e) {
+            GatBackend.LOGGER.warning(e.getMessage());
+        }
+        return this.broker != null;
     }
 
 }
