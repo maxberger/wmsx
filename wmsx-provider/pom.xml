@@ -143,11 +143,6 @@
       <artifactId>commons-logging</artifactId>
       <version>1.1.1</version>
     </dependency>
-    <dependency>
-      <groupId>commons-discovery</groupId>
-      <artifactId>commons-discovery</artifactId>
-      <version>20040218.194635</version>
-    </dependency>
 <!--    <dependency>
       <groupId>hu.kfki.grid</groupId>
       <artifactId>cog-jglobus</artifactId>
