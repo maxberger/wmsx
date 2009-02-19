@@ -6,3 +6,5 @@ target/
 ^.*jdl$
 ^wmsx/w2k/atype
 ^wmsx/w2k/scripts/basesetup.sh
+^temp
+^test
