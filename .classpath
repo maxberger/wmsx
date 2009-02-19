@@ -7,7 +7,6 @@
 	<classpathentry kind="src" output="wmsx-common/target/classes" path="wmsx-common/src/main/java"/>
 	<classpathentry kind="src" output="wmsx-common/target/test-classes" path="wmsx-common/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="wmsx-common/target/test-classes" path="wmsx-common/src/test/resources"/>
-	<classpathentry kind="src" output="wmsx-provider-common/target/classes" path="wmsx-provider-common/src/main/java"/>
 	<classpathentry kind="src" output="worker/target/classes" path="worker/src/main/java"/>
 	<classpathentry kind="src" output="wmsx-dl/target/classes" path="wmsx-dl/src/main/java"/>
 	<classpathentry kind="src" output="wmsx-lcg/target/classes" path="wmsx-lcg/src/main/java"/>
