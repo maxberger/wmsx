@@ -50,7 +50,6 @@
     <module>wmsx-api</module>
     <module>wmsx-backend-api</module>
     <module>wmsx-common</module>
-    <module>wmsx-provider-common</module>
     <module>worker</module>
     <module>wmsx-dl</module>
     <module>wmsx-provider</module>
