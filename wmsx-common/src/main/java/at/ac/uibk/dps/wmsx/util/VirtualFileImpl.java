@@ -31,19 +31,21 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
+import at.ac.uibk.dps.wmsx.util.VirtualFile;
+
 /**
- * Management for virtual files.
+ * Actual Implementation of management for virtual files.
  * 
  * @version $Date$
  */
-public class VirtualFile implements Serializable {
+public class VirtualFileImpl implements Serializable, VirtualFile {
 
     /**
      * Serial Version for the virtual file.
      */
-    public static final int serialVersionUID = 1;
+    private static final long serialVersionUID = 1L;
 
-    private static final Logger LOGGER = Logger.getLogger(VirtualFile.class
+    private static final Logger LOGGER = Logger.getLogger(VirtualFileImpl.class
             .toString());
 
     private final transient File localFile;
@@ -58,7 +60,7 @@ public class VirtualFile implements Serializable {
      * @param source
      *            The actual file.
      */
-    public VirtualFile(final File source) {
+    public VirtualFileImpl(final File source) {
         this.localFile = source;
         this.name = source.getName();
     }
@@ -80,7 +82,7 @@ public class VirtualFile implements Serializable {
             this.name = (String) in.readObject();
             this.fileContent = (byte[]) in.readObject();
         } catch (final ClassNotFoundException e) {
-            VirtualFile.LOGGER.warning(e.getMessage());
+            VirtualFileImpl.LOGGER.warning(e.getMessage());
         }
     }
 
@@ -94,21 +96,12 @@ public class VirtualFile implements Serializable {
         return this.fileContent.clone();
     }
 
-    /**
-     * Retrieve the filename.
-     * 
-     * @return Filename without any path components.
-     */
+    /** {@inheritDoc} */
     public String getName() {
         return this.name;
     }
 
-    /**
-     * Stores the file back onto the file system under its name.
-     * 
-     * @param dir
-     *            Directory to store to.
-     */
+    /** {@inheritDoc} */
     public void storeFile(final File dir) {
         if (this.localFile == null) {
             try {
@@ -118,10 +111,16 @@ public class VirtualFile implements Serializable {
                 fos.close();
                 FileUtil.makeExecutable(f);
             } catch (final IOException ioe) {
-                VirtualFile.LOGGER.warning(ioe.getMessage());
+                VirtualFileImpl.LOGGER.warning(ioe.getMessage());
             }
         } else {
             FileUtil.copy(this.localFile, new File(dir, this.name));
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

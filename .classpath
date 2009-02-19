@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" output="wmsx-common-api/target/classes" path="wmsx-common-api/src/main/java"/>
 	<classpathentry kind="src" output="worker-api/target/classes" path="worker-api/src/main/java"/>
 	<classpathentry kind="src" output="wmsx-api/target/classes" path="wmsx-api/src/main/java"/>
 	<classpathentry kind="src" output="wmsx-backend-api/target/classes" path="wmsx-backend-api/src/main/java"/>

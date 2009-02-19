@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -25,8 +25,9 @@ import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.util.FileUtil;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
+
+import at.ac.uibk.dps.wmsx.util.VirtualFile;
 
 /**
  * Describes work with additional attributes needed by the controller.
@@ -43,7 +44,7 @@ public class ControllerWorkDescription {
 
     private final Boolean preferLocal;
 
-    private final Map<String, byte[]> inputSandbox;
+    private final List<VirtualFile> inputSandbox;
 
     private int retriesLeft;
 
@@ -119,7 +120,7 @@ public class ControllerWorkDescription {
     /**
      * @return The input sandbox.
      */
-    public Map<String, byte[]> getInputSandbox() {
+    public List<VirtualFile> getInputSandbox() {
         return this.inputSandbox;
     }
 

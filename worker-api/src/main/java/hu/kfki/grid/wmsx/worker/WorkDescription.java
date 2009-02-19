@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -22,9 +22,10 @@
 package hu.kfki.grid.wmsx.worker;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+
+import at.ac.uibk.dps.wmsx.util.VirtualFile;
 
 /**
  * Describes the work sent to worker.
@@ -40,7 +41,7 @@ public class WorkDescription implements Serializable {
 
     private final Object id;
 
-    private final Map<String, byte[]> inputSandbox;
+    private final List<VirtualFile> inputSandbox;
 
     private final String executable;
 
@@ -54,7 +55,6 @@ public class WorkDescription implements Serializable {
 
     private final String workflowId;
 
-    /* <String> */
     private final List<String> outputSandbox;
 
     /**
@@ -81,7 +81,7 @@ public class WorkDescription implements Serializable {
             final String exec, final String deployexec, final List<String> arg,
             final String out, final String err, final String wfId) {
         this.id = jobId;
-        this.inputSandbox = new TreeMap<String, byte[]>();
+        this.inputSandbox = new ArrayList<VirtualFile>();
         this.outputSandbox = output;
         this.executable = exec;
         this.deploy = deployexec;
@@ -101,7 +101,7 @@ public class WorkDescription implements Serializable {
     /**
      * @return The input sandbox for this job.
      */
-    public Map<String, byte[]> getInputSandbox() {
+    public List<VirtualFile> getInputSandbox() {
         return this.inputSandbox;
     }
 
