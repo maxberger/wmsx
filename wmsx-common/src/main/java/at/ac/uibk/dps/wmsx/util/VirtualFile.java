@@ -24,6 +24,7 @@ package at.ac.uibk.dps.wmsx.util;
 import hu.kfki.grid.wmsx.util.FileUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -37,12 +38,19 @@ import java.util.logging.Logger;
  */
 public class VirtualFile implements Serializable {
 
+    /**
+     * Serial Version for the virtual file.
+     */
+    public static final int serialVersionUID = 1;
+
     private static final Logger LOGGER = Logger.getLogger(VirtualFile.class
             .toString());
 
     private final transient File localFile;
 
     private transient byte[] fileContent;
+
+    private String name;
 
     /**
      * Create a Virtual File based on an existing local file.
@@ -52,10 +60,12 @@ public class VirtualFile implements Serializable {
      */
     public VirtualFile(final File source) {
         this.localFile = source;
+        this.name = source.getName();
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {
         this.ensureContentIsLoaded();
+        out.writeObject(this.name);
         out.writeObject(this.fileContent);
     }
 
@@ -67,6 +77,7 @@ public class VirtualFile implements Serializable {
 
     private void readObject(final ObjectInputStream in) throws IOException {
         try {
+            this.name = (String) in.readObject();
             this.fileContent = (byte[]) in.readObject();
         } catch (final ClassNotFoundException e) {
             VirtualFile.LOGGER.warning(e.getMessage());
@@ -81,5 +92,36 @@ public class VirtualFile implements Serializable {
     public byte[] getFileContent() {
         this.ensureContentIsLoaded();
         return this.fileContent.clone();
+    }
+
+    /**
+     * Retrieve the filename.
+     * 
+     * @return Filename without any path components.
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Stores the file back onto the file system under its name.
+     * 
+     * @param dir
+     *            Directory to store to.
+     */
+    public void storeFile(final File dir) {
+        if (this.localFile == null) {
+            try {
+                final File f = new File(dir, this.name);
+                final FileOutputStream fos = new FileOutputStream(f);
+                fos.write(this.fileContent);
+                fos.close();
+                FileUtil.makeExecutable(f);
+            } catch (final IOException ioe) {
+                VirtualFile.LOGGER.warning(ioe.getMessage());
+            }
+        } else {
+            FileUtil.copy(this.localFile, new File(dir, this.name));
+        }
     }
 }
