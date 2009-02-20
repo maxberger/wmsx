@@ -37,9 +37,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import at.ac.uibk.dps.wmsx.backends.lcg.LcgCommon;
 
 /**
  * Common backend for all LCG (EDG and gLite) targets.
@@ -52,11 +53,6 @@ public abstract class AbstractLCGBackend implements Backend {
      * Parameter for non-interactive.
      */
     protected static final String NOINT = "--noint";
-
-    /**
-     * Absolute path to the "env" program on most unix system.
-     */
-    protected static final String ENV = "/usr/bin/env";
 
     private static final Logger LOGGER = Logger
             .getLogger(AbstractLCGBackend.class.toString());
@@ -294,22 +290,7 @@ public abstract class AbstractLCGBackend implements Backend {
 
     /** {@inheritDoc} */
     public boolean isAvailable() {
-        final List<String> cmds = new ArrayList<String>(3);
         final List<String> submitCmds = this.submitJdlCommand("", "");
-        cmds.add(submitCmds.get(0)); // env command
-        cmds.add("which");
-        cmds.add(submitCmds.get(1)); // the actual command
-        int rv = -1;
-        try {
-            final Process process = Runtime.getRuntime().exec(
-                    cmds.toArray(new String[0]));
-            rv = process.waitFor();
-            ProcessHelper.cleanupProcess(process);
-        } catch (final IOException io) {
-            AbstractLCGBackend.LOGGER.warning(io.getMessage());
-        } catch (final InterruptedException e) {
-            AbstractLCGBackend.LOGGER.warning(e.getMessage());
-        }
-        return rv == 0;
+        return LcgCommon.isAvailable(submitCmds.get(1));
     }
 }
