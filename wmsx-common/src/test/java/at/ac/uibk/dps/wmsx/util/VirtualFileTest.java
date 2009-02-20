@@ -34,14 +34,16 @@ import java.io.ObjectOutputStream;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import at.ac.uibk.dps.wmsx.util.VirtualFile;
-
 /**
  * Tests for {@link VirtualFile}.
  * 
  * @version $Date$
  */
 public class VirtualFileTest {
+
+    private static final int BUF_COUNT = 1024;
+
+    private static final int BUF_SIZE = 4096;
 
     private static final int TESTFILESIZE = 15;
 
@@ -58,7 +60,6 @@ public class VirtualFileTest {
         final InputStream is = VirtualFileTest.class.getResourceAsStream("/"
                 + "testfile.txt");
         FileUtil.copy(is, this.realFile);
-        this.realFile.deleteOnExit();
     }
 
     /**
@@ -102,7 +103,39 @@ public class VirtualFileTest {
 
     private File someTempFile() throws IOException {
         final File serial = File.createTempFile("Test", null);
+        serial.deleteOnExit();
         return serial;
     }
 
+    private File aLargeFile() throws Exception {
+        final File f = this.someTempFile();
+        final FileOutputStream o = new FileOutputStream(f);
+        try {
+            final byte[] b = new byte[VirtualFileTest.BUF_SIZE];
+            for (int i = 0; i < VirtualFileTest.BUF_COUNT; i++) {
+                o.write(b);
+            }
+        } finally {
+            o.close();
+        }
+        return f;
+    }
+
+    /**
+     * Test for size of serialized objects.
+     * 
+     * @throws Exception
+     *             if the test fails.
+     */
+    @Test
+    public void testSerSize() throws Exception {
+        final VirtualFile f = new VirtualFileImpl(this.aLargeFile());
+        final File serial = this.someTempFile();
+        final ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream(serial));
+        oos.writeObject(f);
+        oos.close();
+        Assert.assertTrue(serial.length() > VirtualFileTest.BUF_COUNT
+                * VirtualFileTest.BUF_SIZE);
+    }
 }
