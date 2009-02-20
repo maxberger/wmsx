@@ -1,0 +1,37 @@
+#!/bin/sh
+
+### First argument: absolute path to the jdl or tarball file base name.
+ABSCOMMAND=$1
+### Second argument: absolute path to the generated output directory.
+OUTDIR=$2
+### Remaining arguments: command line arguments of the job executable.
+shift 2
+ARGS=$*
+NARGS=$#
+
+### Debug text:
+echo "Hello, postexec!"
+echo "Absolute command: $ABSCOMMAND"
+echo "Output retrieval directory $OUTDIR"
+echo "Job executable arguments: $ARGS"
+
+### Extracting output:
+OLDDIR=$PWD
+cd $OUTDIR
+tar -xzf out.tar.gz
+rm -f out.tar.gz
+cd $OLDDIR
+
+### Making chain starting decision:
+## If the outputs have not arrived (e.g. due to job failure), 
+## then rerun the job:
+if ! [[ -d $OUTDIR/outputdirectory ]] ; then
+    ## Start child job (call _chain script):
+    exit 1
+fi
+## If condition is not fulfilled, then start new job:
+VALUE=$((`cat $OUTDIR/outputdirectory/result`))
+if (( $VALUE <= 13 )) ; then
+    ## Start child job (call _chain script):
+    exit 1
+fi

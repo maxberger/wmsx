@@ -1,0 +1,3 @@
+hu.kfki.grid.wmsx.backends.local.FakeBackend
+hu.kfki.grid.wmsx.backends.local.LocalBackend
+hu.kfki.grid.wmsx.worker.WorkerBackend

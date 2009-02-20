@@ -1,0 +1,23 @@
+#!/bin/sh
+
+### First argument: absolute path to the jdl or tarball file base name.
+ABSCOMMAND=$1
+### Second argument: absolute path to the generated output directory.
+OUTDIR=$2
+### Remaining arguments: command line arguments of the job executable.
+shift 2
+ARGS=$*
+NARGS=$#
+
+### Start next job:
+## If outputs have not arrived (e.g. due to job failure), 
+## then rerun the job:
+if ! [[ -d $OUTDIR/outputdirectory ]] ; then
+    ## Rerun the job:
+    echo "$ABSCOMMAND $ARGS"
+## Otherwise, start the next job in the chain:
+else
+    VALUE=$((`cat $OUTDIR/outputdirectory/result`))
+    ## Start next job:
+    echo "$ABSCOMMAND $VALUE"
+fi
