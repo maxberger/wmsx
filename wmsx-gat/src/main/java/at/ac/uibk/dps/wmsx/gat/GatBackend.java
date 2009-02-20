@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import org.gridlab.gat.AdaptorInfo;
 import org.gridlab.gat.GAT;
 import org.gridlab.gat.GATContext;
 import org.gridlab.gat.GATInvocationException;
@@ -386,16 +385,7 @@ public class GatBackend implements Backend, MetricListener {
 
     /** {@inheritDoc} */
     public boolean isAvailable() {
-        try {
-            for (final AdaptorInfo ai : GAT.getAdaptorInfos("ResourceBroker")) {
-                if ("GliteResourceBrokerAdaptor".equalsIgnoreCase(ai
-                        .getShortName())) {
-                    return true;
-                }
-            }
-        } catch (final GATInvocationException e) {
-            GatBackend.LOGGER.warning(e.getMessage());
-        }
-        return false;
+        return GatCommon.isAvailable("ResourceBroker",
+                "GliteResourceBrokerAdaptor");
     }
 }
