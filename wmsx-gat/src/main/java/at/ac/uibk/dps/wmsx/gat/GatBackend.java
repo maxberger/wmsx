@@ -65,7 +65,7 @@ import org.gridlab.gat.security.CertificateSecurityContext;
  */
 // CHECKSTYLE:OFF
 public class GatBackend implements Backend, MetricListener {
-    private static final String GLITE_JOB_ID = "glite.jobID";
+    private static final String GLITE_JOB_ID = "adaptor.job.id";
 
     // CHECKSTYLE:ON
     private static final Logger LOGGER = Logger.getLogger(GatBackend.class
