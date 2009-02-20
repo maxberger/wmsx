@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -24,6 +24,8 @@ package hu.kfki.grid.wmsx.backends.lcg;
 import java.util.List;
 import java.util.Vector;
 
+import at.ac.uibk.dps.wmsx.backends.lcg.LcgCommon;
+
 /**
  * Backend for gLite 2.7.
  * 
@@ -43,7 +45,7 @@ public final class EDGBackend extends AbstractLCGBackend {
     public List<String> jobOutputCommand(final String absolutePath,
             final String idString) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add(LcgCommon.ENV);
         commandLine.add("edg-job-get-output");
         commandLine.add("--dir");
         commandLine.add(absolutePath);
@@ -57,7 +59,7 @@ public final class EDGBackend extends AbstractLCGBackend {
     public List<String> retreiveLogCommand(final String jobId,
             final String filename) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add(LcgCommon.ENV);
         commandLine.add("edg-job-get-logging-info");
         commandLine.add("-o");
         commandLine.add(filename);
@@ -70,7 +72,7 @@ public final class EDGBackend extends AbstractLCGBackend {
     @Override
     public List<String> submitJdlCommand(final String jdlFile, final String vo) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add(LcgCommon.ENV);
         commandLine.add("edg-job-submit");
         commandLine.add("--nolisten");
         if (vo != null) {
@@ -85,7 +87,7 @@ public final class EDGBackend extends AbstractLCGBackend {
     @Override
     public List<String> getStatusCommand(final String jobId) {
         final List<String> commandLine = new Vector<String>();
-        commandLine.add(AbstractLCGBackend.ENV);
+        commandLine.add(LcgCommon.ENV);
         commandLine.add("edg-job-status");
         commandLine.add(jobId);
         return commandLine;
