@@ -21,6 +21,16 @@
 
 package at.ac.uibk.dps.wmsx.gat.guid;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.logging.Logger;
+
+import org.gridlab.gat.GAT;
+import org.gridlab.gat.GATInvocationException;
+import org.gridlab.gat.GATObjectCreationException;
+import org.gridlab.gat.URI;
+import org.gridlab.gat.io.File;
+
 import at.ac.uibk.dps.wmsx.backends.guid.GuidBackend;
 import at.ac.uibk.dps.wmsx.gat.GatCommon;
 
@@ -30,9 +40,12 @@ import at.ac.uibk.dps.wmsx.gat.GatCommon;
  * @version $Date$
  */
 public class GatGuidBackend implements GuidBackend {
-    // private static final Logger LOGGER =
-    // Logger.getLogger(GatGuidBackend.class
-    // .toString());
+    private static final String GUID_PREFIX = "guid:///";
+
+    private static final Logger LOGGER = Logger.getLogger(GatGuidBackend.class
+            .toString());
+
+    private final GatCommon gatCommon = GatCommon.getInstance();
 
     /**
      * Default constructor.
@@ -43,6 +56,48 @@ public class GatGuidBackend implements GuidBackend {
 
     /** {@inheritDoc} */
     public boolean isAvailable() {
-        return GatCommon.isAvailable("File", "GliteGuidFileAdaptor");
+        return this.gatCommon.isAvailable("File", "GliteGuidFileAdaptor");
+    }
+
+    /** {@inheritDoc} */
+    public String upload(final java.io.File localFile) {
+        String filename = null;
+        try {
+            final File gatFile = GAT.createFile(this.gatCommon.getGatContext(),
+                    new URI(GatGuidBackend.GUID_PREFIX));
+            gatFile.createNewFile();
+            GatGuidBackend.LOGGER.fine("Created file: " + gatFile.toGATURI());
+            final File localGatFile = GAT.createFile(this.gatCommon
+                    .getGatContext(), localFile.getAbsolutePath());
+            localGatFile.copy(gatFile.toGATURI());
+            filename = gatFile.getPath();
+            gatFile.deleteOnExit();
+        } catch (final IOException e) {
+            GatGuidBackend.LOGGER.warning(e.toString());
+        } catch (final GATObjectCreationException e) {
+            GatGuidBackend.LOGGER.warning(e.toString());
+        } catch (final URISyntaxException e) {
+            GatGuidBackend.LOGGER.warning(e.getMessage());
+        } catch (final GATInvocationException e) {
+            GatGuidBackend.LOGGER.warning(e.getMessage());
+        }
+        return filename;
+    }
+
+    /** {@inheritDoc} */
+    public void download(final String guid, final java.io.File localFile) {
+        try {
+            final File gatFile = GAT.createFile(this.gatCommon.getGatContext(),
+                    new URI(GatGuidBackend.GUID_PREFIX + guid));
+            final File localGatFile = GAT.createFile(this.gatCommon
+                    .getGatContext(), localFile.getAbsolutePath());
+            gatFile.copy(localGatFile.toGATURI());
+        } catch (final GATObjectCreationException e) {
+            GatGuidBackend.LOGGER.warning(e.getMessage());
+        } catch (final URISyntaxException e) {
+            GatGuidBackend.LOGGER.warning(e.getMessage());
+        } catch (final GATInvocationException e) {
+            GatGuidBackend.LOGGER.warning(e.getMessage());
+        }
     }
 }

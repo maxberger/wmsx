@@ -31,56 +31,122 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
-import at.ac.uibk.dps.wmsx.util.VirtualFile;
+import at.ac.uibk.dps.wmsx.backends.guid.GuidBackend;
+import at.ac.uibk.dps.wmsx.backends.guid.GuidBackends;
 
 /**
  * Actual Implementation of management for virtual files.
  * 
  * @version $Date$
  */
-public class VirtualFileImpl implements Serializable, VirtualFile {
+public final class VirtualFileImpl implements Serializable, VirtualFile {
 
     /**
      * Serial Version for the virtual file.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private static final Logger LOGGER = Logger.getLogger(VirtualFileImpl.class
             .toString());
 
-    private final transient File localFile;
+    private transient File localFile;
 
     private transient byte[] fileContent;
 
     private String name;
 
+    private transient GuidBackend guidBackend;
+
+    private transient VirtualFileUploader uploader;
+
+    private transient Thread uploaderThread;
+
+    private transient String guid;
+
     /**
-     * Create a Virtual File based on an existing local file.
+     * Create a Virtual file based on an existing local file.
      * 
      * @param source
      *            The actual file.
      */
     public VirtualFileImpl(final File source) {
+        this(source, null);
+    }
+
+    /**
+     * Create a Virtual file based on an existing local file.
+     * 
+     * @param source
+     *            the local file
+     * @param vo
+     *            if not null, upload to LFC of this VO.
+     */
+    public VirtualFileImpl(final File source, final String vo) {
         this.localFile = source;
         this.name = source.getName();
+        this.guidBackend = GuidBackends.getInstance().get();
+        if (vo != null && this.guidBackend != null) {
+            // TODO: Check file size.
+            this.uploader = new VirtualFileUploader(source, this.guidBackend);
+            this.uploaderThread = new Thread(this.uploader);
+            this.uploaderThread.start();
+        }
     }
 
-    private void writeObject(final ObjectOutputStream out) throws IOException {
-        this.ensureContentIsLoaded();
+    private synchronized void writeObject(final ObjectOutputStream out)
+            throws IOException {
         out.writeObject(this.name);
-        out.writeObject(this.fileContent);
+        this.finalizeUpload();
+        if (this.guid == null) {
+            this.ensureContentIsLoaded();
+            out.writeBoolean(false);
+            out.writeObject(this.fileContent);
+        } else {
+            out.writeBoolean(true);
+            out.writeObject(this.guid);
+        }
     }
 
-    private void ensureContentIsLoaded() {
+    private void finalizeUpload() {
+        if (this.uploaderThread != null) {
+            try {
+                this.uploaderThread.join();
+            } catch (final InterruptedException e) {
+                VirtualFileImpl.LOGGER.warning(e.getMessage());
+            }
+            this.guid = this.uploader.getGuid();
+            this.uploaderThread = null;
+            this.uploader = null;
+        }
+    }
+
+    private synchronized void ensureContentIsLoaded() {
         if (this.fileContent == null) {
-            this.fileContent = FileUtil.loadFile(this.localFile);
+            if (this.localFile == null && this.guid != null) {
+                try {
+                    final File content = File.createTempFile("WMSX", null);
+                    content.deleteOnExit();
+                    this.storeFileAs(content);
+                } catch (final IOException e) {
+                    VirtualFileImpl.LOGGER.warning(e.getMessage());
+                }
+            }
+            if (this.localFile != null) {
+                this.fileContent = FileUtil.loadFile(this.localFile);
+            }
         }
     }
 
     private void readObject(final ObjectInputStream in) throws IOException {
+        this.guidBackend = GuidBackends.getInstance().get();
         try {
             this.name = (String) in.readObject();
-            this.fileContent = (byte[]) in.readObject();
+            final boolean isGuid = in.readBoolean();
+            if (isGuid) {
+                this.guid = (String) in.readObject();
+            } else {
+                this.fileContent = (byte[]) in.readObject();
+            }
         } catch (final ClassNotFoundException e) {
             VirtualFileImpl.LOGGER.warning(e.getMessage());
         }
@@ -91,7 +157,7 @@ public class VirtualFileImpl implements Serializable, VirtualFile {
      * 
      * @return the content of the file.
      */
-    public byte[] getFileContent() {
+    public synchronized byte[] getFileContent() {
         this.ensureContentIsLoaded();
         return this.fileContent.clone();
     }
@@ -102,19 +168,28 @@ public class VirtualFileImpl implements Serializable, VirtualFile {
     }
 
     /** {@inheritDoc} */
-    public void storeFile(final File dir) {
+    public synchronized void storeFile(final File dir) {
+        final File f = new File(dir, this.name);
+        this.storeFileAs(f);
+    }
+
+    private void storeFileAs(final File f) {
         if (this.localFile == null) {
-            try {
-                final File f = new File(dir, this.name);
-                final FileOutputStream fos = new FileOutputStream(f);
-                fos.write(this.fileContent);
-                fos.close();
-                FileUtil.makeExecutable(f);
-            } catch (final IOException ioe) {
-                VirtualFileImpl.LOGGER.warning(ioe.getMessage());
+            if (this.guid == null) {
+                try {
+                    final FileOutputStream fos = new FileOutputStream(f);
+                    fos.write(this.fileContent);
+                    fos.close();
+                    FileUtil.makeExecutable(f);
+                } catch (final IOException ioe) {
+                    VirtualFileImpl.LOGGER.warning(ioe.getMessage());
+                }
+            } else {
+                this.guidBackend.download(this.guid, f);
             }
+            this.localFile = f;
         } else {
-            FileUtil.copy(this.localFile, new File(dir, this.name));
+            FileUtil.copy(this.localFile, f);
         }
     }
 
@@ -123,4 +198,30 @@ public class VirtualFileImpl implements Serializable, VirtualFile {
     public String toString() {
         return this.name;
     }
+
+    private static final class VirtualFileUploader implements Runnable {
+
+        private String guid;
+
+        private final File lFile;
+
+        private final GuidBackend guidBackend;
+
+        private VirtualFileUploader(final File local, final GuidBackend gBackend) {
+            this.lFile = local;
+            this.guidBackend = gBackend;
+        }
+
+        public String getGuid() {
+            return this.guid;
+        }
+
+        /** {@inheritDoc} */
+        public void run() {
+            VirtualFileImpl.LOGGER.finer("Uploading " + this.lFile);
+            this.guid = this.guidBackend.upload(this.lFile);
+            VirtualFileImpl.LOGGER.finer("Guid: " + this.guid);
+        }
+    }
+
 }

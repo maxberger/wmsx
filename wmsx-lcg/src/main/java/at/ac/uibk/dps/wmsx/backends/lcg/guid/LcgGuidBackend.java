@@ -21,6 +21,8 @@
 
 package at.ac.uibk.dps.wmsx.backends.lcg.guid;
 
+import java.io.File;
+
 import at.ac.uibk.dps.wmsx.backends.guid.GuidBackend;
 import at.ac.uibk.dps.wmsx.backends.lcg.LcgCommon;
 
@@ -42,6 +44,18 @@ public class LcgGuidBackend implements GuidBackend {
     /** {@inheritDoc} */
     public boolean isAvailable() {
         return LcgCommon.isAvailable("lcg-cr");
+    }
+
+    /** {@inheritDoc} */
+    public String upload(final File localFile) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public void download(final String guid, final File file) {
+        // TODO Auto-generated method stub
+
     }
 
 }

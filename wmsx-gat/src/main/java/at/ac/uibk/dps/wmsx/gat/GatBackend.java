@@ -41,10 +41,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import org.gridlab.gat.GAT;
-import org.gridlab.gat.GATContext;
 import org.gridlab.gat.GATInvocationException;
 import org.gridlab.gat.GATObjectCreationException;
-import org.gridlab.gat.Preferences;
 import org.gridlab.gat.URI;
 import org.gridlab.gat.monitoring.Metric;
 import org.gridlab.gat.monitoring.MetricDefinition;
@@ -55,7 +53,6 @@ import org.gridlab.gat.resources.Job;
 import org.gridlab.gat.resources.ResourceBroker;
 import org.gridlab.gat.resources.ResourceDescription;
 import org.gridlab.gat.resources.SoftwareDescription;
-import org.gridlab.gat.security.CertificateSecurityContext;
 
 /**
  * gLite back-end based on GAT.
@@ -70,58 +67,26 @@ public class GatBackend implements Backend, MetricListener {
     private static final Logger LOGGER = Logger.getLogger(GatBackend.class
             .toString());
 
-    private static final String GAT_BACKEND_NAME = "Glite";
-
-    private final GATContext context;
-
     private ResourceBroker broker;
 
     private final Map<Job, File> tempDir = new ConcurrentHashMap<Job, File>();
 
     private final Map<String, JobUid> jobForId = new ConcurrentHashMap<String, JobUid>();
 
-    private CertificateSecurityContext secContext;
+    private final GatCommon gatCommon = GatCommon.getInstance();
 
     /**
      * Default constructor.
      */
     public GatBackend() {
-        this.context = GAT.getDefaultGATContext();
-        final Preferences globalPrefs = new Preferences();
-
-        globalPrefs.put("ResourceBroker.adaptor.name",
-                GatBackend.GAT_BACKEND_NAME);
-        globalPrefs.put("AdvertService.adaptor.name",
-                GatBackend.GAT_BACKEND_NAME);
-
-        // System.setProperty("gat.debug", "true");
-        // System.setProperty("gat.verbose", "true");
-        globalPrefs.put("gat.verbose", "false");
-
-        globalPrefs.put("glite.deleteJDL", "true");
-        globalPrefs.put("glite.pollIntervalSecs", "30");
-
-        globalPrefs.put("File.adaptor.name", "Local,GridFTP,!sftp");
-
-        try {
-            final String globusDir = System.getProperty("user.home")
-                    + File.separatorChar + ".globus" + File.separatorChar;
-            this.secContext = new CertificateSecurityContext(new URI(globusDir
-                    + "userkey.pem"), new URI(globusDir + "usercert.pem"), "");
-        } catch (final URISyntaxException e) {
-            GatBackend.LOGGER.warning(LogUtil.logException(e));
-            throw new RuntimeException(e);
-        }
-        this.context.addSecurityContext(this.secContext);
-        this.context.addPreferences(globalPrefs);
-
+        // nothing to do.
     }
 
     private void ensureBroker() throws IOException {
         if (this.broker == null) {
             try {
-                this.broker = GAT.createResourceBroker(this.context, new URI(
-                        "ldap:///"));
+                this.broker = GAT.createResourceBroker(this.gatCommon
+                        .getGatContext(), new URI("ldap:///"));
             } catch (final GATObjectCreationException e) {
                 GatBackend.LOGGER.warning(LogUtil.logException(e));
                 throw new IOException("Failed to load broker");
@@ -325,7 +290,7 @@ public class GatBackend implements Backend, MetricListener {
                 inputFile = FileUtil.resolveFile(baseDir, fileName);
             }
             final org.gridlab.gat.io.File inputFileG = GAT.createFile(
-                    this.context, new URI("file:///"
+                    this.gatCommon.getGatContext(), new URI("file:///"
                             + inputFile.getCanonicalPath()));
             return inputFileG;
         } catch (final URISyntaxException e) {
@@ -367,13 +332,13 @@ public class GatBackend implements Backend, MetricListener {
 
     /** {@inheritDoc} */
     public void forgetPassword() {
-        this.secContext.setPassword("");
+        this.gatCommon.setPassword("");
     }
 
     /** {@inheritDoc} */
     public boolean provideCredentials(final String pass, final String vo) {
-        this.secContext.setPassword(pass);
-        VoData.getInstance().addToContext(vo, this.context);
+        this.gatCommon.setPassword(pass);
+        this.gatCommon.setVo(vo);
         try {
             this.ensureBroker();
         } catch (final IOException r) {
@@ -385,7 +350,7 @@ public class GatBackend implements Backend, MetricListener {
 
     /** {@inheritDoc} */
     public boolean isAvailable() {
-        return GatCommon.isAvailable("ResourceBroker",
+        return this.gatCommon.isAvailable("ResourceBroker",
                 "GliteResourceBrokerAdaptor");
     }
 }
