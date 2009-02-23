@@ -20,6 +20,8 @@
 /* $Id$ */
 package at.ac.uibk.dps.wmsx.backends.guid;
 
+import java.io.File;
+
 /**
  * Interface for backends which support file transfer from / to GUID.
  * 
@@ -33,5 +35,25 @@ public interface GuidBackend {
      * @return true if this backend is available.
      */
     boolean isAvailable();
+
+    /**
+     * Upload a file to an LFC. The file MUST be deleted automatically, either
+     * on program exit, or after a certain time (e.g. 1 day).
+     * 
+     * @param localFile
+     *            handle for the file.
+     * @return the GUID of the file (without any decoration, e.g. no guid:).
+     */
+    String upload(File localFile);
+
+    /**
+     * Download a file from an LFC.
+     * 
+     * @param guid
+     *            GUID of the file, without decoration.
+     * @param file
+     *            file to store to.
+     */
+    void download(String guid, File file);
 
 }

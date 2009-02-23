@@ -23,7 +23,6 @@ package at.ac.uibk.dps.wmsx.backends.guid;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.discovery.tools.Service;
@@ -63,20 +62,16 @@ public final class GuidBackends {
     }
 
     /**
-     * Retrieve a backend.
+     * Retrieve a backend if possible.
      * 
-     * @param name
-     *            name of backend (must be lower case!)
-     * @return the backend.
+     * @return some backend.
      */
-    public GuidBackend get(final String name) {
-        return this.backends.get(name);
+    public GuidBackend get() {
+        if (this.backends.isEmpty()) {
+            return null;
+        } else {
+            return this.backends.values().iterator().next();
+        }
     }
 
-    /**
-     * @return the set of loaded backends.
-     */
-    public Set<String> listBackends() {
-        return this.backends.keySet();
-    }
 }

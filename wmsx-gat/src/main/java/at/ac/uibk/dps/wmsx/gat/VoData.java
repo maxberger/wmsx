@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -85,7 +85,6 @@ public final class VoData {
      *            {@link GATContext} to modify.
      */
     public void addToContext(final String vo, final GATContext context) {
-
         final String vol = vo.toLowerCase(Locale.ENGLISH);
         context.addPreference("VirtualOrganisation", vol);
         final Map<String, String> voData = this.voMap.get(vol);
