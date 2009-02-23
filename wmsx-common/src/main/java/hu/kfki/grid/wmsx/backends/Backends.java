@@ -71,7 +71,7 @@ public final class Backends {
      * @return the backend.
      */
     public Backend get(final String name) {
-        return this.backends.get(name);
+        return this.backends.get(name.toLowerCase(Locale.ENGLISH));
     }
 
     /**
