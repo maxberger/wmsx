@@ -173,6 +173,8 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
                     VirtualFileImpl.LOGGER.warning(ioe.getMessage());
                 }
             } else {
+                VirtualFileImpl.LOGGER.info("Downloading File GUID: "
+                        + this.guid + " to " + f);
                 this.guidBackend.download(this.guid, f);
             }
             this.localFile = f;
@@ -206,9 +208,9 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
 
         /** {@inheritDoc} */
         public void run() {
-            VirtualFileImpl.LOGGER.finer("Uploading " + this.lFile);
+            VirtualFileImpl.LOGGER.info("Uploading " + this.lFile);
             this.guid = this.guidBackend.upload(this.lFile);
-            VirtualFileImpl.LOGGER.finer("Guid: " + this.guid);
+            VirtualFileImpl.LOGGER.info("Guid: " + this.guid);
         }
     }
 
