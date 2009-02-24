@@ -168,7 +168,6 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
                     final FileOutputStream fos = new FileOutputStream(f);
                     fos.write(this.fileContent);
                     fos.close();
-                    FileUtil.makeExecutable(f);
                 } catch (final IOException ioe) {
                     VirtualFileImpl.LOGGER.warning(ioe.getMessage());
                 }
@@ -176,6 +175,11 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
                 VirtualFileImpl.LOGGER.info("Downloading File GUID: "
                         + this.guid + " to " + f);
                 this.guidBackend.download(this.guid, f);
+            }
+            try {
+                FileUtil.makeExecutable(f);
+            } catch (final IOException e) {
+                VirtualFileImpl.LOGGER.warning(e.getMessage());
             }
             this.localFile = f;
         } else {
