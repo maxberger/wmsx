@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -215,6 +215,34 @@ public final class InputParser {
                     found = true;
                 }
                 line = reader.readLine();
+            }
+            reader.close();
+        } catch (final IOException io) {
+            InputParser.LOGGER.warning(io.getMessage());
+        }
+        return retVal;
+    }
+
+    /**
+     * Try to parse the guid: string from an lcg-cr command.
+     * 
+     * @param inputStream
+     *            InputStream to parse
+     * @return the guid or null.
+     */
+    public static String parseGuid(final InputStream inputStream) {
+        String retVal = null;
+        try {
+            final BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(inputStream));
+            String line = reader.readLine();
+            boolean found = false;
+            while (line != null && !found) {
+                line = reader.readLine();
+                if (line.startsWith("guid:")) {
+                    retVal = line.split(":")[1].trim();
+                    found = true;
+                }
             }
             reader.close();
         } catch (final IOException io) {
