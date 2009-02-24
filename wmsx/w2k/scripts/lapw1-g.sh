@@ -11,6 +11,8 @@ cd $SCRATCH
 
 date +"%s.%N"
 
+rm -f $casename.nsh
+
 Idx=$2
 sed -n "${Idx}p" $casename.klist > $casename.klist_$Idx
 echo END >> $casename.klist_$Idx
