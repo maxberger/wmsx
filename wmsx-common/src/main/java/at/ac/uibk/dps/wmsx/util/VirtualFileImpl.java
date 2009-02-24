@@ -24,6 +24,7 @@ package at.ac.uibk.dps.wmsx.util;
 import hu.kfki.grid.wmsx.util.FileUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -68,8 +69,13 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
      * 
      * @param source
      *            The actual file.
+     * @throws FileNotFoundException
+     *             if the file cannot be found.
      */
-    public VirtualFileImpl(final File source) {
+    public VirtualFileImpl(final File source) throws FileNotFoundException {
+        if (!source.exists()) {
+            throw new FileNotFoundException(source.toString());
+        }
         this.localFile = source;
         this.name = source.getName();
         this.guidBackend = GuidBackends.getInstance().get();

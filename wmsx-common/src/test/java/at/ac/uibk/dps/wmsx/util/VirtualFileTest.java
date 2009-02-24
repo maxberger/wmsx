@@ -49,6 +49,8 @@ public class VirtualFileTest {
 
     private final File realFile;
 
+    private final File tempDir;
+
     /**
      * Default constructor.
      * 
@@ -60,6 +62,11 @@ public class VirtualFileTest {
         final InputStream is = VirtualFileTest.class.getResourceAsStream("/"
                 + "testfile.txt");
         FileUtil.copy(is, this.realFile);
+
+        this.tempDir = File.createTempFile("TestDir", null);
+        this.tempDir.delete();
+        this.tempDir.mkdir();
+        this.tempDir.deleteOnExit();
     }
 
     /**
@@ -137,6 +144,22 @@ public class VirtualFileTest {
         oos.close();
         Assert.assertTrue(serial.length() > VirtualFileTest.BUF_COUNT
                 * VirtualFileTest.BUF_SIZE);
+    }
+
+    /**
+     * Test for non-existent file.
+     * 
+     * @throws Exception
+     *             if the test fails.
+     */
+    @Test
+    public void testNullFile() throws Exception {
+        try {
+            final VirtualFile f = new VirtualFileImpl(new File("/blabsafsadkf"));
+            Assert.fail();
+        } catch (final IOException io) {
+            // good!
+        }
     }
 
     /**
