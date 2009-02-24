@@ -23,6 +23,7 @@ package hu.kfki.grid.wmsx.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -234,7 +235,11 @@ public final class FileUtil {
 
         for (final String fileName : files) {
             final File f = FileUtil.resolveFile(dir, fileName);
-            sandbox.add(new VirtualFileImpl(f));
+            try {
+                sandbox.add(new VirtualFileImpl(f));
+            } catch (final FileNotFoundException e) {
+                FileUtil.LOGGER.warning(e.toString());
+            }
         }
         return sandbox;
     }
