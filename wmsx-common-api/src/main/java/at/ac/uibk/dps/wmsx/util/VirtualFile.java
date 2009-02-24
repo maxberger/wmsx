@@ -46,4 +46,9 @@ public interface VirtualFile extends Serializable {
      */
     void storeFile(final File dir);
 
+    /**
+     * Delete all created temporary artifacts.
+     */
+    void deleteTemp();
+
 }

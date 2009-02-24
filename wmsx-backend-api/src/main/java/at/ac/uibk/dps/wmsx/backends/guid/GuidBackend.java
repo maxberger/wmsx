@@ -37,8 +37,7 @@ public interface GuidBackend {
     boolean isAvailable();
 
     /**
-     * Upload a file to an LFC. The file MUST be deleted automatically, either
-     * on program exit, or after a certain time (e.g. 1 day).
+     * Upload a file to an LFC.
      * 
      * @param localFile
      *            handle for the file.
@@ -56,4 +55,11 @@ public interface GuidBackend {
      */
     void download(String guid, File file);
 
+    /**
+     * Delete a file from LFC.
+     * 
+     * @param guid
+     *            GUID of the file, without decoration.
+     */
+    void delete(String guid);
 }
