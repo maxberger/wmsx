@@ -31,8 +31,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
-import at.ac.uibk.dps.wmsx.util.VirtualFile;
-
 /**
  * Actual Implementation of management for virtual files.
  * 
