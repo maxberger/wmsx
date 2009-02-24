@@ -238,11 +238,11 @@ public final class InputParser {
             String line = reader.readLine();
             boolean found = false;
             while (line != null && !found) {
-                line = reader.readLine();
                 if (line.startsWith("guid:")) {
                     retVal = line.split(":")[1].trim();
                     found = true;
                 }
+                line = reader.readLine();
             }
             reader.close();
         } catch (final IOException io) {
