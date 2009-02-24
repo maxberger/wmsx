@@ -1,0 +1,12 @@
+Welcome to WMSX (Workload Manager System Extensions)
+
+To get started, use the two scipts in this directory
+
+./wmsx-provider.sh workdir to start the provider serivce
+
+./wmsx-requestor.sh for actually commands
+
+both can be invoked with "-h" to give a list of command line arguments
+
+If anything is unclear, please do not hesitate to email max@berger.name
+
