@@ -70,22 +70,10 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
      *            The actual file.
      */
     public VirtualFileImpl(final File source) {
-        this(source, null);
-    }
-
-    /**
-     * Create a Virtual file based on an existing local file.
-     * 
-     * @param source
-     *            the local file
-     * @param vo
-     *            if not null, upload to LFC of this VO.
-     */
-    public VirtualFileImpl(final File source, final String vo) {
         this.localFile = source;
         this.name = source.getName();
         this.guidBackend = GuidBackends.getInstance().get();
-        if (vo != null && this.guidBackend != null) {
+        if (this.guidBackend != null) {
             // TODO: Check file size.
             this.uploader = new VirtualFileUploader(source, this.guidBackend);
             this.uploaderThread = new Thread(this.uploader);
