@@ -27,6 +27,11 @@
       <artifactId>wmsx-common</artifactId>
       <version>1.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>at.ac.uibk.dps</groupId>
+      <artifactId>wmsx-lcg</artifactId>
+      <version>1.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
