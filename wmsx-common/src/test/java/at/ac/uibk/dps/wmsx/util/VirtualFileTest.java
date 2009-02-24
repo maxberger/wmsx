@@ -168,5 +168,7 @@ public class VirtualFileTest {
         final byte[] b1 = f.getFileContent();
         final byte[] b2 = f2.getFileContent();
         Assert.assertEquals(b2, b1);
+        f.deleteTemp();
+        f2.deleteTemp();
     }
 }

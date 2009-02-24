@@ -71,7 +71,6 @@ public class GatGuidBackend implements GuidBackend {
                     .getGatContext(), localFile.getAbsolutePath());
             localGatFile.copy(gatFile.toGATURI());
             filename = gatFile.getPath();
-            gatFile.deleteOnExit();
         } catch (final IOException e) {
             GatGuidBackend.LOGGER.warning(e.toString());
         } catch (final GATObjectCreationException e) {
@@ -97,6 +96,19 @@ public class GatGuidBackend implements GuidBackend {
         } catch (final URISyntaxException e) {
             GatGuidBackend.LOGGER.warning(e.getMessage());
         } catch (final GATInvocationException e) {
+            GatGuidBackend.LOGGER.warning(e.getMessage());
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void delete(final String guid) {
+        try {
+            final File gatFile = GAT.createFile(this.gatCommon.getGatContext(),
+                    new URI(GatGuidBackend.GUID_PREFIX + guid));
+            gatFile.delete();
+        } catch (final GATObjectCreationException e) {
+            GatGuidBackend.LOGGER.warning(e.getMessage());
+        } catch (final URISyntaxException e) {
             GatGuidBackend.LOGGER.warning(e.getMessage());
         }
     }

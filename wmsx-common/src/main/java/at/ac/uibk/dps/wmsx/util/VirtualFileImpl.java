@@ -224,4 +224,12 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
         }
     }
 
+    /** {@inheritDoc} */
+    public synchronized void deleteTemp() {
+        this.finalizeUpload();
+        if (this.guid != null) {
+            this.guidBackend.delete(this.guid);
+            this.guid = null;
+        }
+    }
 }
