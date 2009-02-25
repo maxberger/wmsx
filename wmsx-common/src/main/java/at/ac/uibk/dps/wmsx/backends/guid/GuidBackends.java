@@ -43,6 +43,8 @@ public final class GuidBackends {
         }
     }
 
+    private boolean uploadSupported = true;
+
     @SuppressWarnings("unchecked")
     private GuidBackends() {
         final Enumeration<GuidBackend> e = Service.providers(GuidBackend.class);
@@ -68,10 +70,25 @@ public final class GuidBackends {
      */
     public GuidBackend get() {
         if (this.backends.isEmpty()) {
+            this.uploadSupported = false;
             return null;
         } else {
             return this.backends.values().iterator().next();
         }
     }
 
+    /**
+     * @return true if uploading is believed to be supported.
+     */
+    public boolean isUploadSupported() {
+        return this.uploadSupported;
+    }
+
+    /**
+     * Call this method if the upload fails for any reason. Sets
+     * {@link #isUploadSupported()} to false.
+     */
+    public void uploadFailed() {
+        this.uploadSupported = false;
+    }
 }
