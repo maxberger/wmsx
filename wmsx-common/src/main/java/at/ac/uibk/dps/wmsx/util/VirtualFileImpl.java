@@ -64,6 +64,8 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
 
     private transient String guid;
 
+    private final GuidBackends guidBackends = GuidBackends.getInstance();
+
     /**
      * Create a Virtual file based on an existing local file.
      * 
@@ -78,8 +80,8 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
         }
         this.localFile = source;
         this.name = source.getName();
-        this.guidBackend = GuidBackends.getInstance().get();
-        if (this.guidBackend != null) {
+        this.guidBackend = this.guidBackends.get();
+        if (this.guidBackend != null && this.guidBackends.isUploadSupported()) {
             // TODO: Check file size.
             this.uploader = new VirtualFileUploader(source, this.guidBackend);
             this.uploaderThread = new Thread(this.uploader);
@@ -221,6 +223,9 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
             VirtualFileImpl.LOGGER.info("Uploading " + this.lFile);
             this.guid = this.guidBackend.upload(this.lFile);
             VirtualFileImpl.LOGGER.info("Guid: " + this.guid);
+            if (this.guid == null) {
+                GuidBackends.getInstance().uploadFailed();
+            }
         }
     }
 
