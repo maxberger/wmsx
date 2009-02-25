@@ -47,6 +47,8 @@ public final class WorkPerformer {
 
     private final Set<String> deployedWfs = new TreeSet<String>();
 
+    private final FileUtil fileUtil = FileUtil.getInstance();
+
     private static final class SingletonHolder {
         private static final WorkPerformer INSTANCE = new WorkPerformer();
 
@@ -93,7 +95,7 @@ public final class WorkPerformer {
         this.logWithTime("Retrieving sandbox to WorkDir: " + workDir + " "
                 + todo.getInputSandbox());
 
-        FileUtil.retrieveSandbox(todo.getInputSandbox(), workDir);
+        this.fileUtil.retrieveSandbox(todo.getInputSandbox(), workDir);
 
         final boolean deploy;
         if (partOfWf) {
@@ -113,8 +115,9 @@ public final class WorkPerformer {
         final int retVal = this.launchExec(todo, workDir);
         if (retVal == 0) {
             this.logWithTime("Submitting results");
-            controller.doneWith(todo.getId(), new ResultDescription(FileUtil
-                    .createSandbox(todo.getOutputSandbox(), workDir)), uuid);
+            controller.doneWith(todo.getId(), new ResultDescription(
+                    this.fileUtil.createSandbox(todo.getOutputSandbox(),
+                            workDir)), uuid);
         } else {
             this.logWithTime("Failed");
             controller.failed(todo.getId(), uuid);

@@ -114,10 +114,13 @@ public class ControllerImpl implements Controller, Runnable {
 
     private final FileManager fileManager = new FileManager();
 
+    private final FileUtil fileUtil = FileUtil.getInstance();
+
     ControllerImpl() {
         this.shutdownState = false;
         this.shutdownWorkDescription = new ControllerWorkDescription(
                 "shutdown", new EmptyJobDescription()).getWorkDescription();
+        this.fileUtil.supportVirtualFiles();
     }
 
     /** {@inheritDoc} */
@@ -289,7 +292,7 @@ public class ControllerImpl implements Controller, Runnable {
         synchronized (this.pending) {
             sandbox = this.success.get(id);
         }
-        FileUtil.retrieveSandbox(sandbox, dir);
+        this.fileUtil.retrieveSandbox(sandbox, dir);
         synchronized (this.pending) {
             this.success.remove(id);
         }

@@ -48,6 +48,8 @@ public class ControllerWorkDescription {
 
     private int retriesLeft;
 
+    private final FileUtil fileUtil = FileUtil.getInstance();
+
     /**
      * Default constructor.
      * 
@@ -58,7 +60,7 @@ public class ControllerWorkDescription {
      */
     public ControllerWorkDescription(final Object uid,
             final JobDescription jobDesc) {
-        this.inputSandbox = FileUtil.createSandbox(jobDesc
+        this.inputSandbox = this.fileUtil.createSandbox(jobDesc
                 .getListEntry(JobDescription.INPUTSANDBOX), jobDesc
                 .getBaseDir());
 
