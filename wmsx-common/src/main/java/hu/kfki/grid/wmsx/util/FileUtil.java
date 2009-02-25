@@ -30,8 +30,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import at.ac.uibk.dps.wmsx.util.VirtualFile;
@@ -54,8 +56,26 @@ public final class FileUtil {
     private static final Logger LOGGER = Logger.getLogger(FileUtil.class
             .toString());
 
+    private static final class SingletonHolder {
+        private static final FileUtil INSTANCE = new FileUtil();
+
+        private SingletonHolder() {
+        }
+    }
+
+    private boolean vFiles;
+
+    private final Map<String, VirtualFile> vFileMap = new HashMap<String, VirtualFile>();
+
     private FileUtil() {
     };
+
+    /**
+     * @return the Singleton Instance.
+     */
+    public static FileUtil getInstance() {
+        return FileUtil.SingletonHolder.INSTANCE;
+    }
 
     /**
      * Copy from one Stream to another.
@@ -228,17 +248,25 @@ public final class FileUtil {
      *            basedir for relative file names
      * @return a Sandbox List.
      */
-    public static List<VirtualFile> createSandbox(final List<String> files,
+    public List<VirtualFile> createSandbox(final List<String> files,
             final File dir) {
         final List<VirtualFile> sandbox = new ArrayList<VirtualFile>(files
                 .size());
-
         for (final String fileName : files) {
             final File f = FileUtil.resolveFile(dir, fileName);
-            try {
-                sandbox.add(new VirtualFileImpl(f));
-            } catch (final FileNotFoundException e) {
-                FileUtil.LOGGER.warning(e.toString());
+            VirtualFile vf = null;
+            if (this.vFiles) {
+                vf = this.vFileMap.get(f.getAbsolutePath());
+            }
+            if (vf == null) {
+                try {
+                    vf = new VirtualFileImpl(f);
+                } catch (final FileNotFoundException e) {
+                    FileUtil.LOGGER.warning(e.toString());
+                }
+            }
+            if (vf != null) {
+                sandbox.add(vf);
             }
         }
         return sandbox;
@@ -280,10 +308,22 @@ public final class FileUtil {
      * @param dir
      *            Directory to store into.
      */
-    public static void retrieveSandbox(final List<VirtualFile> sandbox,
-            final File dir) {
-        for (final VirtualFile entry : sandbox) {
-            entry.storeFile(dir);
+    public void retrieveSandbox(final List<VirtualFile> sandbox, final File dir) {
+        if (this.vFiles) {
+            for (final VirtualFile entry : sandbox) {
+                final File fullname = new File(dir, entry.getName());
+                this.vFileMap.put(fullname.getAbsolutePath(), entry);
+                // TODO TODO TODO TODO TODO
+                // THIS IS VERY BAD !!!!!
+                // Name of the file should NEVER be hard coded.
+                if ("result".equals(entry.getName())) {
+                    entry.storeFile(dir);
+                }
+            }
+        } else {
+            for (final VirtualFile entry : sandbox) {
+                entry.storeFile(dir);
+            }
         }
     }
 
@@ -366,6 +406,13 @@ public final class FileUtil {
         if (!success) {
             throw new IOException("Error copying some files");
         }
+    }
+
+    /**
+     * Enable support for virtual files.
+     */
+    public void supportVirtualFiles() {
+        this.vFiles = true;
     }
 
 }
