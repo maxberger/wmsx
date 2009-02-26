@@ -179,7 +179,7 @@ public final class WorkerImpl implements Worker {
     public void newWork() throws RemoteException {
         FileServerImpl.getInstance().start();
         synchronized (this) {
-            this.notify();
+            this.notifyAll();
         }
     }
 }
