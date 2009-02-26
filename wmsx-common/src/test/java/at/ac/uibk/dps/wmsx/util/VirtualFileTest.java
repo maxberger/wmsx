@@ -21,7 +21,6 @@
 
 package at.ac.uibk.dps.wmsx.util;
 
-import hu.kfki.grid.wmsx.util.Exporter;
 import hu.kfki.grid.wmsx.util.FileUtil;
 
 import java.io.File;
@@ -224,7 +223,7 @@ public class VirtualFileTest {
         Assert.assertEquals(b2, b1);
         f.deleteTemp();
         f2.deleteTemp();
-        Exporter.getInstance().unexportAll();
+        // Exporter.getInstance().unexportAll();
     }
 
 }
