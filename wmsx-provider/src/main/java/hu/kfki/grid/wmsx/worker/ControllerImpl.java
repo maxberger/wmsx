@@ -63,18 +63,10 @@ public class ControllerImpl implements Controller, Runnable {
                         ControllerImpl.this.workerInfo.entrySet());
             }
             for (final Map.Entry<Uuid, WorkerInfo> w : workersToNotify) {
-                try {
-                    final Worker proxy = w.getValue().getProxy();
-                    if (proxy != null) {
-                        proxy.newWork();
-                    }
-                } catch (final RemoteException r) {
-                    synchronized (ControllerImpl.this.workerInfo) {
-                        ControllerImpl.this.workerInfo.remove(w.getKey());
-                    }
-                }
+                ControllerImpl.this.notifyWorker(w);
             }
         }
+
     }
 
     private static final int STARTUP_DELAY = 30;
@@ -121,6 +113,19 @@ public class ControllerImpl implements Controller, Runnable {
         this.shutdownWorkDescription = new ControllerWorkDescription(
                 "shutdown", new EmptyJobDescription()).getWorkDescription();
         this.fileUtil.supportVirtualFiles();
+    }
+
+    private void notifyWorker(final Map.Entry<Uuid, WorkerInfo> w) {
+        try {
+            final Worker proxy = w.getValue().getProxy();
+            if (proxy != null) {
+                proxy.newWork();
+            }
+        } catch (final RemoteException r) {
+            synchronized (this.workerInfo) {
+                this.workerInfo.remove(w.getKey());
+            }
+        }
     }
 
     /** {@inheritDoc} */
@@ -423,12 +428,27 @@ public class ControllerImpl implements Controller, Runnable {
     public void registerWorker(final Uuid uuid, final Worker worker)
             throws RemoteException {
         ControllerImpl.LOGGER.info("Worker is registering: " + uuid);
+        final WorkerInfo info;
         synchronized (this.workerInfo) {
-            final WorkerInfo info = this.getWorkerInfo(uuid);
+            info = this.getWorkerInfo(uuid);
             info.setProxy(worker);
             ControllerImpl.LOGGER.info("Now there are "
                     + this.workerInfo.size() + " registered workers.");
         }
+        this.notifyWorker(new Map.Entry<Uuid, WorkerInfo>() {
+
+            public Uuid getKey() {
+                return uuid;
+            }
+
+            public WorkerInfo getValue() {
+                return info;
+            }
+
+            public WorkerInfo setValue(final WorkerInfo value) {
+                return null;
+            }
+        });
     }
 
     /**
