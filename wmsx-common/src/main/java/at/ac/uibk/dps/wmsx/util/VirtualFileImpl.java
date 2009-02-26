@@ -47,7 +47,7 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
     /**
      * Serial Version for the virtual file.
      */
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     private static final Logger LOGGER = Logger.getLogger(VirtualFileImpl.class
             .toString());
@@ -66,7 +66,11 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
 
     private transient String guid;
 
+    private transient FileServer fileServer;
+
     private final GuidBackends guidBackends = GuidBackends.getInstance();
+
+    private final FileServerImpl fileServerImpl = FileServerImpl.getInstance();
 
     /**
      * Create a Virtual file based on an existing local file.
@@ -83,7 +87,11 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
         this.localFile = source;
         this.name = source.getName();
         this.guidBackend = this.guidBackends.get();
-        if (this.guidBackend != null && this.guidBackends.isUploadSupported()
+
+        if (this.fileServerImpl.isAvailable()) {
+            this.fileServer = this.fileServerImpl.serveFile(this);
+        } else if (this.guidBackend != null
+                && this.guidBackends.isUploadSupported()
                 && source.length() > VirtualFileImpl.MIN_GUID_FILESIZE) {
             this.uploader = new VirtualFileUploader(source, this.guidBackend);
             this.uploaderThread = new Thread(this.uploader);
@@ -91,16 +99,23 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
         }
     }
 
+    private static enum ContentLocation {
+        INLINE, GUID, SERVER,
+    }
+
     private synchronized void writeObject(final ObjectOutputStream out)
             throws IOException {
         out.writeObject(this.name);
         this.finalizeUpload();
-        if (this.guid == null) {
+        if (this.fileServer != null) {
+            out.writeObject(VirtualFileImpl.ContentLocation.SERVER);
+            out.writeObject(this.fileServer);
+        } else if (this.guid == null) {
             this.ensureContentIsLoaded();
-            out.writeBoolean(false);
+            out.writeObject(VirtualFileImpl.ContentLocation.INLINE);
             out.writeObject(this.fileContent);
         } else {
-            out.writeBoolean(true);
+            out.writeObject(VirtualFileImpl.ContentLocation.GUID);
             out.writeObject(this.guid);
         }
     }
@@ -120,17 +135,29 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
 
     private synchronized void ensureContentIsLoaded() {
         if (this.fileContent == null) {
-            if (this.localFile == null && this.guid != null) {
-                try {
-                    final File content = File.createTempFile("WMSX", null);
-                    content.deleteOnExit();
-                    this.storeFileAs(content);
-                } catch (final IOException e) {
-                    VirtualFileImpl.LOGGER.warning(e.getMessage());
-                }
-            }
-            if (this.localFile != null) {
+            if (this.localFile == null) {
+                this.loadFileFromRemote();
+            } else {
                 this.fileContent = FileUtil.loadFile(this.localFile);
+            }
+        }
+    }
+
+    private void loadFileFromRemote() {
+        if (this.fileServer != null) {
+            try {
+                this.fileContent = this.fileServer.retrieveFile(this.name);
+            } catch (final IOException io) {
+                VirtualFileImpl.LOGGER.warning("Failed to load remote file "
+                        + this.name);
+            }
+        } else if (this.guid != null) {
+            try {
+                final File content = File.createTempFile("WMSX", null);
+                content.deleteOnExit();
+                this.storeFileAs(content);
+            } catch (final IOException e) {
+                VirtualFileImpl.LOGGER.warning(e.getMessage());
             }
         }
     }
@@ -139,22 +166,26 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
         this.guidBackend = GuidBackends.getInstance().get();
         try {
             this.name = (String) in.readObject();
-            final boolean isGuid = in.readBoolean();
-            if (isGuid) {
+            final ContentLocation location = (ContentLocation) in.readObject();
+            switch (location) {
+            case GUID:
                 this.guid = (String) in.readObject();
-            } else {
+                break;
+            case INLINE:
                 this.fileContent = (byte[]) in.readObject();
+                break;
+            case SERVER:
+                this.fileServer = (FileServer) in.readObject();
+                break;
+            default:
+                throw new IOException("Failed to deserialize VirtualFile");
             }
         } catch (final ClassNotFoundException e) {
             VirtualFileImpl.LOGGER.warning(e.getMessage());
         }
     }
 
-    /**
-     * Load the actual file content.
-     * 
-     * @return the content of the file.
-     */
+    /** {@inheritDoc} */
     public synchronized byte[] getFileContent() {
         this.ensureContentIsLoaded();
         return this.fileContent.clone();
@@ -175,6 +206,7 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
         if (this.localFile == null) {
             if (this.guid == null) {
                 try {
+                    this.ensureContentIsLoaded();
                     final FileOutputStream fos = new FileOutputStream(f);
                     fos.write(this.fileContent);
                     fos.close();

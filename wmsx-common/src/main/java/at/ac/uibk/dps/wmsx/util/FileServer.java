@@ -21,41 +21,25 @@
 
 package at.ac.uibk.dps.wmsx.util;
 
-import java.io.File;
-import java.io.Serializable;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
- * Management for virtual files.
+ * Public interface for serving VirtualFiles.
  * 
  * @version $Date$
  */
-public interface VirtualFile extends Serializable {
+public interface FileServer extends Remote {
 
     /**
-     * Retrieve the filename.
+     * Retrieve a File from this server.
      * 
-     * @return Filename without any path components.
+     * @param name
+     *            Name of the file
+     * @return file content
+     * @throws RemoteException
+     *             if the connection fails.
      */
-    String getName();
-
-    /**
-     * Stores the file back onto the file system under its name.
-     * 
-     * @param dir
-     *            Directory to store to.
-     */
-    void storeFile(final File dir);
-
-    /**
-     * Delete all created temporary artifacts.
-     */
-    void deleteTemp();
-
-    /**
-     * Load the actual file content.
-     * 
-     * @return the content of the file.
-     */
-    byte[] getFileContent();
+    byte[] retrieveFile(String name) throws RemoteException;
 
 }
