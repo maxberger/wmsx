@@ -42,7 +42,11 @@ import at.ac.uibk.dps.wmsx.backends.guid.GuidBackends;
  */
 public final class VirtualFileImpl implements Serializable, VirtualFile {
 
-    private static final int MIN_GUID_FILESIZE = 100 * 1024;
+    private static final int KILO_BYTE = 1024;
+
+    private static final int MIN_GUID_FILESIZE = 100 * VirtualFileImpl.KILO_BYTE;
+
+    private static final int MIN_SERVER_FILESIZE = 1 * VirtualFileImpl.KILO_BYTE;
 
     /**
      * Serial Version for the virtual file.
@@ -87,12 +91,13 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
         this.localFile = source;
         this.name = source.getName();
         this.guidBackend = this.guidBackends.get();
-
-        if (this.fileServerImpl.isAvailable()) {
+        final long fileSize = source.length();
+        if (this.fileServerImpl.isAvailable()
+                && fileSize > VirtualFileImpl.MIN_SERVER_FILESIZE) {
             this.fileServer = this.fileServerImpl.serveFile(this);
         } else if (this.guidBackend != null
                 && this.guidBackends.isUploadSupported()
-                && source.length() > VirtualFileImpl.MIN_GUID_FILESIZE) {
+                && fileSize > VirtualFileImpl.MIN_GUID_FILESIZE) {
             this.uploader = new VirtualFileUploader(source, this.guidBackend);
             this.uploaderThread = new Thread(this.uploader);
             this.uploaderThread.start();
