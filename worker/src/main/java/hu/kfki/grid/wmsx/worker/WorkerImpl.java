@@ -124,7 +124,7 @@ public final class WorkerImpl implements Worker {
         }
         this.alive.stop();
         WorkerImpl.LOGGER.info("Unexporting");
-        Exporter.getInstance().unexport();
+        Exporter.getInstance().unexportAll();
     }
 
     private void registerWithController() {
