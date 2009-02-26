@@ -1,0 +1,11 @@
+[
+Executable = "worker.sh" ;
+InputSandbox = {"worker.sh","worker.tar.gz","proxyFile"};
+OutputSandbox = {"worker.out"};
+RetryCount = 10;
+StdOutput = "worker.out";
+StdError = "worker.out";
+Requirements = (
+!(other.GlueCEUniqueID=="hephygr.oeaw.ac.at:2119/jobmanager-lcgpbs-voce")
+);
+]

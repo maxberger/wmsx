@@ -1,0 +1,4 @@
+mvn install:install-file -Dfile=cog-jglobus-1.1.jar -DgroupId=hu.kfki.grid -DartifactId=cog-jglobus -Dversion=1.1 -Dpackaging=jar
+mvn install:install-file -Dfile=edg_wl_userinterface_jclient-1.0.jar -DgroupId=hu.kfki.grid -DartifactId=edg_wl_userinterface_jclient -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=edg_wl_common_jrequestad-1.0.jar -DgroupId=hu.kfki.grid -DartifactId=edg_wl_common_jrequestad -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=classad-lcg.jar -DgroupId=hu.kfki.grid -DartifactId=classad -Dversion=lcg -Dpackaging=jar
