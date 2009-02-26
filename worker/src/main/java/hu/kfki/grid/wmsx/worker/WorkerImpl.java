@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 
 import net.jini.id.Uuid;
 import net.jini.id.UuidFactory;
+import at.ac.uibk.dps.wmsx.util.FileServerImpl;
 
 /**
  * Performs work on a remote host.
@@ -176,6 +177,7 @@ public final class WorkerImpl implements Worker {
 
     /** {@inheritDoc} */
     public void newWork() throws RemoteException {
+        FileServerImpl.getInstance().start();
         synchronized (this) {
             this.notify();
         }
