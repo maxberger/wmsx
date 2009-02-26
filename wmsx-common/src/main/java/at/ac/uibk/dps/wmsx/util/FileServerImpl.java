@@ -25,6 +25,7 @@ import hu.kfki.grid.wmsx.util.Exporter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * {@link FileServer} implementation which servers {@link VirtualFileImpl}.
@@ -32,6 +33,9 @@ import java.util.Map;
  * @version $Date$
  */
 public final class FileServerImpl implements FileServer {
+
+    private static final Logger LOGGER = Logger.getLogger(FileServerImpl.class
+            .toString());
 
     private FileServer myProxy;
 
@@ -83,7 +87,9 @@ public final class FileServerImpl implements FileServer {
      * @return A proxy which can be used to retrieve the file again.
      */
     public FileServer serveFile(final VirtualFile vFile) {
-        this.serverMap.put(vFile.getName(), vFile);
+        final String name = vFile.getName();
+        FileServerImpl.LOGGER.info("Serving file: " + name);
+        this.serverMap.put(name, vFile);
         return this.myProxy;
     }
 
@@ -93,6 +99,7 @@ public final class FileServerImpl implements FileServer {
         if (vFile == null) {
             return null;
         } else {
+            FileServerImpl.LOGGER.info("Transferring file: " + name);
             return vFile.getFileContent();
         }
     }
