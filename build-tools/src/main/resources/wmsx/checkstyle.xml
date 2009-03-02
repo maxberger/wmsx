@@ -39,12 +39,6 @@
         <module name="TypeName"/>
         <module name="UnusedImports"/>
         <module name="RedundantImport"/>
-<!-- Unfortunately this differs from the default eclipse import order. -->
-<!--        <module name="ImportOrder">
-            <property name="groups" value="java,javax,net,org,com"/>
-            <property name="ordered" value="true"/>
-            <property name="separated" value="true"/>
-        </module> -->
         <module name="IllegalImport"/>
         <module name="AvoidStarImport"/>
         <module name="AnonInnerLength"/>
@@ -141,11 +135,9 @@
         <module name="NPathComplexity"/>
         <module name="Regexp"/>
         <module name="UpperEll"/>
-<!-- Reenable as soon as maven-checkstyle-plugin 2.2 is released -->
-<!--        <module name="TrailingComment">
+        <module name="TrailingComment">
           <property name='legalComment' value='^\$.*\$$'/> 
         </module>
--->
         <module name="TodoComment">
           <property name="severity" value="ignore"/>
         </module>
