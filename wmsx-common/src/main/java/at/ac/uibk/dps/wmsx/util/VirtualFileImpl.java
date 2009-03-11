@@ -44,9 +44,9 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
 
     private static final int KILO_BYTE = 1024;
 
-    private static final int MIN_GUID_FILESIZE = 100 * VirtualFileImpl.KILO_BYTE;
+    private static final int MIN_GUID_FILESIZE = 1000 * VirtualFileImpl.KILO_BYTE;
 
-    private static final int MIN_SERVER_FILESIZE = 1 * VirtualFileImpl.KILO_BYTE;
+    private static final int MIN_SERVER_FILESIZE = 10 * VirtualFileImpl.KILO_BYTE;
 
     /**
      * Serial Version for the virtual file.
