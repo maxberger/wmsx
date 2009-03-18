@@ -19,6 +19,22 @@
   </licenses>
   <developers>
     <developer>
+      <id>georg</id>
+      <name>Georg Bader</name>
+      <email>georg.bader@student.uibk.ac.at</email>
+<!--      <url>http://eric.propellors.net</url>
+      <organization>Codehaus</organization>
+      <organizationUrl>http://mojo.codehaus.org</organizationUrl>
+-->      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+<!--     <properties>
+        <picUrl>http://tinyurl.com/prv4t</picUrl>
+      </properties>
+-->    </developer>
+    <developer>
       <id>martin</id>
       <name>Martin Illecker</name>
       <email>martin.illecker@gmail.com</email>
