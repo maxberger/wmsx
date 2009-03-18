@@ -17,9 +17,28 @@
       <distribution>manual</distribution>
     </license>
   </licenses>
+  <developers>
+    <developer>
+      <id>martin</id>
+      <name>Martin Illecker</name>
+      <email>martin.illecker@gmail.com</email>
+<!--      <url>http://eric.propellors.net</url>
+      <organization>Codehaus</organization>
+      <organizationUrl>http://mojo.codehaus.org</organizationUrl>
+-->      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+<!--     <properties>
+        <picUrl>http://tinyurl.com/prv4t</picUrl>
+      </properties>
+-->    </developer>
+  </developers>
+
   <scm>
-    <connection>scm:svn:http://goedis.dps.uibk.ac.at/~dps002/hg/wmsx-gui</connection>
-    <developerConnection>scm:svn:http://goedis.dps.uibk.ac.at/~dps002/hg/wmsx-gui</developerConnection>
+    <connection>scm:hg:http://goedis.dps.uibk.ac.at/~dps002/hg/wmsx-gui</connection>
+    <developerConnection>scm:hg:http://goedis.dps.uibk.ac.at/~dps002/hg/wmsx-gui</developerConnection>
     <url>http://goedis.dps.uibk.ac.at/~dps002/hg/wmsx-gui</url>
   </scm>
 
@@ -36,6 +55,7 @@
            <optimize>true</optimize>
         </configuration>
       </plugin>
+
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
@@ -51,6 +71,7 @@
           </archive>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.codehaus.mojo.webstart</groupId>
         <artifactId>webstart-maven-plugin</artifactId>
@@ -85,8 +106,79 @@
           </execution>
         </executions>
       </plugin>
+
+            <plugin>
+<!-- This is necessary for docbook sites on OS X -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>2.0-beta-7</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.doxia</groupId>
+            <artifactId>doxia-module-docbook-simple</artifactId>
+            <version>1.0-alpha-11</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+          <debug>false</debug>
+          <optimize>true</optimize>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4.3</version>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>java.awt.headless</name>
+              <value>true</value>
+            </property>
+          </systemProperties>
+          <parallel>methods</parallel>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.pyx4me</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.0.3</version>
+        <configuration>
+          <libs>
+            <lib>${runtime.lib}</lib>
+          </libs>
+          <proguardInclude>${common.dir}/proguard.lib.conf</proguardInclude>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <id>validate-changes</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>changes-validate</goal>
+            </goals>
+            <configuration>
+<!-- if set to true the build will fail if the changes file is invalid,
+                   if set to false warnings will be logged. -->
+              <failOnError>true</failOnError>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
+  
   <profiles>
     <profile>
       <id>netbeans-public</id>
@@ -130,6 +222,7 @@
       </build>
     </profile>
   </profiles>
+  
   <dependencies>
     <dependency>
       <groupId>org.testng</groupId>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- 
+   Copyright 2007
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<project name="WMSX GUI">
+<!--  <bannerLeft>
+    <name>JEuclid</name>
+    <src>images/logo.png</src>
+    <href>http://jeuclid.sourceforge.net/</href>
+  </bannerLeft>
+-->
+  <poweredBy>
+    <logo name="Get JEuclid at SourceForge.net. Fast, secure and Free Open Source software downloads" href="http://sourceforge.net/projects/jeuclid" img="http://sflogo.sourceforge.net/sflogo.php?group_id=44862&amp;type=13"/>
+    <logo name="Build with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png"/>
+  </poweredBy>
+  <publishDate format="dd MMM yyyy"/>
+  <body>
+    <links>
+      <item name="WMSX GUI" href="http://goedis.dps.uibk.ac.at/~dps002/"/>
+    </links>
+    <menu ref="parent"/>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Try now!" href="webstart.html"/>
+    </menu>
+    <menu ref="modules"/>
+    <menu ref="reports"/>
+  </body>
+</project>
