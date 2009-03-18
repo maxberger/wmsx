@@ -74,6 +74,13 @@
 
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>     
         <configuration>
           <archive>
             <manifest>
@@ -85,6 +92,12 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
           </archive>
+          <!-- keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at -->
+          <keystore>./keystore</keystore>
+          <storepass>hugoboss</storepass>
+          <alias>goedis.dps.uibk.ac.at</alias>
+          <signedjar>${project.build.directory}/signed/${project.build.finalName}.jar</signedjar>
+          <verify>true</verify>
         </configuration>
       </plugin>
 
