@@ -70,12 +70,12 @@
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>gat-api</artifactId>
-      <version>0.3</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>at.ac.uibk.dps.gat</groupId>
       <artifactId>gat-engine</artifactId>
-      <version>0.3</version>
+      <version>0.2</version>
     </dependency>
   </dependencies>
 </project>
