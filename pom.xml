@@ -81,4 +81,11 @@
       <url>sftp://wmsx.max.berger.name/home/wmsx/www</url>
     </site>
   </distributionManagement>
+  <repositories>
+    <repository>
+      <id>wmsx-deps</id>
+      <name>WMSX additional dependencies</name>
+      <url>http://wmsx.max.berger.name/m2</url>
+    </repository>
+  </repositories>
 </project>
