@@ -35,7 +35,7 @@ public class Requestor {
             
         } catch (final IOException io) {
             System.out.println("IOException: " + io.getMessage());
-            JOptionPane.showMessageDialog(null, io.getMessage(), "WMSX Gui - IOException", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, io.getMessage()+"\nFailed to connect to provider. Please check if its running.", "WMSX Gui - IOException", JOptionPane.ERROR_MESSAGE);
         } catch (final ClassNotFoundException e) {
             System.out.println("ClassNotFound: " + e.getMessage());
             JOptionPane.showMessageDialog(null, e.getMessage(), "WMSX Gui - ClassNotFound", JOptionPane.ERROR_MESSAGE);
