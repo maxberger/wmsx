@@ -11,14 +11,18 @@
 
 package at.ac.uibk.dps.wmsxgui.presentation;
 
+import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
+
 /**
  *
  * @author bafu
  */
 public class MainWindow extends javax.swing.JFrame {
 
+    private BusinessManager businessman;
     /** Creates new form MainWindow */
-    public MainWindow() {
+    public MainWindow(final BusinessManager bm) {
+        businessman = bm;
         initComponents();
     }
 
@@ -35,7 +39,12 @@ public class MainWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("jButton1");
+        jButton1.setText("doŚomething");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -44,7 +53,7 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(213, 213, 213)
                 .addComponent(jButton1)
-                .addContainerGap(358, Short.MAX_VALUE))
+                .addContainerGap(326, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -56,6 +65,13 @@ public class MainWindow extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        System.out.println("ping: "+businessman.getRequestor().ping(false));
+        System.out.println("fullping: "+businessman.getRequestor().ping(true));
+        System.out.println("listBackends: "+businessman.getRequestor().listBackends().toString());
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

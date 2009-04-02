@@ -19,8 +19,11 @@ public class App {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+
+
                 System.out.println("wmsx-gui is starting...");
-                new MainWindow().setVisible(true);
+                new MainWindow(BusinessManager.getInstance()).setVisible(true);
+
             }
         });
     }
