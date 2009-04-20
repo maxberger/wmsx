@@ -16,16 +16,17 @@ import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
 /**
  *
  * @author lancelot
+ * @version 20.4.2009
  */
 public class Optionen extends javax.swing.JFrame {
 
     private BusinessManager businessman;
 
-    /** Creates new form Optionen */
+    /** Creates new form Optionen. */
     public Optionen() {
-        businessman = BusinessManager.getInstance();
-        initComponents();
-        ladeWerte();
+        this.businessman = BusinessManager.getInstance();
+        this.initComponents();
+        this.ladeWerte();
     }
 
     /** This method is called from within the constructor to
@@ -144,8 +145,10 @@ public class Optionen extends javax.swing.JFrame {
         // TODO add your handling code here:
         //speichern
         
-        businessman.getRequestor().setActiveJobCount(Integer.parseInt(jobcounttxt.getText()));
-        businessman.getRequestor().rememberAfsPassword(new String(jPasswordField1.getPassword()));
+        this.businessman.getRequestor().setActiveJobCount(
+                Integer.parseInt(jobcounttxt.getText()));
+        this.businessman.getRequestor().rememberAfsPassword(
+                new String(jPasswordField1.getPassword()));
         //System.out.println(new String(jPasswordField1.getPassword()));
        // businessman.getRequestor().rememberGridPassword(new String(jPasswordField2.getPassword()));  //fehler??
 
