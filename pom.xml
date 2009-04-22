@@ -254,17 +254,17 @@ keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
         <artifactId>maven-changelog-plugin</artifactId>
         <version>2.1</version>
       </plugin>
-
+-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>2.2</version>
         <configuration>
-          <configLocation>jeuclid/checkstyle.xml</configLocation>
-          <suppressionsLocation>jeuclid/checkstyle_filter.xml</suppressionsLocation>
+          <configLocation>checkstyle.xml</configLocation>
+          <!--<suppressionsLocation>jeuclid/checkstyle_filter.xml</suppressionsLocation>-->
         </configuration>
       </plugin>
--->
+
     </plugins>
   </reporting>
 
