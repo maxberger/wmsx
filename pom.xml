@@ -257,6 +257,30 @@ keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <linksource>true</linksource>
+          <aggregate>true</aggregate>
+          <keywords>true</keywords>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://testng.org/javadocs/</link>
+            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+            <link>http://jcip.net/annotations/doc/</link>
+          </links>
+          <tags>
+            <tag>
+              <name>todo</name>
+              <placement>a</placement>
+              <head>This needs to be done:</head>
+            </tag>
+          </tags>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>2.2</version>
         <configuration>
