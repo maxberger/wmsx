@@ -58,7 +58,16 @@
     <url>http://goedis.dps.uibk.ac.at/~dps002/hg/wmsx-gui</url>
   </scm>
 
+  <distributionManagement>
+    <site>
+      <id>goedis</id>
+      <name>Website for WMSX GUI</name>
+      <url>sftp://goedis.dps.uibk.ac.at/home/dps002/public_html</url>
+    </site>
+  </distributionManagement>
+
   <build>
+    <defaultGoal>install</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -74,6 +83,23 @@
 
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>at.ac.uibk.dps.wmsxgui.App</mainClass>
+              <addClasspath>true</addClasspath>
+              <addExtensions />
+              <classpathPrefix />
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+<!--
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
             <goals>
@@ -81,7 +107,6 @@
             </goals>
           </execution>
         </executions>
-
         <configuration>
           <archive>
             <manifest>
@@ -93,14 +118,18 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
           </archive>
-          <!-- keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at -->
+          
+keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
+
           <keystore>${basedir}/keystore</keystore>
           <storepass>hugoboss</storepass>
           <alias>goedis.dps.uibk.ac.at</alias>
           <signedjar>${project.build.directory}/signed/${project.build.finalName}.jar</signedjar>
           <verify>true</verify>
+          
        </configuration>
       </plugin>
+-->
 
       <plugin>
         <groupId>org.codehaus.mojo.webstart</groupId>
@@ -111,7 +140,7 @@
             <outputFile>wmsx-gui.jnlp</outputFile>
             <mainClass>at.ac.uibk.dps.wmsxgui.App</mainClass>
           </jnlp>
-          <pack200>true</pack200>
+          <!-- <pack200>true</pack200> -->
           <sign>
             <keystore>${basedir}/keystore</keystore>
             <keypass>hugoboss</keypass>
@@ -208,7 +237,7 @@
 -->
     </plugins>
   </build>
-
+  
   <reporting>
     <plugins>
       <plugin>
@@ -219,6 +248,23 @@
           <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
         </configuration>
       </plugin>
+<!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <version>2.1</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <configLocation>jeuclid/checkstyle.xml</configLocation>
+          <suppressionsLocation>jeuclid/checkstyle_filter.xml</suppressionsLocation>
+        </configuration>
+      </plugin>
+-->
     </plugins>
   </reporting>
 
