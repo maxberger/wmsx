@@ -10,7 +10,7 @@
     <description kind="short">$informationDescription</description>
     <icon href="jeuclid.gif" />
     <offline-allowed/>
-    <association mime-type="application/mathml+xml" extensions="mml" />
+    <association mime-type="application/jnlp+xml" extensions="jnlp" />
     <shortcut online="false">
       <desktop/>
       <menu submenu="wmsx-gui"/>
