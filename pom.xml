@@ -208,12 +208,18 @@ keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
         </configuration>
       </plugin>
 
+<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
         <version>2.1</version>
-      </plugin>
-
+        <configuration>
+          <type>range</type>
+          <range>30</range>
+          <dateFormat>EE MM dd HH:mm:ss yyyy Z</dateFormat>
+        </configuration>
+     </plugin>
+-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
