@@ -12,6 +12,8 @@
 package at.ac.uibk.dps.wmsxgui.presentation;
 
 import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 
 /**
  *
@@ -26,8 +28,21 @@ public class Optionen extends javax.swing.JFrame {
     public Optionen(BusinessManager bm) {
         this.businessman = bm;
         initComponents();
+        centerScreen();
+        
         ladeWerte();
     }
+
+     /** Positioniert das Fenster genau in der Mitte des Bildschirmes...
+	 *
+	 */
+	private void centerScreen()
+	{
+		Dimension dim = getToolkit().getScreenSize();
+		Rectangle abounds = getBounds();
+		setLocation((dim.width - abounds.width) / 2,(dim.height - abounds.height) / 2);
+		requestFocus();
+	}
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -48,7 +63,7 @@ public class Optionen extends javax.swing.JFrame {
         jPasswordField2 = new javax.swing.JPasswordField();
         jButton3 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jButton1.setText("OK");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
