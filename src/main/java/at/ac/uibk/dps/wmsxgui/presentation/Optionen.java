@@ -23,10 +23,10 @@ public class Optionen extends javax.swing.JFrame {
     private BusinessManager businessman;
 
     /** Creates new form Optionen. */
-    public Optionen() {
-        this.businessman = BusinessManager.getInstance();
-        this.initComponents();
-        this.ladeWerte();
+    public Optionen(BusinessManager bm) {
+        this.businessman = bm;
+        initComponents();
+        ladeWerte();
     }
 
     /** This method is called from within the constructor to
@@ -53,14 +53,13 @@ public class Optionen extends javax.swing.JFrame {
         jButton1.setText("OK");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btn_ok(evt);
             }
         });
 
         jLabel1.setText("maximale Anzahl Jobs");
 
         jobcounttxt.setText("5");
-        jobcounttxt.setName("null"); // NOI18N
         jobcounttxt.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 jobcounttxtCaretUpdate(evt);
@@ -74,7 +73,7 @@ public class Optionen extends javax.swing.JFrame {
         jButton2.setText("vergessen");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btn_forgetAfs(evt);
             }
         });
 
@@ -85,7 +84,7 @@ public class Optionen extends javax.swing.JFrame {
         jButton3.setText("vergessen");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btn_forgetGrid(evt);
             }
         });
 
@@ -114,7 +113,7 @@ public class Optionen extends javax.swing.JFrame {
                         .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -141,7 +140,7 @@ public class Optionen extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btn_ok(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ok
         // TODO add your handling code here:
         //speichern
         
@@ -149,11 +148,11 @@ public class Optionen extends javax.swing.JFrame {
                 Integer.parseInt(jobcounttxt.getText()));
         this.businessman.getRequestor().rememberAfsPassword(
                 new String(jPasswordField1.getPassword()));
-        //System.out.println(new String(jPasswordField1.getPassword()));
-       // businessman.getRequestor().rememberGridPassword(new String(jPasswordField2.getPassword()));  //fehler??
+        System.out.println(new String(jPasswordField1.getPassword()));
+        businessman.getRequestor().rememberGridPassword(new String(jPasswordField2.getPassword()));  //fehler??
 
         this.setVisible(false);
-    }//GEN-LAST:event_jButton1ActionPerformed
+}//GEN-LAST:event_btn_ok
 
     private void jobcounttxtCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jobcounttxtCaretUpdate
         // TODO add your handling code here:
@@ -161,28 +160,18 @@ public class Optionen extends javax.swing.JFrame {
 
 }//GEN-LAST:event_jobcounttxtCaretUpdate
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btn_forgetAfs(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_forgetAfs
         // TODO add your handling code here:
         businessman.getRequestor().forgetAfsPassword();
-    }//GEN-LAST:event_jButton2ActionPerformed
+}//GEN-LAST:event_btn_forgetAfs
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btn_forgetGrid(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_forgetGrid
         // TODO add your handling code here:
-       // businessman.getRequestor()
+        //businessman.getRequestor().
         //die funktion gibts nicht :-(
-    }//GEN-LAST:event_jButton3ActionPerformed
+}//GEN-LAST:event_btn_forgetGrid
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Optionen().setVisible(true);
-            }
-        });
-    }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
