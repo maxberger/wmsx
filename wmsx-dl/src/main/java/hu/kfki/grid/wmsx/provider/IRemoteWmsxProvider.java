@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,12 +15,13 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
 
 package hu.kfki.grid.wmsx.provider;
+
+import hu.kfki.grid.wmsx.SubmissionResult;
 
 import java.io.Serializable;
 import java.rmi.Remote;
@@ -93,13 +94,27 @@ public interface IRemoteWmsxProvider extends Remote {
      *            file where to store stdout if interactive
      * @param resultDir
      *            directory where to retrieve the result to
-     * @return a jobid
+     * @return a {@link SubmissionResult}.
      * @throws RemoteException
      *             if the connection is broken.
      */
-    String submitJdl(String jdlFile, String output, String resultDir)
+    SubmissionResult submitJdl(String jdlFile, String output, String resultDir)
             throws RemoteException;
 
+    /**
+     * Submit a list of Laszlo Commands.
+     * 
+     * @param commands
+     *            The list of commands to submit
+     * @param interactive
+     *            If true, the jobs are submitted interactive
+     * @param prefix
+     *            common Prefix for the whole job
+     * @param name
+     *            Name of the LaszloCommand
+     * @throws RemoteException
+     *             if the connection is broken.
+     */
     void submitLaszlo(List<IRemoteWmsxProvider.LaszloCommand> commands,
             boolean interactive, String prefix, String name)
             throws RemoteException;

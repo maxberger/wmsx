@@ -21,6 +21,7 @@
 
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.SubmissionResult;
 import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.Backends;
 import hu.kfki.grid.wmsx.backends.JobUid;
@@ -167,7 +168,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     /** {@inheritDoc} */
-    public String submitJdl(final String jdlFile, final String output,
+    public SubmissionResult submitJdl(final String jdlFile, final String output,
             final String resultDir) {
         return this.submitJdl(jdlFile, output, resultDir, 0);
     }
@@ -185,11 +186,11 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
      *            if not 0, use this as an application id for new workflows.
      * @return a jobid
      */
-    public synchronized String submitJdl(final String jdlFile,
+    public synchronized SubmissionResult submitJdl(final String jdlFile,
             final String output, final String resultDir, final int appId) {
         final int current = JobWatcher.getInstance().getNumJobsRunning();
         final int avail = this.maxJobs - current;
-        String result;
+        SubmissionResult result;
         try {
             final JobFactory factory = new JdlJobFactory(new JDLJobDescription(
                     new File(jdlFile)), output, resultDir, this.currentBackend,
@@ -197,17 +198,17 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             if (avail > 0) {
                 final JobUid id = this.reallySubmitFactory(factory);
                 if (id != null) {
-                    result = id.getBackendId().toString();
+                    result = new SubmissionResult(id.toTransportJobUid());
                 } else {
-                    result = "failed";
+                    result = new SubmissionResult("failed in backend");
                 }
             } else {
                 this.pendingJobFactories.add(factory);
-                result = "pending";
+                result = new SubmissionResult("pending");
             }
         } catch (final IOException io) {
             WmsxProviderImpl.LOGGER.info(LogUtil.logException(io));
-            result = "Error opening " + jdlFile;
+            result = new SubmissionResult("Error opening " + jdlFile);
         }
         return result;
     }

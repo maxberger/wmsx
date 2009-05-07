@@ -33,7 +33,7 @@ public interface Wmsx {
 
     boolean ping(boolean remote);
 
-    String submitJdl(String jdlFile, String outputFile, String resultDir)
+    SubmissionResult submitJdl(String jdlFile, String outputFile, String resultDir)
             throws IOException;
 
     void submitLaszlo(String argFile, boolean interactive, String name)
