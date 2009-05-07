@@ -22,7 +22,7 @@ public class BusinessManager {
 	 */
 	private static class SingletonHolder
 	{
-		private final static BusinessManager INSTANCE = new BusinessManager();
+		private static BusinessManager INSTANCE = new BusinessManager();
 	}
 
 	/** Gibt immer die gleiche Instanz zurück
