@@ -170,9 +170,9 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_test(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_test
-        System.out.println("ping: "+businessman.getRequestor().ping(false));
+       System.out.println("ping: "+businessman.getRequestor().ping(false));
        System.out.println("fullping: "+businessman.getRequestor().ping(true));
-       System.out.println("listBackends: "+businessman.getRequestor().listBackends().toString());
+       System.out.println("listBackends: "+businessman.getRequestor().listBackends());
 }//GEN-LAST:event_btn_test
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
