@@ -21,6 +21,8 @@
 
 package hu.kfki.grid.wmsx.backends;
 
+import hu.kfki.grid.wmsx.TransportJobUID;
+
 /**
  * Uniquely describe a job and its backend.
  * 
@@ -112,6 +114,10 @@ public class JobUid {
             return false;
         }
         return true;
+    }
+
+    public TransportJobUID toTransportJobUid() {
+        return new TransportJobUID(backend.toString(), realId.toString());
     }
 
 }

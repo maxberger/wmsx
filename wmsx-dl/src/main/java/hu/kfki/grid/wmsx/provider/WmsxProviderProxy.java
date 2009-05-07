@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,13 +15,13 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
 
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.SubmissionResult;
 import hu.kfki.grid.wmsx.Wmsx;
 import hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider.LaszloCommand;
 
@@ -48,20 +48,26 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
 
     private static final String FILE_NOT_FOUND = "File not Found: ";
 
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     private static final Logger LOGGER = Logger
             .getLogger(WmsxProviderProxy.class.toString());
 
     private final IRemoteWmsxProvider remoteService;
 
+    /**
+     * Default Constructor.
+     * 
+     * @param remote
+     *            Actual Proxy of the Remote Service.
+     */
     public WmsxProviderProxy(final Remote remote) {
         this.remoteService = (IRemoteWmsxProvider) remote;
     }
 
     /** {@inheritDoc} */
-    public String submitJdl(final String jdlFile, final String output,
-            final String resultDir) throws IOException {
+    public SubmissionResult submitJdl(final String jdlFile,
+            final String output, final String resultDir) throws IOException {
         try {
             final File f = new File(jdlFile);
             if (!f.exists()) {
@@ -89,7 +95,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
                     outputPath, resultPath);
         } catch (final RemoteException re) {
             WmsxProviderProxy.LOGGER.warning(re.getMessage());
-            return null;
+            return new SubmissionResult(re.toString());
         }
     }
 

@@ -22,6 +22,7 @@
 
 package hu.kfki.grid.wmsx.requestor;
 
+import hu.kfki.grid.wmsx.SubmissionResult;
 import hu.kfki.grid.wmsx.Wmsx;
 import hu.kfki.grid.wmsx.WmsxEntry;
 
@@ -395,7 +396,7 @@ public class App implements DiscoveryListener {
                                     .getOptionValue(App.NAME));
                     break;
                 case CMD_JDL:
-                    final String s = myService.submitJdl(this.commandLine
+                    final SubmissionResult s = myService.submitJdl(this.commandLine
                             .getOptionValue('j'), this.commandLine
                             .getOptionValue('o'), this.commandLine
                             .getOptionValue('r'));
