@@ -1,19 +1,14 @@
 package at.ac.uibk.dps.wmsxgui.business;
 
-import hu.kfki.grid.wmsx.Wmsx;
+import hu.kfki.grid.wmsx.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import java.util.*;
-
 import javax.swing.JOptionPane;
-
 import net.jini.admin.Administrable;
-
 import com.sun.jini.admin.DestroyAdmin;
-
 import java.rmi.RemoteException;
 
 /**
@@ -130,7 +125,7 @@ public class Requestor {
     /*
     * jdl           submit a JDL file
     */
-    public String submitJdl(String jdlFile, String outputFile, String resultDir )
+    public SubmissionResult submitJdl(String jdlFile, String outputFile, String resultDir )
     {
         try
         {
@@ -179,7 +174,7 @@ public class Requestor {
     /*
      * listbackends      lists possible backends
     */
-    public ArrayList<String> listBackends()
+    public String listBackends()
     {
          return wmsx_service.listBackends();
     }

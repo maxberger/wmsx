@@ -17,7 +17,9 @@ public class BusinessManager {
 	private BusinessManager()
 	{
         requestor = Requestor.getInstance();
-    }/** Private innere statische Klasse, realisiert Singleton Pattern
+    }
+
+    /** Private innere statische Klasse, realisiert Singleton Pattern
 	 *
 	 */
 	private static class SingletonHolder
