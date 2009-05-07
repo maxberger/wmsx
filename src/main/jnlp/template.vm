@@ -8,7 +8,7 @@
     <vendor>WMSX GUI developers<vendor/>
     <homepage>$project.url<homepage/>
     <description kind="short">$informationDescription</description>
-    <icon href="jeuclid.gif" />
+    <icon href="wmsx_gui_logo.png" />
     <offline-allowed/>
     <association mime-type="application/jnlp+xml" extensions="jnlp" />
     <shortcut online="false">

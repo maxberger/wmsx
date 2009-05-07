@@ -143,9 +143,9 @@ keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
           <!-- <pack200>true</pack200> -->
           <sign>
             <keystore>${basedir}/keystore</keystore>
-            <keypass>hugoboss</keypass>
-            <storepass>hugoboss</storepass>
-            <alias>goedis.dps.uibk.ac.at</alias>
+            <keypass>verysecret</keypass>
+            <storepass>evenmoresecret</storepass>
+            <alias>signKey</alias>
             <validity>365</validity>
             <dnameCn>goedis.dps.uibk.ac.at</dnameCn>
             <verify>true</verify>

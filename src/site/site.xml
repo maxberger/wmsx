@@ -15,12 +15,11 @@
    limitations under the License.
 -->
 <project name="WMSX GUI">
-<!--  <bannerLeft>
-    <name>JEuclid</name>
-    <src>images/logo.png</src>
-    <href>http://jeuclid.sourceforge.net/</href>
+  <bannerLeft>
+    <name>wmsx gui</name>
+    <src>images/wmsx_gui_logo.png</src>
+    <href>http://goedis.dps.uibk.ac.at/~dps002/</href>
   </bannerLeft>
--->
   <poweredBy>
     <logo name="Build with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png"/>
   </poweredBy>
