@@ -8,3 +8,7 @@ target/
 ^wmsx/w2k/scripts/basesetup.sh
 ^temp
 ^test
+\.classpath$
+\.project$
+\.settings/
+\.checkstyle$
