@@ -54,9 +54,8 @@
     <module>wmsx-provider</module>
     <module>wmsx-requestor</module>
     <module>wmsx-lcg</module>
-    <module>wmsx</module>
     <module>wmsx-gat</module>
-    <module>wmsx-ng</module>
+    <module>wmsx</module>
   </modules>
   <reporting>
     <plugins>
