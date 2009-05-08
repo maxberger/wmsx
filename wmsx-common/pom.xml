@@ -53,7 +53,7 @@
     </dependency>
     <dependency>
       <groupId>hu.kfki.grid</groupId>
-      <artifactId>wmsx-common-api</artifactId>
+      <artifactId>wmsx-api</artifactId>
       <version>1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -61,7 +61,7 @@
       <artifactId>wmsx-backend-api</artifactId>
       <version>1.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
+     <dependency>
       <groupId>commons-discovery</groupId>
       <artifactId>commons-discovery</artifactId>
       <version>20040218.194635</version>
