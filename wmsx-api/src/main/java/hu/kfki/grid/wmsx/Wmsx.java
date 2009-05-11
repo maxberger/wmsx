@@ -22,7 +22,6 @@
 package hu.kfki.grid.wmsx;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * WMSX Service Interface.
@@ -142,10 +141,10 @@ public interface Wmsx {
     /**
      * List the available backends.
      * 
-     * @return a String with a list of backends.
+     * @return a List&lt;String&gt; with a list of backends.
      * @see hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider#listBackends()
      */
-    String listBackends();
+    Iterable<String> listBackends();
 
     /**
      * Kill all running workers.
