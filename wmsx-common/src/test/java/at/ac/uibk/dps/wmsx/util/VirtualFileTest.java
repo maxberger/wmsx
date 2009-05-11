@@ -155,7 +155,7 @@ public class VirtualFileTest {
     @Test
     public void testNullFile() throws Exception {
         try {
-            final VirtualFile f = new VirtualFileImpl(new File("/blabsafsadkf"));
+            new VirtualFileImpl(new File("/blabsafsadkf"));
             Assert.fail();
         } catch (final IOException io) {
             // good!
