@@ -23,6 +23,10 @@ package hu.kfki.grid.wmsx;
 
 import java.io.IOException;
 
+import net.jini.core.event.RemoteEventListener;
+import net.jini.core.lease.Lease;
+import net.jini.id.Uuid;
+
 /**
  * WMSX Service Interface.
  * 
@@ -67,7 +71,7 @@ public interface Wmsx {
      *            If true, the jobs are submitted interactive
      * @param name
      *            Name of the LaszloCommand
-     * @see hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider#submitLaszlo(List,
+     * @see hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider#submitLaszlo(java.util.List,
      *      boolean, String, String)
      * @throws IOException
      *             If some of the input files cannot be opened.
@@ -152,4 +156,48 @@ public interface Wmsx {
      * @see hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider#shutdownWorkers()
      */
     void shutdownWorkers();
+
+    /**
+     * Retrieves a list of known jobs. Please note: Some of these may no longer
+     * be active.
+     * 
+     * @return an Iterable&lt;TransportJobUID&gt; of jobs.
+     */
+    Iterable<TransportJobUID> listJobs();
+
+    /**
+     * Register an observer to be notified when a job status changes. The
+     * {@link RemoteEventListener#notify()} method is called with a
+     * {@link JobChangeEvent} as parameter.
+     * 
+     * @param r
+     *            a {@link RemoteEventListener} to be notified on changes.
+     * @return a Lease which must be renewed.
+     */
+    Lease registerEventListener(RemoteEventListener r);
+
+    /**
+     * Retrieve the current information for a job.
+     * 
+     * @param jobId
+     *            Id of the job
+     * @return information about the job.
+     */
+    JobInfo getJobInfo(TransportJobUID jobId);
+
+    /**
+     * Cancel a running job.
+     * 
+     * @param jobId
+     *            If of the job.
+     */
+    void cancelJob(TransportJobUID jobId);
+
+    /**
+     * Shutdown a worker.
+     * 
+     * @param workerId
+     *            Id of the worker.
+     */
+    void shutdownWorker(Uuid workerId);
 }

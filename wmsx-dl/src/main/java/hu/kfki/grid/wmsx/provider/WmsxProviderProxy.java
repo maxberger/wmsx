@@ -21,7 +21,9 @@
 
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.SubmissionResult;
+import hu.kfki.grid.wmsx.TransportJobUID;
 import hu.kfki.grid.wmsx.Wmsx;
 import hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider.LaszloCommand;
 
@@ -39,6 +41,9 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import net.jini.admin.Administrable;
+import net.jini.core.event.RemoteEventListener;
+import net.jini.core.lease.Lease;
+import net.jini.id.Uuid;
 
 /**
  * A smart proxy which wraps the remote Jini service calls.
@@ -153,23 +158,21 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         String line = reader.readLine();
         while (line != null) {
             line = line.trim();
-            if (line.length() > 0) {
-                if (line.charAt(0) != '#') {
-                    final int spacePos = line.indexOf(" ");
-                    final String command;
-                    final String args;
-                    if (spacePos < 0) {
-                        command = line;
-                        args = "";
-                    } else {
-                        command = line.substring(0, spacePos);
-                        args = line.substring(spacePos + 1).trim();
-                    }
-                    final File cmdWithPath = new File(f.getParentFile(),
-                            command);
-                    commands.add(new IRemoteWmsxProvider.LaszloCommand(
-                            cmdWithPath.getAbsolutePath(), args));
+            if (line.length() > 0 && line.charAt(0) != '#') {
+                final int spacePos = line.indexOf(' ');
+                final String command;
+                final String args;
+                if (spacePos < 0) {
+                    command = line;
+                    args = "";
+                } else {
+                    command = line.substring(0, spacePos);
+                    args = line.substring(spacePos + 1).trim();
                 }
+                final File cmdWithPath = new File(f.getParentFile(), command);
+                commands.add(new IRemoteWmsxProvider.LaszloCommand(cmdWithPath
+                        .getAbsolutePath(), args));
+
             }
             line = reader.readLine();
         }
@@ -245,6 +248,36 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
         } catch (final RemoteException re) {
             WmsxProviderProxy.LOGGER.warning(re.getMessage());
         }
+    }
+
+    /** {@inheritDoc} */
+    public void cancelJob(final TransportJobUID jobId) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /** {@inheritDoc} */
+    public JobInfo getJobInfo(final TransportJobUID jobId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public Iterable<TransportJobUID> listJobs() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public Lease registerEventListener(final RemoteEventListener r) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public void shutdownWorker(final Uuid workerId) {
+        // TODO Auto-generated method stub
+
     }
 
 }
