@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,7 +15,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see http://www.gnu.org/licenses/.
- * 
  */
 
 /* $Id$ */
@@ -108,18 +107,24 @@ public class App implements DiscoveryListener {
 
     private static final int CMD_LISTBACK = 13;
 
+    private static final String OPTION_INTERACTIVE = "interactive";
+
+    private static final Object FOUNDLOCK = new Object();
+
+    private static LookupDiscovery discover;
+
+    private static boolean found;
+
     private final List<Integer> commands;
 
     private final CommandLine commandLine;
 
-    private static LookupDiscovery discover = null;
-
-    private static boolean found = false;
-
-    private static final Object foundLock = new Object();
-
-    private static final String OPTION_INTERACTIVE = "interactive";
-
+    /**
+     * Entry point for the command line app.
+     * 
+     * @param args
+     *            Commandline arguments.
+     */
     public static void main(final String[] args) {
 
         final Options options = new Options();
@@ -259,6 +264,14 @@ public class App implements DiscoveryListener {
         }
     }
 
+    /**
+     * Default Constructor.
+     * 
+     * @param cmds
+     *            Commmands
+     * @param cmdLine
+     *            the actual commandline, if needed.
+     */
     public App(final List<Integer> cmds, final CommandLine cmdLine) {
         this.commands = cmds;
         this.commandLine = cmdLine;
@@ -311,6 +324,7 @@ public class App implements DiscoveryListener {
         }
     }
 
+    /** {@inheritDoc} */
     public void discovered(final DiscoveryEvent evt) {
         final ServiceRegistrar[] registrars = evt.getRegistrars();
 
@@ -344,9 +358,9 @@ public class App implements DiscoveryListener {
             App.LOGGER.fine("Classifier null");
             return;
         }
-        synchronized (App.foundLock) {
+        synchronized (App.FOUNDLOCK) {
             App.found = true;
-            App.foundLock.notifyAll();
+            App.FOUNDLOCK.notifyAll();
         }
 
         final Iterator<Integer> cmdIt = this.commands.iterator();
@@ -358,7 +372,7 @@ public class App implements DiscoveryListener {
             // App.LOGGER.info(myService.hello());
             try {
                 switch (command) {
-                case CMD_SHUTDOWN:
+                case App.CMD_SHUTDOWN:
                     try {
                         final Administrable mys = (Administrable) myService;
                         final Object adm = mys.getAdmin();
@@ -372,61 +386,61 @@ public class App implements DiscoveryListener {
                                 + npe.getMessage());
                     }
                     break;
-                case CMD_PING:
+                case App.CMD_PING:
                     myService.ping(false);
                     break;
-                case CMD_FULLPING:
+                case App.CMD_FULLPING:
                     myService.ping(true);
                     break;
-                case CMD_NUMBER:
+                case App.CMD_NUMBER:
                     myService.setMaxJobs(Integer.parseInt(this.commandLine
                             .getOptionValue('n')));
                     break;
-                case CMD_WORKERS:
+                case App.CMD_WORKERS:
                     myService.startWorkers(Integer.parseInt(this.commandLine
                             .getOptionValue('w')));
                     break;
-                case CMD_SHUTDOWNWORKERS:
+                case App.CMD_SHUTDOWNWORKERS:
                     myService.shutdownWorkers();
                     break;
-                case CMD_LASZLO:
+                case App.CMD_LASZLO:
                     myService.submitLaszlo(
                             this.commandLine.getOptionValue('a'),
                             this.commandLine.hasOption('i'), this.commandLine
                                     .getOptionValue(App.NAME));
                     break;
-                case CMD_JDL:
-                    final SubmissionResult s = myService.submitJdl(this.commandLine
-                            .getOptionValue('j'), this.commandLine
-                            .getOptionValue('o'), this.commandLine
-                            .getOptionValue('r'));
+                case App.CMD_JDL:
+                    final SubmissionResult s = myService.submitJdl(
+                            this.commandLine.getOptionValue('j'),
+                            this.commandLine.getOptionValue('o'),
+                            this.commandLine.getOptionValue('r'));
                     System.out.println("" + s);
                     break;
-                case CMD_FORGETAFS:
+                case App.CMD_FORGETAFS:
                     myService.forgetAfs();
                     break;
-                case CMD_REMEMBERAFS:
+                case App.CMD_REMEMBERAFS:
                     final String password = this.askPassword("AFS Password: ");
                     if (!myService.rememberAfs(password)) {
                         App.LOGGER.warning("Error remembering AFS password");
                     }
                     break;
-                case CMD_REMEMBERGRID:
+                case App.CMD_REMEMBERGRID:
                     final String gpassword = this
                             .askPassword("Grid Password: ");
                     if (!myService.rememberGrid(gpassword)) {
                         App.LOGGER.warning("Error remembering Grid password");
                     }
                     break;
-                case CMD_VO:
+                case App.CMD_VO:
                     myService.setVo(this.commandLine.getOptionValue(App.VO));
                     break;
-                case CMD_BACKEND:
+                case App.CMD_BACKEND:
                     myService.setBackend(this.commandLine
                             .getOptionValue(App.BACKEND));
                     break;
-                case CMD_LISTBACK:
-                    final String bs = myService.listBackends();
+                case App.CMD_LISTBACK:
+                    final String bs = myService.listBackends().toString();
                     System.out.println(bs);
                     break;
                 default:
@@ -454,6 +468,7 @@ public class App implements DiscoveryListener {
         return p;
     }
 
+    /** {@inheritDoc} */
     public void discarded(final DiscoveryEvent arg0) {
         // do nothing
     }

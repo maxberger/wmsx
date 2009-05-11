@@ -168,8 +168,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     /** {@inheritDoc} */
-    public SubmissionResult submitJdl(final String jdlFile, final String output,
-            final String resultDir) {
+    public SubmissionResult submitJdl(final String jdlFile,
+            final String output, final String resultDir) {
         return this.submitJdl(jdlFile, output, resultDir, 0);
     }
 
@@ -551,8 +551,8 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     }
 
     /** {@inheritDoc} */
-    public String listBackends() throws RemoteException {
-        return Backends.getInstance().listBackends().toString();
+    public Iterable<String> listBackends() throws RemoteException {
+        return Backends.getInstance().listBackends();
     }
 
 }

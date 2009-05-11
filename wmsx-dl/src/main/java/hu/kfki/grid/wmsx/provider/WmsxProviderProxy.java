@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -227,14 +228,14 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
     }
 
     /** {@inheritDoc} */
-    public String listBackends() {
-        String s = "";
+    public Iterable<String> listBackends() {
+        Iterable<String> list = Collections.emptyList();
         try {
-            s = this.remoteService.listBackends();
+            list = this.remoteService.listBackends();
         } catch (final RemoteException re) {
             WmsxProviderProxy.LOGGER.warning(re.getMessage());
         }
-        return s;
+        return list;
     }
 
     /** {@inheritDoc} */

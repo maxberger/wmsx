@@ -193,12 +193,12 @@ public interface IRemoteWmsxProvider extends Remote {
     /**
      * List the available backends.
      * 
-     * @return a String with a list of backends.
+     * @return a List of backend names.
      * @throws RemoteException
      *             if the connection is broken.
      * @see hu.kfki.grid.wmsx.Wmsx#listBackends()
      */
-    String listBackends() throws RemoteException;
+    Iterable<String> listBackends() throws RemoteException;
 
     /**
      * Kill all running workers.
