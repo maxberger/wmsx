@@ -32,6 +32,7 @@ import java.util.List;
  * Remote version of Jini service.
  * 
  * @version $Date$
+ * @see hu.kfki.grid.wmsx.Wmsx
  */
 public interface IRemoteWmsxProvider extends Remote {
 
@@ -72,6 +73,7 @@ public interface IRemoteWmsxProvider extends Remote {
      * 
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#ping(boolean)
      */
     void ping() throws RemoteException;
 
@@ -82,6 +84,7 @@ public interface IRemoteWmsxProvider extends Remote {
      *            number of workers to start
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#startWorkers(int)
      */
     void startWorkers(int number) throws RemoteException;
 
@@ -97,6 +100,7 @@ public interface IRemoteWmsxProvider extends Remote {
      * @return a {@link SubmissionResult}.
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#submitJdl(String, String, String)
      */
     SubmissionResult submitJdl(String jdlFile, String output, String resultDir)
             throws RemoteException;
@@ -114,6 +118,7 @@ public interface IRemoteWmsxProvider extends Remote {
      *            Name of the LaszloCommand
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#submitLaszlo(String, boolean, String)
      */
     void submitLaszlo(List<IRemoteWmsxProvider.LaszloCommand> commands,
             boolean interactive, String prefix, String name)
@@ -126,6 +131,7 @@ public interface IRemoteWmsxProvider extends Remote {
      *            new number of running jobs
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#setMaxJobs(int)
      */
     void setMaxJobs(int maxJobs) throws RemoteException;
 
@@ -137,6 +143,7 @@ public interface IRemoteWmsxProvider extends Remote {
      * @return true if pw can be remembered
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#rememberAfs(String)
      */
     boolean rememberAfs(String password) throws RemoteException;
 
@@ -148,6 +155,7 @@ public interface IRemoteWmsxProvider extends Remote {
      * @return true if pw can be remembered
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#rememberGrid(String)
      */
     boolean rememberGrid(String password) throws RemoteException;
 
@@ -156,6 +164,7 @@ public interface IRemoteWmsxProvider extends Remote {
      * 
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#forgetAfs()
      */
     void forgetAfs() throws RemoteException;
 
@@ -166,6 +175,7 @@ public interface IRemoteWmsxProvider extends Remote {
      *            new VO.
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#setVo(String)
      */
     void setVo(String newVo) throws RemoteException;
 
@@ -176,6 +186,7 @@ public interface IRemoteWmsxProvider extends Remote {
      *            new backend.
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#setBackend(String)
      */
     void setBackend(String backend) throws RemoteException;
 
@@ -185,6 +196,7 @@ public interface IRemoteWmsxProvider extends Remote {
      * @return a String with a list of backends.
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#listBackends()
      */
     String listBackends() throws RemoteException;
 
@@ -193,6 +205,7 @@ public interface IRemoteWmsxProvider extends Remote {
      * 
      * @throws RemoteException
      *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#shutdownWorkers()
      */
     void shutdownWorkers() throws RemoteException;
 }
