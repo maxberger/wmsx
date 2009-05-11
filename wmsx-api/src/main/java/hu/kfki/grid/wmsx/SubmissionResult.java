@@ -75,10 +75,10 @@ public final class SubmissionResult implements Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        if (this.jobUid==null) {
-            return errorMessage;
+        if (this.jobUid == null) {
+            return this.errorMessage;
         } else {
-            return jobUid.toString();
+            return this.jobUid.toString();
         }
     }
 }
