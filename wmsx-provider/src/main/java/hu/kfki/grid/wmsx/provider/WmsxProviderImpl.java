@@ -49,6 +49,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -552,7 +553,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     /** {@inheritDoc} */
     public Iterable<String> listBackends() throws RemoteException {
-        return Backends.getInstance().listBackends();
+        return new ArrayList<String>(Backends.getInstance().listBackends());
     }
 
 }
