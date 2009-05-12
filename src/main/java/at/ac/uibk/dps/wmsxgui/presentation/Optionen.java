@@ -12,6 +12,7 @@
 package at.ac.uibk.dps.wmsxgui.presentation;
 
 import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
+import hu.kfki.grid.wmsx.Wmsx;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
@@ -23,10 +24,12 @@ import java.awt.Rectangle;
 public class Optionen extends javax.swing.JFrame {
 
     private BusinessManager businessman;
+    private Wmsx wmsx_service;
 
     /** Creates new form Optionen. */
-    public Optionen(BusinessManager bm) {
-        this.businessman = bm;
+    public Optionen() {
+        this.businessman = BusinessManager.getInstance();
+        wmsx_service = BusinessManager.getInstance().getRequestor().getWmsxService();
         initComponents();
         centerScreen();
         
@@ -159,12 +162,12 @@ public class Optionen extends javax.swing.JFrame {
         // TODO add your handling code here:
         //speichern
         
-        this.businessman.getRequestor().setActiveJobCount(
+        wmsx_service.setMaxJobs(
                 Integer.parseInt(jobcounttxt.getText()));
-        this.businessman.getRequestor().rememberAfsPassword(
+        wmsx_service.rememberAfs(
                 new String(jPasswordField1.getPassword()));
         System.out.println(new String(jPasswordField1.getPassword()));
-        businessman.getRequestor().rememberGridPassword(new String(jPasswordField2.getPassword()));  //fehler??
+        wmsx_service.rememberGrid(new String(jPasswordField2.getPassword()));  //fehler??
 
         this.setVisible(false);
 }//GEN-LAST:event_btn_ok
@@ -177,7 +180,7 @@ public class Optionen extends javax.swing.JFrame {
 
     private void btn_forgetAfs(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_forgetAfs
         // TODO add your handling code here:
-        businessman.getRequestor().forgetAfsPassword();
+        wmsx_service.forgetAfs();
 }//GEN-LAST:event_btn_forgetAfs
 
     private void btn_forgetGrid(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_forgetGrid

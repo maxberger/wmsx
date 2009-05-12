@@ -30,23 +30,19 @@ import javax.swing.tree.DefaultTreeModel;
 public class MainWindow extends javax.swing.JFrame {
 
     private BusinessManager businessman;
+    private Wmsx wmsx_service;
     private JFrame optionen;
     private DefaultMutableTreeNode rootNode;
     private DefaultTreeModel treeModel;
 
 
     /** Creates new form MainWindow */
-    public MainWindow(final BusinessManager bm) {
-        this.businessman = bm;
+    public MainWindow() {
+        this.businessman = BusinessManager.getInstance();
+        wmsx_service = BusinessManager.getInstance().getRequestor().getWmsxService();
         makeModel();
         initComponents();
 
-
-        centerScreen();
-    }
-
-    public MainWindow() {
-        initComponents();
         centerScreen();
     }
 
@@ -390,15 +386,15 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_test(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_test
-       System.out.println("ping: "+businessman.getRequestor().ping(false));
-       System.out.println("fullping: "+businessman.getRequestor().ping(true));
-       System.out.println("listBackends: "+businessman.getRequestor().listBackends());
+       System.out.println("ping: "+wmsx_service.ping(false));
+       System.out.println("fullping: "+wmsx_service.ping(true));
+       System.out.println("listBackends: "+wmsx_service.listBackends());
 }//GEN-LAST:event_btn_test
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
         if(optionen==null)
-            optionen=new Optionen(businessman);
+            optionen=new Optionen();
         System.out.println("zeige optionen");
         optionen.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
@@ -478,7 +474,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         rootNode = new DefaultMutableTreeNode("Backends");
         
-        Iterable<String> backends = businessman.getRequestor().listBackends();
+        Iterable<String> backends = wmsx_service.listBackends();
 
         //while(backends.iterator().hasNext()){
         //     System.out.println(backends.iterator().next());
