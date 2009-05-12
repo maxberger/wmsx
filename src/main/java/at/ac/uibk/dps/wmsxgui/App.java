@@ -6,7 +6,6 @@
 package at.ac.uibk.dps.wmsxgui;
 
 import at.ac.uibk.dps.wmsxgui.presentation.*;
-import at.ac.uibk.dps.wmsxgui.business.*;
 /**
  *
  * @author bafu
@@ -22,7 +21,7 @@ public class App {
 
 
                 System.out.println("wmsx-gui is starting...");
-                new MainWindow(BusinessManager.getInstance()).setVisible(true);
+                new MainWindow().setVisible(true);
 
             }
         });
