@@ -12,6 +12,8 @@
 package at.ac.uibk.dps.wmsxgui.presentation;
 
 import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
+import hu.kfki.grid.wmsx.JobInfo;
+import hu.kfki.grid.wmsx.Wmsx;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -19,7 +21,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeModel;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -29,12 +31,16 @@ public class MainWindow extends javax.swing.JFrame {
 
     private BusinessManager businessman;
     private JFrame optionen;
-    private TreeModel rootNode;
+    private DefaultMutableTreeNode rootNode;
+    private DefaultTreeModel treeModel;
+
 
     /** Creates new form MainWindow */
     public MainWindow(final BusinessManager bm) {
-        businessman = bm;
+        this.businessman = bm;
+        makeModel();
         initComponents();
+
 
         centerScreen();
     }
@@ -68,7 +74,7 @@ public class MainWindow extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanelRight = new javax.swing.JPanel();
         jPanelTopContainer = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPaneTable = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanelJobDetails = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -110,7 +116,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jPanelRight.setPreferredSize(new java.awt.Dimension(200, 200));
 
-        jScrollPane2.setAutoscrolls(true);
+        jScrollPaneTable.setAutoscrolls(true);
 
         jTable1.setAutoCreateRowSorter(true);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -139,7 +145,7 @@ public class MainWindow extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable1);
+        jScrollPaneTable.setViewportView(jTable1);
 
         jPanelJobDetails.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Details"));
 
@@ -238,13 +244,13 @@ public class MainWindow extends javax.swing.JFrame {
         jPanelTopContainer.setLayout(jPanelTopContainerLayout);
         jPanelTopContainerLayout.setHorizontalGroup(
             jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE)
+            .addComponent(jScrollPaneTable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE)
             .addGroup(jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanelJobDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelTopContainerLayout.setVerticalGroup(
             jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+            .addComponent(jScrollPaneTable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
             .addGroup(jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanelJobDetails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -301,40 +307,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jScrollPane1.setMinimumSize(new java.awt.Dimension(0, 0));
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Backends");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("local");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("blue");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("violet");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("red");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("yellow");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("grid");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("worker1");
-        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("basketball");
-        treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("soccer");
-        treeNode3.add(treeNode4);
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("football");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("hockey");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("worker");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("hot dogs");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("pizza");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("ravioli");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("bananas");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jTree1.setModel(treeModel);
         jTree1.setMinimumSize(new java.awt.Dimension(50, 100));
         jTree1.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
@@ -435,11 +408,20 @@ public class MainWindow extends javax.swing.JFrame {
         DefaultMutableTreeNode node =
                 (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent();
         if (node == null) return;
+        
+        String classname = node.getUserObject().getClass().getSimpleName();
+        System.out.println(classname);
+
+        if (classname.equals("JobInfo")){
+            jScrollPaneTable.setVisible(false);
+            jPanelJobDetails.setVisible(true);
+        }else{
+            jScrollPaneTable.setVisible(true);
+            jPanelJobDetails.setVisible(false);
+        }
         String titel = node.getUserObject().toString();
-       
         jLabel8.setText(titel);
         
-        jScrollPane2.setVisible(false);
 
     }//GEN-LAST:event_jTree1ValueChanged
 
@@ -448,6 +430,8 @@ public class MainWindow extends javax.swing.JFrame {
         System.exit( 0 );
       }
     };
+
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -476,7 +460,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelRight;
     private javax.swing.JPanel jPanelTopContainer;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPaneTable;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
@@ -489,5 +473,40 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
+
+    private void makeModel() {
+
+        rootNode = new DefaultMutableTreeNode("Backends");
+        
+        Iterable<String> backends = businessman.getRequestor().listBackends();
+
+        //while(backends.iterator().hasNext()){
+        //     System.out.println(backends.iterator().next());
+             // endlosschleife mit fake???
+             
+       // }
+
+
+ // @TODO: UNTERSCHEIDUNG worker und  jobs ???
+
+
+        DefaultMutableTreeNode node1 = new DefaultMutableTreeNode("Fake");
+        DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(new JobInfo("description"));
+
+        rootNode.add(node1);
+        node1 = new DefaultMutableTreeNode("Worker");
+        node1.add(node2);
+        rootNode.add(node1);
+        node1 = new DefaultMutableTreeNode("Local");
+        node2 = new DefaultMutableTreeNode(new JobInfo("job blabla"));
+        node1.add(node2);
+        rootNode.add(node1);
+
+        node1 = new DefaultMutableTreeNode("Gat");
+        rootNode.add(node1);
+
+        treeModel = new DefaultTreeModel(rootNode);
+
+    }
 
 }

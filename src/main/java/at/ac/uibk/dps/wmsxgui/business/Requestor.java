@@ -10,12 +10,15 @@ import javax.swing.JOptionPane;
 import net.jini.admin.Administrable;
 import com.sun.jini.admin.DestroyAdmin;
 import java.rmi.RemoteException;
+import net.jini.core.event.RemoteEventListener;
+import net.jini.core.lease.Lease;
+import net.jini.id.Uuid;
 
 /**
  *
  * @author bafu
  */
-public class Requestor {
+public class Requestor implements Wmsx{
 
     private Wmsx wmsx_service;
     /* Singleton Pattern */
@@ -36,6 +39,50 @@ public class Requestor {
             JOptionPane.showMessageDialog(null, e.getMessage(), "WMSX Gui - ClassNotFound", JOptionPane.ERROR_MESSAGE);
         }
 	}
+
+    public void setMaxJobs(int maxJobs) {
+        wmsx_service.setMaxJobs(maxJobs);
+    }
+
+    public void startWorkers(int number) {
+        wmsx_service.startWorkers(number);
+    }
+
+    public boolean rememberAfs(String password) {
+        return wmsx_service.rememberAfs(password);
+    }
+
+    public boolean rememberGrid(String password) {
+        return wmsx_service.rememberGrid(password);
+    }
+
+    public void forgetAfs() {
+        wmsx_service.forgetAfs();
+    }
+
+    public void shutdownWorkers() {
+        wmsx_service.shutdownWorkers();
+    }
+
+    public Iterable<TransportJobUID> listJobs() {
+        return wmsx_service.listJobs();
+    }
+
+    public Lease registerEventListener(RemoteEventListener r) {
+       return wmsx_service.registerEventListener(r);
+    }
+
+    public JobInfo getJobInfo(TransportJobUID jobId) {
+        return wmsx_service.getJobInfo(jobId);
+    }
+
+    public void cancelJob(TransportJobUID jobId) {
+        wmsx_service.cancelJob(jobId);
+    }
+
+    public void shutdownWorker(Uuid workerId) {
+        wmsx_service.shutdownWorker(workerId);
+    }
 
 	/** Private innere statische Klasse, realisiert Singleton Pattern
 	 *
@@ -174,7 +221,7 @@ public class Requestor {
     /*
      * listbackends      lists possible backends
     */
-    public String listBackends()
+    public Iterable<String> listBackends()
     {
          return wmsx_service.listBackends();
     }
@@ -186,5 +233,6 @@ public class Requestor {
     {
          wmsx_service.setBackend(backend);
     }
+
 
 }

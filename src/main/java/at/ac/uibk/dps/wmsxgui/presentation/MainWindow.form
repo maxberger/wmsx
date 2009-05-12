@@ -127,7 +127,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane2" alignment="1" pref="585" max="32767" attributes="0"/>
+                      <Component id="jScrollPaneTable" alignment="1" pref="593" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Component id="jPanelJobDetails" alignment="0" max="32767" attributes="0"/>
                       </Group>
@@ -135,7 +135,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane2" alignment="1" pref="264" max="32767" attributes="0"/>
+                      <Component id="jScrollPaneTable" alignment="1" pref="264" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Component id="jPanelJobDetails" alignment="1" max="32767" attributes="0"/>
                       </Group>
@@ -143,7 +143,7 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+                <Container class="javax.swing.JScrollPane" name="jScrollPaneTable">
                   <Properties>
                     <Property name="autoscrolls" type="boolean" value="true"/>
                   </Properties>
@@ -191,17 +191,17 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                      <Component id="jTextField1" pref="194" max="32767" attributes="0"/>
+                                      <Component id="jTextField1" pref="198" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="jTextField2" pref="194" max="32767" attributes="0"/>
+                                      <Component id="jTextField2" pref="198" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jTextField7" alignment="0" pref="194" max="32767" attributes="0"/>
-                                          <Component id="jTextField3" alignment="0" pref="194" max="32767" attributes="0"/>
+                                          <Component id="jTextField7" alignment="0" pref="198" max="32767" attributes="0"/>
+                                          <Component id="jTextField3" alignment="0" pref="198" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -213,9 +213,9 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jTextField4" alignment="0" pref="196" max="32767" attributes="0"/>
-                                  <Component id="jTextField5" alignment="0" pref="196" max="32767" attributes="0"/>
-                                  <Component id="jTextField6" alignment="0" pref="196" max="32767" attributes="0"/>
+                                  <Component id="jTextField4" alignment="0" pref="200" max="32767" attributes="0"/>
+                                  <Component id="jTextField5" alignment="0" pref="200" max="32767" attributes="0"/>
+                                  <Component id="jTextField6" alignment="0" pref="200" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -352,7 +352,7 @@
                                   <Component id="jButtonRefresh" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="438" max="32767" attributes="0"/>
+                          <EmptySpace pref="446" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -409,8 +409,8 @@
           <SubComponents>
             <Component class="javax.swing.JTree" name="jTree1">
               <Properties>
-                <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
-                  <TreeModel code="Backends&#xa; local&#xa;  blue&#xa;  violet&#xa;  red&#xa;  yellow&#xa; grid&#xa;  worker1&#xa;   basketball&#xa;   soccer&#xa;  football&#xa;  hockey&#xa; worker&#xa;  hot dogs&#xa;  pizza&#xa;  ravioli&#xa;  bananas"/>
+                <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="treeModel" type="code"/>
                 </Property>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[50, 100]"/>
