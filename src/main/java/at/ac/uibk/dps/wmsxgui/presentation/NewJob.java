@@ -12,9 +12,17 @@
 package at.ac.uibk.dps.wmsxgui.presentation;
 
 import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
+import at.ac.uibk.dps.wmsxgui.presentation.util.JobDescriptionFileFilter;
+import hu.kfki.grid.wmsx.SubmissionResult;
 import hu.kfki.grid.wmsx.Wmsx;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -32,7 +40,14 @@ public class NewJob extends javax.swing.JFrame {
         wmsx_service = businessman.getRequestor().getWmsxService();
         initComponents();
         centerScreen();
-        
+
+        // Set icon
+        Image icon = (new ImageIcon(getClass().getResource("/icon.png"))).getImage();
+        this.setIconImage(icon);
+
+        Iterable<String> backends = wmsx_service.listBackends();
+        for (String backend : backends)
+            cb_backend.addItem(backend);
     }
 
      /** Positioniert das Fenster genau in der Mitte des Bildschirmes...
@@ -57,6 +72,20 @@ public class NewJob extends javax.swing.JFrame {
 
         btn_cancel = new javax.swing.JButton();
         btn_ok = new javax.swing.JButton();
+        cb_type = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        cb_backend = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        tb_jobdescriptionfile = new javax.swing.JTextField();
+        btn_select_jobdesc = new javax.swing.JButton();
+        btn_select_resultdir = new javax.swing.JButton();
+        tb_resultdir = new javax.swing.JTextField();
+        tb_outputfile = new javax.swing.JTextField();
+        btn_select_outputfile = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -74,49 +103,220 @@ public class NewJob extends javax.swing.JFrame {
             }
         });
 
+        cb_type.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Job", "Worker" }));
+        cb_type.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_typeActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("CreationType");
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Create a new Job"));
+
+        jLabel1.setText("Backend");
+
+        jLabel2.setText("JobDescriptionFile");
+
+        btn_select_jobdesc.setText("Select");
+        btn_select_jobdesc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_select_jobdescActionPerformed(evt);
+            }
+        });
+
+        btn_select_resultdir.setText("Select");
+        btn_select_resultdir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_select_resultdirActionPerformed(evt);
+            }
+        });
+
+        btn_select_outputfile.setText("Select");
+        btn_select_outputfile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_select_outputfileActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Output to File");
+
+        jLabel3.setText("ResultDirectory");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cb_backend, 0, 332, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(tb_resultdir, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_select_resultdir))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(tb_jobdescriptionfile, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_select_jobdesc))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(tb_outputfile, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_select_outputfile)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(cb_backend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_select_jobdesc)
+                    .addComponent(tb_jobdescriptionfile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tb_outputfile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(btn_select_outputfile))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_select_resultdir)
+                    .addComponent(tb_resultdir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(218, Short.MAX_VALUE)
-                .addComponent(btn_ok, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(cb_type, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(166, 166, 166)
+                        .addComponent(btn_ok, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(259, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(cb_type, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_cancel)
                     .addComponent(btn_ok))
-                .addContainerGap())
+                .addContainerGap(14, Short.MAX_VALUE))
         );
-
-        btn_cancel.getAccessibleContext().setAccessibleName("Cancel");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_cancel(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancel
-        // TODO add your handling code here:
-        //speichern
-    
         
         this.setVisible(false);
 }//GEN-LAST:event_btn_cancel
 
     private void btn_ok(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ok
-        // TODO add your handling code here:
+        String jdlFile = tb_jobdescriptionfile.getText();
+        String resultDir = tb_resultdir.getText();
+        String outputFile = tb_outputfile.getText();
+
+        if ( (new File(jdlFile)).exists() && (new File(resultDir)).exists() )
+        {
+            wmsx_service.setBackend(cb_backend.getSelectedItem().toString());
+
+            try
+            {
+                SubmissionResult s = wmsx_service.submitJdl(jdlFile, (outputFile.length()==0)?null:outputFile, resultDir);
+                System.out.println("SubmissionResult: " + s);
+                
+            } catch (final IOException e) {
+                System.out.println(e.getMessage() + " " + e.getStackTrace());
+            }
+            this.setVisible(false);
+        }else
+             JOptionPane.showMessageDialog(this, "JobDescriptionFile or ResultDirectory doesn't exist!", "WMSX GUI - NewJob", JOptionPane.ERROR_MESSAGE);
 }//GEN-LAST:event_btn_ok
+
+    private void cb_typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_typeActionPerformed
+
+}//GEN-LAST:event_cb_typeActionPerformed
+
+    private void btn_select_jobdescActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_select_jobdescActionPerformed
+        JFileChooser fc = new JFileChooser();
+        //fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        //Add a custom file filter and disable the default
+        //(Accept All) file filter.
+        fc.addChoosableFileFilter(new JobDescriptionFileFilter());
+        fc.setAcceptAllFileFilterUsed(false);
+
+
+        int returnVal = fc.showOpenDialog(this);
+        if (returnVal==0)
+            tb_jobdescriptionfile.setText(fc.getSelectedFile().getAbsolutePath());
+}//GEN-LAST:event_btn_select_jobdescActionPerformed
+
+    private void btn_select_outputfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_select_outputfileActionPerformed
+        JFileChooser fc = new JFileChooser();
+
+        int returnVal = fc.showSaveDialog(this);
+        if (returnVal==0)
+            tb_outputfile.setText(fc.getSelectedFile().getAbsolutePath());
+    }//GEN-LAST:event_btn_select_outputfileActionPerformed
+
+    private void btn_select_resultdirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_select_resultdirActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        int returnVal = fc.showOpenDialog(this);
+        if (returnVal==0)
+            tb_resultdir.setText(fc.getSelectedFile().getAbsolutePath());
+    }//GEN-LAST:event_btn_select_resultdirActionPerformed
 
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_cancel;
     private javax.swing.JButton btn_ok;
+    private javax.swing.JButton btn_select_jobdesc;
+    private javax.swing.JButton btn_select_outputfile;
+    private javax.swing.JButton btn_select_resultdir;
+    private javax.swing.JComboBox cb_backend;
+    private javax.swing.JComboBox cb_type;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JTextField tb_jobdescriptionfile;
+    private javax.swing.JTextField tb_outputfile;
+    private javax.swing.JTextField tb_resultdir;
     // End of variables declaration//GEN-END:variables
 
 }

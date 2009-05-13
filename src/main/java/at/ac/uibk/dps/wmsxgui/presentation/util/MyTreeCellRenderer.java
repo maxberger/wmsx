@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package at.ac.uibk.dps.wmsxgui.presentation;
+package at.ac.uibk.dps.wmsxgui.presentation.util;
 
 import hu.kfki.grid.wmsx.JobInfo;
 import java.awt.Component;
