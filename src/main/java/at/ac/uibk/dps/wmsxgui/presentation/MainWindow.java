@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -43,7 +44,21 @@ public class MainWindow extends javax.swing.JFrame {
         makeModel();
         initComponents();
 
+        if (wmsx_service==null)
+        {
+            setTitle("WMSX GUI - Offline Demo Mode");
+
+            menu_item_newjob.setEnabled(false);
+            menu_item_options.setEnabled(false);
+            menu_item_stopserver.setEnabled(false);
+
+            btn_add.setEnabled(false);
+            btn_remove.setEnabled(false);
+            btn_ping.setEnabled(false);
+        }
         centerScreen();
+
+        this.repaint();
     }
 
     /** Positioniert das Fenster genau in der Mitte des Bildschirmes...
@@ -89,21 +104,21 @@ public class MainWindow extends javax.swing.JFrame {
         jTextField7 = new javax.swing.JTextField();
         jPanelButtons = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        jButtonKill = new javax.swing.JButton();
-        jButtonRefresh = new javax.swing.JButton();
+        btn_kill = new javax.swing.JButton();
+        btn_refresh = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
-        jToolBar1 = new javax.swing.JToolBar();
-        jButtonAdd = new javax.swing.JButton();
-        jButtonStop = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        toolbar_main = new javax.swing.JToolBar();
+        btn_add = new javax.swing.JButton();
+        btn_remove = new javax.swing.JButton();
+        btn_ping = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        menu_file = new javax.swing.JMenu();
+        menu_item_newjob = new javax.swing.JMenuItem();
+        menu_item_stopserver = new javax.swing.JMenuItem();
+        menu_item_options = new javax.swing.JMenuItem();
+        menu_item_exit = new javax.swing.JMenuItem();
+        menu_edit = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("WMSX GUI");
@@ -117,20 +132,20 @@ public class MainWindow extends javax.swing.JFrame {
         jTable1.setAutoCreateRowSorter(true);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "JobName", "JobPath", "JobOutput", "JobStatus"
+                "Name", "Path", "Backend", "Output", "Time", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                true, true, true, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -160,20 +175,6 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("Host");
 
-        jTextField1.setText("jTextField1");
-
-        jTextField2.setText("jTextField1");
-
-        jTextField3.setText("jTextField3");
-
-        jTextField4.setText("jTextField4");
-
-        jTextField5.setText("jTextField5");
-
-        jTextField6.setText("jTextField6");
-
-        jTextField7.setText("jTextField7");
-
         javax.swing.GroupLayout jPanelJobDetailsLayout = new javax.swing.GroupLayout(jPanelJobDetails);
         jPanelJobDetails.setLayout(jPanelJobDetailsLayout);
         jPanelJobDetailsLayout.setHorizontalGroup(
@@ -188,15 +189,15 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelJobDetailsLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))
+                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
                     .addGroup(jPanelJobDetailsLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))
+                        .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
                     .addGroup(jPanelJobDetailsLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))))
+                            .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -204,9 +205,9 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
+                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addComponent(jTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanelJobDetailsLayout.setVerticalGroup(
@@ -240,7 +241,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanelTopContainer.setLayout(jPanelTopContainerLayout);
         jPanelTopContainerLayout.setHorizontalGroup(
             jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPaneTable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE)
+            .addComponent(jScrollPaneTable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
             .addGroup(jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanelJobDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -255,9 +256,9 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel8.setText("job/worker so und so");
 
-        jButtonKill.setText("kill");
+        btn_kill.setText("kill");
 
-        jButtonRefresh.setText("refresh");
+        btn_refresh.setText("refresh");
 
         javax.swing.GroupLayout jPanelButtonsLayout = new javax.swing.GroupLayout(jPanelButtons);
         jPanelButtons.setLayout(jPanelButtonsLayout);
@@ -268,10 +269,10 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(jPanelButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addGroup(jPanelButtonsLayout.createSequentialGroup()
-                        .addComponent(jButtonKill, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_kill, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonRefresh)))
-                .addContainerGap(438, Short.MAX_VALUE))
+                        .addComponent(btn_refresh)))
+                .addContainerGap(446, Short.MAX_VALUE))
         );
         jPanelButtonsLayout.setVerticalGroup(
             jPanelButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -279,8 +280,8 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonKill)
-                    .addComponent(jButtonRefresh))
+                    .addComponent(btn_kill)
+                    .addComponent(btn_refresh))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -314,52 +315,52 @@ public class MainWindow extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jScrollPane1);
 
-        jToolBar1.setFloatable(false);
-        jToolBar1.setRollover(true);
+        toolbar_main.setFloatable(false);
+        toolbar_main.setRollover(true);
 
-        jButtonAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/add.png"))); // NOI18N
-        jButtonAdd.setFocusable(false);
-        jButtonAdd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonAdd.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jButtonAdd);
+        btn_add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/add.png"))); // NOI18N
+        btn_add.setFocusable(false);
+        btn_add.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btn_add.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar_main.add(btn_add);
 
-        jButtonStop.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stop.png"))); // NOI18N
-        jButtonStop.setFocusable(false);
-        jButtonStop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonStop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jButtonStop);
+        btn_remove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stop.png"))); // NOI18N
+        btn_remove.setFocusable(false);
+        btn_remove.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btn_remove.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar_main.add(btn_remove);
 
-        jButton1.setText("Test");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btn_ping.setText("Ping");
+        btn_ping.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_test(evt);
+                btn_ping(evt);
             }
         });
-        jToolBar1.add(jButton1);
+        toolbar_main.add(btn_ping);
 
-        jMenu1.setText("File");
+        menu_file.setText("File");
 
-        jMenuItem4.setText("New Job");
-        jMenu1.add(jMenuItem4);
+        menu_item_newjob.setText("New Job");
+        menu_file.add(menu_item_newjob);
 
-        jMenuItem2.setText("Stop Server");
-        jMenu1.add(jMenuItem2);
+        menu_item_stopserver.setText("Stop Server");
+        menu_file.add(menu_item_stopserver);
 
-        jMenuItem1.setText("Options");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        menu_item_options.setText("Options");
+        menu_item_options.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                menu_item_optionsActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        menu_file.add(menu_item_options);
 
-        jMenuItem3.setText("Exit");
-        jMenu1.add(jMenuItem3);
+        menu_item_exit.setText("Exit");
+        menu_file.add(menu_item_exit);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(menu_file);
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        menu_edit.setText("Edit");
+        jMenuBar1.add(menu_edit);
 
         setJMenuBar(jMenuBar1);
 
@@ -371,12 +372,12 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGap(12, 12, 12)
                 .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 701, Short.MAX_VALUE)
+            .addComponent(toolbar_main, javax.swing.GroupLayout.DEFAULT_SIZE, 701, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(toolbar_main, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
                 .addContainerGap())
@@ -385,19 +386,46 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_test(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_test
-       System.out.println("ping: "+wmsx_service.ping(false));
-       System.out.println("fullping: "+wmsx_service.ping(true));
-       System.out.println("listBackends: "+wmsx_service.listBackends());
-}//GEN-LAST:event_btn_test
+    private void btn_ping(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ping
+       if (wmsx_service!=null)
+       {
+           boolean ping = wmsx_service.ping(false);
+           boolean fullping =  wmsx_service.ping(true);
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
-        if(optionen==null)
-            optionen=new Optionen();
-        System.out.println("zeige optionen");
-        optionen.setVisible(true);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+           if (ping && fullping)
+               JOptionPane.showMessageDialog(this, "Ping to provider was ok!", "WMSX GUI - Ping", JOptionPane.INFORMATION_MESSAGE);
+           else
+               JOptionPane.showMessageDialog(this, "Ping to provider failed!", "WMSX GUI - Ping", JOptionPane.ERROR_MESSAGE);
+       }
+}//GEN-LAST:event_btn_ping
+
+    private void btn_add(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add
+       if (wmsx_service!=null)
+       {
+            System.out.println("btn_add...");
+
+            NewJob newjob = new NewJob();
+            System.out.println("Show NewJobDialog...");
+            newjob.setVisible(true);
+       }
+}//GEN-LAST:event_btn_add
+
+       private void btn_remove(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_remove
+       if (wmsx_service!=null)
+       {
+           System.out.println("btn_remove...");
+       }
+}//GEN-LAST:event_btn_remove
+
+       private void menu_item_optionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_optionsActionPerformed
+       if (wmsx_service!=null)
+       {
+            if(optionen==null)
+                optionen=new Optionen();
+            System.out.println("Show OptionsDialog...");
+            optionen.setVisible(true);
+       }
+}//GEN-LAST:event_menu_item_optionsActionPerformed
 
     private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTree1ValueChanged
 
@@ -417,13 +445,14 @@ public class MainWindow extends javax.swing.JFrame {
         }
         String titel = node.getUserObject().toString();
         jLabel8.setText(titel);
-        
+
+        this.repaint();
 
     }//GEN-LAST:event_jTree1ValueChanged
 
     Action exitAction = new AbstractAction( "Quit" ) {
       @Override public void actionPerformed( ActionEvent e ) {
-        System.exit( 0 );
+        System.exit(0);
       }
     };
 
@@ -431,11 +460,11 @@ public class MainWindow extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButtonAdd;
-    private javax.swing.JButton jButtonKill;
-    private javax.swing.JButton jButtonRefresh;
-    private javax.swing.JButton jButtonStop;
+    private javax.swing.JButton btn_add;
+    private javax.swing.JButton btn_kill;
+    private javax.swing.JButton btn_ping;
+    private javax.swing.JButton btn_refresh;
+    private javax.swing.JButton btn_remove;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -444,13 +473,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JPanel jPanelButtons;
     private javax.swing.JPanel jPanelJobDetails;
     private javax.swing.JPanel jPanelRight;
@@ -466,43 +489,52 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
-    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JTree jTree1;
+    private javax.swing.JMenu menu_edit;
+    private javax.swing.JMenu menu_file;
+    private javax.swing.JMenuItem menu_item_exit;
+    private javax.swing.JMenuItem menu_item_newjob;
+    private javax.swing.JMenuItem menu_item_options;
+    private javax.swing.JMenuItem menu_item_stopserver;
+    private javax.swing.JToolBar toolbar_main;
     // End of variables declaration//GEN-END:variables
 
     private void makeModel() {
 
         rootNode = new DefaultMutableTreeNode("Backends");
-        
-        Iterable<String> backends = wmsx_service.listBackends();
 
-        //while(backends.iterator().hasNext()){
-        //     System.out.println(backends.iterator().next());
-             // endlosschleife mit fake???
-             
-       // }
+        if (wmsx_service!=null)
+        {
+            Iterable<String> backends = wmsx_service.listBackends();
+
+            for (String backend : backends){
+                 System.out.println(backend);
+                 // endlosschleife mit fake???
+            }
+
+        }else {
 
 
- // @TODO: UNTERSCHEIDUNG worker und  jobs ???
+            // @TODO: UNTERSCHEIDUNG worker und  jobs ???
 
 
-        DefaultMutableTreeNode node1 = new DefaultMutableTreeNode("Fake");
-        DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(new JobInfo("description"));
+            DefaultMutableTreeNode node1 = new DefaultMutableTreeNode("Fake");
+            DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(new JobInfo("description"));
 
-        rootNode.add(node1);
-        node1 = new DefaultMutableTreeNode("Worker");
-        node1.add(node2);
-        rootNode.add(node1);
-        node1 = new DefaultMutableTreeNode("Local");
-        node2 = new DefaultMutableTreeNode(new JobInfo("job blabla"));
-        node1.add(node2);
-        rootNode.add(node1);
+            rootNode.add(node1);
+            node1 = new DefaultMutableTreeNode("Worker");
+            node1.add(node2);
+            rootNode.add(node1);
+            node1 = new DefaultMutableTreeNode("Local");
+            node2 = new DefaultMutableTreeNode(new JobInfo("job blabla"));
+            node1.add(node2);
+            rootNode.add(node1);
 
-        node1 = new DefaultMutableTreeNode("Gat");
-        rootNode.add(node1);
+            node1 = new DefaultMutableTreeNode("Gat");
+            rootNode.add(node1);
 
-        treeModel = new DefaultTreeModel(rootNode);
-
+            treeModel = new DefaultTreeModel(rootNode);
+        }
     }
 
 }

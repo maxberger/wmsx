@@ -56,7 +56,7 @@ public class Optionen extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        btn_cancel = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jobcounttxt = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -65,13 +65,14 @@ public class Optionen extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jPasswordField2 = new javax.swing.JPasswordField();
         jButton3 = new javax.swing.JButton();
+        btn_ok = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jButton1.setText("OK");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btn_cancel.setText("Cancel");
+        btn_cancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_ok(evt);
+                btn_cancel(evt);
             }
         });
 
@@ -106,13 +107,22 @@ public class Optionen extends javax.swing.JFrame {
             }
         });
 
+        btn_ok.setText("OK");
+        btn_ok.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ok(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(308, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(218, Short.MAX_VALUE)
+                .addComponent(btn_ok, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
@@ -151,14 +161,16 @@ public class Optionen extends javax.swing.JFrame {
                     .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_cancel)
+                    .addComponent(btn_ok))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_ok(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ok
+    private void btn_cancel(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancel
         // TODO add your handling code here:
         //speichern
         
@@ -170,7 +182,7 @@ public class Optionen extends javax.swing.JFrame {
         wmsx_service.rememberGrid(new String(jPasswordField2.getPassword()));  //fehler??
 
         this.setVisible(false);
-}//GEN-LAST:event_btn_ok
+}//GEN-LAST:event_btn_cancel
 
     private void jobcounttxtCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jobcounttxtCaretUpdate
         // TODO add your handling code here:
@@ -189,9 +201,14 @@ public class Optionen extends javax.swing.JFrame {
         //die funktion gibts nicht :-(
 }//GEN-LAST:event_btn_forgetGrid
 
+    private void btn_ok(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ok
+        // TODO add your handling code here:
+}//GEN-LAST:event_btn_ok
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btn_cancel;
+    private javax.swing.JButton btn_ok;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
