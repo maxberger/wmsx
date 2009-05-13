@@ -21,13 +21,13 @@ import java.awt.Rectangle;
  * @author lancelot
  * @version 20.4.2009
  */
-public class Optionen extends javax.swing.JFrame {
+public class Options extends javax.swing.JFrame {
 
     private BusinessManager businessman;
     private Wmsx wmsx_service;
 
     /** Creates new form Optionen. */
-    public Optionen() {
+    public Options() {
         this.businessman = BusinessManager.getInstance();
         wmsx_service = BusinessManager.getInstance().getRequestor().getWmsxService();
         initComponents();
@@ -118,30 +118,30 @@ public class Optionen extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(218, Short.MAX_VALUE)
-                .addComponent(btn_ok, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btn_ok, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2))
-                    .addComponent(jobcounttxt, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3)))
-                .addContainerGap(24, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jobcounttxt, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jPasswordField1, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+                                    .addComponent(jPasswordField2, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING))))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -171,15 +171,6 @@ public class Optionen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_cancel(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancel
-        // TODO add your handling code here:
-        //speichern
-        
-        wmsx_service.setMaxJobs(
-                Integer.parseInt(jobcounttxt.getText()));
-        wmsx_service.rememberAfs(
-                new String(jPasswordField1.getPassword()));
-        System.out.println(new String(jPasswordField1.getPassword()));
-        wmsx_service.rememberGrid(new String(jPasswordField2.getPassword()));  //fehler??
 
         this.setVisible(false);
 }//GEN-LAST:event_btn_cancel
@@ -191,18 +182,27 @@ public class Optionen extends javax.swing.JFrame {
 }//GEN-LAST:event_jobcounttxtCaretUpdate
 
     private void btn_forgetAfs(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_forgetAfs
-        // TODO add your handling code here:
+
         wmsx_service.forgetAfs();
 }//GEN-LAST:event_btn_forgetAfs
 
     private void btn_forgetGrid(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_forgetGrid
-        // TODO add your handling code here:
+
         //businessman.getRequestor().
         //die funktion gibts nicht :-(
 }//GEN-LAST:event_btn_forgetGrid
 
     private void btn_ok(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ok
-        // TODO add your handling code here:
+        //speichern
+
+        wmsx_service.setMaxJobs(
+                Integer.parseInt(jobcounttxt.getText()));
+        wmsx_service.rememberAfs(
+                new String(jPasswordField1.getPassword()));
+        System.out.println(new String(jPasswordField1.getPassword()));
+        wmsx_service.rememberGrid(new String(jPasswordField2.getPassword()));  //fehler??
+
+        this.setVisible(false);
 }//GEN-LAST:event_btn_ok
 
     

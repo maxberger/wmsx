@@ -13,11 +13,17 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="New Job"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menu_item_newjobActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menu_item_stopserver">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Stop Server"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menu_item_stopserverActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menu_item_options">
               <Properties>
@@ -31,6 +37,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Exit"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menu_item_exitActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -107,7 +116,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanelButtons" alignment="0" max="32767" attributes="0"/>
+                  <Component id="panel_buttons" alignment="0" max="32767" attributes="0"/>
                   <Component id="jPanelTopContainer" alignment="0" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
@@ -116,7 +125,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jPanelTopContainer" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jPanelButtons" min="-2" max="-2" attributes="0"/>
+                      <Component id="panel_buttons" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -127,23 +136,23 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPaneTable" alignment="1" pref="593" max="32767" attributes="0"/>
+                      <Component id="panel_table" alignment="1" pref="593" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                          <Component id="jPanelJobDetails" alignment="0" max="32767" attributes="0"/>
+                          <Component id="panel_jobdetails" alignment="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPaneTable" alignment="1" pref="264" max="32767" attributes="0"/>
+                      <Component id="panel_table" alignment="1" pref="264" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                          <Component id="jPanelJobDetails" alignment="1" max="32767" attributes="0"/>
+                          <Component id="panel_jobdetails" alignment="1" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JScrollPane" name="jScrollPaneTable">
+                <Container class="javax.swing.JScrollPane" name="panel_table">
                   <Properties>
                     <Property name="autoscrolls" type="boolean" value="true"/>
                   </Properties>
@@ -170,7 +179,7 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Container class="javax.swing.JPanel" name="jPanelJobDetails">
+                <Container class="javax.swing.JPanel" name="panel_jobdetails">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -311,7 +320,7 @@
                 </Container>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JPanel" name="jPanelButtons">
+            <Container class="javax.swing.JPanel" name="panel_buttons">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
@@ -388,7 +397,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTree" name="jTree1">
+            <Component class="javax.swing.JTree" name="tree_jobs">
               <Properties>
                 <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="treeModel" type="code"/>
@@ -398,7 +407,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="jTree1ValueChanged"/>
+                <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="tree_jobsValueChanged"/>
               </Events>
             </Component>
           </SubComponents>
@@ -422,6 +431,9 @@
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_add"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btn_remove">
           <Properties>
@@ -432,6 +444,9 @@
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_remove"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btn_ping">
           <Properties>

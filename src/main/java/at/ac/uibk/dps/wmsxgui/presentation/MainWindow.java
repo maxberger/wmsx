@@ -40,7 +40,7 @@ public class MainWindow extends javax.swing.JFrame {
     /** Creates new form MainWindow */
     public MainWindow() {
         this.businessman = BusinessManager.getInstance();
-        wmsx_service = BusinessManager.getInstance().getRequestor().getWmsxService();
+        wmsx_service = businessman.getRequestor().getWmsxService();
         makeModel();
         initComponents();
 
@@ -55,10 +55,22 @@ public class MainWindow extends javax.swing.JFrame {
             btn_add.setEnabled(false);
             btn_remove.setEnabled(false);
             btn_ping.setEnabled(false);
-        }
-        centerScreen();
 
-        this.repaint();
+            btn_kill.setEnabled(false);
+            btn_refresh.setEnabled(false);
+        }
+
+        //verstecke tabelle
+        //panel_table.setVisible(false);
+        panel_jobdetails.setVisible(false);
+
+        //disable remove buttons
+        btn_remove.setEnabled(false);
+        btn_kill.setEnabled(false);
+
+        tree_jobs.setCellRenderer(new MyTreeCellRenderer());
+
+        centerScreen();
     }
 
     /** Positioniert das Fenster genau in der Mitte des Bildschirmes...
@@ -85,9 +97,9 @@ public class MainWindow extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanelRight = new javax.swing.JPanel();
         jPanelTopContainer = new javax.swing.JPanel();
-        jScrollPaneTable = new javax.swing.JScrollPane();
+        panel_table = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanelJobDetails = new javax.swing.JPanel();
+        panel_jobdetails = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -102,12 +114,12 @@ public class MainWindow extends javax.swing.JFrame {
         jTextField5 = new javax.swing.JTextField();
         jTextField6 = new javax.swing.JTextField();
         jTextField7 = new javax.swing.JTextField();
-        jPanelButtons = new javax.swing.JPanel();
+        panel_buttons = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         btn_kill = new javax.swing.JButton();
         btn_refresh = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
+        tree_jobs = new javax.swing.JTree();
         toolbar_main = new javax.swing.JToolBar();
         btn_add = new javax.swing.JButton();
         btn_remove = new javax.swing.JButton();
@@ -127,7 +139,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jPanelRight.setPreferredSize(new java.awt.Dimension(200, 200));
 
-        jScrollPaneTable.setAutoscrolls(true);
+        panel_table.setAutoscrolls(true);
 
         jTable1.setAutoCreateRowSorter(true);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -156,9 +168,9 @@ public class MainWindow extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPaneTable.setViewportView(jTable1);
+        panel_table.setViewportView(jTable1);
 
-        jPanelJobDetails.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Details"));
+        panel_jobdetails.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Details"));
 
         jLabel1.setText("Name:");
 
@@ -175,63 +187,63 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("Host");
 
-        javax.swing.GroupLayout jPanelJobDetailsLayout = new javax.swing.GroupLayout(jPanelJobDetails);
-        jPanelJobDetails.setLayout(jPanelJobDetailsLayout);
-        jPanelJobDetailsLayout.setHorizontalGroup(
-            jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelJobDetailsLayout.createSequentialGroup()
+        javax.swing.GroupLayout panel_jobdetailsLayout = new javax.swing.GroupLayout(panel_jobdetails);
+        panel_jobdetails.setLayout(panel_jobdetailsLayout);
+        panel_jobdetailsLayout.setHorizontalGroup(
+            panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addComponent(jLabel7))
-                .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelJobDetailsLayout.createSequentialGroup()
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
-                    .addGroup(jPanelJobDetailsLayout.createSequentialGroup()
+                    .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
-                    .addGroup(jPanelJobDetailsLayout.createSequentialGroup()
+                    .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
                             .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                     .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                     .addComponent(jTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanelJobDetailsLayout.setVerticalGroup(
-            jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelJobDetailsLayout.createSequentialGroup()
-                .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        panel_jobdetailsLayout.setVerticalGroup(
+            panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_jobdetailsLayout.createSequentialGroup()
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel5)
                     .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
-                .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelJobDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(109, Short.MAX_VALUE))
@@ -241,18 +253,18 @@ public class MainWindow extends javax.swing.JFrame {
         jPanelTopContainer.setLayout(jPanelTopContainerLayout);
         jPanelTopContainerLayout.setHorizontalGroup(
             jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPaneTable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
             .addGroup(jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanelJobDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panel_jobdetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelTopContainerLayout.setVerticalGroup(
             jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPaneTable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
             .addGroup(jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanelJobDetails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panel_jobdetails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanelButtons.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        panel_buttons.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel8.setText("job/worker so und so");
 
@@ -260,26 +272,26 @@ public class MainWindow extends javax.swing.JFrame {
 
         btn_refresh.setText("refresh");
 
-        javax.swing.GroupLayout jPanelButtonsLayout = new javax.swing.GroupLayout(jPanelButtons);
-        jPanelButtons.setLayout(jPanelButtonsLayout);
-        jPanelButtonsLayout.setHorizontalGroup(
-            jPanelButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelButtonsLayout.createSequentialGroup()
+        javax.swing.GroupLayout panel_buttonsLayout = new javax.swing.GroupLayout(panel_buttons);
+        panel_buttons.setLayout(panel_buttonsLayout);
+        panel_buttonsLayout.setHorizontalGroup(
+            panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_buttonsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
-                    .addGroup(jPanelButtonsLayout.createSequentialGroup()
+                    .addGroup(panel_buttonsLayout.createSequentialGroup()
                         .addComponent(btn_kill, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_refresh)))
                 .addContainerGap(446, Short.MAX_VALUE))
         );
-        jPanelButtonsLayout.setVerticalGroup(
-            jPanelButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelButtonsLayout.createSequentialGroup()
+        panel_buttonsLayout.setVerticalGroup(
+            panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_buttonsLayout.createSequentialGroup()
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_kill)
                     .addComponent(btn_refresh))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -289,7 +301,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanelRight.setLayout(jPanelRightLayout);
         jPanelRightLayout.setHorizontalGroup(
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelButtons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panel_buttons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanelTopContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanelRightLayout.setVerticalGroup(
@@ -297,21 +309,21 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRightLayout.createSequentialGroup()
                 .addComponent(jPanelTopContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelButtons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(panel_buttons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jSplitPane1.setRightComponent(jPanelRight);
 
         jScrollPane1.setMinimumSize(new java.awt.Dimension(0, 0));
 
-        jTree1.setModel(treeModel);
-        jTree1.setMinimumSize(new java.awt.Dimension(50, 100));
-        jTree1.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+        tree_jobs.setModel(treeModel);
+        tree_jobs.setMinimumSize(new java.awt.Dimension(50, 100));
+        tree_jobs.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
-                jTree1ValueChanged(evt);
+                tree_jobsValueChanged(evt);
             }
         });
-        jScrollPane1.setViewportView(jTree1);
+        jScrollPane1.setViewportView(tree_jobs);
 
         jSplitPane1.setLeftComponent(jScrollPane1);
 
@@ -322,12 +334,22 @@ public class MainWindow extends javax.swing.JFrame {
         btn_add.setFocusable(false);
         btn_add.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_add.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btn_add.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_add(evt);
+            }
+        });
         toolbar_main.add(btn_add);
 
         btn_remove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stop.png"))); // NOI18N
         btn_remove.setFocusable(false);
         btn_remove.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_remove.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btn_remove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_remove(evt);
+            }
+        });
         toolbar_main.add(btn_remove);
 
         btn_ping.setText("Ping");
@@ -341,9 +363,19 @@ public class MainWindow extends javax.swing.JFrame {
         menu_file.setText("File");
 
         menu_item_newjob.setText("New Job");
+        menu_item_newjob.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_item_newjobActionPerformed(evt);
+            }
+        });
         menu_file.add(menu_item_newjob);
 
         menu_item_stopserver.setText("Stop Server");
+        menu_item_stopserver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_item_stopserverActionPerformed(evt);
+            }
+        });
         menu_file.add(menu_item_stopserver);
 
         menu_item_options.setText("Options");
@@ -355,6 +387,11 @@ public class MainWindow extends javax.swing.JFrame {
         menu_file.add(menu_item_options);
 
         menu_item_exit.setText("Exit");
+        menu_item_exit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_item_exitActionPerformed(evt);
+            }
+        });
         menu_file.add(menu_item_exit);
 
         jMenuBar1.add(menu_file);
@@ -421,34 +458,61 @@ public class MainWindow extends javax.swing.JFrame {
        if (wmsx_service!=null)
        {
             if(optionen==null)
-                optionen=new Optionen();
+                optionen=new Options();
             System.out.println("Show OptionsDialog...");
             optionen.setVisible(true);
        }
 }//GEN-LAST:event_menu_item_optionsActionPerformed
 
-    private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTree1ValueChanged
+       private void tree_jobsValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_tree_jobsValueChanged
 
         DefaultMutableTreeNode node =
-                (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent();
+                (DefaultMutableTreeNode) tree_jobs.getLastSelectedPathComponent();
+        
         if (node == null) return;
         
         String classname = node.getUserObject().getClass().getSimpleName();
         System.out.println(classname);
 
         if (classname.equals("JobInfo")){
-            jScrollPaneTable.setVisible(false);
-            jPanelJobDetails.setVisible(true);
+            panel_table.setVisible(false);
+            panel_jobdetails.setVisible(true);
+
+            //enable remove buttons
+            btn_remove.setEnabled(true);
+            btn_kill.setEnabled(true);
         }else{
-            jScrollPaneTable.setVisible(true);
-            jPanelJobDetails.setVisible(false);
+            panel_table.setVisible(true);
+            panel_jobdetails.setVisible(false);
+
+            //disable remove buttons
+            btn_remove.setEnabled(false);
+            btn_kill.setEnabled(false);
         }
+        
         String titel = node.getUserObject().toString();
         jLabel8.setText(titel);
 
-        this.repaint();
+        //this.repaint();
 
-    }//GEN-LAST:event_jTree1ValueChanged
+}//GEN-LAST:event_tree_jobsValueChanged
+
+       private void menu_item_stopserverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_stopserverActionPerformed
+           // TODO add your handling code here:
+       }//GEN-LAST:event_menu_item_stopserverActionPerformed
+
+       private void menu_item_exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_exitActionPerformed
+           System.exit(0);
+       }//GEN-LAST:event_menu_item_exitActionPerformed
+
+       private void menu_item_newjobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_newjobActionPerformed
+           if (wmsx_service!=null)
+           {
+                NewJob newjob = new NewJob();
+                System.out.println("Show NewJobDialog...");
+                newjob.setVisible(true);
+           }
+       }//GEN-LAST:event_menu_item_newjobActionPerformed
 
     Action exitAction = new AbstractAction( "Quit" ) {
       @Override public void actionPerformed( ActionEvent e ) {
@@ -474,12 +538,9 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanelButtons;
-    private javax.swing.JPanel jPanelJobDetails;
     private javax.swing.JPanel jPanelRight;
     private javax.swing.JPanel jPanelTopContainer;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPaneTable;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
@@ -489,14 +550,17 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
-    private javax.swing.JTree jTree1;
     private javax.swing.JMenu menu_edit;
     private javax.swing.JMenu menu_file;
     private javax.swing.JMenuItem menu_item_exit;
     private javax.swing.JMenuItem menu_item_newjob;
     private javax.swing.JMenuItem menu_item_options;
     private javax.swing.JMenuItem menu_item_stopserver;
+    private javax.swing.JPanel panel_buttons;
+    private javax.swing.JPanel panel_jobdetails;
+    private javax.swing.JScrollPane panel_table;
     private javax.swing.JToolBar toolbar_main;
+    private javax.swing.JTree tree_jobs;
     // End of variables declaration//GEN-END:variables
 
     private void makeModel() {
@@ -509,7 +573,13 @@ public class MainWindow extends javax.swing.JFrame {
 
             for (String backend : backends){
                  System.out.println(backend);
-                 // endlosschleife mit fake???
+                 //add Backend
+                 DefaultMutableTreeNode backendnode = new DefaultMutableTreeNode(backend);
+                 //add 3 sample jobs
+                 for (int i=0; i<=3; i++)
+                    backendnode.add(new DefaultMutableTreeNode(new JobInfo("test")));
+                 rootNode.add(backendnode);
+                 
             }
 
         }else {
@@ -533,8 +603,8 @@ public class MainWindow extends javax.swing.JFrame {
             node1 = new DefaultMutableTreeNode("Gat");
             rootNode.add(node1);
 
-            treeModel = new DefaultTreeModel(rootNode);
         }
+        treeModel = new DefaultTreeModel(rootNode);
     }
 
 }
