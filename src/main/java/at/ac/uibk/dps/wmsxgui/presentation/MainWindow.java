@@ -11,14 +11,17 @@
 
 package at.ac.uibk.dps.wmsxgui.presentation;
 
+import at.ac.uibk.dps.wmsxgui.presentation.util.MyTreeCellRenderer;
 import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
 import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.Wmsx;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -69,6 +72,10 @@ public class MainWindow extends javax.swing.JFrame {
         btn_kill.setEnabled(false);
 
         tree_jobs.setCellRenderer(new MyTreeCellRenderer());
+
+        // Set icon
+        Image icon = (new ImageIcon(getClass().getResource("/icon.png"))).getImage();
+        this.setIconImage(icon);
 
         centerScreen();
     }
@@ -478,9 +485,12 @@ public class MainWindow extends javax.swing.JFrame {
             panel_table.setVisible(false);
             panel_jobdetails.setVisible(true);
 
-            //enable remove buttons
-            btn_remove.setEnabled(true);
-            btn_kill.setEnabled(true);
+            if (wmsx_service!=null)
+            {
+                //enable remove buttons
+                btn_remove.setEnabled(true);
+                btn_kill.setEnabled(true);
+            }
         }else{
             panel_table.setVisible(true);
             panel_jobdetails.setVisible(false);
@@ -498,7 +508,10 @@ public class MainWindow extends javax.swing.JFrame {
 }//GEN-LAST:event_tree_jobsValueChanged
 
        private void menu_item_stopserverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_stopserverActionPerformed
-           // TODO add your handling code here:
+           if (wmsx_service!=null)
+           {
+               wmsx_service.shutdownWorkers();
+           }
        }//GEN-LAST:event_menu_item_stopserverActionPerformed
 
        private void menu_item_exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_exitActionPerformed
