@@ -21,7 +21,9 @@
 
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.SubmissionResult;
+import hu.kfki.grid.wmsx.TransportJobUID;
 import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.Backends;
 import hu.kfki.grid.wmsx.backends.JobUid;
@@ -59,6 +61,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
+
+import net.jini.core.event.RemoteEventListener;
+import net.jini.core.lease.Lease;
+import net.jini.id.Uuid;
 
 import com.sun.jini.admin.DestroyAdmin;
 
@@ -554,6 +560,37 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     /** {@inheritDoc} */
     public Iterable<String> listBackends() throws RemoteException {
         return new ArrayList<String>(Backends.getInstance().listBackends());
+    }
+
+    /** {@inheritDoc} */
+    public void cancelJob(final TransportJobUID jobId) throws RemoteException {
+        // TODO Auto-generated method stub
+    }
+
+    /** {@inheritDoc} */
+    public JobInfo getJobInfo(final TransportJobUID jobId)
+            throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public Iterable<TransportJobUID> listJobs() throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public Lease registerEventListener(final RemoteEventListener r)
+            throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public void shutdownWorker(final Uuid workerId) throws RemoteException {
+        // TODO Auto-generated method stub
+
     }
 
 }

@@ -35,9 +35,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import net.jini.admin.Administrable;
@@ -50,7 +50,10 @@ import net.jini.id.Uuid;
  * 
  * @version $Date$
  */
+// CHECKSTYLE:OFF
+// Data Abstraction coupling is too high, but it is needed.
 public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
+    // CHECKSTYLE:ON
 
     private static final String FILE_NOT_FOUND = "File not Found: ";
 
@@ -152,7 +155,7 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
             throw new FileNotFoundException(WmsxProviderProxy.FILE_NOT_FOUND
                     + argFile);
         }
-        final List<LaszloCommand> commands = new Vector<LaszloCommand>();
+        final List<LaszloCommand> commands = new ArrayList<LaszloCommand>();
         final FileReader freader = new FileReader(f);
         final BufferedReader reader = new BufferedReader(freader);
         String line = reader.readLine();
@@ -252,32 +255,51 @@ public class WmsxProviderProxy implements Serializable, Wmsx, Administrable {
 
     /** {@inheritDoc} */
     public void cancelJob(final TransportJobUID jobId) {
-        // TODO Auto-generated method stub
-
+        try {
+            this.remoteService.cancelJob(jobId);
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
     }
 
     /** {@inheritDoc} */
     public JobInfo getJobInfo(final TransportJobUID jobId) {
-        // TODO Auto-generated method stub
+        try {
+            return this.remoteService.getJobInfo(jobId);
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
         return null;
     }
 
     /** {@inheritDoc} */
     public Iterable<TransportJobUID> listJobs() {
-        // TODO Auto-generated method stub
-        return null;
+        Iterable<TransportJobUID> list = Collections.emptyList();
+        try {
+            list = this.remoteService.listJobs();
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
+        return list;
     }
 
     /** {@inheritDoc} */
     public Lease registerEventListener(final RemoteEventListener r) {
-        // TODO Auto-generated method stub
+        try {
+            return this.remoteService.registerEventListener(r);
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
         return null;
     }
 
     /** {@inheritDoc} */
     public void shutdownWorker(final Uuid workerId) {
-        // TODO Auto-generated method stub
-
+        try {
+            this.remoteService.shutdownWorker(workerId);
+        } catch (final RemoteException re) {
+            WmsxProviderProxy.LOGGER.warning(re.getMessage());
+        }
     }
 
 }
