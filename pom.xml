@@ -302,12 +302,13 @@ keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
   </profiles>
 
   <dependencies>
+<!--
     <dependency>
       <groupId>wmsx-gui</groupId>
       <artifactId>tinylaf</artifactId>
       <version>1.3.8</version>
     </dependency>
-
+-->
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
