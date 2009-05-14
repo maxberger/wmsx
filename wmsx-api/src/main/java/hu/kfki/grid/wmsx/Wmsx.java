@@ -162,17 +162,19 @@ public interface Wmsx {
      * be active.
      * 
      * @return an Iterable&lt;TransportJobUID&gt; of jobs.
+     * @see hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider#listJobs()
      */
     Iterable<TransportJobUID> listJobs();
 
     /**
      * Register an observer to be notified when a job status changes. The
      * {@link RemoteEventListener#notify()} method is called with a
-     * {@link JobChangeEvent} as parameter.
+     * {@link hu.kfki.grid.wmsx.JobChangeEvent} as parameter.
      * 
      * @param r
      *            a {@link RemoteEventListener} to be notified on changes.
      * @return a Lease which must be renewed.
+     * @see hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider#registerEventListener(RemoteEventListener)
      */
     Lease registerEventListener(RemoteEventListener r);
 
@@ -182,6 +184,7 @@ public interface Wmsx {
      * @param jobId
      *            Id of the job
      * @return information about the job.
+     * @see hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider#getJobInfo(TransportJobUID)
      */
     JobInfo getJobInfo(TransportJobUID jobId);
 
@@ -190,6 +193,7 @@ public interface Wmsx {
      * 
      * @param jobId
      *            If of the job.
+     * @see hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider#cancelJob(TransportJobUID)
      */
     void cancelJob(TransportJobUID jobId);
 
@@ -198,6 +202,7 @@ public interface Wmsx {
      * 
      * @param workerId
      *            Id of the worker.
+     * @see hu.kfki.grid.wmsx.provider.IRemoteWmsxProvider#shutdownWorker(Uuid)
      */
     void shutdownWorker(Uuid workerId);
 }

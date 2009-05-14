@@ -21,12 +21,18 @@
 
 package hu.kfki.grid.wmsx.provider;
 
+import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.SubmissionResult;
+import hu.kfki.grid.wmsx.TransportJobUID;
 
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+
+import net.jini.core.event.RemoteEventListener;
+import net.jini.core.lease.Lease;
+import net.jini.id.Uuid;
 
 /**
  * Remote version of Jini service.
@@ -208,4 +214,64 @@ public interface IRemoteWmsxProvider extends Remote {
      * @see hu.kfki.grid.wmsx.Wmsx#shutdownWorkers()
      */
     void shutdownWorkers() throws RemoteException;
+
+    /**
+     * Retrieves a list of known jobs. Please note: Some of these may no longer
+     * be active.
+     * 
+     * @return an Iterable&lt;TransportJobUID&gt; of jobs.
+     * @throws RemoteException
+     *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#listJobs()
+     */
+    Iterable<TransportJobUID> listJobs() throws RemoteException;
+
+    /**
+     * Register an observer to be notified when a job status changes. The
+     * {@link RemoteEventListener#notify()} method is called with a
+     * {@link hu.kfki.grid.wmsx.JobChangeEvent} as parameter.
+     * 
+     * @param r
+     *            a {@link RemoteEventListener} to be notified on changes.
+     * @return a Lease which must be renewed.
+     * @throws RemoteException
+     *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#registerEventListener(RemoteEventListener)
+     */
+    Lease registerEventListener(RemoteEventListener r) throws RemoteException;
+
+    /**
+     * Retrieve the current information for a job.
+     * 
+     * @param jobId
+     *            Id of the job
+     * @return information about the job.
+     * @throws RemoteException
+     *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#getJobInfo(TransportJobUID)
+     */
+    JobInfo getJobInfo(TransportJobUID jobId) throws RemoteException;
+
+    /**
+     * Cancel a running job.
+     * 
+     * @param jobId
+     *            If of the job.
+     * @throws RemoteException
+     *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#cancelJob(TransportJobUID)
+     */
+    void cancelJob(TransportJobUID jobId) throws RemoteException;
+
+    /**
+     * Shutdown a worker.
+     * 
+     * @param workerId
+     *            Id of the worker.
+     * @throws RemoteException
+     *             if the connection is broken.
+     * @see hu.kfki.grid.wmsx.Wmsx#shutdownWorker(Uuid)
+     */
+    void shutdownWorker(Uuid workerId) throws RemoteException;
+
 }
