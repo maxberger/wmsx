@@ -35,9 +35,9 @@ import net.jini.id.Uuid;
  */
 public class JobInfo implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    private final String siteId;
+    private String siteId = "";
 
     private boolean isWorker;
 
@@ -49,24 +49,24 @@ public class JobInfo implements Serializable {
 
     private Date doneRunningTime;
 
-    private String executable;
+    private String executable = "";
 
-    private String description;
+    private String description = "";
 
-    private String output;
+    private String output = "";
 
-    private TransportJobUID jobId;
+    private final TransportJobUID jobId;
 
-    private JobState status;
+    private JobState status = JobState.NONE;
 
     /**
      * Default constructor.
      * 
-     * @param site
-     *            Site this job was scheduled to.
+     * @param id
+     *            The JobID.
      */
-    public JobInfo(final String site) {
-        this.siteId = site;
+    public JobInfo(final TransportJobUID id) {
+        this.jobId = id;
     }
 
     /**
@@ -74,6 +74,156 @@ public class JobInfo implements Serializable {
      */
     public String getSiteId() {
         return this.siteId;
+    }
+
+    /**
+     * @return the isWorker
+     */
+    public boolean isWorker() {
+        return this.isWorker;
+    }
+
+    /**
+     * @param nisWorker
+     *            the isWorker to set
+     */
+    public void setWorker(final boolean nisWorker) {
+        this.isWorker = nisWorker;
+    }
+
+    /**
+     * @return the workerId
+     */
+    public Uuid getWorkerId() {
+        return this.workerId;
+    }
+
+    /**
+     * @param nworkerId
+     *            the workerId to set
+     */
+    public void setWorkerId(final Uuid nworkerId) {
+        this.workerId = nworkerId;
+    }
+
+    /**
+     * @return the creationTime
+     */
+    public Date getCreationTime() {
+        return this.creationTime;
+    }
+
+    /**
+     * @param ncreationTime
+     *            the creationTime to sewt
+     */
+    public void setCreationTime(final Date ncreationTime) {
+        this.creationTime = ncreationTime;
+    }
+
+    /**
+     * @return the startRunningTime
+     */
+    public Date getStartRunningTime() {
+        return this.startRunningTime;
+    }
+
+    /**
+     * @param nstartRunningTime
+     *            the startRunningTime to set
+     */
+    public void setStartRunningTime(final Date nstartRunningTime) {
+        this.startRunningTime = nstartRunningTime;
+    }
+
+    /**
+     * @return the doneRunningTime
+     */
+    public Date getDoneRunningTime() {
+        return this.doneRunningTime;
+    }
+
+    /**
+     * @param ndoneRunningTime
+     *            the doneRunningTime to set
+     */
+    public void setDoneRunningTime(final Date ndoneRunningTime) {
+        this.doneRunningTime = ndoneRunningTime;
+    }
+
+    /**
+     * @return the executable
+     */
+    public String getExecutable() {
+        return this.executable;
+    }
+
+    /**
+     * @param nexecutable
+     *            the executable to set
+     */
+    public void setExecutable(final String nexecutable) {
+        this.executable = nexecutable;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return this.description;
+    }
+
+    /**
+     * @param ndescription
+     *            the description to set
+     */
+    public void setDescription(final String ndescription) {
+        this.description = ndescription;
+    }
+
+    /**
+     * @return the output
+     */
+    public String getOutput() {
+        return this.output;
+    }
+
+    /**
+     * @param noutput
+     *            the output to set
+     */
+    public void setOutput(final String noutput) {
+        this.output = noutput;
+    }
+
+    /**
+     * @return the status
+     */
+    public JobState getStatus() {
+        return this.status;
+    }
+
+    /**
+     * @param nstatus
+     *            the status to set
+     */
+    public void setStatus(final JobState nstatus) {
+        this.status = nstatus;
+    }
+
+    /**
+     * @return the jobId
+     */
+    public TransportJobUID getJobId() {
+        return this.jobId;
+    }
+
+    /**
+     * @param nsiteId
+     *            the siteId to set
+     */
+    public void setSiteId(final String nsiteId) {
+        this.siteId = nsiteId;
     }
 
 }
