@@ -21,59 +21,79 @@
 
 package hu.kfki.grid.wmsx.job;
 
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+
 /**
  * Represents possible states of a job.
  * 
  * @version $Date: 1/1/2000$
  */
-public final class JobState {
+public final class JobState implements Serializable {
 
     /**
      * Startup phase. The job is committed, but not yet running.
      */
-    public static final JobState STARTUP = new JobState();
+    public static final JobState STARTUP = new JobState(JobState.STR_STARTUP);
 
     /**
      * Running phase. The job is being executed on the backend.
      */
-    public static final JobState RUNNING = new JobState();
+    public static final JobState RUNNING = new JobState(JobState.STR_RUNNING);
 
     /**
      * The job has terminated successfully.
      */
-    public static final JobState SUCCESS = new JobState();
+    public static final JobState SUCCESS = new JobState(JobState.STR_SUCCESS);
 
     /**
      * The job has terminated abnormally.
      */
-    public static final JobState FAILED = new JobState();
+    public static final JobState FAILED = new JobState(JobState.STR_FAILED);
 
     /**
      * The job state information is not available.
      */
-    public static final JobState NONE = new JobState();
+    public static final JobState NONE = new JobState(JobState.STR_NONE);
 
-    private JobState() {
+    private static final long serialVersionUID = 1L;
+
+    private final static String STR_STARTUP = "STARTUP";
+
+    private final static String STR_RUNNING = "RUNNING";
+
+    private final static String STR_SUCCESS = "SUCCESS";
+
+    private final static String STR_FAILED = "FAILED";
+
+    private final static String STR_NONE = "NONE";
+
+    private final String value;
+
+    private JobState(final String val) {
+        this.value = val;
     };
 
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final String result;
-        if (JobState.STARTUP.equals(this)) {
-            result = "STARTUP";
-        } else if (JobState.RUNNING.equals(this)) {
-            result = "RUNNING";
-        } else if (JobState.SUCCESS.equals(this)) {
-            result = "SUCCESS";
-        } else if (JobState.FAILED.equals(this)) {
-            result = "FAILED";
-        } else if (JobState.NONE.equals(this)) {
-            result = "NONE";
+        return this.value;
+    }
+
+    private Object readResolve() throws ObjectStreamException {
+        final Object retVal;
+        if (this.value.equals(JobState.STR_STARTUP)) {
+            retVal = JobState.STARTUP;
+        } else if (this.value.equals(JobState.STR_RUNNING)) {
+            retVal = JobState.RUNNING;
+        } else if (this.value.equals(JobState.STR_SUCCESS)) {
+            retVal = JobState.SUCCESS;
+        } else if (this.value.equals(JobState.STR_FAILED)) {
+            retVal = JobState.FAILED;
         } else {
-            result = super.toString();
+            retVal = JobState.NONE;
         }
-        return result;
+        return retVal;
     }
 
 }
