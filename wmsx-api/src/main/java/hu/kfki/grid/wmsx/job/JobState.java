@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -21,21 +21,42 @@
 
 package hu.kfki.grid.wmsx.job;
 
+/**
+ * Represents possible states of a job.
+ * 
+ * @version $Date: 1/1/2000$
+ */
 public final class JobState {
+
+    /**
+     * Startup phase. The job is committed, but not yet running.
+     */
+    public static final JobState STARTUP = new JobState();
+
+    /**
+     * Running phase. The job is being executed on the backend.
+     */
+    public static final JobState RUNNING = new JobState();
+
+    /**
+     * The job has terminated successfully.
+     */
+    public static final JobState SUCCESS = new JobState();
+
+    /**
+     * The job has terminated abnormally.
+     */
+    public static final JobState FAILED = new JobState();
+
+    /**
+     * The job state information is not available.
+     */
+    public static final JobState NONE = new JobState();
 
     private JobState() {
     };
 
-    public static final JobState STARTUP = new JobState();
-
-    public static final JobState RUNNING = new JobState();
-
-    public static final JobState SUCCESS = new JobState();
-
-    public static final JobState FAILED = new JobState();
-
-    public static final JobState NONE = new JobState();
-
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         final String result;
