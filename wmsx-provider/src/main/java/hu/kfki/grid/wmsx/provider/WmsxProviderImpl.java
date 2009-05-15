@@ -570,14 +570,12 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     /** {@inheritDoc} */
     public JobInfo getJobInfo(final TransportJobUID jobId)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return JobWatcher.getInstance().getInfoForJob(jobId);
     }
 
     /** {@inheritDoc} */
     public Iterable<TransportJobUID> listJobs() throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return JobWatcher.getInstance().getActiveJobs();
     }
 
     /** {@inheritDoc} */
