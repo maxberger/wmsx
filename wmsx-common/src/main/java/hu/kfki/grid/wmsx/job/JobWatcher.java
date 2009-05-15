@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -21,8 +21,11 @@
 
 package hu.kfki.grid.wmsx.job;
 
+import hu.kfki.grid.wmsx.JobInfo;
+import hu.kfki.grid.wmsx.TransportJobUID;
 import hu.kfki.grid.wmsx.backends.JobUid;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,7 +46,7 @@ public final class JobWatcher implements Runnable {
 
     private final Map<JobUid, Set<JobListener>> joblisteners = new HashMap<JobUid, Set<JobListener>>();
 
-    private final Map<JobUid, JobState> jobstate = new HashMap<JobUid, JobState>();
+    private final Map<TransportJobUID, JobInfo> jobInfos = new HashMap<TransportJobUID, JobInfo>();
 
     private Thread runThread;
 
@@ -61,11 +64,13 @@ public final class JobWatcher implements Runnable {
         this.shutdown = false;
     }
 
-    private synchronized void doStart() {
-        if (this.runThread == null) {
-            JobWatcher.LOGGER.info("Starting new Listener");
-            this.runThread = new Thread(this);
-            this.runThread.start();
+    private void doStart() {
+        synchronized (this) {
+            if (this.runThread == null) {
+                JobWatcher.LOGGER.info("Starting new Listener");
+                this.runThread = new Thread(this);
+                this.runThread.start();
+            }
         }
     }
 
@@ -74,6 +79,36 @@ public final class JobWatcher implements Runnable {
      */
     public static JobWatcher getInstance() {
         return JobWatcher.SingletonHolder.INSTANCE;
+    }
+
+    /**
+     * Retrieve the JobInfo for a given Job.
+     * 
+     * @param id
+     *            Id of the job.
+     * @return the JobInfo.
+     */
+    public JobInfo getInfoForJob(final TransportJobUID id) {
+        JobInfo info;
+        synchronized (this.jobInfos) {
+            info = this.jobInfos.get(id);
+            if (info == null) {
+                info = new JobInfo(id);
+                this.jobInfos.put(id, info);
+            }
+        }
+        return info;
+    }
+
+    /**
+     * Retrieve the JobInfo for a given Job.
+     * 
+     * @param id
+     *            Id of the job.
+     * @return the JobInfo.
+     */
+    public JobInfo getInfoForJob(final JobUid id) {
+        return this.getInfoForJob(id.toTransportJobUid());
     }
 
     /**
@@ -88,7 +123,6 @@ public final class JobWatcher implements Runnable {
         if (jobId == null) {
             return;
         }
-        JobState stateNow;
         synchronized (this) {
             if (!this.shutdown) {
                 Set<JobListener> listeners = this.joblisteners.get(jobId);
@@ -97,30 +131,32 @@ public final class JobWatcher implements Runnable {
                     this.joblisteners.put(jobId, listeners);
                 }
                 listeners.add(listener);
-
-                stateNow = this.jobstate.get(jobId);
-
                 this.doStart();
-            } else {
-                stateNow = null;
-
+                this.sendMissedStates(jobId, listener);
             }
         }
-        if (stateNow != null) {
-            if (JobState.STARTUP.equals(stateNow)) {
-                listener.startup(jobId);
-            } else if (JobState.RUNNING.equals(stateNow)) {
-                listener.startup(jobId);
-                listener.running(jobId);
-            } else if (JobState.SUCCESS.equals(stateNow)) {
-                listener.startup(jobId);
-                listener.running(jobId);
-                listener.done(jobId, true);
-            } else if (JobState.FAILED.equals(stateNow)) {
-                listener.startup(jobId);
-                listener.running(jobId);
-                listener.done(jobId, false);
-            }
+    }
+
+    /**
+     * @param jobId
+     * @param listener
+     */
+    private void sendMissedStates(final JobUid jobId, final JobListener listener) {
+        final JobState stateNow = this.getInfoForJob(jobId).getStatus();
+
+        if (JobState.STARTUP.equals(stateNow)) {
+            listener.startup(jobId);
+        } else if (JobState.RUNNING.equals(stateNow)) {
+            listener.startup(jobId);
+            listener.running(jobId);
+        } else if (JobState.SUCCESS.equals(stateNow)) {
+            listener.startup(jobId);
+            listener.running(jobId);
+            listener.done(jobId, true);
+        } else if (JobState.FAILED.equals(stateNow)) {
+            listener.startup(jobId);
+            listener.running(jobId);
+            listener.done(jobId, false);
         }
     }
 
@@ -238,15 +274,24 @@ public final class JobWatcher implements Runnable {
     }
 
     private boolean hasStateChanged(final JobUid jobId, final JobState stateNow) {
-        boolean differs;
-        synchronized (this.jobstate) {
-            JobState oldState = this.jobstate.get(jobId);
+        final boolean differs;
+        synchronized (this.jobInfos) {
+            final JobInfo info = this.getInfoForJob(jobId);
+            JobState oldState = info.getStatus();
             if (oldState == null) {
                 oldState = JobState.NONE;
             }
             differs = !oldState.equals(stateNow);
             if (differs) {
-                this.jobstate.put(jobId, stateNow);
+                info.setStatus(stateNow);
+                if (JobState.STARTUP.equals(stateNow)) {
+                    info.setCreationTime(new Date());
+                } else if (JobState.RUNNING.equals(stateNow)) {
+                    info.setStartRunningTime(new Date());
+                } else if (JobState.SUCCESS.equals(stateNow)
+                        || JobState.FAILED.equals(stateNow)) {
+                    info.setDoneRunningTime(new Date());
+                }
             }
         }
         return differs;
