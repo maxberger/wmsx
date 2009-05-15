@@ -25,10 +25,12 @@ import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.TransportJobUID;
 import hu.kfki.grid.wmsx.backends.JobUid;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -242,6 +244,20 @@ public final class JobWatcher implements Runnable {
                 this.joblisteners.remove(jobId);
             }
         }
+    }
+
+    /**
+     * @return A list of active jobs.
+     */
+    public Iterable<TransportJobUID> getActiveJobs() {
+        List<TransportJobUID> retVal;
+        synchronized (this) {
+            retVal = new ArrayList<TransportJobUID>(this.joblisteners.size());
+            for (final JobUid jid : this.joblisteners.keySet()) {
+                retVal.add(jid.toTransportJobUid());
+            }
+        }
+        return retVal;
     }
 
     private void notifyListeners(final JobUid jobId, final JobState stateNow,
