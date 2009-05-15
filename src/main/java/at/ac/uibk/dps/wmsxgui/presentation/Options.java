@@ -31,7 +31,8 @@ public class Options extends javax.swing.JFrame {
     /** Creates new form Optionen. */
     public Options() {
         this.businessman = BusinessManager.getInstance();
-        wmsx_service = businessman.getRequestor().getWmsxService();
+        wmsx_service = businessman.getWmsxService();
+
         initComponents();
         centerScreen();
 
@@ -39,7 +40,6 @@ public class Options extends javax.swing.JFrame {
         Image icon = (new ImageIcon(getClass().getResource("/icon.png"))).getImage();
         this.setIconImage(icon);
 
-        ladeWerte();
     }
 
      /** Positioniert das Fenster genau in der Mitte des Bildschirmes...
@@ -224,9 +224,4 @@ public class Options extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPasswordField2;
     private javax.swing.JTextField jobcounttxt;
     // End of variables declaration//GEN-END:variables
-
-    private void ladeWerte() {
-        
-    }
-
 }

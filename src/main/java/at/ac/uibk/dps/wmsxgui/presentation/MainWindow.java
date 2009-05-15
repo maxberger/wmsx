@@ -13,6 +13,7 @@ package at.ac.uibk.dps.wmsxgui.presentation;
 
 import at.ac.uibk.dps.wmsxgui.presentation.util.MyTreeCellRenderer;
 import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
+import at.ac.uibk.dps.wmsxgui.business.JobData;
 import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.Wmsx;
 import java.awt.Dimension;
@@ -43,11 +44,13 @@ public class MainWindow extends javax.swing.JFrame {
     /** Creates new form MainWindow */
     public MainWindow() {
         this.businessman = BusinessManager.getInstance();
-        wmsx_service = businessman.getRequestor().getWmsxService();
-        makeModel();
+        wmsx_service = businessman.getWmsxService();
+        
+        updateTreeModel();
+        
         initComponents();
 
-        if (wmsx_service==null)
+        if (!businessman.isOnline())
         {
             setTitle("WMSX GUI - Offline Demo Mode");
 
@@ -208,15 +211,15 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
+                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
                     .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
+                        .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
                     .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))))
+                            .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -224,9 +227,9 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))
+                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                    .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                    .addComponent(jTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panel_jobdetailsLayout.setVerticalGroup(
@@ -253,20 +256,20 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(109, Short.MAX_VALUE))
+                .addContainerGap(150, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanelTopContainerLayout = new javax.swing.GroupLayout(jPanelTopContainer);
         jPanelTopContainer.setLayout(jPanelTopContainerLayout);
         jPanelTopContainerLayout.setHorizontalGroup(
             jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
             .addGroup(jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(panel_jobdetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelTopContainerLayout.setVerticalGroup(
             jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
             .addGroup(jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(panel_jobdetails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -276,8 +279,18 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel8.setText("job/worker so und so");
 
         btn_kill.setText("kill");
+        btn_kill.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_killActionPerformed(evt);
+            }
+        });
 
         btn_refresh.setText("refresh");
+        btn_refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_refreshActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel_buttonsLayout = new javax.swing.GroupLayout(panel_buttons);
         panel_buttons.setLayout(panel_buttonsLayout);
@@ -291,7 +304,7 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(btn_kill, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_refresh)))
-                .addContainerGap(446, Short.MAX_VALUE))
+                .addContainerGap(427, Short.MAX_VALUE))
         );
         panel_buttonsLayout.setVerticalGroup(
             panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -431,7 +444,7 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_ping(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ping
-       if (wmsx_service!=null)
+       if (businessman.isOnline())
        {
            boolean ping = wmsx_service.ping(false);
            boolean fullping =  wmsx_service.ping(true);
@@ -444,7 +457,7 @@ public class MainWindow extends javax.swing.JFrame {
 }//GEN-LAST:event_btn_ping
 
     private void btn_add(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add
-       if (wmsx_service!=null)
+       if (businessman.isOnline())
        {
             System.out.println("btn_add...");
 
@@ -455,14 +468,14 @@ public class MainWindow extends javax.swing.JFrame {
 }//GEN-LAST:event_btn_add
 
        private void btn_remove(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_remove
-       if (wmsx_service!=null)
+       if (businessman.isOnline())
        {
            System.out.println("btn_remove...");
        }
 }//GEN-LAST:event_btn_remove
 
        private void menu_item_optionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_optionsActionPerformed
-       if (wmsx_service!=null)
+       if (businessman.isOnline())
        {
             if(optionen==null)
                 optionen=new Options();
@@ -508,7 +521,7 @@ public class MainWindow extends javax.swing.JFrame {
 }//GEN-LAST:event_tree_jobsValueChanged
 
        private void menu_item_stopserverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_stopserverActionPerformed
-           if (wmsx_service!=null)
+           if (businessman.isOnline())
            {
                wmsx_service.shutdownWorkers();
            }
@@ -519,13 +532,21 @@ public class MainWindow extends javax.swing.JFrame {
        }//GEN-LAST:event_menu_item_exitActionPerformed
 
        private void menu_item_newjobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_newjobActionPerformed
-           if (wmsx_service!=null)
+           if (businessman.isOnline())
            {
                 NewJob newjob = new NewJob();
                 System.out.println("Show NewJobDialog...");
                 newjob.setVisible(true);
            }
        }//GEN-LAST:event_menu_item_newjobActionPerformed
+
+       private void btn_killActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_killActionPerformed
+           // TODO add your handling code here:
+       }//GEN-LAST:event_btn_killActionPerformed
+
+       private void btn_refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_refreshActionPerformed
+           businessman.refreshData();
+       }//GEN-LAST:event_btn_refreshActionPerformed
 
     Action exitAction = new AbstractAction( "Quit" ) {
       @Override public void actionPerformed( ActionEvent e ) {
@@ -576,43 +597,33 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTree tree_jobs;
     // End of variables declaration//GEN-END:variables
 
-    private void makeModel() {
-
+    private void updateTreeModel() {
+ 
         rootNode = new DefaultMutableTreeNode("Backends");
 
-        if (wmsx_service!=null)
+        if (businessman.isOnline())
         {
-            Iterable<String> backends = wmsx_service.listBackends();
-
-            for (String backend : backends){
-                 System.out.println(backend);
+            for (String backend : businessman.getBackends()){
+                 //System.out.println(backend);
                  //add Backend
                  DefaultMutableTreeNode backendnode = new DefaultMutableTreeNode(backend);
-                 //add 3 sample jobs
-                 for (int i=0; i<=3; i++)
-                    backendnode.add(new DefaultMutableTreeNode(new JobInfo("test")));
+                 //add jobs for backend
+                 for (JobData jobdata : businessman.getJobs(backend))
+                    backendnode.add(new DefaultMutableTreeNode(jobdata));
+                    
                  rootNode.add(backendnode);
                  
             }
 
-        }else {
-
-
-            // @TODO: UNTERSCHEIDUNG worker und  jobs ???
-
+        }else { //offline Demo Mode
 
             DefaultMutableTreeNode node1 = new DefaultMutableTreeNode("Fake");
-            DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(new JobInfo("description"));
-
+            
             rootNode.add(node1);
             node1 = new DefaultMutableTreeNode("Worker");
-            node1.add(node2);
             rootNode.add(node1);
             node1 = new DefaultMutableTreeNode("Local");
-            node2 = new DefaultMutableTreeNode(new JobInfo("job blabla"));
-            node1.add(node2);
             rootNode.add(node1);
-
             node1 = new DefaultMutableTreeNode("Gat");
             rootNode.add(node1);
 
