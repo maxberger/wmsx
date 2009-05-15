@@ -31,7 +31,9 @@ import java.io.Serializable;
 public class TransportJobUID implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     private final String backend;
+
     private final String localId;
 
     /**
@@ -66,7 +68,49 @@ public class TransportJobUID implements Serializable {
     public String toString() {
         final StringBuilder b = new StringBuilder(this.backend.toString());
         b.append('/');
-        b.append(localId);
+        b.append(this.localId);
         return b.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + (this.backend == null ? 0 : this.backend.hashCode());
+        result = prime * result
+                + (this.localId == null ? 0 : this.localId.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        final TransportJobUID other = (TransportJobUID) obj;
+        if (this.backend == null) {
+            if (other.backend != null) {
+                return false;
+            }
+        } else if (!this.backend.equals(other.backend)) {
+            return false;
+        }
+        if (this.localId == null) {
+            if (other.localId != null) {
+                return false;
+            }
+        } else if (!this.localId.equals(other.localId)) {
+            return false;
+        }
+        return true;
     }
 }
