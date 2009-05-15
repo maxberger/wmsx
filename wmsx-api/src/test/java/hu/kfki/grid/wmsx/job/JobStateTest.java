@@ -20,6 +20,11 @@
 /* $Id$ */
 package hu.kfki.grid.wmsx.job;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -58,5 +63,27 @@ public class JobStateTest extends TestCase {
         Assert.assertNotSame(state, JobState.NONE);
         Assert.assertEquals(state, JobState.RUNNING);
         Assert.assertSame(state, JobState.RUNNING);
+    }
+
+    /**
+     * Tests serialization equalities.
+     * 
+     * @throws Exception
+     *             if the test fails.
+     */
+    public void testSerial() throws Exception {
+        final JobState state = JobState.SUCCESS;
+        final ByteArrayOutputStream bas = new ByteArrayOutputStream();
+        final ObjectOutputStream oos = new ObjectOutputStream(bas);
+        oos.writeObject(state);
+        oos.close();
+
+        final ByteArrayInputStream bis = new ByteArrayInputStream(bas
+                .toByteArray());
+        final ObjectInputStream ois = new ObjectInputStream(bis);
+        final JobState read = (JobState) ois.readObject();
+        ois.close();
+        Assert.assertEquals(state, read);
+        Assert.assertSame(state, read);
     }
 }
