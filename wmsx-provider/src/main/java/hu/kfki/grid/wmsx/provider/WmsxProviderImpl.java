@@ -65,6 +65,8 @@ import java.util.logging.Logger;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.lease.Lease;
 import net.jini.id.Uuid;
+import net.jini.id.UuidFactory;
+import at.ac.uibk.dps.wmsx.leases.LandlordImpl;
 
 import com.sun.jini.admin.DestroyAdmin;
 
@@ -597,8 +599,11 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
     /** {@inheritDoc} */
     public Lease registerEventListener(final RemoteEventListener r)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        final Lease l = LandlordImpl.getInstance().getLeaseFactory().newLease(
+                UuidFactory.generate(), Lease.ANY);
+        JobWatcher.getInstance().addGenericListener(
+                new JobChangeEventEmitter(r));
+        return l;
     }
 
     /** {@inheritDoc} */

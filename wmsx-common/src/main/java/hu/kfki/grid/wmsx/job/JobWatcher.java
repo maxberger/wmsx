@@ -46,6 +46,8 @@ public final class JobWatcher implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(JobWatcher.class
             .toString());
 
+    private final Set<JobListener> catchAllJobListeners = new HashSet<JobListener>();
+
     private final Map<JobUid, Set<JobListener>> joblisteners = new HashMap<JobUid, Set<JobListener>>();
 
     private final Map<TransportJobUID, JobInfo> jobInfos = new HashMap<TransportJobUID, JobInfo>();
@@ -111,6 +113,18 @@ public final class JobWatcher implements Runnable {
      */
     public JobInfo getInfoForJob(final JobUid id) {
         return this.getInfoForJob(id.toTransportJobUid());
+    }
+
+    /**
+     * Adds a catch-all listener.
+     * 
+     * @param listener
+     *            Listener to add.
+     */
+    public void addGenericListener(final JobListener listener) {
+        synchronized (this.catchAllJobListeners) {
+            this.catchAllJobListeners.add(listener);
+        }
     }
 
     /**
@@ -265,15 +279,30 @@ public final class JobWatcher implements Runnable {
         final Iterator<JobListener> li = listeners.iterator();
         while (li.hasNext()) {
             final JobListener listener = li.next();
-            if (JobState.STARTUP.equals(stateNow)) {
-                listener.startup(jobId);
-            } else if (JobState.RUNNING.equals(stateNow)) {
-                listener.running(jobId);
-            } else if (JobState.SUCCESS.equals(stateNow)) {
-                listener.done(jobId, true);
-            } else if (JobState.FAILED.equals(stateNow)) {
-                listener.done(jobId, false);
+            this.notifyListener(jobId, stateNow, listener);
+        }
+        synchronized (this.catchAllJobListeners) {
+            for (final JobListener listener : this.catchAllJobListeners) {
+                this.notifyListener(jobId, stateNow, listener);
             }
+        }
+    }
+
+    /**
+     * @param jobId
+     * @param stateNow
+     * @param listener
+     */
+    private void notifyListener(final JobUid jobId, final JobState stateNow,
+            final JobListener listener) {
+        if (JobState.STARTUP.equals(stateNow)) {
+            listener.startup(jobId);
+        } else if (JobState.RUNNING.equals(stateNow)) {
+            listener.running(jobId);
+        } else if (JobState.SUCCESS.equals(stateNow)) {
+            listener.done(jobId, true);
+        } else if (JobState.FAILED.equals(stateNow)) {
+            listener.done(jobId, false);
         }
     }
 

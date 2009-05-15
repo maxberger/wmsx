@@ -21,6 +21,7 @@
 
 package hu.kfki.grid.wmsx;
 
+import hu.kfki.grid.wmsx.job.JobState;
 import net.jini.core.event.RemoteEvent;
 
 /**
@@ -30,11 +31,38 @@ import net.jini.core.event.RemoteEvent;
  */
 public final class JobChangeEvent extends RemoteEvent {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    private JobChangeEvent(final TransportJobUID jobUID, final String newState,
-            final int snum) {
+    private final JobState state;
+
+    /**
+     * Creates a new JobChangedEvent.
+     * 
+     * @param jobUID
+     *            Id of the Job
+     * @param newState
+     *            the new state
+     * @param snum
+     *            serial number of the event
+     */
+    public JobChangeEvent(final TransportJobUID jobUID,
+            final JobState newState, final int snum) {
         super(jobUID, 1, snum, null);
+        this.state = newState;
+    }
+
+    /**
+     * @return the JobID.
+     */
+    public TransportJobUID getJobUid() {
+        return (TransportJobUID) this.getSource();
+    }
+
+    /**
+     * @return the new Job State.
+     */
+    public JobState getState() {
+        return this.state;
     }
 
 }
