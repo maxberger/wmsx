@@ -21,7 +21,12 @@
 
 package hu.kfki.grid.wmsx;
 
+import hu.kfki.grid.wmsx.job.JobState;
+
 import java.io.Serializable;
+import java.util.Date;
+
+import net.jini.id.Uuid;
 
 /**
  * Describes Information about a job.
@@ -33,6 +38,26 @@ public class JobInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final String siteId;
+
+    private boolean isWorker;
+
+    private Uuid workerId;
+
+    private Date creationTime;
+
+    private Date startRunningTime;
+
+    private Date doneRunningTime;
+
+    private String executable;
+
+    private String description;
+
+    private String output;
+
+    private TransportJobUID jobId;
+
+    private JobState status;
 
     /**
      * Default constructor.
