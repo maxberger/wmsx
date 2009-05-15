@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -21,6 +21,7 @@
 
 package hu.kfki.grid.wmsx.worker;
 
+import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.Backends;
 import hu.kfki.grid.wmsx.backends.JobUid;
@@ -160,6 +161,7 @@ public final class ControllerServer {
                 }
                 final JobUid juid = WmsxProviderImpl.getInstance()
                         .reallySubmitFactory(fac);
+                this.setWorkerInfo(uuid, juid);
                 JobWatcher.getInstance().addWatch(juid,
                         WorkerListener.getInstance());
             } catch (final CloneNotSupportedException e) {
@@ -167,6 +169,16 @@ public final class ControllerServer {
                         + e.getMessage());
             }
 
+        }
+
+        /**
+         * @param uuid
+         * @param juid
+         */
+        private void setWorkerInfo(final Uuid uuid, final JobUid juid) {
+            final JobInfo info = JobWatcher.getInstance().getInfoForJob(juid);
+            info.setWorkerId(uuid);
+            info.setWorker(true);
         }
     }
 
