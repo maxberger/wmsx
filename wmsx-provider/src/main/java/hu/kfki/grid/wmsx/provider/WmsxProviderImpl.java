@@ -242,10 +242,15 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             result = backend.submitJob(job.getJobDescription(), this.vo);
             if (result != null) {
                 id = result.getJobId();
+
                 WmsxProviderImpl.LOGGER.info("Job id is: " + id);
+
+                this.fillInInfo(id, job);
+
                 JobWatcher.getInstance()
                         .addWatch(id, LogListener.getInstance());
                 JobWatcher.getInstance().addWatch(id, this);
+
                 if (ResultListener.getInstance().setJob(id, job)) {
                     JobWatcher.getInstance().addWatch(id,
                             ResultListener.getInstance());
@@ -275,6 +280,17 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             WmsxProviderImpl.LOGGER.warning(LogUtil.logException(e));
         }
         return null;
+    }
+
+    /**
+     * @param id
+     * @param job
+     */
+    private void fillInInfo(final JobUid id, final JdlJob job) {
+        final JobInfo info = JobWatcher.getInstance().getInfoForJob(id);
+        info.setExecutable(job.getCommand());
+        info.setOutput(job.getOutput());
+        info.setDescription(job.getName());
     }
 
     private void runPreexec(final JdlJob job, final String output) {
