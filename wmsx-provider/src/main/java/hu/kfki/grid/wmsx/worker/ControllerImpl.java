@@ -21,6 +21,7 @@
 
 package hu.kfki.grid.wmsx.worker;
 
+import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.backends.Backends;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.job.JobState;
@@ -31,6 +32,7 @@ import hu.kfki.grid.wmsx.util.FileUtil;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -88,10 +90,6 @@ public class ControllerImpl implements Controller, Runnable {
 
     private final Map<Object, ControllerWorkDescription> running = new TreeMap<Object, ControllerWorkDescription>();
 
-    private final Map<Object, Uuid> assignedTo = new TreeMap<Object, Uuid>();
-
-    private final Map<Object, Long> assignedAt = new TreeMap<Object, Long>();
-
     private final Map<Object, List<VirtualFile>> success = new TreeMap<Object, List<VirtualFile>>();
 
     private final Set<Object> failed = new TreeSet<Object>();
@@ -145,8 +143,8 @@ public class ControllerImpl implements Controller, Runnable {
             final WorkDescription wd = cwd.getWorkDescription();
             jobid = wd.getId();
             this.running.put(jobid, cwd);
-            this.assignedTo.put(jobid, uuid);
-            this.assignedAt.put(jobid, Long.valueOf(now));
+            this.completeInfoOnRunning(uuid, jobid);
+
             this.fileManager.modifyInputSandbox(uuid, wd.getWorkflowId(), cwd
                     .getInputSandbox(), wd.getInputSandbox());
         }
@@ -156,6 +154,27 @@ public class ControllerImpl implements Controller, Runnable {
                 JobState.RUNNING);
         this.startPendingCheck();
         return cwd.getWorkDescription();
+    }
+
+    /**
+     * @param uuid
+     * @param jobid
+     */
+    private void completeInfoOnRunning(final Uuid uuid, final Object jobid) {
+        final JobInfo info = this.getInfoForJob(jobid);
+        // Running must be set for suspicious check to work.
+        info.setStartRunningTime(new Date());
+        info.setWorkerId(uuid);
+    }
+
+    /**
+     * @param jobid
+     * @return
+     */
+    private JobInfo getInfoForJob(final Object jobid) {
+        final JobUid jid = this.getJuidForId(jobid);
+        final JobInfo info = JobWatcher.getInstance().getInfoForJob(jid);
+        return info;
     }
 
     private ControllerWorkDescription getWorkdescriptionForUuid(
@@ -229,7 +248,6 @@ public class ControllerImpl implements Controller, Runnable {
         synchronized (this.pending) {
             if (this.running.containsKey(id)) {
                 final ControllerWorkDescription cwd = this.running.remove(id);
-                this.assignedTo.remove(id);
                 final List<VirtualFile> outputSandbox = result
                         .getOutputSandbox();
                 this.success.put(id, outputSandbox);
@@ -391,9 +409,10 @@ public class ControllerImpl implements Controller, Runnable {
         final Set<Object> suspicous = new TreeSet<Object>();
 
         synchronized (this.workerInfo) {
-            final long now = System.currentTimeMillis();
+            final long now = new Date().getTime();
             for (final Object id : this.running.keySet()) {
-                final Uuid uuid = this.assignedTo.get(id);
+                final JobInfo jinfo = this.getInfoForJob(id);
+                final Uuid uuid = jinfo.getWorkerId();
                 final WorkerInfo info = this.getWorkerInfo(uuid);
                 final long seen = info.getLastSeen();
                 final long alive = now - seen;
@@ -402,7 +421,7 @@ public class ControllerImpl implements Controller, Runnable {
                     suspicous.add(id);
                 }
                 final long timerunning = now
-                        - this.assignedAt.get(id).longValue();
+                        - jinfo.getStartRunningTime().getTime();
                 if (timerunning > ControllerImpl.MAX_TIME_RUNNING
                         * ControllerImpl.MSEC_TO_SEC) {
                     suspicous.add(id);
