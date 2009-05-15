@@ -37,7 +37,8 @@ public class NewJob extends javax.swing.JFrame {
     /** Creates new form NewJob. */
     public NewJob() {
         this.businessman = BusinessManager.getInstance();
-        wmsx_service = businessman.getRequestor().getWmsxService();
+        wmsx_service = businessman.getWmsxService();
+        
         initComponents();
         centerScreen();
 
@@ -45,8 +46,7 @@ public class NewJob extends javax.swing.JFrame {
         Image icon = (new ImageIcon(getClass().getResource("/icon.png"))).getImage();
         this.setIconImage(icon);
 
-        Iterable<String> backends = wmsx_service.listBackends();
-        for (String backend : backends)
+        for (String backend : businessman.getBackends())
             cb_backend.addItem(backend);
     }
 
@@ -258,7 +258,10 @@ public class NewJob extends javax.swing.JFrame {
             } catch (final IOException e) {
                 System.out.println(e.getMessage() + " " + e.getStackTrace());
             }
+
             this.setVisible(false);
+            businessman.refreshData();
+
         }else
              JOptionPane.showMessageDialog(this, "JobDescriptionFile or ResultDirectory doesn't exist!", "WMSX GUI - NewJob", JOptionPane.ERROR_MESSAGE);
 }//GEN-LAST:event_btn_ok

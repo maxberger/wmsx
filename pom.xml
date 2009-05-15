@@ -97,40 +97,6 @@
         </configuration>
       </plugin>
 
-<!--
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>at.ac.uibk.dps.wmsxgui.App</mainClass>
-              <addClasspath>true</addClasspath>
-              <addExtensions/>
-              <classpathPrefix/>
-              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-          </archive>
-          
-keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
-
-          <keystore>${basedir}/keystore</keystore>
-          <storepass>hugoboss</storepass>
-          <alias>goedis.dps.uibk.ac.at</alias>
-          <signedjar>${project.build.directory}/signed/${project.build.finalName}.jar</signedjar>
-          <verify>true</verify>
-          
-       </configuration>
-      </plugin>
--->
-
       <plugin>
         <groupId>org.codehaus.mojo.webstart</groupId>
         <artifactId>webstart-maven-plugin</artifactId>
@@ -155,11 +121,6 @@ keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
             </keystoreConfig>
           </sign>
           <workDirectory>${project.build.directory}/site</workDirectory>
-          <!--
-          <dependencies>
-            <dependency>commons-logging:commons:logging</dependency>
-          </dependencies>
-          -->
         </configuration>
         <executions>
           <execution>
@@ -185,15 +146,6 @@ keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
         </dependencies>
       </plugin>
 
-     <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-            <configLocation>checkstyle.xml</configLocation>
-        </configuration>
-     </plugin>
-
     </plugins>
   </build>
   
@@ -208,18 +160,6 @@ keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
         </configuration>
       </plugin>
 
-<!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changelog-plugin</artifactId>
-        <version>2.1</version>
-        <configuration>
-          <type>range</type>
-          <range>30</range>
-          <dateFormat>EE MM dd HH:mm:ss yyyy Z</dateFormat>
-        </configuration>
-     </plugin>
--->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -250,7 +190,42 @@ keytool -genkey -keyalg RSA -keystore keystore -alias goedis.dps.uibk.ac.at
         <version>2.2</version>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
-          <!--<suppressionsLocation>jeuclid/checkstyle_filter.xml</suppressionsLocation>-->
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <linkXref>true</linkXref>
+          <targetJdk>1.5</targetJdk>
+          <sourceEncoding>utf-8</sourceEncoding>
+          <rulesets>
+            <ruleset>/rulesets/basic.xml</ruleset>
+            <ruleset>/rulesets/braces.xml</ruleset>
+            <ruleset>/rulesets/codesize.xml</ruleset>
+            <ruleset>/rulesets/clone.xml</ruleset>
+            <ruleset>/rulesets/design.xml</ruleset>
+            <ruleset>/rulesets/finalizers.xml</ruleset>
+            <ruleset>/rulesets/imports.xml</ruleset>
+            <ruleset>/rulesets/strings.xml</ruleset>
+            <ruleset>/rulesets/migrating_to_15.xml</ruleset>
+            <ruleset>/rulesets/optimizations.xml</ruleset>
+            <ruleset>/rulesets/sunsecure.xml</ruleset>
+            <ruleset>/rulesets/unusedcode.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>1.2</version>
+        <configuration>
+          <threshold>Low</threshold>
+          <effort>Max</effort>
+          <omitVisitors>FindDeadLocalStores</omitVisitors>
         </configuration>
       </plugin>
 
