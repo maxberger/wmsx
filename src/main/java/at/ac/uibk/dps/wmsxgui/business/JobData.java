@@ -36,5 +36,4 @@ public class JobData {
         return transportJobUID.getLocalId();
     }
 
-
 }
