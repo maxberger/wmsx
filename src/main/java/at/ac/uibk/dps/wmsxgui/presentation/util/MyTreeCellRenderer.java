@@ -5,9 +5,9 @@
 
 package at.ac.uibk.dps.wmsxgui.presentation.util;
 
-import hu.kfki.grid.wmsx.JobInfo;
+import at.ac.uibk.dps.wmsxgui.business.JobData;
+import hu.kfki.grid.wmsx.job.JobState;
 import java.awt.Component;
-import java.util.Random;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -41,21 +41,18 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
         
         if (isJob(value)) {
-            JobInfo jobinfo = (JobInfo) ((DefaultMutableTreeNode)value).getUserObject();
+            JobData job = (JobData) ((DefaultMutableTreeNode)value).getUserObject();
 
-            Random rand = new Random();
-            switch(rand.nextInt(3))
-            {
-                case 0: setIcon(greenCircle);
-                        break;
-                case 1: setIcon(orangeCircle);
-                        break;
-                case 2: setIcon(redCircle);
-                        break;
-            }
+            JobState state = job.getJobinfo().getStatus();
+            if (state.equals(JobState.RUNNING))
+                setIcon(greenCircle);
+            else if (state.equals(JobState.STARTUP))
+                setIcon(orangeCircle);
+            else if (state.equals(JobState.SUCCESS))
+                setIcon(redCircle);
 
-            setToolTipText(jobinfo.toString());
-            setText(jobinfo.toString());
+            setToolTipText(job.getJobinfo().getDescription());
+            setText(job.getTransportJobUID().getLocalId());
 
         } else {
             setIcon(grid);
@@ -70,7 +67,7 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
         String classname = node.getUserObject().getClass().getSimpleName();
 
-        if (classname.equals("JobInfo")){
+        if (classname.equals("JobData")){
             return true;
         }
 

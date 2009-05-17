@@ -14,12 +14,13 @@ package at.ac.uibk.dps.wmsxgui.presentation;
 import at.ac.uibk.dps.wmsxgui.presentation.util.MyTreeCellRenderer;
 import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
 import at.ac.uibk.dps.wmsxgui.business.JobData;
-import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.Wmsx;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -32,7 +33,7 @@ import javax.swing.tree.DefaultTreeModel;
  *
  * @author bafu
  */
-public class MainWindow extends javax.swing.JFrame {
+public class MainWindow extends javax.swing.JFrame implements Observer {
 
     private BusinessManager businessman;
     private Wmsx wmsx_service;
@@ -45,11 +46,13 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() {
         this.businessman = BusinessManager.getInstance();
         wmsx_service = businessman.getWmsxService();
-        
-        updateTreeModel();
+
+        businessman.addObserver(this);
         
         initComponents();
 
+        updateTreeModel();
+        
         if (!businessman.isOnline())
         {
             setTitle("WMSX GUI - Offline Demo Mode");
@@ -494,11 +497,11 @@ public class MainWindow extends javax.swing.JFrame {
         String classname = node.getUserObject().getClass().getSimpleName();
         System.out.println(classname);
 
-        if (classname.equals("JobInfo")){
+        if (classname.equals("JobData")){
             panel_table.setVisible(false);
             panel_jobdetails.setVisible(true);
 
-            if (wmsx_service!=null)
+            if (businessman.isOnline())
             {
                 //enable remove buttons
                 btn_remove.setEnabled(true);
@@ -629,6 +632,13 @@ public class MainWindow extends javax.swing.JFrame {
 
         }
         treeModel = new DefaultTreeModel(rootNode);
+        tree_jobs.setModel(treeModel);
+        tree_jobs.updateUI();
     }
 
+
+    public void update(final Observable o, final Object obj) {
+        System.out.println("MainWindowm: updateObserver...");
+		updateTreeModel();
+	}
 }

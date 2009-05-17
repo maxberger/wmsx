@@ -5,19 +5,25 @@
 
 package at.ac.uibk.dps.wmsxgui.business;
 
+import hu.kfki.grid.wmsx.JobChangeEvent;
 import hu.kfki.grid.wmsx.Wmsx;
-import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.TransportJobUID;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import net.jini.core.event.RemoteEvent;
+import net.jini.core.event.RemoteEventListener;
+import net.jini.core.event.UnknownEventException;
+import net.jini.core.lease.Lease;
 
 /**
  *
  * @author bafu
  */
-public class BusinessManager {
+public class BusinessManager extends Observable implements RemoteEventListener {
 
     private Requestor requestor;
     private Wmsx wmsx_service;
@@ -30,7 +36,9 @@ public class BusinessManager {
 	private BusinessManager()
 	{
         requestor = Requestor.getInstance();
-        wmsx_service = requestor.getWmsxService();;
+        wmsx_service = requestor.getWmsxService();
+        Lease lease = wmsx_service.registerEventListener(this);
+
         refreshData();
     }
 
@@ -76,6 +84,7 @@ public class BusinessManager {
 
    public void refreshData()
    {
+       System.out.println("BusinessManager: refreshData...");
        if (isOnline())
        {
            jobmap.clear();
@@ -89,5 +98,24 @@ public class BusinessManager {
                jobmap.get(transJobUID.getBackend()).add(new JobData(transJobUID,wmsx_service.getJobInfo(transJobUID)));
            }
        }
+       updateObservers();
+   }
+
+   private void updateObservers()
+   {
+       setChanged();
+       notifyObservers();
+   }
+
+
+   public void notify(RemoteEvent re) throws UnknownEventException, RemoteException {
+       System.out.println("BusinessManager: notified by provider...");
+       JobChangeEvent e = (JobChangeEvent)re;
+       for (JobData job : jobmap.get(e.getJobUid().getBackend()))
+           if (job.getTransportJobUID().equals(e.getJobUid()))
+           {
+               job.getJobinfo().setStatus(e.getState());
+               updateObservers();
+           }
    }
 }
