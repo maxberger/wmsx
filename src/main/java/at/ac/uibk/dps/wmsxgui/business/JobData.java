@@ -7,12 +7,14 @@ package at.ac.uibk.dps.wmsxgui.business;
 
 import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.TransportJobUID;
+import java.io.Serializable;
 
 /**
  *
  * @author bafu
  */
-public class JobData {
+public class JobData implements Serializable{
+    private static final long serialVersionUID = -1595944205656281484L;
 
     private TransportJobUID transportJobUID;
     private JobInfo jobinfo;
