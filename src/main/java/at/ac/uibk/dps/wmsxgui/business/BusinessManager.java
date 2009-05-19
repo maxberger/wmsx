@@ -8,6 +8,7 @@ package at.ac.uibk.dps.wmsxgui.business;
 import hu.kfki.grid.wmsx.JobChangeEvent;
 import hu.kfki.grid.wmsx.Wmsx;
 import hu.kfki.grid.wmsx.TransportJobUID;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +24,8 @@ import net.jini.core.lease.Lease;
  *
  * @author bafu
  */
-public class BusinessManager extends Observable implements RemoteEventListener {
+public class BusinessManager extends Observable implements RemoteEventListener, Serializable {
+    private static final long serialVersionUID = 4569728891303483934L;
 
     private Requestor requestor;
     private Wmsx wmsx_service;

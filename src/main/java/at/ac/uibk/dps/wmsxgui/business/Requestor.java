@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import java.io.Serializable;
 import javax.swing.JOptionPane;
 
 
@@ -13,7 +14,8 @@ import javax.swing.JOptionPane;
  *
  * @author bafu
  */
-public class Requestor {
+public class Requestor implements Serializable{
+    private static final long serialVersionUID = -8474571551490820022L;
 
     private Wmsx wmsx_service;
     /* Singleton Pattern */
