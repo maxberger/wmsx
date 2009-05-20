@@ -50,7 +50,6 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
         requestor = Requestor.getInstance();
         wmsx_service = requestor.getWmsxService();
-        lease = wmsx_service.registerEventListener(this);
 
         try{
 
@@ -60,10 +59,10 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
             theStub = (RemoteEventListener) myDefaultExporter.export(this);
 
-            theManager = new LeaseRenewalManager();
+            lease = wmsx_service.registerEventListener(theStub);
 
-            theManager.renewFor(lease, Lease.FOREVER,
-                            30000, new DebugListener());
+            theManager = new LeaseRenewalManager();
+            theManager.renewFor(lease, Lease.FOREVER,30000, new DebugListener());
 
         } catch (Exception re) {
             re.printStackTrace();
@@ -79,7 +78,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
     private static class DebugListener implements LeaseListener {
         public void notify(LeaseRenewalEvent anEvent) {
-            System.err.println("Got lease renewal problem");
+            System.err.println("BusinessManager: Got lease renewal problem!");
 
             System.err.println(anEvent.getException());
             System.err.println(anEvent.getExpiration());
@@ -154,8 +153,8 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
 
    public void notify(RemoteEvent re) throws UnknownEventException, RemoteException {
-       System.out.println("BusinessManager: notified by provider...");
        JobChangeEvent e = (JobChangeEvent)re;
+       System.out.println("BusinessManager: notified by provider..."+e.getJobUid()+" State: "+e.getState());
        for (JobData job : jobmap.get(e.getJobUid().getBackend()))
            if (job.getTransportJobUID().equals(e.getJobUid()))
            {
