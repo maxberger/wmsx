@@ -8,7 +8,6 @@ package at.ac.uibk.dps.wmsxgui.business;
 import hu.kfki.grid.wmsx.JobChangeEvent;
 import hu.kfki.grid.wmsx.Wmsx;
 import hu.kfki.grid.wmsx.TransportJobUID;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,12 +18,19 @@ import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
 import net.jini.core.lease.Lease;
+import net.jini.export.Exporter;
+import net.jini.jeri.BasicILFactory;
+import net.jini.jeri.BasicJeriExporter;
+import net.jini.jeri.tcp.TcpServerEndpoint;
+import net.jini.lease.LeaseListener;
+import net.jini.lease.LeaseRenewalEvent;
+import net.jini.lease.LeaseRenewalManager;
 
 /**
  *
  * @author bafu
  */
-public class BusinessManager extends Observable implements RemoteEventListener, Serializable {
+public class BusinessManager extends Observable implements RemoteEventListener {
     private static final long serialVersionUID = 4569728891303483934L;
 
     private Requestor requestor;
@@ -33,15 +39,52 @@ public class BusinessManager extends Observable implements RemoteEventListener, 
 
     private Map<String, List<JobData>> jobmap = new HashMap<String, List<JobData>>();
     private Iterable<String> backends;
-    
+
+    private RemoteEventListener theStub;
+    private LeaseRenewalManager theManager;
+    private Lease lease;
+
     /* Singleton Pattern */
 	private BusinessManager()
-	{
+    {
+
         requestor = Requestor.getInstance();
         wmsx_service = requestor.getWmsxService();
-        Lease lease = wmsx_service.registerEventListener(this);
+        lease = wmsx_service.registerEventListener(this);
+
+        try{
+
+            Exporter myDefaultExporter =
+                new BasicJeriExporter(TcpServerEndpoint.getInstance(0),
+                                      new BasicILFactory(), false, true);
+
+            theStub = (RemoteEventListener) myDefaultExporter.export(this);
+
+            theManager = new LeaseRenewalManager();
+
+            theManager.renewFor(lease, Lease.FOREVER,
+                            30000, new DebugListener());
+
+        } catch (Exception re) {
+            re.printStackTrace();
+        }
+
 
         refreshData();
+    }
+
+    RemoteEventListener getStub() {
+        return theStub;
+    }
+
+    private static class DebugListener implements LeaseListener {
+        public void notify(LeaseRenewalEvent anEvent) {
+            System.err.println("Got lease renewal problem");
+
+            System.err.println(anEvent.getException());
+            System.err.println(anEvent.getExpiration());
+            System.err.println(anEvent.getLease());
+        }
     }
 
     /** Private innere statische Klasse, realisiert Singleton Pattern
