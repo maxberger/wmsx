@@ -19,6 +19,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.util.Enumeration;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.AbstractAction;
@@ -28,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 /**
  *
@@ -341,11 +343,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         tree_jobs.setModel(treeModel);
         tree_jobs.setMinimumSize(new java.awt.Dimension(50, 100));
-        tree_jobs.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
-            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
-                tree_jobsValueChanged(evt);
-            }
-        });
         jScrollPane1.setViewportView(tree_jobs);
 
         jSplitPane1.setLeftComponent(jScrollPane1);
@@ -464,7 +461,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
        {
             System.out.println("btn_add...");
 
-            NewJob newjob = new NewJob();
+            NewJob newjob = new NewJob(this);
             System.out.println("Show NewJobDialog...");
             newjob.setVisible(true);
        }
@@ -487,42 +484,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
        }
 }//GEN-LAST:event_menu_item_optionsActionPerformed
 
-       private void tree_jobsValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_tree_jobsValueChanged
-
-        DefaultMutableTreeNode node =
-                (DefaultMutableTreeNode) tree_jobs.getLastSelectedPathComponent();
-        
-        if (node == null) return;
-        
-        String classname = node.getUserObject().getClass().getSimpleName();
-        System.out.println(classname);
-
-        if (classname.equals("JobData")){
-            panel_table.setVisible(false);
-            panel_jobdetails.setVisible(true);
-
-            if (businessman.isOnline())
-            {
-                //enable remove buttons
-                btn_remove.setEnabled(true);
-                btn_kill.setEnabled(true);
-            }
-        }else{
-            panel_table.setVisible(true);
-            panel_jobdetails.setVisible(false);
-
-            //disable remove buttons
-            btn_remove.setEnabled(false);
-            btn_kill.setEnabled(false);
-        }
-        
-        String titel = node.getUserObject().toString();
-        jLabel8.setText(titel);
-
-        //this.repaint();
-
-}//GEN-LAST:event_tree_jobsValueChanged
-
        private void menu_item_stopserverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_stopserverActionPerformed
            if (businessman.isOnline())
            {
@@ -537,8 +498,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
        private void menu_item_newjobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_item_newjobActionPerformed
            if (businessman.isOnline())
            {
-                NewJob newjob = new NewJob();
-                System.out.println("Show NewJobDialog...");
+                NewJob newjob = new NewJob(this);
+                System.out.println("MainWindow: Show NewJobDialog...");
                 newjob.setVisible(true);
            }
        }//GEN-LAST:event_menu_item_newjobActionPerformed
@@ -548,7 +509,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
        }//GEN-LAST:event_btn_killActionPerformed
 
        private void btn_refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_refreshActionPerformed
-           businessman.refreshData();
+
+           updateBusinessManager();
        }//GEN-LAST:event_btn_refreshActionPerformed
 
     Action exitAction = new AbstractAction( "Quit" ) {
@@ -557,7 +519,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
       }
     };
 
-
+    public void updateBusinessManager()
+    {
+           businessman.saveExpansionState(tree_jobs);
+           businessman.refreshData();
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -601,7 +567,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // End of variables declaration//GEN-END:variables
 
     private void updateTreeModel() {
- 
+        System.out.println("MainWindow: updateTreeModel...");
+        
         rootNode = new DefaultMutableTreeNode("Backends");
 
         if (businessman.isOnline())
@@ -618,6 +585,17 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                  
             }
 
+            treeModel = new DefaultTreeModel(rootNode);
+            tree_jobs.setModel(treeModel);
+
+            //restore Expanded Nodes
+            for (int row : businessman.getExpansionStateRows())
+            {                
+                System.out.println("MainWindow: setExpandedRow: "+row);
+                tree_jobs.expandRow(row);
+            }
+
+
         }else { //offline Demo Mode
 
             DefaultMutableTreeNode node1 = new DefaultMutableTreeNode("Fake");
@@ -630,10 +608,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             node1 = new DefaultMutableTreeNode("Gat");
             rootNode.add(node1);
 
+            treeModel = new DefaultTreeModel(rootNode);
+            tree_jobs.setModel(treeModel);
+
         }
-        System.out.println("MainWindow: updateTreeModel...");
-        treeModel = new DefaultTreeModel(rootNode);
-        tree_jobs.setModel(treeModel);
+
         //tree_jobs.updateUI();
     }
 

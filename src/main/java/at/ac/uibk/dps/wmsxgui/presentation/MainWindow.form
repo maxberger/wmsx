@@ -412,9 +412,6 @@
                   <Dimension value="[50, 100]"/>
                 </Property>
               </Properties>
-              <Events>
-                <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="tree_jobsValueChanged"/>
-              </Events>
             </Component>
           </SubComponents>
         </Container>

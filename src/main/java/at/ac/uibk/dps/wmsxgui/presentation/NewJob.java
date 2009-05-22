@@ -32,10 +32,12 @@ import javax.swing.JOptionPane;
 public class NewJob extends javax.swing.JFrame {
 
     private BusinessManager businessman;
+    private MainWindow mainWindow;
     private Wmsx wmsx_service;
 
     /** Creates new form NewJob. */
-    public NewJob() {
+    public NewJob(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
         this.businessman = BusinessManager.getInstance();
         wmsx_service = businessman.getWmsxService();
         
@@ -262,7 +264,8 @@ public class NewJob extends javax.swing.JFrame {
                 }
 
                 this.setVisible(false);
-                businessman.refreshData();
+                //businessman.refreshData();
+                mainWindow.updateBusinessManager();
 
             }else
                  JOptionPane.showMessageDialog(this, "JobDescriptionFile or ResultDirectory doesn't exist!", "WMSX GUI - NewJob", JOptionPane.ERROR_MESSAGE);
@@ -279,7 +282,8 @@ public class NewJob extends javax.swing.JFrame {
                     wmsx_service.startWorkers(workercnt);
 
                     this.setVisible(false);
-                    businessman.refreshData();
+                    //businessman.refreshData();
+                    mainWindow.updateBusinessManager();
                     
                 } else
                     JOptionPane.showMessageDialog(this, "JobCount has to be greater than zero!", "WMSX GUI - NewJob", JOptionPane.ERROR_MESSAGE);

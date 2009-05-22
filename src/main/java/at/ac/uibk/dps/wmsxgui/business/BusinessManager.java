@@ -10,10 +10,14 @@ import hu.kfki.grid.wmsx.Wmsx;
 import hu.kfki.grid.wmsx.TransportJobUID;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import javax.swing.JTree;
+import javax.swing.tree.TreePath;
 import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
@@ -44,6 +48,8 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     private LeaseRenewalManager theManager;
     private Lease lease;
 
+    private List<Integer> expandedNodesRowIndex = new ArrayList<Integer>();
+
     /* Singleton Pattern */
 	private BusinessManager()
     {
@@ -70,10 +76,6 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
 
         refreshData();
-    }
-
-    RemoteEventListener getStub() {
-        return theStub;
     }
 
     private static class DebugListener implements LeaseListener {
@@ -117,6 +119,24 @@ public class BusinessManager extends Observable implements RemoteEventListener {
            return false;
    }
 
+   public void saveExpansionState(JTree tree_jobs)
+   {
+        System.out.println("BusinessManager: saveExpansionState...");
+        expandedNodesRowIndex.clear();
+        Enumeration<TreePath> expandedNodes = tree_jobs.getExpandedDescendants(new TreePath(tree_jobs.getModel().getRoot()));
+        while (expandedNodes.hasMoreElements())
+        {
+            TreePath treePath = (TreePath) expandedNodes.nextElement();
+            expandedNodesRowIndex.add(tree_jobs.getRowForPath(treePath));
+        }
+        Collections.sort(expandedNodesRowIndex);
+   }
+   
+   public List<Integer> getExpansionStateRows()
+   {
+       return expandedNodesRowIndex;
+   }
+
    public Iterable<String> getBackends() {
        return backends;
    }
@@ -131,6 +151,8 @@ public class BusinessManager extends Observable implements RemoteEventListener {
        System.out.println("BusinessManager: refreshData...");
        if (isOnline())
        {
+           
+           //clear cached data and update via wmsx_service
            jobmap.clear();
 
            backends = wmsx_service.listBackends();
@@ -142,6 +164,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
            for (TransportJobUID transJobUID : wmsx_service.listJobs())
            {
                //System.out.println("BusinessManager: refreshData... add new job - backend: "+transJobUID.getBackend().toLowerCase());
+               //Achtung: fake vs. Fake
                jobmap.get(transJobUID.getBackend().toLowerCase()).add(new JobData(transJobUID,wmsx_service.getJobInfo(transJobUID)));
            }
        }
