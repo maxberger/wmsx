@@ -631,14 +631,15 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             rootNode.add(node1);
 
         }
+        System.out.println("MainWindow: updateTreeModel...");
         treeModel = new DefaultTreeModel(rootNode);
         tree_jobs.setModel(treeModel);
-        tree_jobs.updateUI();
+        //tree_jobs.updateUI();
     }
 
 
     public void update(final Observable o, final Object obj) {
-        System.out.println("MainWindowm: updateObserver...");
+        System.out.println("MainWindow: updateObserver...");
 		updateTreeModel();
 	}
 }
