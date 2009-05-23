@@ -49,6 +49,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     private Lease lease;
 
     private List<Integer> expandedNodesRowIndex = new ArrayList<Integer>();
+    private String currentBackend;
 
     /* Singleton Pattern */
 	private BusinessManager()
@@ -111,6 +112,16 @@ public class BusinessManager extends Observable implements RemoteEventListener {
        return wmsx_service;
    }
 
+   public String getCurrentBackend() {
+       return currentBackend;
+   }
+
+   public void setCurrentBackend(String currentBackend) {
+       this.currentBackend = currentBackend;
+       updateObservers(null);
+   }
+
+
    public boolean isOnline()
    {
        if (wmsx_service!=null)
@@ -143,7 +154,21 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
    public List<JobData> getJobs(String backend)
    {
-       return jobmap.get(backend);
+       if (backend!=null)
+           return jobmap.get(backend);
+       else
+       {
+           List<JobData> joblist = new ArrayList<JobData>();
+           for (List<JobData> jl :  jobmap.values())
+               joblist.addAll(jl);
+
+           return joblist;
+       }
+   }
+
+   public List<JobData> getJobsTable()
+   {
+       return getJobs(getCurrentBackend());
    }
 
    public void refreshData()
