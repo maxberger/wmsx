@@ -174,14 +174,57 @@
                       <Properties>
                         <Property name="autoCreateRowSorter" type="boolean" value="true"/>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="6" rowCount="4">
-                            <Column editable="false" title="Name" type="java.lang.String"/>
-                            <Column editable="false" title="Path" type="java.lang.String"/>
-                            <Column editable="false" title="Backend" type="java.lang.String"/>
-                            <Column editable="false" title="Output" type="java.lang.String"/>
-                            <Column editable="false" title="Time" type="java.lang.String"/>
-                            <Column editable="false" title="Status" type="java.lang.String"/>
+                          <Table columnCount="7" rowCount="4">
+                            <Column editable="false" title="JobUID" type="java.lang.String"/>
+                            <Column editable="false" title="Executable" type="java.lang.String"/>
+                            <Column editable="false" title="SiteID" type="java.lang.String"/>
+                            <Column editable="false" title="Created" type="java.lang.String"/>
+                            <Column editable="false" title="Started" type="java.lang.String"/>
+                            <Column editable="false" title="Finished" type="java.lang.String"/>
+                            <Column editable="false" title="State" type="java.lang.String"/>
                           </Table>
+                        </Property>
+                        <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                          <TableColumnModel selectionModel="0">
+                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                              <Title/>
+                              <Editor/>
+                              <Renderer/>
+                            </Column>
+                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                              <Title/>
+                              <Editor/>
+                              <Renderer/>
+                            </Column>
+                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                              <Title/>
+                              <Editor/>
+                              <Renderer/>
+                            </Column>
+                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                              <Title/>
+                              <Editor/>
+                              <Renderer/>
+                            </Column>
+                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                              <Title/>
+                              <Editor/>
+                              <Renderer/>
+                            </Column>
+                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                              <Title/>
+                              <Editor/>
+                              <Renderer/>
+                            </Column>
+                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                              <Title/>
+                              <Editor/>
+                              <Renderer/>
+                            </Column>
+                          </TableColumnModel>
+                        </Property>
+                        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                          <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                         </Property>
                       </Properties>
                     </Component>
@@ -299,16 +342,34 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="tb_jobdetails_jobuid">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="tb_jobdetails_state">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="tb_jobdetails_siteid">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="tb_jobdetails_creationtime">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="tb_jobdetails_startedtime">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="tb_jobdetails_donetime">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Container class="javax.swing.JPanel" name="jPanel1">
 
@@ -363,6 +424,9 @@
                           </Properties>
                         </Component>
                         <Component class="javax.swing.JTextField" name="tb_jobdetails_executable">
+                          <Properties>
+                            <Property name="editable" type="boolean" value="false"/>
+                          </Properties>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel9">
                           <Properties>
@@ -370,6 +434,9 @@
                           </Properties>
                         </Component>
                         <Component class="javax.swing.JTextField" name="tb_jobdetails_output">
+                          <Properties>
+                            <Property name="editable" type="boolean" value="false"/>
+                          </Properties>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel10">
                           <Properties>
@@ -386,6 +453,7 @@
                             <Component class="javax.swing.JTextArea" name="ta_jobdetails_description">
                               <Properties>
                                 <Property name="columns" type="int" value="20"/>
+                                <Property name="editable" type="boolean" value="false"/>
                                 <Property name="rows" type="int" value="5"/>
                               </Properties>
                             </Component>
