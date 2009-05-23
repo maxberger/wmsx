@@ -118,7 +118,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
    public void setCurrentBackend(String currentBackend) {
        this.currentBackend = currentBackend;
-       updateObservers(null);
+       updateObservers(currentBackend);
    }
 
 
@@ -132,7 +132,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
    public void saveExpansionState(JTree tree_jobs)
    {
-        System.out.println("BusinessManager: saveExpansionState...");
+        //System.out.println("BusinessManager: saveExpansionState...");
         expandedNodesRowIndex.clear();
         Enumeration<TreePath> expandedNodes = tree_jobs.getExpandedDescendants(new TreePath(tree_jobs.getModel().getRoot()));
         while (expandedNodes.hasMoreElements())
@@ -154,7 +154,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
    public List<JobData> getJobs(String backend)
    {
-       if (backend!=null)
+       if ( (backend!=null) && (!backend.equals("Backends")) )
            return jobmap.get(backend);
        else
        {
@@ -196,10 +196,10 @@ public class BusinessManager extends Observable implements RemoteEventListener {
        updateObservers(null);
    }
 
-   private void updateObservers(JobData job)
+   private void updateObservers(Object o)
    {
        setChanged();
-       notifyObservers(job);
+       notifyObservers(o);
    }
 
 

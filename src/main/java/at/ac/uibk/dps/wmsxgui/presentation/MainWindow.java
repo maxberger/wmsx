@@ -136,7 +136,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jScrollPane1 = new javax.swing.JScrollPane();
         ta_jobdetails_description = new javax.swing.JTextArea();
         panel_buttons = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
+        l_selectedjob = new javax.swing.JLabel();
         btn_kill = new javax.swing.JButton();
         btn_refresh = new javax.swing.JButton();
         sp_tree = new javax.swing.JScrollPane();
@@ -303,11 +303,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         panel_top.setLayout(panel_topLayout);
         panel_topLayout.setHorizontalGroup(
             panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 729, Short.MAX_VALUE)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
             .addGroup(panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_topLayout.createSequentialGroup()
                     .addComponent(panel_jobdetails, javax.swing.GroupLayout.PREFERRED_SIZE, 645, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(84, Short.MAX_VALUE)))
+                    .addContainerGap(14, Short.MAX_VALUE)))
         );
         panel_topLayout.setVerticalGroup(
             panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,7 +318,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         panel_buttons.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jLabel8.setText("job/worker");
+        l_selectedjob.setText("job/worker");
 
         btn_kill.setText("kill");
         btn_kill.addActionListener(new java.awt.event.ActionListener() {
@@ -341,17 +341,17 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             .addGroup(panel_buttonsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
+                    .addComponent(l_selectedjob)
                     .addGroup(panel_buttonsLayout.createSequentialGroup()
                         .addComponent(btn_kill, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_refresh)))
-                .addContainerGap(568, Short.MAX_VALUE))
+                .addContainerGap(498, Short.MAX_VALUE))
         );
         panel_buttonsLayout.setVerticalGroup(
             panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_buttonsLayout.createSequentialGroup()
-                .addComponent(jLabel8)
+                .addComponent(l_selectedjob)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_kill)
@@ -363,7 +363,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jPanelRight.setLayout(jPanelRightLayout);
         jPanelRightLayout.setHorizontalGroup(
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_top, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 729, Short.MAX_VALUE)
+            .addComponent(panel_top, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
             .addComponent(panel_buttons, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanelRightLayout.setVerticalGroup(
@@ -383,7 +383,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         tree_jobs.setMaximumSize(null);
         tree_jobs.setMinimumSize(new java.awt.Dimension(100, 100));
         tree_jobs.setPreferredSize(new java.awt.Dimension(100, 100));
-        tree_jobs.setRequestFocusEnabled(false);
         tree_jobs.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
                 tree_jobsValueChanged(evt);
@@ -563,40 +562,35 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             DefaultMutableTreeNode node =
                 (DefaultMutableTreeNode) tree_jobs.getLastSelectedPathComponent();
 
-            if (node == null) return;
-
-            String classname = node.getUserObject().getClass().getSimpleName();
-            System.out.println(classname);
-
-            if (classname.equals("JobData"))
+            if (node != null)
             {
-                setJobDetails((JobData)node.getUserObject());
-
-                //change top panel
-                panel_table.setVisible(false);
-                panel_jobdetails.setVisible(true);
-
-                if (businessman.isOnline())
+                if (node.getUserObject().getClass().getSimpleName().equals("JobData"))
                 {
-                    //enable remove buttons
-                    btn_remove.setEnabled(true);
-                    btn_kill.setEnabled(true);
+                    setJobDetails((JobData)node.getUserObject());
+
+                    //change top panel
+                    panel_table.setVisible(false);
+                    panel_jobdetails.setVisible(true);
+
+                    if (businessman.isOnline())
+                    {
+                        //enable remove buttons
+                        btn_remove.setEnabled(true);
+                        btn_kill.setEnabled(true);
+                    }
+                }else{
+                    businessman.setCurrentBackend(node.getUserObject().toString());
+
+                    panel_table.setVisible(true);
+                    panel_jobdetails.setVisible(false);
+
+                    //disable remove buttons
+                    btn_remove.setEnabled(false);
+                    btn_kill.setEnabled(false);
                 }
-            }else{
-                businessman.setCurrentBackend(node.getUserObject().toString());
 
-                panel_table.setVisible(true);
-                panel_jobdetails.setVisible(false);
-
-                //disable remove buttons
-                btn_remove.setEnabled(false);
-                btn_kill.setEnabled(false);
+                l_selectedjob.setText(node.getUserObject().toString());
             }
-
-            String titel = node.getUserObject().toString();
-            jLabel8.setText(titel);
-
-            //this.repaint();
        }//GEN-LAST:event_tree_jobsValueChanged
 
     Action exitAction = new AbstractAction( "Quit" ) {
@@ -620,13 +614,13 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanelRight;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JLabel l_selectedjob;
     private javax.swing.JMenu menu_edit;
     private javax.swing.JMenu menu_file;
     private javax.swing.JMenuItem menu_item_exit;
@@ -704,10 +698,19 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
 
     public void update(final Observable o, final Object obj) {
-        System.out.println("MainWindow: updateObserver...");
-        businessman.saveExpansionState(tree_jobs);
-		updateTreeModel();
-        setJobDetails((JobData)obj);
+        if ((obj==null) || (!obj.getClass().getSimpleName().equals("String")))
+        {
+            System.out.println("MainWindow: updateObserver...");
+            businessman.saveExpansionState(tree_jobs);
+            updateTreeModel();
+
+                if ((obj!=null) && (obj.getClass().getSimpleName().equals("JobData")) )
+                {
+                    JobData job = (JobData)obj;
+                    if ( (panel_jobdetails.isVisible()) && (tb_jobdetails_jobuid.getText().equals(job.getTransportJobUID().toString())) )
+                        setJobDetails(job);
+                }
+        }
 	}
 
     public void updateBusinessManager()

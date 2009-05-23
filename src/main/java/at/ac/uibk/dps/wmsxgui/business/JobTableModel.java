@@ -28,15 +28,21 @@ public class JobTableModel extends AbstractTableModel implements Observer
     public JobTableModel()
     {
         this.businessman = BusinessManager.getInstance();
-        data = businessman.getJobsTable();
         businessman.addObserver(this);
+        updateData();
     }
 
     public void update(final Observable o, final Object obj) {
         System.out.println("JobTableModel: updateObserver...");
-        data = businessman.getJobsTable();
-
+        updateData();
 	}
+
+    private void updateData()
+    {
+        data = businessman.getJobsTable();
+        //printDebugData();
+        fireTableDataChanged();
+    }
 
     public int getColumnCount() {
         return columnNames.length;
@@ -52,7 +58,7 @@ public class JobTableModel extends AbstractTableModel implements Observer
 
     public Object getValueAt(int row, int col)
     {
-        if (data.get(row)!=null)
+        if ( (data.size()>0) && (data.get(row)!=null) )
         {
             switch(col)
             {
@@ -114,20 +120,14 @@ public class JobTableModel extends AbstractTableModel implements Observer
             System.out.println("New value of data:");
             printDebugData();
         }
-    }
+    }*/
 
     private void printDebugData() {
-        int numRows = getRowCount();
-        int numCols = getColumnCount();
+        System.out.println("JobTableModel: printDebugData... RowCount: "+getRowCount());
+        for (int i=0; i < getRowCount(); i++) {
+            System.out.println("JobTableModel: printDebugData:  row " + i + ": "+data.get(i));
 
-        for (int i=0; i < numRows; i++) {
-            System.out.print("    row " + i + ":");
-            for (int j=0; j < numCols; j++) {
-                System.out.print("  " + data[i][j]);
-            }
-            System.out.println();
         }
-        System.out.println("--------------------------");
-    }*/
+    }
 }
 
