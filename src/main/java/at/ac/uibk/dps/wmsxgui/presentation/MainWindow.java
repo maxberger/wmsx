@@ -14,12 +14,12 @@ package at.ac.uibk.dps.wmsxgui.presentation;
 import at.ac.uibk.dps.wmsxgui.presentation.util.MyTreeCellRenderer;
 import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
 import at.ac.uibk.dps.wmsxgui.business.JobData;
+import at.ac.uibk.dps.wmsxgui.business.JobTableModel;
 import hu.kfki.grid.wmsx.Wmsx;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.util.Enumeration;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.AbstractAction;
@@ -29,7 +29,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 
 /**
  *
@@ -53,6 +52,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         
         initComponents();
 
+        table_jobs.setModel(new JobTableModel());
         updateTreeModel();
         
         if (!businessman.isOnline())
@@ -113,7 +113,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jPanelRight = new javax.swing.JPanel();
         panel_top = new javax.swing.JPanel();
         panel_table = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        table_jobs = new javax.swing.JTable();
         panel_jobdetails = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -164,34 +164,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         panel_table.setAutoscrolls(true);
 
-        jTable1.setAutoCreateRowSorter(true);
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "JobUID", "Executable", "SiteID", "Created", "Started", "Finished", "State"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        panel_table.setViewportView(jTable1);
+        table_jobs.setAutoCreateRowSorter(true);
+        panel_table.setViewportView(table_jobs);
 
         panel_jobdetails.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Details"));
         panel_jobdetails.setPreferredSize(new java.awt.Dimension(622, 268));
@@ -598,6 +572,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             {
                 setJobDetails((JobData)node.getUserObject());
 
+                //change top panel
+                panel_table.setVisible(false);
+                panel_jobdetails.setVisible(true);
+
                 if (businessman.isOnline())
                 {
                     //enable remove buttons
@@ -605,6 +583,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                     btn_kill.setEnabled(true);
                 }
             }else{
+                businessman.setCurrentBackend(node.getUserObject().toString());
+
                 panel_table.setVisible(true);
                 panel_jobdetails.setVisible(false);
 
@@ -647,7 +627,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel jPanelRight;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JMenu menu_edit;
     private javax.swing.JMenu menu_file;
     private javax.swing.JMenuItem menu_item_exit;
@@ -660,6 +639,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel panel_top;
     private javax.swing.JScrollPane sp_tree;
     private javax.swing.JTextArea ta_jobdetails_description;
+    private javax.swing.JTable table_jobs;
     private javax.swing.JTextField tb_jobdetails_creationtime;
     private javax.swing.JTextField tb_jobdetails_donetime;
     private javax.swing.JTextField tb_jobdetails_executable;
@@ -725,32 +705,33 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     public void update(final Observable o, final Object obj) {
         System.out.println("MainWindow: updateObserver...");
+        businessman.saveExpansionState(tree_jobs);
 		updateTreeModel();
         setJobDetails((JobData)obj);
 	}
 
     public void updateBusinessManager()
     {
-           businessman.saveExpansionState(tree_jobs);
            businessman.refreshData();
     }
 
     private void setJobDetails(JobData job)
     {
-        tb_jobdetails_jobuid.setText(job.getTransportJobUID().toString());
-        tb_jobdetails_state.setText(job.getJobinfo().getStatus().toString());
-        tb_jobdetails_siteid.setText(job.getJobinfo().getSiteId());
+        if (job!=null)
+        {
+            System.out.println("MainWindow: setJobDetails.. job: "+job);
+            tb_jobdetails_jobuid.setText(job.getTransportJobUID().toString());
+            tb_jobdetails_state.setText(job.getJobinfo().getStatus().toString());
+            tb_jobdetails_siteid.setText(job.getJobinfo().getSiteId());
 
-        tb_jobdetails_creationtime.setText((job.getJobinfo().getCreationTime()!=null)?job.getJobinfo().getCreationTime().toString():"");
-        tb_jobdetails_startedtime.setText((job.getJobinfo().getStartRunningTime()!=null)?job.getJobinfo().getStartRunningTime().toString():"");
-        tb_jobdetails_donetime.setText((job.getJobinfo().getDoneRunningTime()!=null)?job.getJobinfo().getDoneRunningTime().toString():"");
+            tb_jobdetails_creationtime.setText((job.getJobinfo().getCreationTime()!=null)?job.getJobinfo().getCreationTime().toString():"");
+            tb_jobdetails_startedtime.setText((job.getJobinfo().getStartRunningTime()!=null)?job.getJobinfo().getStartRunningTime().toString():"");
+            tb_jobdetails_donetime.setText((job.getJobinfo().getDoneRunningTime()!=null)?job.getJobinfo().getDoneRunningTime().toString():"");
 
-        tb_jobdetails_executable.setText(job.getJobinfo().getExecutable());
-        tb_jobdetails_output.setText(job.getJobinfo().getOutput());
-        ta_jobdetails_description.setText(job.getJobinfo().getDescription());
+            tb_jobdetails_executable.setText(job.getJobinfo().getExecutable());
+            tb_jobdetails_output.setText(job.getJobinfo().getOutput());
+            ta_jobdetails_description.setText(job.getJobinfo().getDescription());
 
-        //change top panel
-        panel_table.setVisible(false);
-        panel_jobdetails.setVisible(true);
+        }
     }
 }
