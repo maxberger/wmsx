@@ -111,7 +111,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanelRight = new javax.swing.JPanel();
-        jPanelTopContainer = new javax.swing.JPanel();
+        panel_top = new javax.swing.JPanel();
         panel_table = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         panel_jobdetails = new javax.swing.JPanel();
@@ -133,7 +133,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jLabel8 = new javax.swing.JLabel();
         btn_kill = new javax.swing.JButton();
         btn_refresh = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        sp_tree = new javax.swing.JScrollPane();
         tree_jobs = new javax.swing.JTree();
         toolbar_main = new javax.swing.JToolBar();
         btn_add = new javax.swing.JButton();
@@ -153,6 +153,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jSplitPane1.setDividerSize(5);
 
         jPanelRight.setPreferredSize(new java.awt.Dimension(200, 200));
+
+        panel_top.setPreferredSize(new java.awt.Dimension(596, 250));
 
         panel_table.setAutoscrolls(true);
 
@@ -216,15 +218,15 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
+                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))
                     .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
+                        .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))
                     .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))))
+                            .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -232,9 +234,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
+                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                    .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                    .addComponent(jTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panel_jobdetailsLayout.setVerticalGroup(
@@ -264,18 +266,20 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 .addContainerGap(150, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanelTopContainerLayout = new javax.swing.GroupLayout(jPanelTopContainer);
-        jPanelTopContainer.setLayout(jPanelTopContainerLayout);
-        jPanelTopContainerLayout.setHorizontalGroup(
-            jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
-            .addGroup(jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(panel_jobdetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        javax.swing.GroupLayout panel_topLayout = new javax.swing.GroupLayout(panel_top);
+        panel_top.setLayout(panel_topLayout);
+        panel_topLayout.setHorizontalGroup(
+            panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
+            .addGroup(panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_topLayout.createSequentialGroup()
+                    .addContainerGap(101, Short.MAX_VALUE)
+                    .addComponent(panel_jobdetails, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
-        jPanelTopContainerLayout.setVerticalGroup(
-            jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panel_topLayout.setVerticalGroup(
+            panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
-            .addGroup(jPanelTopContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(panel_jobdetails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -309,7 +313,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                         .addComponent(btn_kill, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_refresh)))
-                .addContainerGap(427, Short.MAX_VALUE))
+                .addContainerGap(468, Short.MAX_VALUE))
         );
         panel_buttonsLayout.setVerticalGroup(
             panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -326,26 +330,35 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jPanelRight.setLayout(jPanelRightLayout);
         jPanelRightLayout.setHorizontalGroup(
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_buttons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanelTopContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panel_top, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
+            .addComponent(panel_buttons, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanelRightLayout.setVerticalGroup(
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRightLayout.createSequentialGroup()
-                .addComponent(jPanelTopContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(panel_top, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel_buttons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jSplitPane1.setRightComponent(jPanelRight);
 
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(0, 0));
+        sp_tree.setMinimumSize(new java.awt.Dimension(50, 80));
+        sp_tree.setPreferredSize(new java.awt.Dimension(120, 363));
 
         tree_jobs.setModel(treeModel);
-        tree_jobs.setMinimumSize(new java.awt.Dimension(50, 100));
-        jScrollPane1.setViewportView(tree_jobs);
+        tree_jobs.setMaximumSize(null);
+        tree_jobs.setMinimumSize(new java.awt.Dimension(100, 100));
+        tree_jobs.setPreferredSize(new java.awt.Dimension(100, 100));
+        tree_jobs.setRequestFocusEnabled(false);
+        tree_jobs.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                tree_jobsValueChanged(evt);
+            }
+        });
+        sp_tree.setViewportView(tree_jobs);
 
-        jSplitPane1.setLeftComponent(jScrollPane1);
+        jSplitPane1.setLeftComponent(sp_tree);
 
         toolbar_main.setFloatable(false);
         toolbar_main.setRollover(true);
@@ -427,9 +440,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(toolbar_main, javax.swing.GroupLayout.DEFAULT_SIZE, 701, Short.MAX_VALUE)
+            .addComponent(toolbar_main, javax.swing.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -459,7 +472,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void btn_add(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add
        if (businessman.isOnline())
        {
-            System.out.println("btn_add...");
+            //System.out.println("btn_add...");
 
             NewJob newjob = new NewJob(this);
             System.out.println("Show NewJobDialog...");
@@ -479,7 +492,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
        {
             if(optionen==null)
                 optionen=new Options();
-            System.out.println("Show OptionsDialog...");
+            //System.out.println("Show OptionsDialog...");
             optionen.setVisible(true);
        }
 }//GEN-LAST:event_menu_item_optionsActionPerformed
@@ -499,7 +512,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
            if (businessman.isOnline())
            {
                 NewJob newjob = new NewJob(this);
-                System.out.println("MainWindow: Show NewJobDialog...");
+                //System.out.println("MainWindow: Show NewJobDialog...");
                 newjob.setVisible(true);
            }
        }//GEN-LAST:event_menu_item_newjobActionPerformed
@@ -512,6 +525,40 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
            updateBusinessManager();
        }//GEN-LAST:event_btn_refreshActionPerformed
+
+       private void tree_jobsValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_tree_jobsValueChanged
+            DefaultMutableTreeNode node =
+                (DefaultMutableTreeNode) tree_jobs.getLastSelectedPathComponent();
+
+            if (node == null) return;
+
+            String classname = node.getUserObject().getClass().getSimpleName();
+            System.out.println(classname);
+
+            if (classname.equals("JobData")){
+                panel_table.setVisible(false);
+                panel_jobdetails.setVisible(true);
+
+                if (businessman.isOnline())
+                {
+                    //enable remove buttons
+                    btn_remove.setEnabled(true);
+                    btn_kill.setEnabled(true);
+                }
+            }else{
+                panel_table.setVisible(true);
+                panel_jobdetails.setVisible(false);
+
+                //disable remove buttons
+                btn_remove.setEnabled(false);
+                btn_kill.setEnabled(false);
+            }
+
+            String titel = node.getUserObject().toString();
+            jLabel8.setText(titel);
+
+            //this.repaint();
+       }//GEN-LAST:event_tree_jobsValueChanged
 
     Action exitAction = new AbstractAction( "Quit" ) {
       @Override public void actionPerformed( ActionEvent e ) {
@@ -542,8 +589,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanelRight;
-    private javax.swing.JPanel jPanelTopContainer;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
@@ -562,6 +607,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel panel_buttons;
     private javax.swing.JPanel panel_jobdetails;
     private javax.swing.JScrollPane panel_table;
+    private javax.swing.JPanel panel_top;
+    private javax.swing.JScrollPane sp_tree;
     private javax.swing.JToolBar toolbar_main;
     private javax.swing.JTree tree_jobs;
     // End of variables declaration//GEN-END:variables

@@ -34,7 +34,7 @@ public class JobData {
 
     public String toString()
     {
-        return transportJobUID.getLocalId();
+        return transportJobUID.toString();
     }
 
 }

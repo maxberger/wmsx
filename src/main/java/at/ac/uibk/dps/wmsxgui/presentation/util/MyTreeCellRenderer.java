@@ -52,7 +52,7 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
                 setIcon(redCircle);
 
             setToolTipText(job.getJobinfo().getDescription());
-            setText(job.getTransportJobUID().getLocalId());
+            setText(job.getTransportJobUID().toString());
 
         } else {
             setIcon(grid);
