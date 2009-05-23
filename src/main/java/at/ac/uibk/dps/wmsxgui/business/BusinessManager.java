@@ -168,24 +168,25 @@ public class BusinessManager extends Observable implements RemoteEventListener {
                jobmap.get(transJobUID.getBackend().toLowerCase()).add(new JobData(transJobUID,wmsx_service.getJobInfo(transJobUID)));
            }
        }
-       updateObservers();
+       updateObservers(null);
    }
 
-   private void updateObservers()
+   private void updateObservers(JobData job)
    {
        setChanged();
-       notifyObservers();
+       notifyObservers(job);
    }
 
 
    public void notify(RemoteEvent re) throws UnknownEventException, RemoteException {
        JobChangeEvent e = (JobChangeEvent)re;
        System.out.println("BusinessManager: notified by provider..."+e.getJobUid()+" State: "+e.getState());
-       for (JobData job : jobmap.get(e.getJobUid().getBackend()))
+       //Achtung: Fake vs. fake --> darum toLowerCase
+       for (JobData job : jobmap.get(e.getJobUid().getBackend().toLowerCase()))
            if (job.getTransportJobUID().equals(e.getJobUid()))
            {
                job.getJobinfo().setStatus(e.getState());
-               updateObservers();
+               updateObservers(job);
            }
    }
 }

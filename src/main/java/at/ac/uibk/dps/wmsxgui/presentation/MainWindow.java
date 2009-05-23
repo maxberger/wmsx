@@ -167,20 +167,20 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jTable1.setAutoCreateRowSorter(true);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Name", "Path", "Backend", "Output", "Time", "Status"
+                "JobUID", "Executable", "SiteID", "Created", "Started", "Finished", "State"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -208,13 +208,30 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         jLabel6.setText("Finished");
 
+        tb_jobdetails_jobuid.setEditable(false);
+
+        tb_jobdetails_state.setEditable(false);
+
+        tb_jobdetails_siteid.setEditable(false);
+
+        tb_jobdetails_creationtime.setEditable(false);
+
+        tb_jobdetails_startedtime.setEditable(false);
+
+        tb_jobdetails_donetime.setEditable(false);
+
         jLabel7.setText("Executable");
 
+        tb_jobdetails_executable.setEditable(false);
+
         jLabel9.setText("Output");
+
+        tb_jobdetails_output.setEditable(false);
 
         jLabel10.setText("Description");
 
         ta_jobdetails_description.setColumns(20);
+        ta_jobdetails_description.setEditable(false);
         ta_jobdetails_description.setRows(5);
         jScrollPane1.setViewportView(ta_jobdetails_description);
 
@@ -577,9 +594,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             String classname = node.getUserObject().getClass().getSimpleName();
             System.out.println(classname);
 
-            if (classname.equals("JobData")){
-                panel_table.setVisible(false);
-                panel_jobdetails.setVisible(true);
+            if (classname.equals("JobData"))
+            {
+                setJobDetails((JobData)node.getUserObject());
 
                 if (businessman.isOnline())
                 {
@@ -607,12 +624,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         System.exit(0);
       }
     };
-
-    public void updateBusinessManager()
-    {
-           businessman.saveExpansionState(tree_jobs);
-           businessman.refreshData();
-    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -715,5 +726,31 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     public void update(final Observable o, final Object obj) {
         System.out.println("MainWindow: updateObserver...");
 		updateTreeModel();
+        setJobDetails((JobData)obj);
 	}
+
+    public void updateBusinessManager()
+    {
+           businessman.saveExpansionState(tree_jobs);
+           businessman.refreshData();
+    }
+
+    private void setJobDetails(JobData job)
+    {
+        tb_jobdetails_jobuid.setText(job.getTransportJobUID().toString());
+        tb_jobdetails_state.setText(job.getJobinfo().getStatus().toString());
+        tb_jobdetails_siteid.setText(job.getJobinfo().getSiteId());
+
+        tb_jobdetails_creationtime.setText((job.getJobinfo().getCreationTime()!=null)?job.getJobinfo().getCreationTime().toString():"");
+        tb_jobdetails_startedtime.setText((job.getJobinfo().getStartRunningTime()!=null)?job.getJobinfo().getStartRunningTime().toString():"");
+        tb_jobdetails_donetime.setText((job.getJobinfo().getDoneRunningTime()!=null)?job.getJobinfo().getDoneRunningTime().toString():"");
+
+        tb_jobdetails_executable.setText(job.getJobinfo().getExecutable());
+        tb_jobdetails_output.setText(job.getJobinfo().getOutput());
+        ta_jobdetails_description.setText(job.getJobinfo().getDescription());
+
+        //change top panel
+        panel_table.setVisible(false);
+        panel_jobdetails.setVisible(true);
+    }
 }
