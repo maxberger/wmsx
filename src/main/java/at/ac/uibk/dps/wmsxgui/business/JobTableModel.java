@@ -21,7 +21,7 @@ public class JobTableModel extends AbstractTableModel implements Observer
     private BusinessManager businessman;
 
     private String[] columnNames = {"JobUID", "Executable", 
-        "SiteID", "Created", "Started", "Finished", "State"};
+        "SiteID", "Created", "Started", "Finished", "State","Type"};
 
     private List<JobData> data;
 
@@ -69,6 +69,7 @@ public class JobTableModel extends AbstractTableModel implements Observer
                 case 4: return (data.get(row).getJobinfo().getStartRunningTime()!=null)?data.get(row).getJobinfo().getStartRunningTime().toString():"";
                 case 5: return (data.get(row).getJobinfo().getDoneRunningTime()!=null)?data.get(row).getJobinfo().getDoneRunningTime().toString():"";
                 case 6: return data.get(row).getJobinfo().getStatus().toString();
+                case 7: return (data.get(row).getJobinfo().isWorker()==true)?"Worker":"Job";
                 default: return data.get(row).getTransportJobUID().toString();
             }
         }else
