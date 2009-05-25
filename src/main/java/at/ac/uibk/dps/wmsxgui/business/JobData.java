@@ -24,6 +24,10 @@ public class JobData {
         this.jobinfo = jobinfo;
     }
 
+    public void setJobinfo(JobInfo jobinfo) {
+        this.jobinfo = jobinfo;
+    }
+
     public JobInfo getJobinfo() {
         return jobinfo;
     }
