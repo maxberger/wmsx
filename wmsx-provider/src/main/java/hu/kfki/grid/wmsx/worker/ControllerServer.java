@@ -209,6 +209,16 @@ public final class ControllerServer {
     }
 
     /**
+     * Terminate the given worker.
+     * 
+     * @param Uuid
+     *            uuid of the worker.
+     */
+    public void shutdownWorker(final Uuid id) {
+        this.controller.scheduleShutdownForWorker(id);
+    }
+
+    /**
      * @return Singleton instance.
      */
     public static ControllerServer getInstance() {

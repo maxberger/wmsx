@@ -608,8 +608,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     /** {@inheritDoc} */
     public void shutdownWorker(final Uuid workerId) throws RemoteException {
-        // TODO Auto-generated method stub
-
+        ControllerServer.getInstance().shutdownWorker(workerId);
     }
 
 }
