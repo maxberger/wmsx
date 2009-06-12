@@ -38,6 +38,8 @@ public class WorkerInfo {
 
     private int retriesLeft;
 
+    private boolean shutdown;
+
     /**
      * Default constructor.
      */
@@ -104,9 +106,16 @@ public class WorkerInfo {
     }
 
     /**
-     * @return true if this worker has retries.
+     * Schedule this worker to be shutdown.
      */
-    public boolean hasRetries() {
-        return this.retriesLeft >= 0;
+    public void scheduleShutdown() {
+        this.shutdown = true;
+    }
+
+    /**
+     * @return true if this worker should be shut down.
+     */
+    public boolean shouldShutdown() {
+        return this.shutdown || this.retriesLeft < 1;
     }
 }

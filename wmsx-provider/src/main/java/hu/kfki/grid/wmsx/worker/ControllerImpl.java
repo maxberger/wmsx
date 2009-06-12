@@ -96,20 +96,17 @@ public class ControllerImpl implements Controller, Runnable {
 
     private final Map<Uuid, WorkerInfo> workerInfo = new HashMap<Uuid, WorkerInfo>();
 
-    private final WorkDescription shutdownWorkDescription;
+    private final ControllerWorkDescription shutdownWorkDescription;
 
     private boolean pendingCheckRunning;
-
-    private boolean shutdownState;
 
     private final FileManager fileManager = new FileManager();
 
     private final FileUtil fileUtil = FileUtil.getInstance();
 
     ControllerImpl() {
-        this.shutdownState = false;
         this.shutdownWorkDescription = new ControllerWorkDescription(
-                "shutdown", new EmptyJobDescription()).getWorkDescription();
+                "shutdown", new EmptyJobDescription());
         this.fileUtil.supportVirtualFiles();
     }
 
@@ -128,19 +125,21 @@ public class ControllerImpl implements Controller, Runnable {
 
     /** {@inheritDoc} */
     public WorkDescription retrieveWork(final Uuid uuid) {
-        if (this.shutdownState) {
-            return this.shutdownWorkDescription;
-        }
         final Object jobid;
         this.ping(uuid);
         final ControllerWorkDescription cwd;
+        final WorkDescription wd;
         synchronized (this.pending) {
             final long now = System.currentTimeMillis();
             cwd = this.getWorkdescriptionForUuid(uuid, now);
             if (cwd == null) {
                 return null;
             }
-            final WorkDescription wd = cwd.getWorkDescription();
+            wd = cwd.getWorkDescription();
+            if (cwd == this.shutdownWorkDescription) {
+                return wd;
+            }
+
             jobid = wd.getId();
             this.running.put(jobid, cwd);
             this.completeInfoOnRunning(uuid, jobid);
@@ -153,7 +152,7 @@ public class ControllerImpl implements Controller, Runnable {
         JobWatcher.getInstance().checkWithState(this.getJuidForId(jobid),
                 JobState.RUNNING);
         this.startPendingCheck();
-        return cwd.getWorkDescription();
+        return wd;
     }
 
     /**
@@ -182,8 +181,8 @@ public class ControllerImpl implements Controller, Runnable {
 
         synchronized (this.workerInfo) {
             final WorkerInfo i = this.workerInfo.get(uuid);
-            if (!i.hasRetries()) {
-                return null;
+            if (i.shouldShutdown()) {
+                return this.shutdownWorkDescription;
             }
         }
 
@@ -433,13 +432,14 @@ public class ControllerImpl implements Controller, Runnable {
     }
 
     /**
-     * set shutdown state.
-     * 
-     * @param newShutdown
-     *            new state. If true it shuts down.
+     * schedules all currently known workers to be shut down.
      */
-    public void setShutdownState(final boolean newShutdown) {
-        this.shutdownState = newShutdown;
+    public void scheduleShutdownForAllWorkers() {
+        synchronized (this.workerInfo) {
+            for (final WorkerInfo wi : this.workerInfo.values()) {
+                wi.scheduleShutdown();
+            }
+        }
         this.notifyAllWorkers();
     }
 
