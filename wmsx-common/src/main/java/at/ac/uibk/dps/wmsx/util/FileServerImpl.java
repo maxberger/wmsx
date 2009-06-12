@@ -87,10 +87,18 @@ public final class FileServerImpl implements FileServer {
      * @return A proxy which can be used to retrieve the file again.
      */
     public FileServer serveFile(final VirtualFile vFile) {
+        final FileServer proxy;
+        synchronized (this) {
+            proxy = this.myProxy;
+        }
+        if (proxy == null) {
+            throw new IllegalStateException(
+                    "start() must be called before serveFile()");
+        }
         final String name = vFile.getName();
         FileServerImpl.LOGGER.info("Serving file: " + name);
         this.serverMap.put(name, vFile);
-        return this.myProxy;
+        return proxy;
     }
 
     /** {@inheritDoc} */
