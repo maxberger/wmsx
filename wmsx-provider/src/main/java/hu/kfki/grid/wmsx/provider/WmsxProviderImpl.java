@@ -32,6 +32,7 @@ import hu.kfki.grid.wmsx.job.JobListener;
 import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.LogListener;
 import hu.kfki.grid.wmsx.job.description.JDLJobDescription;
+import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.job.result.ResultListener;
 import hu.kfki.grid.wmsx.job.shadow.ShadowListener;
 import hu.kfki.grid.wmsx.provider.arglist.LaszloJobFactory;
@@ -290,9 +291,11 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
      */
     private void fillInInfo(final JobUid id, final JdlJob job) {
         final JobInfo info = JobWatcher.getInstance().getInfoForJob(id);
-        info.setExecutable(job.getCommand());
+
+        info.setExecutable(job.getJobDescription().getStringEntry(
+                JobDescription.EXECUTABLE));
         info.setOutput(job.getOutput());
-        info.setDescription(job.getName());
+        info.setDescription(job.getJobDescription().getName());
     }
 
     private void runPreexec(final JdlJob job, final String output) {
