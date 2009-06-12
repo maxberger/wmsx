@@ -65,7 +65,7 @@ public class ControllerImpl implements Controller, Runnable {
                         ControllerImpl.this.workerInfo.entrySet());
             }
             for (final Map.Entry<Uuid, WorkerInfo> w : workersToNotify) {
-                ControllerImpl.this.notifyWorker(w);
+                ControllerImpl.this.notifyWorker(w.getKey(), w.getValue());
             }
         }
 
@@ -110,15 +110,15 @@ public class ControllerImpl implements Controller, Runnable {
         this.fileUtil.supportVirtualFiles();
     }
 
-    private void notifyWorker(final Map.Entry<Uuid, WorkerInfo> w) {
+    private void notifyWorker(final Uuid id, final WorkerInfo wi) {
         try {
-            final Worker proxy = w.getValue().getProxy();
+            final Worker proxy = wi.getProxy();
             if (proxy != null) {
                 proxy.newWork();
             }
         } catch (final RemoteException r) {
             synchronized (this.workerInfo) {
-                this.workerInfo.remove(w.getKey());
+                this.workerInfo.remove(id);
             }
         }
     }
@@ -443,6 +443,25 @@ public class ControllerImpl implements Controller, Runnable {
         this.notifyAllWorkers();
     }
 
+    /**
+     * schedules the given worker to be shut down.
+     * 
+     * @param uuid
+     *            Id of the worker.
+     */
+    public void scheduleShutdownForWorker(final Uuid uuid) {
+        final WorkerInfo wi;
+        synchronized (this.workerInfo) {
+            wi = this.workerInfo.get(uuid);
+            if (wi != null) {
+                wi.scheduleShutdown();
+            }
+        }
+        if (wi != null) {
+            this.notifyWorker(uuid, wi);
+        }
+    }
+
     /** {@inheritDoc} */
     public void registerWorker(final Uuid uuid, final Worker worker)
             throws RemoteException {
@@ -454,20 +473,7 @@ public class ControllerImpl implements Controller, Runnable {
             ControllerImpl.LOGGER.info("Now there are "
                     + this.workerInfo.size() + " registered workers.");
         }
-        this.notifyWorker(new Map.Entry<Uuid, WorkerInfo>() {
-
-            public Uuid getKey() {
-                return uuid;
-            }
-
-            public WorkerInfo getValue() {
-                return info;
-            }
-
-            public WorkerInfo setValue(final WorkerInfo value) {
-                return null;
-            }
-        });
+        this.notifyWorker(uuid, info);
     }
 
     /**
