@@ -42,7 +42,8 @@ import com.sun.jini.landlord.LocalLandlord;
  * 
  * @version $Date: 1/1/2000$
  */
-public class LandlordImpl implements Landlord, LocalLandlord, ReferentUuid {
+public final class LandlordImpl implements Landlord, LocalLandlord,
+        ReferentUuid {
 
     private static final long MAX_LEASE_TIME = 120 * 60 * 1000;
 
@@ -80,18 +81,20 @@ public class LandlordImpl implements Landlord, LocalLandlord, ReferentUuid {
     }
 
     /** {@inheritDoc} */
-    public long renew(final Uuid cookie, long duration)
+    public long renew(final Uuid cookie, final long duration)
             throws LeaseDeniedException, UnknownLeaseException {
-        if (duration > LandlordImpl.MAX_LEASE_TIME) {
-            duration = LandlordImpl.MAX_LEASE_TIME;
-        }
+        final long saneDuration;
         if (duration < LandlordImpl.MIN_LEASE_TIME) {
-            duration = LandlordImpl.MIN_LEASE_TIME;
+            saneDuration = LandlordImpl.MIN_LEASE_TIME;
+        } else if (duration > LandlordImpl.MAX_LEASE_TIME) {
+            saneDuration = LandlordImpl.MAX_LEASE_TIME;
+        } else {
+            saneDuration = duration;
         }
         synchronized (this.expires) {
-            this.expires.put(cookie, System.currentTimeMillis() + duration);
+            this.expires.put(cookie, System.currentTimeMillis() + saneDuration);
         }
-        return duration;
+        return saneDuration;
     }
 
     /** {@inheritDoc} */
