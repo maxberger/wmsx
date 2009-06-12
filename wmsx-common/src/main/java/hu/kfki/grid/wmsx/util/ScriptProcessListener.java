@@ -19,34 +19,20 @@
 
 /* $Id$ */
 
-package hu.kfki.grid.wmsx.worker;
-
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+package hu.kfki.grid.wmsx.util;
 
 /**
- * Interface for workers supporting push notification.
+ * Receives notification when a script is launched with the process object.
  * 
  * @version $Date$
  */
-public interface Worker extends Remote {
+public interface ScriptProcessListener {
 
     /**
-     * Notification that new work is available.
+     * Called when a {@link Process} object has been assigned.
      * 
-     * @throws RemoteException
-     *             if the connection is broken.
+     * @param p
+     *            the Process object.
      */
-    void newWork() throws RemoteException;
-
-    /**
-     * Cancel the given job if it is running.
-     * 
-     * @param id
-     *            Internal Id of the job.
-     * @throws RemoteException
-     *             if the connection is broken.
-     */
-    void cancel(Object id) throws RemoteException;
-
+    void gotProcess(Process p);
 }

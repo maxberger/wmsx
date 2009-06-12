@@ -103,12 +103,16 @@ public final class ScriptLauncher {
      * @return return value of the execution.
      */
     public int launchScript(final String cmdString, final File dir,
-            final String stdout, final String stderr) {
+            final String stdout, final String stderr,
+            final ScriptProcessListener listener) {
         int retVal = 0;
         try {
             final OutputStream o = this.prepareOutput(stdout, dir);
             final OutputStream e = this.prepareOutput(stderr, dir);
             final Process p = Runtime.getRuntime().exec(cmdString, null, dir);
+            if (listener != null) {
+                listener.gotProcess(p);
+            }
             retVal = this.wrapProcess(p, o, e);
         } catch (final IOException e) {
             ScriptLauncher.LOGGER
@@ -157,6 +161,7 @@ public final class ScriptLauncher {
      *            OutputStream to listen to
      * @param err
      *            ErrorStream to listen to
+     * @param listener
      * @return return value of the process' execution.
      */
     public int wrapProcess(final Process p, final OutputStream out,

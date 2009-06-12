@@ -177,4 +177,12 @@ public final class WorkPerformer {
                 todo.getStderr(), workDir);
     }
 
+    /**
+     * @param id
+     */
+    public void cancelJob(final Object id) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

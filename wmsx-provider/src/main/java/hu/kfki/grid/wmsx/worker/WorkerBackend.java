@@ -112,4 +112,9 @@ public final class WorkerBackend implements Backend {
         return true;
     }
 
+    /** {@inheritDoc} */
+    public void cancelJob(final JobUid id) {
+        this.controllerImpl.cancelJob(id.getBackendId());
+    }
+
 }

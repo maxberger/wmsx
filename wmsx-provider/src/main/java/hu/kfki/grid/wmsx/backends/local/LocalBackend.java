@@ -120,4 +120,12 @@ public final class LocalBackend implements Backend {
     public boolean isAvailable() {
         return true;
     }
+
+    /** {@inheritDoc} */
+    public void cancelJob(final JobUid id) {
+        final LocalProcess p = this.processes.get(id);
+        if (p != null) {
+            p.tryToDestroy();
+        }
+    }
 }

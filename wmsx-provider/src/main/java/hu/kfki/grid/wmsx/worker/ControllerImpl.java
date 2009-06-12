@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -506,4 +507,62 @@ public class ControllerImpl implements Controller, Runnable {
         }
     }
 
+    /**
+     * Cancels the given job.
+     * 
+     * @param internal
+     *            Id.
+     */
+    public void cancelJob(final Object id) {
+        boolean didcancel = false;
+        synchronized (this.pending) {
+            if (this.running.keySet().contains(id)) {
+
+                final JobInfo jinfo = this.getInfoForJob(id);
+                final Uuid uuid = jinfo.getWorkerId();
+
+                new Thread(new Runnable() {
+
+                    public void run() {
+                        ControllerImpl.this.sendCancelNotification(uuid, id);
+                    }
+                }).start();
+                didcancel = true;
+            } else {
+                final Iterator<ControllerWorkDescription> cwdid = this.pending
+                        .iterator();
+                while (cwdid.hasNext()) {
+                    final ControllerWorkDescription cwd = cwdid.next();
+                    if (cwd.getWorkDescription().getId().equals(id)) {
+                        cwdid.remove();
+                        didcancel = true;
+                    }
+                }
+            }
+            if (didcancel) {
+                this.failed.add(id);
+                JobWatcher.getInstance().checkWithState(this.getJuidForId(id),
+                        JobState.FAILED);
+            }
+        }
+    }
+
+    private void sendCancelNotification(final Uuid uuid, final Object id) {
+        final Worker proxy;
+        synchronized (this.workerInfo) {
+            final WorkerInfo wi = this.workerInfo.get(uuid);
+            if (wi == null) {
+                proxy = null;
+            } else {
+                proxy = wi.getProxy();
+            }
+        }
+        if (proxy != null) {
+            try {
+                proxy.cancel(id);
+            } catch (final RemoteException e) {
+                ControllerImpl.LOGGER.info(e.getMessage());
+            }
+        }
+    }
 }

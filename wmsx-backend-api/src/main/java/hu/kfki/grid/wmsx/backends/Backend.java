@@ -115,4 +115,12 @@ public interface Backend {
      * @return true if this backend is available.
      */
     boolean isAvailable();
+
+    /**
+     * Cancel a running job if possible.
+     * 
+     * @param id
+     *            Id of the job to cancel.
+     */
+    void cancelJob(final JobUid id);
 }
