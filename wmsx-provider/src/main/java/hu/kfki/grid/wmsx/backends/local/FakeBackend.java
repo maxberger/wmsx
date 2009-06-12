@@ -53,13 +53,17 @@ public final class FakeBackend implements Backend {
 
     /** {@inheritDoc} */
     public JobState getState(final JobUid uid) {
-        JobState newState = JobState.SUCCESS;
+        final JobState newState;
         final Object key = uid.getBackendId();
         final JobState nowState = this.state.get(key);
-        if (JobState.NONE.equals(nowState)) {
+        if (nowState == null || JobState.NONE.equals(nowState)) {
             newState = JobState.STARTUP;
         } else if (JobState.STARTUP.equals(nowState)) {
             newState = JobState.RUNNING;
+        } else if (JobState.RUNNING.equals(nowState)) {
+            newState = JobState.SUCCESS;
+        } else {
+            newState = nowState;
         }
         this.state.put(key, newState);
         return newState;
@@ -115,5 +119,10 @@ public final class FakeBackend implements Backend {
     /** {@inheritDoc} */
     public boolean isAvailable() {
         return true;
+    }
+
+    /** {@inheritDoc} */
+    public void cancelJob(final JobUid id) {
+        this.state.put(id, JobState.FAILED);
     }
 }

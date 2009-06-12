@@ -97,6 +97,17 @@ public final class GLiteWmsBackend extends AbstractLCGBackend {
 
     /** {@inheritDoc} */
     @Override
+    public List<String> cancelJobCommand(final String jobId) {
+        final List<String> commandLine = new Vector<String>();
+        commandLine.add(LcgCommon.ENV);
+        commandLine.add("glite-wms-job-cancel");
+        commandLine.add(AbstractLCGBackend.NOINT);
+        commandLine.add(jobId);
+        return commandLine;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "GLiteWms";
     }

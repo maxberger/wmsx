@@ -79,6 +79,20 @@ public abstract class AbstractLCGBackend implements Backend {
 
     }
 
+    /** {@inheritDoc} */
+    public void cancelJob(final JobUid id) {
+        try {
+            final String jobId = (String) id.getBackendId();
+            final List<String> commandLine = this.cancelJobCommand(jobId);
+            final Process p = Runtime.getRuntime().exec(
+                    commandLine.toArray(new String[commandLine.size()]));
+            ProcessHelper.cleanupProcess(p);
+        } catch (final IOException e) {
+            AbstractLCGBackend.LOGGER.warning(e.getMessage());
+        }
+
+    }
+
     /**
      * Command line to run to retrieve the job output.
      * 
@@ -113,6 +127,15 @@ public abstract class AbstractLCGBackend implements Backend {
      */
     protected abstract List<String> retreiveLogCommand(String jobId,
             String filename);
+
+    /**
+     * Command line to cancel a job.
+     * 
+     * @param jobId
+     *            jobId as string.
+     * @return List of commands to execute.
+     */
+    protected abstract List<String> cancelJobCommand(String jobId);
 
     /**
      * Command line to get the status output.

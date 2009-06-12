@@ -58,6 +58,8 @@ public final class WorkerImpl implements Worker {
 
     private final Alive alive;
 
+    private final WorkPerformer performer = WorkPerformer.getInstance();
+
     private WorkerImpl(final Controller cont, final Uuid id) {
         this.controller = cont;
         this.uuid = id;
@@ -70,7 +72,6 @@ public final class WorkerImpl implements Worker {
     }
 
     private void start() {
-        final WorkPerformer performer = WorkPerformer.getInstance();
         boolean terminate = false;
         long lastChecked = 0;
         long delay = WorkerImpl.START_DELAY;
@@ -106,7 +107,7 @@ public final class WorkerImpl implements Worker {
                             terminate = true;
                         } else {
                             this.alive.start();
-                            performer.performWork(todo, this.controller,
+                            this.performer.performWork(todo, this.controller,
                                     this.uuid);
                             delay = WorkerImpl.START_DELAY;
                             lastChecked = 0;
@@ -181,5 +182,10 @@ public final class WorkerImpl implements Worker {
         synchronized (this) {
             this.notifyAll();
         }
+    }
+
+    /** {@inheritDoc} */
+    public void cancel(final Object id) throws RemoteException {
+        this.performer.cancelJob(id);
     }
 }

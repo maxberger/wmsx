@@ -353,4 +353,14 @@ public class GatBackend implements Backend, MetricListener {
         return this.gatCommon.isAvailable("ResourceBroker",
                 "GliteResourceBrokerAdaptor");
     }
+
+    /** {@inheritDoc} */
+    public void cancelJob(final JobUid id) {
+        final Job job = (Job) id.getBackendId();
+        try {
+            job.stop();
+        } catch (final GATInvocationException e) {
+            GatBackend.LOGGER.warning(LogUtil.logException(e));
+        }
+    }
 }

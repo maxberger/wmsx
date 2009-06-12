@@ -27,6 +27,7 @@ import hu.kfki.grid.wmsx.job.JobWatcher;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 import hu.kfki.grid.wmsx.util.FileUtil;
 import hu.kfki.grid.wmsx.util.ScriptLauncher;
+import hu.kfki.grid.wmsx.util.ScriptProcessListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +40,7 @@ import java.util.logging.Logger;
  * 
  * @version $Date$
  */
-public class LocalProcess implements Runnable {
+public class LocalProcess implements Runnable, ScriptProcessListener {
 
     private static final Logger LOGGER = Logger.getLogger(LocalProcess.class
             .toString());
@@ -51,6 +52,10 @@ public class LocalProcess implements Runnable {
     private final JobUid uid;
 
     private final JobDescription job;
+
+    private Process process;
+
+    private volatile boolean failed;
 
     /**
      * Create a localProcess wrapper.
@@ -76,16 +81,28 @@ public class LocalProcess implements Runnable {
         this.stateMap.put(this.uid, JobState.STARTUP);
         JobWatcher.getInstance().checkWithState(this.uid, JobState.STARTUP);
         try {
-            this.startup();
-            this.stateMap.put(this.uid, JobState.RUNNING);
-            JobWatcher.getInstance().checkWithState(this.uid, JobState.RUNNING);
-            this.running();
-            this.stateMap.put(this.uid, JobState.SUCCESS);
-            JobWatcher.getInstance().checkWithState(this.uid, JobState.SUCCESS);
+            if (!this.failed) {
+                this.startup();
+            }
+            if (!this.failed) {
+                this.stateMap.put(this.uid, JobState.RUNNING);
+                JobWatcher.getInstance().checkWithState(this.uid,
+                        JobState.RUNNING);
+                this.running();
+            }
+            if (!this.failed) {
+                this.stateMap.put(this.uid, JobState.SUCCESS);
+                JobWatcher.getInstance().checkWithState(this.uid,
+                        JobState.SUCCESS);
+            }
         } catch (final IOException e) {
             LocalProcess.LOGGER.warning(e.getMessage());
+            this.failed = true;
+        }
+        if (this.failed) {
             this.stateMap.put(this.uid, JobState.FAILED);
             JobWatcher.getInstance().checkWithState(this.uid, JobState.FAILED);
+            this.cleanup();
         }
     }
 
@@ -125,7 +142,7 @@ public class LocalProcess implements Runnable {
             stderr = new File(this.workdir, stderr).getCanonicalPath();
         }
         ScriptLauncher.getInstance().launchScript(commandline.toString(),
-                this.workdir, stdout, stderr);
+                this.workdir, stdout, stderr, this);
     }
 
     /**
@@ -155,7 +172,29 @@ public class LocalProcess implements Runnable {
     }
 
     private void cleanup() {
-        FileUtil.cleanDir(this.workdir, false);
+        if (this.workdir != null) {
+            FileUtil.cleanDir(this.workdir, false);
+        }
+    }
+
+    /**
+     * 
+     */
+    public void tryToDestroy() {
+        synchronized (this) {
+            this.failed = true;
+            if (this.process != null) {
+                this.process.destroy();
+            }
+        }
+
+    }
+
+    /** {@inheritDoc} */
+    public void gotProcess(final Process p) {
+        synchronized (this) {
+            this.process = p;
+        }
     }
 
 }
