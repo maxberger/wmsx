@@ -77,26 +77,6 @@ public abstract class AbstractLCGBackend implements Backend {
             AbstractLCGBackend.LOGGER.warning(e.getMessage());
         }
 
-        // TODO: Re-enable!
-        // final Job job = new Job((JobId) id.getBackendId());
-        //
-        // Result result;
-        // try {
-        // result = job.getLogInfo();
-        // final String logInfo = result.toString(InfoLB.HIGH_LOG_LEVEL);
-        // final BufferedWriter logWriter = new BufferedWriter(new FileWriter(
-        // new File(dir, "log")));
-        // logWriter.write(logInfo);
-        // logWriter.close();
-        // } catch (final UnsupportedOperationException e) {
-        // AbstractLCGBackend.LOGGER.info("UnsupportedOperationException: "
-        // + e.getMessage());
-        // } catch (final IOException e) {
-        // AbstractLCGBackend.LOGGER.warning("IOException" + e.getMessage());
-        // } catch (final GlobusCredentialException e) {
-        // AbstractLCGBackend.LOGGER.info("GlobusCredentialException"
-        // + e.getMessage());
-        // }
     }
 
     /**
@@ -213,47 +193,6 @@ public abstract class AbstractLCGBackend implements Backend {
             AbstractLCGBackend.LOGGER.warning(io.getMessage());
         }
         return retVal;
-
-        // final Job job = new Job(new JobId(uid.getBackendId().toString()));
-        // JobState retVal = JobState.FAILED;
-        // try {
-        //
-        // final Result result = job.getStatus(false);
-        //
-        // final JobStatus status = (JobStatus) result.getResult();
-        //
-        // final int statusInt = status.code();
-        //
-        // final boolean startupPhase = statusInt == JobStatus.SUBMITTED
-        // || statusInt == JobStatus.WAITING
-        // || statusInt == JobStatus.READY
-        // || statusInt == JobStatus.SCHEDULED;
-        //
-        // final boolean active = statusInt == JobStatus.RUNNING;
-        //
-        // // boolean done = (statusInt == JobStatus.DONE)
-        // // || (statusInt == JobStatus.CLEARED)
-        // // || (statusInt == JobStatus.ABORTED)
-        // // || (statusInt == JobStatus.CANCELLED);
-        // final boolean success = statusInt == JobStatus.DONE
-        // || statusInt == JobStatus.CLEARED;
-        //
-        // if (startupPhase) {
-        // retVal = JobState.STARTUP;
-        // } else if (active) {
-        // retVal = JobState.RUNNING;
-        // } else if (success) {
-        // retVal = JobState.SUCCESS;
-        // }
-        //
-        // } catch (final IOException e) {
-        // AbstractLCGBackend.LOGGER.warning(e.getMessage());
-        // retVal = JobState.FAILED;
-        // } catch (final GlobusCredentialException e) {
-        // AbstractLCGBackend.LOGGER.warning(e.getMessage());
-        // retVal = JobState.FAILED;
-        // }
-        // return retVal;
     }
 
     /** {@inheritDoc} */
