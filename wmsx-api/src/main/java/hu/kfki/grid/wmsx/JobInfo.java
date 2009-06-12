@@ -110,7 +110,11 @@ public class JobInfo implements Serializable {
      * @return the creationTime
      */
     public Date getCreationTime() {
-        return (Date) this.creationTime.clone();
+        if (this.creationTime == null) {
+            return null;
+        } else {
+            return (Date) this.creationTime.clone();
+        }
     }
 
     /**
@@ -125,7 +129,11 @@ public class JobInfo implements Serializable {
      * @return the startRunningTime
      */
     public Date getStartRunningTime() {
-        return (Date) this.startRunningTime.clone();
+        if (this.startRunningTime == null) {
+            return null;
+        } else {
+            return (Date) this.startRunningTime.clone();
+        }
     }
 
     /**
@@ -140,7 +148,11 @@ public class JobInfo implements Serializable {
      * @return the doneRunningTime
      */
     public Date getDoneRunningTime() {
-        return (Date) this.doneRunningTime.clone();
+        if (this.doneRunningTime == null) {
+            return null;
+        } else {
+            return (Date) this.doneRunningTime.clone();
+        }
     }
 
     /**
