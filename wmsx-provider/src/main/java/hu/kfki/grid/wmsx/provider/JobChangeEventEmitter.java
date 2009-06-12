@@ -73,6 +73,8 @@ public class JobChangeEventEmitter implements JobListener {
             JobChangeEventEmitter.LOGGER.info(e.toString());
         } catch (final UnknownEventException e) {
             JobChangeEventEmitter.LOGGER.info(e.toString());
+        } catch (final Exception e) {
+            JobChangeEventEmitter.LOGGER.warning(e.toString());
         }
     }
 
