@@ -110,45 +110,45 @@ public class JobInfo implements Serializable {
      * @return the creationTime
      */
     public Date getCreationTime() {
-        return this.creationTime;
+        return (Date) this.creationTime.clone();
     }
 
     /**
      * @param ncreationTime
-     *            the creationTime to sewt
+     *            the creationTime to set. Must not be null.
      */
     public void setCreationTime(final Date ncreationTime) {
-        this.creationTime = ncreationTime;
+        this.creationTime = (Date) ncreationTime.clone();
     }
 
     /**
      * @return the startRunningTime
      */
     public Date getStartRunningTime() {
-        return this.startRunningTime;
+        return (Date) this.startRunningTime.clone();
     }
 
     /**
      * @param nstartRunningTime
-     *            the startRunningTime to set
+     *            the startRunningTime to set. Must not be null.
      */
     public void setStartRunningTime(final Date nstartRunningTime) {
-        this.startRunningTime = nstartRunningTime;
+        this.startRunningTime = (Date) nstartRunningTime.clone();
     }
 
     /**
      * @return the doneRunningTime
      */
     public Date getDoneRunningTime() {
-        return this.doneRunningTime;
+        return (Date) this.doneRunningTime.clone();
     }
 
     /**
      * @param ndoneRunningTime
-     *            the doneRunningTime to set
+     *            the doneRunningTime to set. Must not be null.
      */
     public void setDoneRunningTime(final Date ndoneRunningTime) {
-        this.doneRunningTime = ndoneRunningTime;
+        this.doneRunningTime = (Date) ndoneRunningTime.clone();
     }
 
     /**
