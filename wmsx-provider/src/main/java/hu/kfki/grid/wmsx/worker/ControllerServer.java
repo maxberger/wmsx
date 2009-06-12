@@ -192,7 +192,6 @@ public final class ControllerServer {
      */
     public void submitWorkers(final Backend backend, final int count) {
         if (this.jobDesc != null) {
-            this.controller.setShutdownState(false);
 
             for (int i = 0; i < count; i++) {
                 new Thread(new WorkerStarter(backend)).start();
@@ -206,7 +205,7 @@ public final class ControllerServer {
      * Terminate all workers.
      */
     public void shutdownWorkers() {
-        this.controller.setShutdownState(true);
+        this.controller.scheduleShutdownForAllWorkers();
     }
 
     /**
