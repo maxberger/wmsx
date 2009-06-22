@@ -142,12 +142,17 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         l_selectedjob = new javax.swing.JLabel();
         btn_kill = new javax.swing.JButton();
         btn_refresh = new javax.swing.JButton();
+        btn_cleanup = new javax.swing.JButton();
+        btn_kill1 = new javax.swing.JButton();
         sp_tree = new javax.swing.JScrollPane();
         tree_jobs = new javax.swing.JTree();
         toolbar_main = new javax.swing.JToolBar();
         btn_add = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         btn_remove = new javax.swing.JButton();
         btn_ping = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         menu_file = new javax.swing.JMenu();
         menu_item_newjob = new javax.swing.JMenuItem();
@@ -351,6 +356,20 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
         });
 
+        btn_cleanup.setText("cleanup");
+        btn_cleanup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cleanupActionPerformed(evt);
+            }
+        });
+
+        btn_kill1.setText("stop");
+        btn_kill1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_kill1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panel_buttonsLayout = new javax.swing.GroupLayout(panel_buttons);
         panel_buttons.setLayout(panel_buttonsLayout);
         panel_buttonsLayout.setHorizontalGroup(
@@ -360,10 +379,14 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 .addGroup(panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(l_selectedjob)
                     .addGroup(panel_buttonsLayout.createSequentialGroup()
+                        .addComponent(btn_kill1, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_kill, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_refresh)))
-                .addContainerGap(440, Short.MAX_VALUE))
+                        .addComponent(btn_refresh)
+                        .addGap(6, 6, 6)
+                        .addComponent(btn_cleanup)))
+                .addContainerGap(305, Short.MAX_VALUE))
         );
         panel_buttonsLayout.setVerticalGroup(
             panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -372,7 +395,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_kill)
-                    .addComponent(btn_refresh))
+                    .addComponent(btn_kill1)
+                    .addComponent(btn_refresh)
+                    .addComponent(btn_cleanup))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -410,6 +435,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         toolbar_main.setRollover(true);
 
         btn_add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/add.png"))); // NOI18N
+        btn_add.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         btn_add.setFocusable(false);
         btn_add.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_add.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -420,7 +446,15 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         });
         toolbar_main.add(btn_add);
 
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/window-close.png"))); // NOI18N
+        jButton3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton3.setFocusable(false);
+        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar_main.add(jButton3);
+
         btn_remove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stop.png"))); // NOI18N
+        btn_remove.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         btn_remove.setFocusable(false);
         btn_remove.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_remove.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -438,6 +472,20 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
         });
         toolbar_main.add(btn_ping);
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view-refresh.png"))); // NOI18N
+        jButton1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar_main.add(jButton1);
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/edit-clear.png"))); // NOI18N
+        jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton2.setFocusable(false);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar_main.add(jButton2);
 
         menu_file.setText("File");
 
@@ -604,6 +652,14 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
        }//GEN-LAST:event_tree_jobsValueChanged
 
+       private void btn_cleanupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cleanupActionPerformed
+           // TODO add your handling code here:
+}//GEN-LAST:event_btn_cleanupActionPerformed
+
+       private void btn_kill1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_kill1ActionPerformed
+           // TODO add your handling code here:
+       }//GEN-LAST:event_btn_kill1ActionPerformed
+
     Action exitAction = new AbstractAction( "Quit" ) {
       @Override public void actionPerformed( ActionEvent e ) {
         System.exit(0);
@@ -613,10 +669,15 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_add;
+    private javax.swing.JButton btn_cleanup;
     private javax.swing.JButton btn_kill;
+    private javax.swing.JButton btn_kill1;
     private javax.swing.JButton btn_ping;
     private javax.swing.JButton btn_refresh;
     private javax.swing.JButton btn_remove;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;

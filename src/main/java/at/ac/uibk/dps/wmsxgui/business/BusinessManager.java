@@ -161,7 +161,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
            List<JobData> joblist = new ArrayList<JobData>();
            for (List<JobData> jl :  jobmap.values())
                joblist.addAll(jl);
-
+           
            return joblist;
        }
    }
@@ -190,7 +190,8 @@ public class BusinessManager extends Observable implements RemoteEventListener {
            {
                //System.out.println("BusinessManager: refreshData... add new job - backend: "+transJobUID.getBackend().toLowerCase());
                //Achtung: fake vs. Fake
-               jobmap.get(transJobUID.getBackend().toLowerCase()).add(new JobData(transJobUID,wmsx_service.getJobInfo(transJobUID)));
+               jobmap.get(transJobUID.getBackend().toLowerCase())
+                       .add(new JobData(transJobUID,wmsx_service.getJobInfo(transJobUID)));
            }
        }
        updateObservers(null);
