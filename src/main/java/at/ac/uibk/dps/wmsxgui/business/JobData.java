@@ -9,36 +9,35 @@ import hu.kfki.grid.wmsx.JobInfo;
 import hu.kfki.grid.wmsx.TransportJobUID;
 
 /**
- *
+ * 
  * @author bafu
  */
 public class JobData {
-    private static final long serialVersionUID = -1595944205656281484L;
+    private static final long     serialVersionUID = -1595944205656281484L;
 
-    private TransportJobUID transportJobUID;
-    private JobInfo jobinfo;
+    private final TransportJobUID transportJobUID;
+    private JobInfo               jobinfo;
 
-    public JobData(TransportJobUID transportJobUID, JobInfo jobinfo)
-    {
+    public JobData(final TransportJobUID transportJobUID, final JobInfo jobinfo) {
         this.transportJobUID = transportJobUID;
         this.jobinfo = jobinfo;
     }
 
-    public void setJobinfo(JobInfo jobinfo) {
+    public void setJobinfo(final JobInfo jobinfo) {
         this.jobinfo = jobinfo;
     }
 
     public JobInfo getJobinfo() {
-        return jobinfo;
+        return this.jobinfo;
     }
 
     public TransportJobUID getTransportJobUID() {
-        return transportJobUID;
+        return this.transportJobUID;
     }
 
-    public String toString()
-    {
-        return transportJobUID.toString();
+    @Override
+    public String toString() {
+        return this.transportJobUID.toString();
     }
 
 }

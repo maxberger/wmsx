@@ -6,8 +6,9 @@
 package at.ac.uibk.dps.wmsxgui.business;
 
 import hu.kfki.grid.wmsx.JobChangeEvent;
-import hu.kfki.grid.wmsx.Wmsx;
 import hu.kfki.grid.wmsx.TransportJobUID;
+import hu.kfki.grid.wmsx.Wmsx;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,8 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
+
 import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
 import net.jini.core.event.UnknownEventException;
@@ -31,56 +34,54 @@ import net.jini.lease.LeaseRenewalEvent;
 import net.jini.lease.LeaseRenewalManager;
 
 /**
- *
+ * 
  * @author bafu
  */
 public class BusinessManager extends Observable implements RemoteEventListener {
-    private static final long serialVersionUID = 4569728891303483934L;
+    private static final long                serialVersionUID      = 4569728891303483934L;
 
-    private Requestor requestor;
-    private Wmsx wmsx_service;
-    private boolean isOnline;
+    private final Requestor                  requestor;
+    private final Wmsx                       wmsx_service;
+    private final Map<String, List<JobData>> jobmap                = new HashMap<String, List<JobData>>();
+    private Iterable<String>                 backends;
 
-    private Map<String, List<JobData>> jobmap = new HashMap<String, List<JobData>>();
-    private Iterable<String> backends;
+    private RemoteEventListener              theStub;
+    private LeaseRenewalManager              theManager;
+    private Lease                            lease;
 
-    private RemoteEventListener theStub;
-    private LeaseRenewalManager theManager;
-    private Lease lease;
-
-    private List<Integer> expandedNodesRowIndex = new ArrayList<Integer>();
-    private String currentBackend;
+    private final List<Integer>              expandedNodesRowIndex = new ArrayList<Integer>();
+    private String                           currentBackend;
 
     /* Singleton Pattern */
-	private BusinessManager()
-    {
+    private BusinessManager() {
 
-        requestor = Requestor.getInstance();
-        wmsx_service = requestor.getWmsxService();
+        this.requestor = Requestor.getInstance();
+        this.wmsx_service = this.requestor.getWmsxService();
 
-        try{
+        try {
 
-            Exporter myDefaultExporter =
-                new BasicJeriExporter(TcpServerEndpoint.getInstance(0),
-                                      new BasicILFactory(), false, true);
+            final Exporter myDefaultExporter = new BasicJeriExporter(
+                    TcpServerEndpoint.getInstance(0), new BasicILFactory(),
+                    false, true);
 
-            theStub = (RemoteEventListener) myDefaultExporter.export(this);
+            this.theStub = (RemoteEventListener) myDefaultExporter.export(this);
 
-            lease = wmsx_service.registerEventListener(theStub);
+            this.lease = this.wmsx_service.registerEventListener(this.theStub);
 
-            theManager = new LeaseRenewalManager();
-            theManager.renewFor(lease, Lease.FOREVER,30000, new DebugListener());
+            this.theManager = new LeaseRenewalManager();
+            this.theManager.renewFor(this.lease, Lease.FOREVER, 30000,
+                                     new DebugListener());
 
-        } catch (Exception re) {
+        }
+        catch (final Exception re) {
             re.printStackTrace();
         }
 
-
-        refreshData();
+        this.refreshData();
     }
 
     private static class DebugListener implements LeaseListener {
-        public void notify(LeaseRenewalEvent anEvent) {
+        public void notify(final LeaseRenewalEvent anEvent) {
             System.err.println("BusinessManager: Got lease renewal problem!");
 
             System.err.println(anEvent.getException());
@@ -89,131 +90,141 @@ public class BusinessManager extends Observable implements RemoteEventListener {
         }
     }
 
-    /** Private innere statische Klasse, realisiert Singleton Pattern
-	 *
-	 */
-	private static class SingletonHolder
-	{
-		private static BusinessManager INSTANCE = new BusinessManager();
-	}
+    /**
+     * Private innere statische Klasse, realisiert Singleton Pattern
+     * 
+     */
+    private static class SingletonHolder {
+        private static BusinessManager INSTANCE = new BusinessManager();
+    }
 
-	/** Gibt immer die gleiche Instanz zurück
-	 * @return Instance der Game Klasse
-	 */
-	public static BusinessManager getInstance()
-	{
-		return SingletonHolder.INSTANCE;
-	}
-	/* Singleton */
+    /**
+     * Gibt immer die gleiche Instanz zurück
+     * 
+     * @return Instance der Game Klasse
+     */
+    public static BusinessManager getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
 
+    /* Singleton */
 
-   public Wmsx getWmsxService()
-   {
-       return wmsx_service;
-   }
+    public Wmsx getWmsxService() {
+        return this.wmsx_service;
+    }
 
-   public String getCurrentBackend() {
-       return currentBackend;
-   }
+    public String getCurrentBackend() {
+        return this.currentBackend;
+    }
 
-   public void setCurrentBackend(String currentBackend) {
-       this.currentBackend = currentBackend;
-       updateObservers(currentBackend);
-   }
+    public void setCurrentBackend(final String currentBackend) {
+        this.currentBackend = currentBackend;
+        this.updateObservers(currentBackend);
+    }
 
-
-   public boolean isOnline()
-   {
-       if (wmsx_service!=null)
-           return true;
-       else
-           return false;
-   }
-
-   public void saveExpansionState(JTree tree_jobs)
-   {
-        //System.out.println("BusinessManager: saveExpansionState...");
-        expandedNodesRowIndex.clear();
-        Enumeration<TreePath> expandedNodes = tree_jobs.getExpandedDescendants(new TreePath(tree_jobs.getModel().getRoot()));
-        while (expandedNodes.hasMoreElements())
-        {
-            TreePath treePath = (TreePath) expandedNodes.nextElement();
-            expandedNodesRowIndex.add(tree_jobs.getRowForPath(treePath));
+    public boolean isOnline() {
+        if (this.wmsx_service != null) {
+            return true;
         }
-        Collections.sort(expandedNodesRowIndex);
-   }
-   
-   public List<Integer> getExpansionStateRows()
-   {
-       return expandedNodesRowIndex;
-   }
+        else {
+            return false;
+        }
+    }
 
-   public Iterable<String> getBackends() {
-       return backends;
-   }
+    public void saveExpansionState(final JTree tree_jobs) {
+        // System.out.println("BusinessManager: saveExpansionState...");
+        this.expandedNodesRowIndex.clear();
+        final Enumeration<TreePath> expandedNodes = tree_jobs
+                .getExpandedDescendants(new TreePath(tree_jobs.getModel()
+                        .getRoot()));
+        while (expandedNodes.hasMoreElements()) {
+            final TreePath treePath = expandedNodes.nextElement();
+            this.expandedNodesRowIndex.add(tree_jobs.getRowForPath(treePath));
+        }
+        Collections.sort(this.expandedNodesRowIndex);
+    }
 
-   public List<JobData> getJobs(String backend)
-   {
-       if ( (backend!=null) && (!backend.equals("Backends")) )
-           return jobmap.get(backend);
-       else
-       {
-           List<JobData> joblist = new ArrayList<JobData>();
-           for (List<JobData> jl :  jobmap.values())
-               joblist.addAll(jl);
-           
-           return joblist;
-       }
-   }
+    public List<Integer> getExpansionStateRows() {
+        return this.expandedNodesRowIndex;
+    }
 
-   public List<JobData> getJobsTable()
-   {
-       return getJobs(getCurrentBackend());
-   }
+    public Iterable<String> getBackends() {
+        return this.backends;
+    }
 
-   public void refreshData()
-   {
-       System.out.println("BusinessManager: refreshData...");
-       if (isOnline())
-       {
-           
-           //clear cached data and update via wmsx_service
-           jobmap.clear();
+    public List<JobData> getJobs(final String backend) {
+        if ((backend != null) && (!backend.equals("Backends"))) {
+            return this.jobmap.get(backend);
+        }
+        else {
+            final List<JobData> joblist = new ArrayList<JobData>();
+            for (final List<JobData> jl : this.jobmap.values()) {
+                joblist.addAll(jl);
+            }
 
-           backends = wmsx_service.listBackends();
-           for (String backend : backends)
-               jobmap.put(backend, new ArrayList<JobData>());
+            return joblist;
+        }
+    }
 
-           //System.out.println("BusinessManager: refreshData... backends: "+backends.toString());
+    public JobData getJobData(final TransportJobUID uid) {
+        for (final JobData jd : this.getJobs(uid.getBackend())) {
+            if (jd.getTransportJobUID().equals(uid)) {
+                return jd;
+            }
+        }
+        return null;
+    }
 
-           for (TransportJobUID transJobUID : wmsx_service.listJobs())
-           {
-               //System.out.println("BusinessManager: refreshData... add new job - backend: "+transJobUID.getBackend().toLowerCase());
-               //Achtung: fake vs. Fake
-               jobmap.get(transJobUID.getBackend().toLowerCase())
-                       .add(new JobData(transJobUID,wmsx_service.getJobInfo(transJobUID)));
-           }
-       }
-       updateObservers(null);
-   }
+    public List<JobData> getJobsTable() {
+        return this.getJobs(this.getCurrentBackend());
+    }
 
-   private void updateObservers(Object o)
-   {
-       setChanged();
-       notifyObservers(o);
-   }
+    public void refreshData() {
+        System.out.println("BusinessManager: refreshData...");
+        if (this.isOnline()) {
 
+            // clear cached data and update via wmsx_service
+            this.jobmap.clear();
 
-   public void notify(RemoteEvent re) throws UnknownEventException, RemoteException {
-       JobChangeEvent e = (JobChangeEvent)re;
-       System.out.println("BusinessManager: notified by provider..."+e.getJobUid()+" State: "+e.getState());
-       //Achtung: Fake vs. fake --> darum toLowerCase
-       if (jobmap!=null)
-           for (JobData job : jobmap.get(e.getJobUid().getBackend().toLowerCase()))
-               if (job.getTransportJobUID().equals(e.getJobUid()))
-               {
-                   job.setJobinfo(wmsx_service.getJobInfo(e.getJobUid()));
-                   updateObservers(job);
-               }
-   }
+            this.backends = this.wmsx_service.listBackends();
+            for (final String backend : this.backends) {
+                this.jobmap.put(backend, new ArrayList<JobData>());
+            }
+
+            // System.out.println("BusinessManager: refreshData... backends: "+backends.toString());
+
+            for (final TransportJobUID transJobUID : this.wmsx_service
+                    .listJobs()) {
+                // System.out.println("BusinessManager: refreshData... add new job - backend: "+transJobUID.getBackend().toLowerCase());
+                // Achtung: fake vs. Fake
+                this.jobmap.get(transJobUID.getBackend().toLowerCase())
+                        .add(
+                             new JobData(transJobUID, this.wmsx_service
+                                     .getJobInfo(transJobUID)));
+            }
+        }
+        this.updateObservers(null);
+    }
+
+    private void updateObservers(final Object o) {
+        this.setChanged();
+        this.notifyObservers(o);
+    }
+
+    public void notify(final RemoteEvent re) throws UnknownEventException,
+            RemoteException {
+        final JobChangeEvent e = (JobChangeEvent) re;
+        System.out.println("BusinessManager: notified by provider..."
+                + e.getJobUid() + " State: " + e.getState());
+        // Achtung: Fake vs. fake --> darum toLowerCase
+        if (this.jobmap != null) {
+            for (final JobData job : this.jobmap.get(e.getJobUid().getBackend()
+                    .toLowerCase())) {
+                if (job.getTransportJobUID().equals(e.getJobUid())) {
+                    job.setJobinfo(this.wmsx_service.getJobInfo(e.getJobUid()));
+                    this.updateObservers(job);
+                }
+            }
+        }
+    }
 }
