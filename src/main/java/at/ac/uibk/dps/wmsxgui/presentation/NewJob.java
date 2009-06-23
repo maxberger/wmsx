@@ -40,13 +40,13 @@ public class NewJob extends javax.swing.JFrame {
     private static final long serialVersionUID = 8499517436924693339L;
     private final BusinessManager businessman;
     private final MainWindow mainWindow;
-    private final Wmsx wmsx_service;
+    private final Wmsx wmsxService;
 
     /** Creates new form NewJob. */
     public NewJob(final MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.businessman = BusinessManager.getInstance();
-        this.wmsx_service = this.businessman.getWmsxService();
+        this.wmsxService = this.businessman.getWmsxService();
 
         this.initComponents();
         this.centerScreen();
@@ -407,11 +407,12 @@ public class NewJob extends javax.swing.JFrame {
         this.pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void btn_cancel(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cancel
 
         this.setVisible(false);
     }// GEN-LAST:event_btn_cancel
-
+    
     private void btn_ok(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_ok
         if (this.cb_type.getSelectedIndex() == 0) // type is job
         {
@@ -420,11 +421,11 @@ public class NewJob extends javax.swing.JFrame {
             final String outputFile = this.tb_outputfile.getText();
 
             if ((new File(jdlFile)).exists() && (new File(resultDir)).exists()) {
-                this.wmsx_service.setBackend(this.cb_backend.getSelectedItem()
+                this.wmsxService.setBackend(this.cb_backend.getSelectedItem()
                         .toString());
 
                 try {
-                    final SubmissionResult s = this.wmsx_service
+                    final SubmissionResult s = this.wmsxService
                             .submitJdl(jdlFile,
                                        (outputFile.length() == 0) ? null
                                                : outputFile, resultDir);
@@ -437,7 +438,7 @@ public class NewJob extends javax.swing.JFrame {
 
                 this.setVisible(false);
                 // businessman.refreshData();
-                this.mainWindow.updateBusinessManager();
+                this.mainWindow.updateBusinessManager(true);
 
             } else {
                 JOptionPane
@@ -455,13 +456,13 @@ public class NewJob extends javax.swing.JFrame {
                         .parseInt(this.tb_jobdescriptionfile.getText());
 
                 if (workercnt > 0) {
-                    this.wmsx_service.setBackend(this.cb_backend
+                    this.wmsxService.setBackend(this.cb_backend
                             .getSelectedItem().toString());
-                    this.wmsx_service.startWorkers(workercnt);
+                    this.wmsxService.startWorkers(workercnt);
 
                     this.setVisible(false);
                     // businessman.refreshData();
-                    this.mainWindow.updateBusinessManager();
+                    this.mainWindow.updateBusinessManager(true);
 
                 } else {
                     JOptionPane

@@ -117,14 +117,14 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="panel_top" alignment="1" pref="580" max="32767" attributes="1"/>
+                  <Component id="panel_top" alignment="1" pref="578" max="32767" attributes="1"/>
                   <Component id="panel_buttons" alignment="1" max="32767" attributes="1"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="panel_top" pref="293" max="32767" attributes="0"/>
+                      <Component id="panel_top" pref="297" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="panel_buttons" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -145,7 +145,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="panel_table" alignment="1" pref="580" max="32767" attributes="0"/>
+                      <Component id="panel_table" alignment="1" pref="578" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Component id="panel_jobdetails" alignment="0" max="32767" attributes="0"/>
                       </Group>
@@ -153,7 +153,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="panel_table" alignment="1" pref="293" max="32767" attributes="0"/>
+                      <Component id="panel_table" alignment="1" pref="297" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Component id="panel_jobdetails" alignment="1" max="32767" attributes="0"/>
                       </Group>
@@ -220,9 +220,9 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" attributes="0">
                                               <Group type="103" groupAlignment="1" attributes="0">
-                                                  <Component id="tb_jobdetails_jobuid" alignment="1" pref="201" max="32767" attributes="0"/>
-                                                  <Component id="tb_jobdetails_state" alignment="1" pref="201" max="32767" attributes="2"/>
-                                                  <Component id="tb_jobdetails_siteid" alignment="1" pref="201" max="32767" attributes="2"/>
+                                                  <Component id="tb_jobdetails_jobuid" alignment="1" pref="202" max="32767" attributes="0"/>
+                                                  <Component id="tb_jobdetails_state" alignment="1" pref="202" max="32767" attributes="2"/>
+                                                  <Component id="tb_jobdetails_siteid" alignment="1" pref="202" max="32767" attributes="2"/>
                                               </Group>
                                               <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
@@ -232,12 +232,12 @@
                                               </Group>
                                               <EmptySpace min="-2" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="tb_jobdetails_creationtime" alignment="0" pref="200" max="32767" attributes="0"/>
-                                                  <Component id="tb_jobdetails_startedtime" alignment="0" pref="200" max="32767" attributes="0"/>
-                                                  <Component id="tb_jobdetails_donetime" alignment="0" pref="200" max="32767" attributes="0"/>
+                                                  <Component id="tb_jobdetails_creationtime" alignment="0" pref="201" max="32767" attributes="0"/>
+                                                  <Component id="tb_jobdetails_startedtime" alignment="0" pref="201" max="32767" attributes="0"/>
+                                                  <Component id="tb_jobdetails_donetime" alignment="0" pref="201" max="32767" attributes="0"/>
                                               </Group>
                                           </Group>
-                                          <Component id="tb_jobdetails_workerID" pref="478" max="32767" attributes="2"/>
+                                          <Component id="tb_jobdetails_workerID" pref="481" max="32767" attributes="2"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -381,7 +381,7 @@
                                       </Group>
                                       <Group type="102" attributes="0">
                                           <EmptySpace min="1" pref="1" max="1" attributes="0"/>
-                                          <Component id="jScrollPane1" pref="47" max="32767" attributes="0"/>
+                                          <Component id="jScrollPane1" pref="96" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -463,16 +463,16 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="l_selectedjob" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="btn_kill1" linkSize="1" min="-2" pref="61" max="-2" attributes="0"/>
+                                  <Component id="btnStop" linkSize="1" min="-2" pref="61" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btn_kill" linkSize="1" min="-2" pref="61" max="-2" attributes="0"/>
+                                  <Component id="btnKill" linkSize="1" min="-2" pref="61" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btn_refresh" linkSize="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnRefresh" linkSize="1" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                                  <Component id="btn_cleanup" linkSize="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnCleanup" linkSize="1" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="298" max="32767" attributes="0"/>
+                          <EmptySpace pref="216" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -482,10 +482,10 @@
                           <Component id="l_selectedjob" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="btn_kill" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btn_kill1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btn_refresh" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btn_cleanup" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnKill" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnStop" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnRefresh" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnCleanup" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -498,36 +498,36 @@
                     <Property name="text" type="java.lang.String" value="job/worker"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JButton" name="btn_kill">
+                <Component class="javax.swing.JButton" name="btnKill">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="kill"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_killActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnKillActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="btn_refresh">
+                <Component class="javax.swing.JButton" name="btnRefresh">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="refresh"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_refreshActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRefreshActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="btn_cleanup">
+                <Component class="javax.swing.JButton" name="btnCleanup">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="cleanup"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_cleanupActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCleanupActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="btn_kill1">
+                <Component class="javax.swing.JButton" name="btnStop">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="stop"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_kill1ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnStopActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
@@ -551,7 +551,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTree" name="tree_jobs">
+            <Component class="javax.swing.JTree" name="treeJobs">
               <Properties>
                 <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="treeModel" type="code"/>
@@ -561,7 +561,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="tree_jobsValueChanged"/>
+                <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="treeJobsValueChanged"/>
               </Events>
             </Component>
           </SubComponents>
@@ -576,7 +576,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="btn_add">
+        <Component class="javax.swing.JButton" name="shortcutAdd">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/add.png"/>
@@ -591,7 +591,7 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_add"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAdd"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton3">
@@ -609,7 +609,7 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btn_remove">
+        <Component class="javax.swing.JButton" name="shortcutRemove">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/stop.png"/>
@@ -624,18 +624,18 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_remove"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemove"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btn_ping">
+        <Component class="javax.swing.JButton" name="shortcutPing">
           <Properties>
             <Property name="text" type="java.lang.String" value="Ping"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_ping"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPing"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="shortcutRefresh">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/view-refresh.png"/>
@@ -649,8 +649,11 @@
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="shortcutRefreshActionPerformed"/>
+          </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton2">
+        <Component class="javax.swing.JButton" name="shortcutCleanup">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/edit-clear.png"/>
@@ -664,6 +667,9 @@
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="shortcutCleanupActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

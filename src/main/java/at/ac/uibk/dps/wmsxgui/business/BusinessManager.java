@@ -41,12 +41,12 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     private static final long serialVersionUID = 4569728891303483934L;
 
     private final Requestor requestor;
-    private final Wmsx wmsx_service;
-    private final Map<String, List<JobData>> jobmap = new HashMap<String, List<JobData>>();
+    private final Wmsx wmsxService;
+    private final Map<String, List<JobData>> jobMap = new HashMap<String, List<JobData>>();
     private Iterable<String> backends;
 
-    private RemoteEventListener theStub;
-    private LeaseRenewalManager theManager;
+    private RemoteEventListener stub;
+    private LeaseRenewalManager manager;
     private Lease lease;
 
     private final List<Integer> expandedNodesRowIndex = new ArrayList<Integer>();
@@ -56,7 +56,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     private BusinessManager() {
 
         this.requestor = Requestor.getInstance();
-        this.wmsx_service = this.requestor.getWmsxService();
+        this.wmsxService = this.requestor.getWmsxService();
 
         try {
 
@@ -64,19 +64,20 @@ public class BusinessManager extends Observable implements RemoteEventListener {
                     TcpServerEndpoint.getInstance(0), new BasicILFactory(),
                     false, true);
 
-            this.theStub = (RemoteEventListener) myDefaultExporter.export(this);
+            this.stub = (RemoteEventListener) myDefaultExporter.export(this);
 
-            this.lease = this.wmsx_service.registerEventListener(this.theStub);
+            this.lease = this.wmsxService.registerEventListener(this.stub);
 
-            this.theManager = new LeaseRenewalManager();
-            this.theManager.renewFor(this.lease, Lease.FOREVER, 30000,
+            this.manager = new LeaseRenewalManager();
+            this.manager.renewFor(this.lease, Lease.FOREVER, 30000,
                                      new DebugListener());
 
         } catch (final Exception re) {
             re.printStackTrace();
         }
 
-        this.refreshData();
+        //fill BusinessData from wmsxService
+        this.cleanupBusinessData();
     }
 
     private static class DebugListener implements LeaseListener {
@@ -109,7 +110,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     /* Singleton */
 
     public Wmsx getWmsxService() {
-        return this.wmsx_service;
+        return this.wmsxService;
     }
 
     public String getCurrentBackend() {
@@ -122,22 +123,22 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     }
 
     public boolean isOnline() {
-        if (this.wmsx_service != null) {
+        if (this.wmsxService != null) {
             return true;
         } else {
             return false;
         }
     }
 
-    public void saveExpansionState(final JTree tree_jobs) {
+    public void saveExpansionState(final JTree treeJobs) {
         // System.out.println("BusinessManager: saveExpansionState...");
         this.expandedNodesRowIndex.clear();
-        final Enumeration<TreePath> expandedNodes = tree_jobs
-                .getExpandedDescendants(new TreePath(tree_jobs.getModel()
+        final Enumeration<TreePath> expandedNodes = treeJobs
+                .getExpandedDescendants(new TreePath(treeJobs.getModel()
                         .getRoot()));
         while (expandedNodes.hasMoreElements()) {
             final TreePath treePath = expandedNodes.nextElement();
-            this.expandedNodesRowIndex.add(tree_jobs.getRowForPath(treePath));
+            this.expandedNodesRowIndex.add(treeJobs.getRowForPath(treePath));
         }
         Collections.sort(this.expandedNodesRowIndex);
     }
@@ -152,10 +153,10 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
     public List<JobData> getJobs(final String backend) {
         if ((backend != null) && (!backend.equals("Backends"))) {
-            return this.jobmap.get(backend);
+            return this.jobMap.get(backend);
         } else {
             final List<JobData> joblist = new ArrayList<JobData>();
-            for (final List<JobData> jl : this.jobmap.values()) {
+            for (final List<JobData> jl : this.jobMap.values()) {
                 joblist.addAll(jl);
             }
 
@@ -176,28 +177,56 @@ public class BusinessManager extends Observable implements RemoteEventListener {
         return this.getJobs(this.getCurrentBackend());
     }
 
-    public void refreshData() {
-        System.out.println("BusinessManager: refreshData...");
+    public void cleanupBusinessData() {
+        System.out.println("BusinessManager: cleanupBusinessData...");
         if (this.isOnline()) {
 
             // clear cached data and update via wmsx_service
-            this.jobmap.clear();
+            this.jobMap.clear();
 
-            this.backends = this.wmsx_service.listBackends();
+            this.backends = this.wmsxService.listBackends();
             for (final String backend : this.backends) {
-                this.jobmap.put(backend, new ArrayList<JobData>());
+                this.jobMap.put(backend, new ArrayList<JobData>());
             }
 
             // System.out.println("BusinessManager: refreshData... backends: "+backends.toString());
 
-            for (final TransportJobUID transJobUID : this.wmsx_service
+            for (final TransportJobUID transJobUID : this.wmsxService
                     .listJobs()) {
                 // System.out.println("BusinessManager: refreshData... add new job - backend: "+transJobUID.getBackend().toLowerCase());
                 // Achtung: fake vs. Fake
-                this.jobmap.get(transJobUID.getBackend().toLowerCase())
+                this.jobMap.get(transJobUID.getBackend().toLowerCase())
                         .add(
-                             new JobData(transJobUID, this.wmsx_service
+                             new JobData(transJobUID, this.wmsxService
                                      .getJobInfo(transJobUID)));
+            }
+        }
+        this.updateObservers(null);
+    }
+
+    public void refreshBusinessData() {
+        System.out.println("BusinessManager: refreshBusinessData...");
+        if (this.isOnline()) {
+
+            // look for new backends...
+            this.backends = this.wmsxService.listBackends();
+            for (final String backend : this.backends) {
+                if (!jobMap.containsKey(backend))
+                    this.jobMap.put(backend, new ArrayList<JobData>());
+            }
+
+            // look for new jobs, but keep old jobs!
+            for (final TransportJobUID transJobUID : this.wmsxService
+                    .listJobs()) {
+                // System.out.println("BusinessManager: refreshData... add new job - backend: "+transJobUID.getBackend().toLowerCase());
+                // Achtung: fake vs. Fake
+                String backend = transJobUID.getBackend().toLowerCase();
+                List<JobData> jobs = this.jobMap.get(backend);
+                JobData jobData = new JobData(transJobUID, this.wmsxService
+                                     .getJobInfo(transJobUID));
+
+                if (!jobs.contains(jobData))
+                    jobs.add(jobData);
             }
         }
         this.updateObservers(null);
@@ -214,11 +243,11 @@ public class BusinessManager extends Observable implements RemoteEventListener {
         System.out.println("BusinessManager: notified by provider..."
                 + e.getJobUid() + " State: " + e.getState());
         // Achtung: Fake vs. fake --> darum toLowerCase
-        if (this.jobmap != null) {
-            for (final JobData job : this.jobmap.get(e.getJobUid().getBackend()
+        if (this.jobMap != null) {
+            for (final JobData job : this.jobMap.get(e.getJobUid().getBackend()
                     .toLowerCase())) {
                 if (job.getTransportJobUID().equals(e.getJobUid())) {
-                    job.setJobinfo(this.wmsx_service.getJobInfo(e.getJobUid()));
+                    job.setJobinfo(this.wmsxService.getJobInfo(e.getJobUid()));
                     this.updateObservers(job);
                 }
             }
