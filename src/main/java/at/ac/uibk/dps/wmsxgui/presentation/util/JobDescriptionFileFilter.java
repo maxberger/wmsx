@@ -10,23 +10,24 @@ package at.ac.uibk.dps.wmsxgui.presentation.util;
  * @author bafu
  */
 import java.io.File;
-import javax.swing.*;
-import javax.swing.filechooser.*;
 
+import javax.swing.filechooser.FileFilter;
 
 public class JobDescriptionFileFilter extends FileFilter {
 
-    //Accept all directories and jdl files.
-    public boolean accept(File f) {
+    // Accept all directories and jdl files.
+    @Override
+    public boolean accept(final File f) {
         if (f.isDirectory()) {
             return true;
         }
 
-        String extension = getExtension(f);
+        final String extension = this.getExtension(f);
         if (extension != null) {
             if (extension.equals("jdl")) {
-                    return true;
-            } else {
+                return true;
+            }
+            else {
                 return false;
             }
         }
@@ -34,18 +35,19 @@ public class JobDescriptionFileFilter extends FileFilter {
         return false;
     }
 
-    //The description of this filter
+    // The description of this filter
+    @Override
     public String getDescription() {
         return "Job Description Files";
     }
 
-    private String getExtension(File f) {
+    private String getExtension(final File f) {
         String ext = null;
-        String s = f.getName();
-        int i = s.lastIndexOf('.');
+        final String s = f.getName();
+        final int i = s.lastIndexOf('.');
 
-        if (i > 0 &&  i < s.length() - 1) {
-            ext = s.substring(i+1).toLowerCase();
+        if ((i > 0) && (i < s.length() - 1)) {
+            ext = s.substring(i + 1).toLowerCase();
         }
         return ext;
     }

@@ -5,69 +5,85 @@
 
 package at.ac.uibk.dps.wmsxgui.presentation.util;
 
-import at.ac.uibk.dps.wmsxgui.business.JobData;
 import hu.kfki.grid.wmsx.job.JobState;
+
 import java.awt.Component;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import at.ac.uibk.dps.wmsxgui.business.JobData;
+
 /**
- *
+ * 
  * @author bafu
  */
 public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
-    private Icon greenCircle;
-    private Icon orangeCircle;
-    private Icon redCircle;
-    private Icon grid;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6155147853626136087L;
+    private final Icon        greenCircle;
+    private final Icon        orangeCircle;
+    private final Icon        redCircle;
+    private final Icon        grid;
 
     public MyTreeCellRenderer() {
-        greenCircle =  (Icon)new ImageIcon(getClass().getResource("/greenCircle.png"));
-        orangeCircle =  (Icon)new ImageIcon(getClass().getResource("/orangeCircle.png"));
-        redCircle =  (Icon)new ImageIcon(getClass().getResource("/redCircle.png"));
-        grid =  (Icon)new ImageIcon(getClass().getResource("/grid.png"));
+        this.greenCircle = new ImageIcon(this.getClass()
+                .getResource("/greenCircle.png"));
+        this.orangeCircle = new ImageIcon(this.getClass()
+                .getResource("/orangeCircle.png"));
+        this.redCircle = new ImageIcon(this.getClass()
+                .getResource("/redCircle.png"));
+        this.grid = new ImageIcon(this.getClass().getResource("/grid.png"));
     }
 
-    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
-            boolean expanded,
-            boolean leaf,
-            int row,
-            boolean hasFocus)
-    {
+    @Override
+    public Component getTreeCellRendererComponent(final JTree tree,
+            final Object value, final boolean sel, final boolean expanded,
+            final boolean leaf, final int row, final boolean hasFocus) {
 
-        super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-        
-        if (isJob(value)) {
-            JobData job = (JobData) ((DefaultMutableTreeNode)value).getUserObject();
+        super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf,
+                                           row, hasFocus);
 
-            JobState state = job.getJobinfo().getStatus();
-            if (state.equals(JobState.RUNNING))
-                setIcon(greenCircle);
-            else if (state.equals(JobState.STARTUP))
-                setIcon(orangeCircle);
-            else if (state.equals(JobState.SUCCESS))
-                setIcon(redCircle);
+        if (this.isJob(value)) {
+            final JobData job = (JobData) ((DefaultMutableTreeNode) value)
+                    .getUserObject();
 
-            setToolTipText(job.getJobinfo().getDescription());
-            setText(job.getTransportJobUID().toString());
+            final JobState state = job.getJobinfo().getStatus();
+            if (state.equals(JobState.RUNNING)) {
+                this.setIcon(this.greenCircle);
+            }
+            else
+                if (state.equals(JobState.STARTUP)) {
+                    this.setIcon(this.orangeCircle);
+                }
+                else
+                    if (state.equals(JobState.SUCCESS)) {
+                        this.setIcon(this.redCircle);
+                    }
 
-        } else {
-            setIcon(grid);
-            setToolTipText(null); //no tool tip
+            this.setToolTipText(job.getJobinfo().getDescription());
+            this.setText(job.getTransportJobUID().toString());
+
+        }
+        else {
+            this.setIcon(this.grid);
+            this.setToolTipText(null); // no tool tip
         }
 
         return this;
     }
 
-    protected boolean isJob(Object value)
-    {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-        String classname = node.getUserObject().getClass().getSimpleName();
+    protected boolean isJob(final Object value) {
+        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+        final String classname = node.getUserObject().getClass()
+                .getSimpleName();
 
-        if (classname.equals("JobData")){
+        if (classname.equals("JobData")) {
             return true;
         }
 
