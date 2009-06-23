@@ -19,14 +19,13 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     /**
      * 
      */
-    private static final long     serialVersionUID = 8976244994494855744L;
+    private static final long serialVersionUID = 8976244994494855744L;
     private final BusinessManager businessman;
 
-    private final String[]        columnNames      = { "JobUID", "Executable",
-            "SiteID", "Created", "Started", "Finished", "State", "Type",
-            "WorkerID"                            };
+    private final String[] columnNames = { "JobUID", "Executable", "SiteID",
+            "Created", "Started", "Finished", "State", "Type", "WorkerID" };
 
-    private List<JobData>         data;
+    private List<JobData> data;
 
     public JobTableModel() {
         this.businessman = BusinessManager.getInstance();
@@ -61,36 +60,37 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     public Object getValueAt(final int row, final int col) {
         if ((this.data.size() > 0) && (this.data.get(row) != null)) {
             switch (col) {
-            case 0:
-                return this.data.get(row).getTransportJobUID();
-            case 1:
-                return this.data.get(row).getJobinfo().getExecutable();
-            case 2:
-                return this.data.get(row).getJobinfo().getSiteId();
-            case 3:
-                return (this.data.get(row).getJobinfo().getCreationTime() != null) ? this.data
-                        .get(row).getJobinfo().getCreationTime().toString()
-                        : "";
-            case 4:
-                return (this.data.get(row).getJobinfo().getStartRunningTime() != null) ? this.data
-                        .get(row).getJobinfo().getStartRunningTime().toString()
-                        : "";
-            case 5:
-                return (this.data.get(row).getJobinfo().getDoneRunningTime() != null) ? this.data
-                        .get(row).getJobinfo().getDoneRunningTime().toString()
-                        : "";
-            case 6:
-                return this.data.get(row).getJobinfo().getStatus().toString();
-            case 7:
-                return (this.data.get(row).getJobinfo().isWorker() == true) ? "Worker"
-                        : "Job";
-            case 8:
-                return this.data.get(row).getJobinfo().getWorkerId();
-            default:
-                return this.data.get(row).getTransportJobUID().toString();
+                case 0:
+                    return this.data.get(row).getTransportJobUID();
+                case 1:
+                    return this.data.get(row).getJobinfo().getExecutable();
+                case 2:
+                    return this.data.get(row).getJobinfo().getSiteId();
+                case 3:
+                    return (this.data.get(row).getJobinfo().getCreationTime() != null) ? this.data
+                            .get(row).getJobinfo().getCreationTime().toString()
+                            : "";
+                case 4:
+                    return (this.data.get(row).getJobinfo()
+                            .getStartRunningTime() != null) ? this.data
+                            .get(row).getJobinfo().getStartRunningTime()
+                            .toString() : "";
+                case 5:
+                    return (this.data.get(row).getJobinfo()
+                            .getDoneRunningTime() != null) ? this.data.get(row)
+                            .getJobinfo().getDoneRunningTime().toString() : "";
+                case 6:
+                    return this.data.get(row).getJobinfo().getStatus()
+                            .toString();
+                case 7:
+                    return (this.data.get(row).getJobinfo().isWorker() == true) ? "Worker"
+                            : "Job";
+                case 8:
+                    return this.data.get(row).getJobinfo().getWorkerId();
+                default:
+                    return this.data.get(row).getTransportJobUID().toString();
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -106,8 +106,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
         // System.out.println("JobTableModel: getColumnClass for Value at Col="+c+": "+val+" Class: "+((val!=null)?val.getClass().toString():"null"));
         if (val != null) {
             return val.getClass();
-        }
-        else {
+        } else {
             return new String().getClass();
         }
     }

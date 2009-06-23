@@ -32,9 +32,9 @@ public class Options extends javax.swing.JFrame {
     /**
      * 
      */
-    private static final long     serialVersionUID = 5689473181735526756L;
+    private static final long serialVersionUID = 5689473181735526756L;
     private final BusinessManager businessman;
-    private final Wmsx            wmsx_service;
+    private final Wmsx wmsx_service;
 
     /** Creates new form Optionen. */
     public Options() {
@@ -353,8 +353,7 @@ public class Options extends javax.swing.JFrame {
 
                 this.wmsx_service.setMaxJobs(maxjobcnt);
 
-            }
-            else {
+            } else {
                 JOptionPane
                         .showMessageDialog(
                                            this,
@@ -363,8 +362,7 @@ public class Options extends javax.swing.JFrame {
                                            JOptionPane.ERROR_MESSAGE);
             }
 
-        }
-        catch (final NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             JOptionPane
                     .showMessageDialog(this,
                                        "MaxJobCount isn't an valid Integer!",
@@ -378,17 +376,17 @@ public class Options extends javax.swing.JFrame {
     }// GEN-LAST:event_btn_closeActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton        btn_close;
-    private javax.swing.JButton        btn_forgetafspassword;
-    private javax.swing.JButton        btn_forgetgridpassword;
-    private javax.swing.JButton        btn_setafspassword;
-    private javax.swing.JButton        btn_setgridpassword;
-    private javax.swing.JButton        btn_setmaxjobcount;
-    private javax.swing.JLabel         jLabel1;
-    private javax.swing.JLabel         jLabel2;
-    private javax.swing.JLabel         jLabel3;
+    private javax.swing.JButton btn_close;
+    private javax.swing.JButton btn_forgetafspassword;
+    private javax.swing.JButton btn_forgetgridpassword;
+    private javax.swing.JButton btn_setafspassword;
+    private javax.swing.JButton btn_setgridpassword;
+    private javax.swing.JButton btn_setmaxjobcount;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPasswordField pf_afspassword;
     private javax.swing.JPasswordField pf_gridpassword;
-    private javax.swing.JTextField     tb_maxjobcount;
+    private javax.swing.JTextField tb_maxjobcount;
     // End of variables declaration//GEN-END:variables
 }

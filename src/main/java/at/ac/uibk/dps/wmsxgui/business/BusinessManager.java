@@ -38,19 +38,19 @@ import net.jini.lease.LeaseRenewalManager;
  * @author bafu
  */
 public class BusinessManager extends Observable implements RemoteEventListener {
-    private static final long                serialVersionUID      = 4569728891303483934L;
+    private static final long serialVersionUID = 4569728891303483934L;
 
-    private final Requestor                  requestor;
-    private final Wmsx                       wmsx_service;
-    private final Map<String, List<JobData>> jobmap                = new HashMap<String, List<JobData>>();
-    private Iterable<String>                 backends;
+    private final Requestor requestor;
+    private final Wmsx wmsx_service;
+    private final Map<String, List<JobData>> jobmap = new HashMap<String, List<JobData>>();
+    private Iterable<String> backends;
 
-    private RemoteEventListener              theStub;
-    private LeaseRenewalManager              theManager;
-    private Lease                            lease;
+    private RemoteEventListener theStub;
+    private LeaseRenewalManager theManager;
+    private Lease lease;
 
-    private final List<Integer>              expandedNodesRowIndex = new ArrayList<Integer>();
-    private String                           currentBackend;
+    private final List<Integer> expandedNodesRowIndex = new ArrayList<Integer>();
+    private String currentBackend;
 
     /* Singleton Pattern */
     private BusinessManager() {
@@ -72,8 +72,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
             this.theManager.renewFor(this.lease, Lease.FOREVER, 30000,
                                      new DebugListener());
 
-        }
-        catch (final Exception re) {
+        } catch (final Exception re) {
             re.printStackTrace();
         }
 
@@ -125,8 +124,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     public boolean isOnline() {
         if (this.wmsx_service != null) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -155,8 +153,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     public List<JobData> getJobs(final String backend) {
         if ((backend != null) && (!backend.equals("Backends"))) {
             return this.jobmap.get(backend);
-        }
-        else {
+        } else {
             final List<JobData> joblist = new ArrayList<JobData>();
             for (final List<JobData> jl : this.jobmap.values()) {
                 joblist.addAll(jl);

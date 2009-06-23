@@ -13,10 +13,10 @@ import hu.kfki.grid.wmsx.TransportJobUID;
  * @author bafu
  */
 public class JobData {
-    private static final long     serialVersionUID = -1595944205656281484L;
+    private static final long serialVersionUID = -1595944205656281484L;
 
     private final TransportJobUID transportJobUID;
-    private JobInfo               jobinfo;
+    private JobInfo jobinfo;
 
     public JobData(final TransportJobUID transportJobUID, final JobInfo jobinfo) {
         this.transportJobUID = transportJobUID;
