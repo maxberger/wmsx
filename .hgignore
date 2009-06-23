@@ -2,3 +2,5 @@ syntax: regexp
 
 target/
 ^keystore
+nbproject
+.settings
