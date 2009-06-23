@@ -41,7 +41,7 @@ import at.ac.uibk.dps.wmsxgui.presentation.util.MyTreeCellRenderer;
 public class MainWindow extends javax.swing.JFrame implements Observer {
 
     private final BusinessManager businessman;
-    private final Wmsx wmsx_service;
+    private final Wmsx wmsxService;
     private JFrame optionen;
     private DefaultMutableTreeNode rootNode;
     private DefaultTreeModel treeModel;
@@ -49,7 +49,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     /* Creates new form MainWindow */
     public MainWindow() {
         this.businessman = BusinessManager.getInstance();
-        this.wmsx_service = this.businessman.getWmsxService();
+        this.wmsxService = this.businessman.getWmsxService();
 
         this.businessman.addObserver(this);
 
@@ -65,12 +65,12 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             this.menu_item_options.setEnabled(false);
             this.menu_item_stopserver.setEnabled(false);
 
-            this.btn_add.setEnabled(false);
-            this.btn_remove.setEnabled(false);
-            this.btn_ping.setEnabled(false);
+            this.shortcutAdd.setEnabled(false);
+            this.shortcutRemove.setEnabled(false);
+            this.shortcutPing.setEnabled(false);
 
-            this.btn_kill.setEnabled(false);
-            this.btn_refresh.setEnabled(false);
+            this.btnKill.setEnabled(false);
+            this.btnRefresh.setEnabled(false);
         }
 
         // verstecke tabelle
@@ -78,10 +78,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.panel_jobdetails.setVisible(false);
 
         // disable remove buttons
-        this.btn_remove.setEnabled(false);
-        this.btn_kill.setEnabled(false);
+        this.shortcutRemove.setEnabled(false);
+        this.btnKill.setEnabled(false);
 
-        this.tree_jobs.setCellRenderer(new MyTreeCellRenderer());
+        this.treeJobs.setCellRenderer(new MyTreeCellRenderer());
 
         // Set icon
         final Image icon = (new ImageIcon(this.getClass()
@@ -92,7 +92,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     }
 
     /**
-     * Positioniert das Fenster genau in der Mitte des Bildschirmes...
+     * Positioniert das Fenster genau in der Mitte des Bildschirmes.
      * 
      */
     private void centerScreen() {
@@ -110,806 +110,478 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed"
-    // desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        this.jSplitPane1 = new javax.swing.JSplitPane();
-        this.jPanelRight = new javax.swing.JPanel();
-        this.panel_top = new javax.swing.JPanel();
-        this.panel_table = new javax.swing.JScrollPane();
-        this.table_jobs = new javax.swing.JTable();
-        this.panel_jobdetails = new javax.swing.JPanel();
-        this.jLabel1 = new javax.swing.JLabel();
-        this.jLabel2 = new javax.swing.JLabel();
-        this.jLabel3 = new javax.swing.JLabel();
-        this.jLabel4 = new javax.swing.JLabel();
-        this.jLabel5 = new javax.swing.JLabel();
-        this.jLabel6 = new javax.swing.JLabel();
-        this.tb_jobdetails_jobuid = new javax.swing.JTextField();
-        this.tb_jobdetails_state = new javax.swing.JTextField();
-        this.tb_jobdetails_siteid = new javax.swing.JTextField();
-        this.tb_jobdetails_creationtime = new javax.swing.JTextField();
-        this.tb_jobdetails_startedtime = new javax.swing.JTextField();
-        this.tb_jobdetails_donetime = new javax.swing.JTextField();
-        this.panel_description = new javax.swing.JPanel();
-        this.jLabel7 = new javax.swing.JLabel();
-        this.tb_jobdetails_executable = new javax.swing.JTextField();
-        this.jLabel9 = new javax.swing.JLabel();
-        this.tb_jobdetails_output = new javax.swing.JTextField();
-        this.jLabel10 = new javax.swing.JLabel();
-        this.jScrollPane1 = new javax.swing.JScrollPane();
-        this.ta_jobdetails_description = new javax.swing.JTextArea();
-        this.jLabel8 = new javax.swing.JLabel();
-        this.tb_jobdetails_workerID = new javax.swing.JTextField();
-        this.panel_buttons = new javax.swing.JPanel();
-        this.l_selectedjob = new javax.swing.JLabel();
-        this.btn_kill = new javax.swing.JButton();
-        this.btn_refresh = new javax.swing.JButton();
-        this.btn_cleanup = new javax.swing.JButton();
-        this.btn_kill1 = new javax.swing.JButton();
-        this.sp_tree = new javax.swing.JScrollPane();
-        this.tree_jobs = new javax.swing.JTree();
-        this.toolbar_main = new javax.swing.JToolBar();
-        this.btn_add = new javax.swing.JButton();
-        this.jButton3 = new javax.swing.JButton();
-        this.btn_remove = new javax.swing.JButton();
-        this.btn_ping = new javax.swing.JButton();
-        this.jButton1 = new javax.swing.JButton();
-        this.jButton2 = new javax.swing.JButton();
-        this.jMenuBar1 = new javax.swing.JMenuBar();
-        this.menu_file = new javax.swing.JMenu();
-        this.menu_item_newjob = new javax.swing.JMenuItem();
-        this.menu_item_stopserver = new javax.swing.JMenuItem();
-        this.menu_item_options = new javax.swing.JMenuItem();
-        this.menu_item_exit = new javax.swing.JMenuItem();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jPanelRight = new javax.swing.JPanel();
+        panel_top = new javax.swing.JPanel();
+        panel_table = new javax.swing.JScrollPane();
+        table_jobs = new javax.swing.JTable();
+        panel_jobdetails = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        tb_jobdetails_jobuid = new javax.swing.JTextField();
+        tb_jobdetails_state = new javax.swing.JTextField();
+        tb_jobdetails_siteid = new javax.swing.JTextField();
+        tb_jobdetails_creationtime = new javax.swing.JTextField();
+        tb_jobdetails_startedtime = new javax.swing.JTextField();
+        tb_jobdetails_donetime = new javax.swing.JTextField();
+        panel_description = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        tb_jobdetails_executable = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        tb_jobdetails_output = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        ta_jobdetails_description = new javax.swing.JTextArea();
+        jLabel8 = new javax.swing.JLabel();
+        tb_jobdetails_workerID = new javax.swing.JTextField();
+        panel_buttons = new javax.swing.JPanel();
+        l_selectedjob = new javax.swing.JLabel();
+        btnKill = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
+        btnCleanup = new javax.swing.JButton();
+        btnStop = new javax.swing.JButton();
+        sp_tree = new javax.swing.JScrollPane();
+        treeJobs = new javax.swing.JTree();
+        toolbar_main = new javax.swing.JToolBar();
+        shortcutAdd = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        shortcutRemove = new javax.swing.JButton();
+        shortcutPing = new javax.swing.JButton();
+        shortcutRefresh = new javax.swing.JButton();
+        shortcutCleanup = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        menu_file = new javax.swing.JMenu();
+        menu_item_newjob = new javax.swing.JMenuItem();
+        menu_item_stopserver = new javax.swing.JMenuItem();
+        menu_item_options = new javax.swing.JMenuItem();
+        menu_item_exit = new javax.swing.JMenuItem();
 
-        this
-                .setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        this.setTitle("WMSX GUI");
-        this.setMinimumSize(new java.awt.Dimension(362, 424));
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("WMSX GUI");
+        setMinimumSize(new java.awt.Dimension(362, 424));
 
-        this.jSplitPane1.setDividerSize(5);
+        jSplitPane1.setDividerSize(5);
 
-        this.jPanelRight.setMinimumSize(new java.awt.Dimension(200, 268));
-        this.jPanelRight.setPreferredSize(new java.awt.Dimension(200, 200));
+        jPanelRight.setMinimumSize(new java.awt.Dimension(200, 268));
+        jPanelRight.setPreferredSize(new java.awt.Dimension(200, 200));
 
-        this.panel_top.setMinimumSize(new java.awt.Dimension(200, 250));
-        this.panel_top.setPreferredSize(new java.awt.Dimension(596, 250));
+        panel_top.setMinimumSize(new java.awt.Dimension(200, 250));
+        panel_top.setPreferredSize(new java.awt.Dimension(596, 250));
 
-        this.panel_table.setAutoscrolls(true);
+        panel_table.setAutoscrolls(true);
 
-        this.table_jobs.setAutoCreateRowSorter(true);
-        this.table_jobs
-                .setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        this.table_jobs.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(final java.awt.event.MouseEvent evt) {
-                MainWindow.this.table_jobsMouseClicked(evt);
+        table_jobs.setAutoCreateRowSorter(true);
+        table_jobs.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        table_jobs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                table_jobsMouseClicked(evt);
             }
         });
-        this.panel_table.setViewportView(this.table_jobs);
+        panel_table.setViewportView(table_jobs);
 
-        this.panel_jobdetails.setBorder(javax.swing.BorderFactory
-                .createTitledBorder("Job Details"));
-        this.panel_jobdetails.setMinimumSize(new java.awt.Dimension(188, 241));
+        panel_jobdetails.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Details"));
+        panel_jobdetails.setMinimumSize(new java.awt.Dimension(188, 241));
 
-        this.jLabel1.setText("JobUID");
+        jLabel1.setText("JobUID");
 
-        this.jLabel2.setText("State");
+        jLabel2.setText("State");
 
-        this.jLabel3.setText("SiteID");
+        jLabel3.setText("SiteID");
 
-        this.jLabel4.setText("Created");
+        jLabel4.setText("Created");
 
-        this.jLabel5.setText("Started");
+        jLabel5.setText("Started");
 
-        this.jLabel6.setText("Finished");
+        jLabel6.setText("Finished");
 
-        this.tb_jobdetails_jobuid.setEditable(false);
+        tb_jobdetails_jobuid.setEditable(false);
 
-        this.tb_jobdetails_state.setEditable(false);
+        tb_jobdetails_state.setEditable(false);
 
-        this.tb_jobdetails_siteid.setEditable(false);
+        tb_jobdetails_siteid.setEditable(false);
 
-        this.tb_jobdetails_creationtime.setEditable(false);
+        tb_jobdetails_creationtime.setEditable(false);
 
-        this.tb_jobdetails_startedtime.setEditable(false);
+        tb_jobdetails_startedtime.setEditable(false);
 
-        this.tb_jobdetails_donetime.setEditable(false);
+        tb_jobdetails_donetime.setEditable(false);
 
-        this.jLabel7.setText("Executable");
+        jLabel7.setText("Executable");
 
-        this.tb_jobdetails_executable.setEditable(false);
+        tb_jobdetails_executable.setEditable(false);
 
-        this.jLabel9.setText("Output");
+        jLabel9.setText("Output");
 
-        this.tb_jobdetails_output.setEditable(false);
+        tb_jobdetails_output.setEditable(false);
 
-        this.jLabel10.setText("Description");
+        jLabel10.setText("Description");
 
-        this.ta_jobdetails_description.setColumns(20);
-        this.ta_jobdetails_description.setEditable(false);
-        this.ta_jobdetails_description.setRows(5);
-        this.jScrollPane1.setViewportView(this.ta_jobdetails_description);
+        ta_jobdetails_description.setColumns(20);
+        ta_jobdetails_description.setEditable(false);
+        ta_jobdetails_description.setRows(5);
+        jScrollPane1.setViewportView(ta_jobdetails_description);
 
-        final javax.swing.GroupLayout panel_descriptionLayout = new javax.swing.GroupLayout(
-                this.panel_description);
-        this.panel_description.setLayout(panel_descriptionLayout);
-        panel_descriptionLayout
-                .setHorizontalGroup(panel_descriptionLayout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                  panel_descriptionLayout
-                                          .createSequentialGroup()
-                                          .addGroup(
-                                                    panel_descriptionLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
-                                                            .addComponent(
-                                                                          this.jLabel10,
-                                                                          javax.swing.GroupLayout.Alignment.TRAILING)
-                                                            .addComponent(
-                                                                          this.jLabel9,
-                                                                          javax.swing.GroupLayout.Alignment.TRAILING)
-                                                            .addComponent(
-                                                                          this.jLabel7,
-                                                                          javax.swing.GroupLayout.Alignment.TRAILING))
-                                          .addPreferredGap(
-                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                          .addGroup(
-                                                    panel_descriptionLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_executable,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          460,
-                                                                          Short.MAX_VALUE)
-                                                            .addComponent(
-                                                                          this.jScrollPane1,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          460,
-                                                                          Short.MAX_VALUE)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_output,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          460,
-                                                                          Short.MAX_VALUE))));
-        panel_descriptionLayout
-                .setVerticalGroup(panel_descriptionLayout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                  panel_descriptionLayout
-                                          .createSequentialGroup()
-                                          .addGap(18, 18, 18)
-                                          .addGroup(
-                                                    panel_descriptionLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_executable,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                          27,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                            .addComponent(
-                                                                          this.jLabel7))
-                                          .addPreferredGap(
-                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                          .addGroup(
-                                                    panel_descriptionLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
-                                                            .addComponent(
-                                                                          this.jLabel9)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_output,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))
-                                          .addPreferredGap(
-                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                          .addGroup(
-                                                    panel_descriptionLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
-                                                            .addGroup(
-                                                                      panel_descriptionLayout
-                                                                              .createSequentialGroup()
-                                                                              .addComponent(
-                                                                                            this.jLabel10)
-                                                                              .addContainerGap())
-                                                            .addGroup(
-                                                                      panel_descriptionLayout
-                                                                              .createSequentialGroup()
-                                                                              .addGap(
-                                                                                      1,
-                                                                                      1,
-                                                                                      1)
-                                                                              .addComponent(
-                                                                                            this.jScrollPane1,
-                                                                                            javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                            47,
-                                                                                            Short.MAX_VALUE)))));
+        javax.swing.GroupLayout panel_descriptionLayout = new javax.swing.GroupLayout(panel_description);
+        panel_description.setLayout(panel_descriptionLayout);
+        panel_descriptionLayout.setHorizontalGroup(
+            panel_descriptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_descriptionLayout.createSequentialGroup()
+                .addGroup(panel_descriptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_descriptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tb_jobdetails_executable, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+                    .addComponent(tb_jobdetails_output, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)))
+        );
+        panel_descriptionLayout.setVerticalGroup(
+            panel_descriptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_descriptionLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(panel_descriptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tb_jobdetails_executable, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_descriptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(tb_jobdetails_output, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_descriptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_descriptionLayout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addContainerGap())
+                    .addGroup(panel_descriptionLayout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))))
+        );
 
-        this.jLabel8.setText("Worker?");
+        jLabel8.setText("Worker?");
 
-        this.tb_jobdetails_workerID.setEditable(false);
+        tb_jobdetails_workerID.setEditable(false);
 
-        final javax.swing.GroupLayout panel_jobdetailsLayout = new javax.swing.GroupLayout(
-                this.panel_jobdetails);
-        this.panel_jobdetails.setLayout(panel_jobdetailsLayout);
-        panel_jobdetailsLayout
-                .setHorizontalGroup(panel_jobdetailsLayout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                  javax.swing.GroupLayout.Alignment.TRAILING,
-                                  panel_jobdetailsLayout
-                                          .createSequentialGroup()
-                                          .addGroup(
-                                                    panel_jobdetailsLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.TRAILING)
-                                                            .addGroup(
-                                                                      javax.swing.GroupLayout.Alignment.LEADING,
-                                                                      panel_jobdetailsLayout
-                                                                              .createSequentialGroup()
-                                                                              .addContainerGap()
-                                                                              .addComponent(
-                                                                                            this.panel_description,
-                                                                                            javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                            javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                            Short.MAX_VALUE))
-                                                            .addGroup(
-                                                                      panel_jobdetailsLayout
-                                                                              .createSequentialGroup()
-                                                                              .addGap(
-                                                                                      13,
-                                                                                      13,
-                                                                                      13)
-                                                                              .addGroup(
-                                                                                        panel_jobdetailsLayout
-                                                                                                .createParallelGroup(
-                                                                                                                     javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                .addComponent(
-                                                                                                              this.jLabel3,
-                                                                                                              javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                .addComponent(
-                                                                                                              this.jLabel1,
-                                                                                                              javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                .addComponent(
-                                                                                                              this.jLabel2,
-                                                                                                              javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                .addComponent(
-                                                                                                              this.jLabel8,
-                                                                                                              javax.swing.GroupLayout.Alignment.TRAILING))
-                                                                              .addPreferredGap(
-                                                                                               javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                              .addGroup(
-                                                                                        panel_jobdetailsLayout
-                                                                                                .createParallelGroup(
-                                                                                                                     javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                .addGroup(
-                                                                                                          panel_jobdetailsLayout
-                                                                                                                  .createSequentialGroup()
-                                                                                                                  .addGroup(
-                                                                                                                            panel_jobdetailsLayout
-                                                                                                                                    .createParallelGroup(
-                                                                                                                                                         javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                                                    .addComponent(
-                                                                                                                                                  this.tb_jobdetails_jobuid,
-                                                                                                                                                  javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                                  201,
-                                                                                                                                                  Short.MAX_VALUE)
-                                                                                                                                    .addComponent(
-                                                                                                                                                  this.tb_jobdetails_state,
-                                                                                                                                                  javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                                  201,
-                                                                                                                                                  Short.MAX_VALUE)
-                                                                                                                                    .addComponent(
-                                                                                                                                                  this.tb_jobdetails_siteid,
-                                                                                                                                                  javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                                  201,
-                                                                                                                                                  Short.MAX_VALUE))
-                                                                                                                  .addGap(
-                                                                                                                          13,
-                                                                                                                          13,
-                                                                                                                          13)
-                                                                                                                  .addGroup(
-                                                                                                                            panel_jobdetailsLayout
-                                                                                                                                    .createParallelGroup(
-                                                                                                                                                         javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                                    .addComponent(
-                                                                                                                                                  this.jLabel6,
-                                                                                                                                                  javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                                                    .addComponent(
-                                                                                                                                                  this.jLabel5,
-                                                                                                                                                  javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                                                    .addComponent(
-                                                                                                                                                  this.jLabel4,
-                                                                                                                                                  javax.swing.GroupLayout.Alignment.TRAILING))
-                                                                                                                  .addPreferredGap(
-                                                                                                                                   javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                                                  .addGroup(
-                                                                                                                            panel_jobdetailsLayout
-                                                                                                                                    .createParallelGroup(
-                                                                                                                                                         javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                                    .addComponent(
-                                                                                                                                                  this.tb_jobdetails_creationtime,
-                                                                                                                                                  javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                                  200,
-                                                                                                                                                  Short.MAX_VALUE)
-                                                                                                                                    .addComponent(
-                                                                                                                                                  this.tb_jobdetails_startedtime,
-                                                                                                                                                  javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                                  200,
-                                                                                                                                                  Short.MAX_VALUE)
-                                                                                                                                    .addComponent(
-                                                                                                                                                  this.tb_jobdetails_donetime,
-                                                                                                                                                  javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                                  200,
-                                                                                                                                                  Short.MAX_VALUE)))
-                                                                                                .addComponent(
-                                                                                                              this.tb_jobdetails_workerID,
-                                                                                                              javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                              478,
-                                                                                                              Short.MAX_VALUE))))
-                                          .addContainerGap()));
-        panel_jobdetailsLayout
-                .setVerticalGroup(panel_jobdetailsLayout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                  panel_jobdetailsLayout
-                                          .createSequentialGroup()
-                                          .addGroup(
-                                                    panel_jobdetailsLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
-                                                            .addComponent(
-                                                                          this.jLabel1)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_jobuid,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                            .addComponent(
-                                                                          this.jLabel4)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_creationtime,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))
-                                          .addPreferredGap(
-                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                          .addGroup(
-                                                    panel_jobdetailsLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_state,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                            .addComponent(
-                                                                          this.jLabel2)
-                                                            .addComponent(
-                                                                          this.jLabel5)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_startedtime,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))
-                                          .addGap(6, 6, 6)
-                                          .addGroup(
-                                                    panel_jobdetailsLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
-                                                            .addComponent(
-                                                                          this.jLabel3)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_siteid,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                            .addComponent(
-                                                                          this.jLabel6)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_donetime,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))
-                                          .addPreferredGap(
-                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                          .addGroup(
-                                                    panel_jobdetailsLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
-                                                            .addComponent(
-                                                                          this.jLabel8)
-                                                            .addComponent(
-                                                                          this.tb_jobdetails_workerID,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))
-                                          .addPreferredGap(
-                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                          .addComponent(
-                                                        this.panel_description,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        Short.MAX_VALUE)));
+        javax.swing.GroupLayout panel_jobdetailsLayout = new javax.swing.GroupLayout(panel_jobdetails);
+        panel_jobdetails.setLayout(panel_jobdetailsLayout);
+        panel_jobdetailsLayout.setHorizontalGroup(
+            panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_jobdetailsLayout.createSequentialGroup()
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_jobdetailsLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panel_description, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panel_jobdetailsLayout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel_jobdetailsLayout.createSequentialGroup()
+                                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(tb_jobdetails_jobuid, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_state, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_siteid, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+                                .addGap(13, 13, 13)
+                                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(tb_jobdetails_creationtime, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_startedtime, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_donetime, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)))
+                            .addComponent(tb_jobdetails_workerID, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        panel_jobdetailsLayout.setVerticalGroup(
+            panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_jobdetailsLayout.createSequentialGroup()
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(tb_jobdetails_jobuid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(tb_jobdetails_creationtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tb_jobdetails_state, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel5)
+                    .addComponent(tb_jobdetails_startedtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(tb_jobdetails_siteid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(tb_jobdetails_donetime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(tb_jobdetails_workerID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panel_description, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
-        final javax.swing.GroupLayout panel_topLayout = new javax.swing.GroupLayout(
-                this.panel_top);
-        this.panel_top.setLayout(panel_topLayout);
-        panel_topLayout
-                .setHorizontalGroup(panel_topLayout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(
-                                      this.panel_table,
-                                      javax.swing.GroupLayout.Alignment.TRAILING,
-                                      javax.swing.GroupLayout.DEFAULT_SIZE,
-                                      580, Short.MAX_VALUE)
-                        .addGroup(
-                                  panel_topLayout
-                                          .createParallelGroup(
-                                                               javax.swing.GroupLayout.Alignment.LEADING)
-                                          .addComponent(
-                                                        this.panel_jobdetails,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        Short.MAX_VALUE)));
-        panel_topLayout
-                .setVerticalGroup(panel_topLayout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(
-                                      this.panel_table,
-                                      javax.swing.GroupLayout.Alignment.TRAILING,
-                                      javax.swing.GroupLayout.DEFAULT_SIZE,
-                                      293, Short.MAX_VALUE)
-                        .addGroup(
-                                  panel_topLayout
-                                          .createParallelGroup(
-                                                               javax.swing.GroupLayout.Alignment.LEADING)
-                                          .addComponent(
-                                                        this.panel_jobdetails,
-                                                        javax.swing.GroupLayout.Alignment.TRAILING,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        Short.MAX_VALUE)));
+        javax.swing.GroupLayout panel_topLayout = new javax.swing.GroupLayout(panel_top);
+        panel_top.setLayout(panel_topLayout);
+        panel_topLayout.setHorizontalGroup(
+            panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+            .addGroup(panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(panel_jobdetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panel_topLayout.setVerticalGroup(
+            panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+            .addGroup(panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(panel_jobdetails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
-        this.panel_buttons.setBorder(javax.swing.BorderFactory
-                .createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        panel_buttons.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        this.l_selectedjob.setText("job/worker");
+        l_selectedjob.setText("job/worker");
 
-        this.btn_kill.setText("kill");
-        this.btn_kill.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                MainWindow.this.btn_killActionPerformed(evt);
+        btnKill.setText("kill");
+        btnKill.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnKillActionPerformed(evt);
             }
         });
 
-        this.btn_refresh.setText("refresh");
-        this.btn_refresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                MainWindow.this.btn_refreshActionPerformed(evt);
+        btnRefresh.setText("refresh");
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
             }
         });
 
-        this.btn_cleanup.setText("cleanup");
-        this.btn_cleanup.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                MainWindow.this.btn_cleanupActionPerformed(evt);
+        btnCleanup.setText("cleanup");
+        btnCleanup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCleanupActionPerformed(evt);
             }
         });
 
-        this.btn_kill1.setText("stop");
-        this.btn_kill1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                MainWindow.this.btn_kill1ActionPerformed(evt);
+        btnStop.setText("stop");
+        btnStop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStopActionPerformed(evt);
             }
         });
 
-        final javax.swing.GroupLayout panel_buttonsLayout = new javax.swing.GroupLayout(
-                this.panel_buttons);
-        this.panel_buttons.setLayout(panel_buttonsLayout);
-        panel_buttonsLayout
-                .setHorizontalGroup(panel_buttonsLayout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                  panel_buttonsLayout
-                                          .createSequentialGroup()
-                                          .addContainerGap()
-                                          .addGroup(
-                                                    panel_buttonsLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
-                                                            .addComponent(
-                                                                          this.l_selectedjob)
-                                                            .addGroup(
-                                                                      panel_buttonsLayout
-                                                                              .createSequentialGroup()
-                                                                              .addComponent(
-                                                                                            this.btn_kill1,
-                                                                                            javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                            61,
-                                                                                            javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                              .addPreferredGap(
-                                                                                               javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                              .addComponent(
-                                                                                            this.btn_kill,
-                                                                                            javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                            61,
-                                                                                            javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                              .addPreferredGap(
-                                                                                               javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                              .addComponent(
-                                                                                            this.btn_refresh)
-                                                                              .addGap(
-                                                                                      6,
-                                                                                      6,
-                                                                                      6)
-                                                                              .addComponent(
-                                                                                            this.btn_cleanup)))
-                                          .addContainerGap(298, Short.MAX_VALUE)));
+        javax.swing.GroupLayout panel_buttonsLayout = new javax.swing.GroupLayout(panel_buttons);
+        panel_buttons.setLayout(panel_buttonsLayout);
+        panel_buttonsLayout.setHorizontalGroup(
+            panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_buttonsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(l_selectedjob)
+                    .addGroup(panel_buttonsLayout.createSequentialGroup()
+                        .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnKill, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRefresh)
+                        .addGap(6, 6, 6)
+                        .addComponent(btnCleanup)))
+                .addContainerGap(216, Short.MAX_VALUE))
+        );
 
-        panel_buttonsLayout
-                .linkSize(javax.swing.SwingConstants.HORIZONTAL,
-                          new java.awt.Component[] { this.btn_cleanup,
-                                  this.btn_kill, this.btn_kill1,
-                                  this.btn_refresh });
+        panel_buttonsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCleanup, btnKill, btnRefresh, btnStop});
 
-        panel_buttonsLayout
-                .setVerticalGroup(panel_buttonsLayout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                  panel_buttonsLayout
-                                          .createSequentialGroup()
-                                          .addComponent(this.l_selectedjob)
-                                          .addPreferredGap(
-                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                          .addGroup(
-                                                    panel_buttonsLayout
-                                                            .createParallelGroup(
-                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
-                                                            .addComponent(
-                                                                          this.btn_kill)
-                                                            .addComponent(
-                                                                          this.btn_kill1)
-                                                            .addComponent(
-                                                                          this.btn_refresh)
-                                                            .addComponent(
-                                                                          this.btn_cleanup))
-                                          .addContainerGap(
-                                                           javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                           Short.MAX_VALUE)));
+        panel_buttonsLayout.setVerticalGroup(
+            panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_buttonsLayout.createSequentialGroup()
+                .addComponent(l_selectedjob)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnKill)
+                    .addComponent(btnStop)
+                    .addComponent(btnRefresh)
+                    .addComponent(btnCleanup))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
-        final javax.swing.GroupLayout jPanelRightLayout = new javax.swing.GroupLayout(
-                this.jPanelRight);
-        this.jPanelRight.setLayout(jPanelRightLayout);
-        jPanelRightLayout.setHorizontalGroup(jPanelRightLayout
-                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(this.panel_top,
-                              javax.swing.GroupLayout.Alignment.TRAILING,
-                              javax.swing.GroupLayout.DEFAULT_SIZE, 580,
-                              Short.MAX_VALUE)
-                .addComponent(this.panel_buttons,
-                              javax.swing.GroupLayout.Alignment.TRAILING,
-                              javax.swing.GroupLayout.DEFAULT_SIZE,
-                              javax.swing.GroupLayout.DEFAULT_SIZE,
-                              Short.MAX_VALUE));
-        jPanelRightLayout
-                .setVerticalGroup(jPanelRightLayout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                  javax.swing.GroupLayout.Alignment.TRAILING,
-                                  jPanelRightLayout
-                                          .createSequentialGroup()
-                                          .addComponent(
-                                                        this.panel_top,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        293, Short.MAX_VALUE)
-                                          .addPreferredGap(
-                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                          .addComponent(
-                                                        this.panel_buttons,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)));
+        javax.swing.GroupLayout jPanelRightLayout = new javax.swing.GroupLayout(jPanelRight);
+        jPanelRight.setLayout(jPanelRightLayout);
+        jPanelRightLayout.setHorizontalGroup(
+            jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panel_top, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+            .addComponent(panel_buttons, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanelRightLayout.setVerticalGroup(
+            jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRightLayout.createSequentialGroup()
+                .addComponent(panel_top, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panel_buttons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
-        this.jSplitPane1.setRightComponent(this.jPanelRight);
+        jSplitPane1.setRightComponent(jPanelRight);
 
-        this.sp_tree.setMinimumSize(new java.awt.Dimension(100, 25));
+        sp_tree.setMinimumSize(new java.awt.Dimension(100, 25));
 
-        this.tree_jobs.setModel(this.treeModel);
-        this.tree_jobs.setMinimumSize(new java.awt.Dimension(100, 100));
-        this.tree_jobs
-                .addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
-                    public void valueChanged(
-                            final javax.swing.event.TreeSelectionEvent evt) {
-                        MainWindow.this.tree_jobsValueChanged(evt);
-                    }
-                });
-        this.sp_tree.setViewportView(this.tree_jobs);
-
-        this.jSplitPane1.setLeftComponent(this.sp_tree);
-
-        this.toolbar_main.setFloatable(false);
-        this.toolbar_main.setRollover(true);
-
-        this.btn_add.setIcon(new javax.swing.ImageIcon(this.getClass()
-                .getResource("/add.png"))); // NOI18N
-        this.btn_add.setBorder(new javax.swing.border.SoftBevelBorder(
-                javax.swing.border.BevelBorder.RAISED));
-        this.btn_add.setFocusable(false);
-        this.btn_add
-                .setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        this.btn_add.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        this.btn_add.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                MainWindow.this.btn_add(evt);
+        treeJobs.setModel(treeModel);
+        treeJobs.setMinimumSize(new java.awt.Dimension(100, 100));
+        treeJobs.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                treeJobsValueChanged(evt);
             }
         });
-        this.toolbar_main.add(this.btn_add);
+        sp_tree.setViewportView(treeJobs);
 
-        this.jButton3.setIcon(new javax.swing.ImageIcon(this.getClass()
-                .getResource("/window-close.png"))); // NOI18N
-        this.jButton3.setBorder(new javax.swing.border.SoftBevelBorder(
-                javax.swing.border.BevelBorder.RAISED));
-        this.jButton3.setFocusable(false);
-        this.jButton3
-                .setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        this.jButton3
-                .setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        this.toolbar_main.add(this.jButton3);
+        jSplitPane1.setLeftComponent(sp_tree);
 
-        this.btn_remove.setIcon(new javax.swing.ImageIcon(this.getClass()
-                .getResource("/stop.png"))); // NOI18N
-        this.btn_remove.setBorder(new javax.swing.border.SoftBevelBorder(
-                javax.swing.border.BevelBorder.RAISED));
-        this.btn_remove.setFocusable(false);
-        this.btn_remove
-                .setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        this.btn_remove
-                .setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        this.btn_remove.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                MainWindow.this.btn_remove(evt);
+        toolbar_main.setFloatable(false);
+        toolbar_main.setRollover(true);
+
+        shortcutAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/add.png"))); // NOI18N
+        shortcutAdd.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        shortcutAdd.setFocusable(false);
+        shortcutAdd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        shortcutAdd.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        shortcutAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdd(evt);
             }
         });
-        this.toolbar_main.add(this.btn_remove);
+        toolbar_main.add(shortcutAdd);
 
-        this.btn_ping.setText("Ping");
-        this.btn_ping.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                MainWindow.this.btn_ping(evt);
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/window-close.png"))); // NOI18N
+        jButton3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton3.setFocusable(false);
+        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar_main.add(jButton3);
+
+        shortcutRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stop.png"))); // NOI18N
+        shortcutRemove.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        shortcutRemove.setFocusable(false);
+        shortcutRemove.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        shortcutRemove.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        shortcutRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemove(evt);
             }
         });
-        this.toolbar_main.add(this.btn_ping);
+        toolbar_main.add(shortcutRemove);
 
-        this.jButton1.setIcon(new javax.swing.ImageIcon(this.getClass()
-                .getResource("/view-refresh.png"))); // NOI18N
-        this.jButton1.setBorder(new javax.swing.border.SoftBevelBorder(
-                javax.swing.border.BevelBorder.RAISED));
-        this.jButton1.setFocusable(false);
-        this.jButton1
-                .setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        this.jButton1
-                .setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        this.toolbar_main.add(this.jButton1);
+        shortcutPing.setText("Ping");
+        shortcutPing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPing(evt);
+            }
+        });
+        toolbar_main.add(shortcutPing);
 
-        this.jButton2.setIcon(new javax.swing.ImageIcon(this.getClass()
-                .getResource("/edit-clear.png"))); // NOI18N
-        this.jButton2.setBorder(new javax.swing.border.SoftBevelBorder(
-                javax.swing.border.BevelBorder.RAISED));
-        this.jButton2.setFocusable(false);
-        this.jButton2
-                .setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        this.jButton2
-                .setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        this.toolbar_main.add(this.jButton2);
+        shortcutRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view-refresh.png"))); // NOI18N
+        shortcutRefresh.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        shortcutRefresh.setFocusable(false);
+        shortcutRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        shortcutRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        shortcutRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                shortcutRefreshActionPerformed(evt);
+            }
+        });
+        toolbar_main.add(shortcutRefresh);
 
-        this.menu_file.setText("File");
+        shortcutCleanup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/edit-clear.png"))); // NOI18N
+        shortcutCleanup.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        shortcutCleanup.setFocusable(false);
+        shortcutCleanup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        shortcutCleanup.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        shortcutCleanup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                shortcutCleanupActionPerformed(evt);
+            }
+        });
+        toolbar_main.add(shortcutCleanup);
 
-        this.menu_item_newjob.setText("New Job");
-        this.menu_item_newjob
-                .addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(
-                            final java.awt.event.ActionEvent evt) {
-                        MainWindow.this.menu_item_newjobActionPerformed(evt);
-                    }
-                });
-        this.menu_file.add(this.menu_item_newjob);
+        menu_file.setText("File");
 
-        this.menu_item_stopserver.setText("Stop Server");
-        this.menu_item_stopserver
-                .addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(
-                            final java.awt.event.ActionEvent evt) {
-                        MainWindow.this
-                                .menu_item_stopserverActionPerformed(evt);
-                    }
-                });
-        this.menu_file.add(this.menu_item_stopserver);
+        menu_item_newjob.setText("New Job");
+        menu_item_newjob.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_item_newjobActionPerformed(evt);
+            }
+        });
+        menu_file.add(menu_item_newjob);
 
-        this.menu_item_options.setText("Options");
-        this.menu_item_options
-                .addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(
-                            final java.awt.event.ActionEvent evt) {
-                        MainWindow.this.menu_item_optionsActionPerformed(evt);
-                    }
-                });
-        this.menu_file.add(this.menu_item_options);
+        menu_item_stopserver.setText("Stop Server");
+        menu_item_stopserver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_item_stopserverActionPerformed(evt);
+            }
+        });
+        menu_file.add(menu_item_stopserver);
 
-        this.menu_item_exit.setText("Exit");
-        this.menu_item_exit
-                .addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(
-                            final java.awt.event.ActionEvent evt) {
-                        MainWindow.this.menu_item_exitActionPerformed(evt);
-                    }
-                });
-        this.menu_file.add(this.menu_item_exit);
+        menu_item_options.setText("Options");
+        menu_item_options.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_item_optionsActionPerformed(evt);
+            }
+        });
+        menu_file.add(menu_item_options);
 
-        this.jMenuBar1.add(this.menu_file);
+        menu_item_exit.setText("Exit");
+        menu_item_exit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_item_exitActionPerformed(evt);
+            }
+        });
+        menu_file.add(menu_item_exit);
 
-        this.setJMenuBar(this.jMenuBar1);
+        jMenuBar1.add(menu_file);
 
-        final javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this
-                .getContentPane());
-        this.getContentPane().setLayout(layout);
-        layout
-                .setHorizontalGroup(layout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                  layout
-                                          .createSequentialGroup()
-                                          .addGap(12, 12, 12)
-                                          .addComponent(
-                                                        this.jSplitPane1,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        685, Short.MAX_VALUE)
-                                          .addContainerGap())
-                        .addComponent(this.toolbar_main,
-                                      javax.swing.GroupLayout.DEFAULT_SIZE,
-                                      709, Short.MAX_VALUE));
-        layout
-                .setVerticalGroup(layout
-                        .createParallelGroup(
-                                             javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                  layout
-                                          .createSequentialGroup()
-                                          .addComponent(
-                                                        this.toolbar_main,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        34,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                          .addGap(18, 18, 18)
-                                          .addComponent(
-                                                        this.jSplitPane1,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        367, Short.MAX_VALUE)
-                                          .addContainerGap()));
+        setJMenuBar(jMenuBar1);
 
-        this.pack();
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(toolbar_main, javax.swing.GroupLayout.DEFAULT_SIZE, 709, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(toolbar_main, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void shortcutRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shortcutRefreshActionPerformed
+        this.updateBusinessManager(true);
+    }//GEN-LAST:event_shortcutRefreshActionPerformed
+
+    private void shortcutCleanupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shortcutCleanupActionPerformed
+        this.updateBusinessManager(false);
+    }//GEN-LAST:event_shortcutCleanupActionPerformed
+
     // GEN-FIRST:event_btn_ping
-    private void btn_ping(final java.awt.event.ActionEvent evt) {
+    private void btnPing(final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
-            final boolean ping = this.wmsx_service.ping(false);
-            final boolean fullping = this.wmsx_service.ping(true);
+            final boolean ping = this.wmsxService.ping(false);
+            final boolean fullping = this.wmsxService.ping(true);
 
             if (ping && fullping) {
                 JOptionPane.showMessageDialog(this, "Ping to provider was ok!",
@@ -926,7 +598,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // GEN-LAST:event_btn_ping
 
     // GEN-FIRST:event_btn_add
-    private void btn_add(final java.awt.event.ActionEvent evt) {
+    private void btnAdd(final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             // System.out.println("btn_add...");
 
@@ -937,7 +609,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     }// GEN-LAST:event_btn_add
 
     // GEN-FIRST:event_btn_remove
-    private void btn_remove(final java.awt.event.ActionEvent evt) {
+    private void btnRemove(final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             System.out.println("btn_remove...");
         }
@@ -963,7 +635,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void menu_item_stopserverActionPerformed(
             final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
-            this.wmsx_service.shutdownWorkers();
+            this.wmsxService.shutdownWorkers();
         }
     }
 
@@ -989,25 +661,37 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     // GEN-LAST:event_menu_item_newjobActionPerformed
 
+    // GEN-FIRST:eventStopActionPerformed
+    private void btnStopActionPerformed(final java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+    }
+    // GEN-LAST:eventStopActionPerformed
+
     // GEN-FIRST:event_btn_killActionPerformed
-    private void btn_killActionPerformed(final java.awt.event.ActionEvent evt) {
+    private void btnKillActionPerformed(final java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }
 
     // GEN-LAST:event_btn_killActionPerformed
 
     // GEN-FIRST:event_btn_refreshActionPerformed
-    private void btn_refreshActionPerformed(final java.awt.event.ActionEvent evt) {
+    private void btnRefreshActionPerformed(final java.awt.event.ActionEvent evt) {
 
-        this.updateBusinessManager();
+        this.updateBusinessManager(true);
     }
 
     // GEN-LAST:event_btn_refreshActionPerformed
 
+    // GEN-FIRST:event_btn_cleanupActionPerformed
+    private void btnCleanupActionPerformed(final java.awt.event.ActionEvent evt) {
+        this.updateBusinessManager(false);
+    }
+    // GEN-LAST:event_btn_cleanupActionPerformed
+
     // GEN-FIRST:event_tree_jobsValueChanged
-    private void tree_jobsValueChanged(
+    private void treeJobsValueChanged(
             final javax.swing.event.TreeSelectionEvent evt) {
-        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree_jobs
+        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.treeJobs
                 .getLastSelectedPathComponent();
 
         if (node != null) {
@@ -1021,8 +705,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
                 if (this.businessman.isOnline()) {
                     // enable remove buttons
-                    this.btn_remove.setEnabled(true);
-                    this.btn_kill.setEnabled(true);
+                    this.shortcutRemove.setEnabled(true);
+                    this.btnKill.setEnabled(true);
                 }
             } else {
                 this.businessman.setCurrentBackend(node.getUserObject()
@@ -1032,8 +716,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 this.panel_jobdetails.setVisible(false);
 
                 // disable remove buttons
-                this.btn_remove.setEnabled(false);
-                this.btn_kill.setEnabled(false);
+                this.shortcutRemove.setEnabled(false);
+                this.btnKill.setEnabled(false);
             }
 
             this.l_selectedjob.setText(node.getUserObject().toString());
@@ -1042,19 +726,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     // GEN-LAST:event_tree_jobsValueChanged
 
-    // GEN-FIRST:event_btn_cleanupActionPerformed
-    private void btn_cleanupActionPerformed(final java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    // GEN-LAST:event_btn_cleanupActionPerformed
-
-    // GEN-FIRST:event_btn_kill1ActionPerformed
-    private void btn_kill1ActionPerformed(final java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    // GEN-LAST:event_btn_kill1ActionPerformed
 
     // GEN-FIRST:event_table_jobsMouseClicked
     private void table_jobsMouseClicked(final java.awt.event.MouseEvent evt) {
@@ -1068,7 +739,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             // System.out.println("doubleclick");
 
             // select Item in the Tree
-            final DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.tree_jobs
+            final DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.treeJobs
                     .getModel().getRoot();
 
             final Enumeration enumeration = root.children();
@@ -1084,7 +755,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                         final JobData jobData = (JobData) node2.getUserObject();
 
                         if (jobData.getTransportJobUID().equals(jobUid)) {
-                            this.tree_jobs.setSelectionPath(new TreePath(node2
+                            this.treeJobs.setSelectionPath(new TreePath(node2
                                     .getPath()));
                         }
                     }
@@ -1099,15 +770,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // GEN-LAST:event_table_jobsMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_add;
-    private javax.swing.JButton btn_cleanup;
-    private javax.swing.JButton btn_kill;
-    private javax.swing.JButton btn_kill1;
-    private javax.swing.JButton btn_ping;
-    private javax.swing.JButton btn_refresh;
-    private javax.swing.JButton btn_remove;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnCleanup;
+    private javax.swing.JButton btnKill;
+    private javax.swing.JButton btnRefresh;
+    private javax.swing.JButton btnStop;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -1134,6 +800,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel panel_jobdetails;
     private javax.swing.JScrollPane panel_table;
     private javax.swing.JPanel panel_top;
+    private javax.swing.JButton shortcutAdd;
+    private javax.swing.JButton shortcutCleanup;
+    private javax.swing.JButton shortcutPing;
+    private javax.swing.JButton shortcutRefresh;
+    private javax.swing.JButton shortcutRemove;
     private javax.swing.JScrollPane sp_tree;
     private javax.swing.JTextArea ta_jobdetails_description;
     private javax.swing.JTable table_jobs;
@@ -1147,8 +818,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JTextField tb_jobdetails_state;
     private javax.swing.JTextField tb_jobdetails_workerID;
     private javax.swing.JToolBar toolbar_main;
-    private javax.swing.JTree tree_jobs;
-
+    private javax.swing.JTree treeJobs;
     // End of variables declaration//GEN-END:variables
 
     private void updateTreeModel() {
@@ -1172,12 +842,12 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
 
             this.treeModel = new DefaultTreeModel(this.rootNode);
-            this.tree_jobs.setModel(this.treeModel);
+            this.treeJobs.setModel(this.treeModel);
 
             // restore Expanded Nodes
             for (final int row : this.businessman.getExpansionStateRows()) {
                 System.out.println("MainWindow: setExpandedRow: " + row);
-                this.tree_jobs.expandRow(row);
+                this.treeJobs.expandRow(row);
             }
 
         } else { // offline Demo Mode
@@ -1193,7 +863,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             this.rootNode.add(node1);
 
             this.treeModel = new DefaultTreeModel(this.rootNode);
-            this.tree_jobs.setModel(this.treeModel);
+            this.treeJobs.setModel(this.treeModel);
 
         }
 
@@ -1203,7 +873,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     public void update(final Observable o, final Object obj) {
         if ((obj == null) || (!obj.getClass().getSimpleName().equals("String"))) {
             System.out.println("MainWindow: updateObserver...");
-            this.businessman.saveExpansionState(this.tree_jobs);
+            this.businessman.saveExpansionState(this.treeJobs);
             this.updateTreeModel();
 
             if ((obj != null)
@@ -1218,8 +888,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         }
     }
 
-    public void updateBusinessManager() {
-        this.businessman.refreshData();
+    public void updateBusinessManager(boolean keepOldData) {
+        if (keepOldData)
+            this.businessman.refreshBusinessData();
+        else
+            this.businessman.cleanupBusinessData();
     }
 
     private void setJobDetails(final JobData job) {

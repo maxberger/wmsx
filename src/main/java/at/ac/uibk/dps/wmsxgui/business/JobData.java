@@ -40,4 +40,20 @@ public class JobData {
         return this.transportJobUID.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final JobData other = (JobData) obj;
+        if (!this.transportJobUID.getLocalId().equals(other.transportJobUID.getLocalId())){
+            return false;
+        }
+        return true;
+    }
+
+
 }
