@@ -40,13 +40,13 @@ import at.ac.uibk.dps.wmsxgui.presentation.util.MyTreeCellRenderer;
  */
 public class MainWindow extends javax.swing.JFrame implements Observer {
 
-    private final BusinessManager  businessman;
-    private final Wmsx             wmsx_service;
-    private JFrame                 optionen;
+    private final BusinessManager businessman;
+    private final Wmsx wmsx_service;
+    private JFrame optionen;
     private DefaultMutableTreeNode rootNode;
-    private DefaultTreeModel       treeModel;
+    private DefaultTreeModel treeModel;
 
-    /** Creates new form MainWindow */
+    /* Creates new form MainWindow */
     public MainWindow() {
         this.businessman = BusinessManager.getInstance();
         this.wmsx_service = this.businessman.getWmsxService();
@@ -905,7 +905,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_ping(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_ping
+    // GEN-FIRST:event_btn_ping
+    private void btn_ping(final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             final boolean ping = this.wmsx_service.ping(false);
             final boolean fullping = this.wmsx_service.ping(true);
@@ -914,16 +915,18 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 JOptionPane.showMessageDialog(this, "Ping to provider was ok!",
                                               "WMSX GUI - Ping",
                                               JOptionPane.INFORMATION_MESSAGE);
-            }
-            else {
+            } else {
                 JOptionPane.showMessageDialog(this, "Ping to provider failed!",
                                               "WMSX GUI - Ping",
                                               JOptionPane.ERROR_MESSAGE);
             }
         }
-    }// GEN-LAST:event_btn_ping
+    }
 
-    private void btn_add(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_add
+    // GEN-LAST:event_btn_ping
+
+    // GEN-FIRST:event_btn_add
+    private void btn_add(final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             // System.out.println("btn_add...");
 
@@ -933,14 +936,18 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         }
     }// GEN-LAST:event_btn_add
 
-    private void btn_remove(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_remove
+    // GEN-FIRST:event_btn_remove
+    private void btn_remove(final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             System.out.println("btn_remove...");
         }
-    }// GEN-LAST:event_btn_remove
+    }
 
+    // GEN-LAST:event_btn_remove
+
+    // GEN-FIRST:event_menu_item_optionsActionPerformed
     private void menu_item_optionsActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_menu_item_optionsActionPerformed
+            final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             if (this.optionen == null) {
                 this.optionen = new Options();
@@ -948,40 +955,58 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             // System.out.println("Show OptionsDialog...");
             this.optionen.setVisible(true);
         }
-    }// GEN-LAST:event_menu_item_optionsActionPerformed
+    }
 
+    // GEN-LAST:event_menu_item_optionsActionPerformed
+
+    // GEN-FIRST:event_menu_item_stopserverActionPerformed
     private void menu_item_stopserverActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_menu_item_stopserverActionPerformed
+            final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             this.wmsx_service.shutdownWorkers();
         }
-    }// GEN-LAST:event_menu_item_stopserverActionPerformed
+    }
 
+    // GEN-LAST:event_menu_item_stopserverActionPerformed
+
+    // GEN-FIRST:event_menu_item_exitActionPerformed
     private void menu_item_exitActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_menu_item_exitActionPerformed
+            final java.awt.event.ActionEvent evt) {
         System.exit(0);
-    }// GEN-LAST:event_menu_item_exitActionPerformed
+    }
 
+    // GEN-LAST:event_menu_item_exitActionPerformed
+
+    // GEN-FIRST:event_menu_item_newjobActionPerformed
     private void menu_item_newjobActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_menu_item_newjobActionPerformed
+            final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             final NewJob newjob = new NewJob(this);
             // System.out.println("MainWindow: Show NewJobDialog...");
             newjob.setVisible(true);
         }
-    }// GEN-LAST:event_menu_item_newjobActionPerformed
+    }
 
-    private void btn_killActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_killActionPerformed
+    // GEN-LAST:event_menu_item_newjobActionPerformed
+
+    // GEN-FIRST:event_btn_killActionPerformed
+    private void btn_killActionPerformed(final java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }// GEN-LAST:event_btn_killActionPerformed
+    }
 
-    private void btn_refreshActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_refreshActionPerformed
+    // GEN-LAST:event_btn_killActionPerformed
+
+    // GEN-FIRST:event_btn_refreshActionPerformed
+    private void btn_refreshActionPerformed(final java.awt.event.ActionEvent evt) {
 
         this.updateBusinessManager();
-    }// GEN-LAST:event_btn_refreshActionPerformed
+    }
 
+    // GEN-LAST:event_btn_refreshActionPerformed
+
+    // GEN-FIRST:event_tree_jobsValueChanged
     private void tree_jobsValueChanged(
-            final javax.swing.event.TreeSelectionEvent evt) {// GEN-FIRST:event_tree_jobsValueChanged
+            final javax.swing.event.TreeSelectionEvent evt) {
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree_jobs
                 .getLastSelectedPathComponent();
 
@@ -999,8 +1024,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                     this.btn_remove.setEnabled(true);
                     this.btn_kill.setEnabled(true);
                 }
-            }
-            else {
+            } else {
                 this.businessman.setCurrentBackend(node.getUserObject()
                         .toString());
 
@@ -1014,17 +1038,26 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
             this.l_selectedjob.setText(node.getUserObject().toString());
         }
-    }// GEN-LAST:event_tree_jobsValueChanged
+    }
 
-    private void btn_cleanupActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cleanupActionPerformed
+    // GEN-LAST:event_tree_jobsValueChanged
+
+    // GEN-FIRST:event_btn_cleanupActionPerformed
+    private void btn_cleanupActionPerformed(final java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }// GEN-LAST:event_btn_cleanupActionPerformed
+    }
 
-    private void btn_kill1ActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_kill1ActionPerformed
+    // GEN-LAST:event_btn_cleanupActionPerformed
+
+    // GEN-FIRST:event_btn_kill1ActionPerformed
+    private void btn_kill1ActionPerformed(final java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }// GEN-LAST:event_btn_kill1ActionPerformed
+    }
 
-    private void table_jobsMouseClicked(final java.awt.event.MouseEvent evt) {// GEN-FIRST:event_table_jobsMouseClicked
+    // GEN-LAST:event_btn_kill1ActionPerformed
+
+    // GEN-FIRST:event_table_jobsMouseClicked
+    private void table_jobsMouseClicked(final java.awt.event.MouseEvent evt) {
 
         final int row = this.table_jobs.getSelectedRow();
         final TransportJobUID jobUid = (TransportJobUID) this.table_jobs
@@ -1061,58 +1094,60 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
 
         }
-    }// GEN-LAST:event_table_jobsMouseClicked
+    }
+
+    // GEN-LAST:event_table_jobsMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton     btn_add;
-    private javax.swing.JButton     btn_cleanup;
-    private javax.swing.JButton     btn_kill;
-    private javax.swing.JButton     btn_kill1;
-    private javax.swing.JButton     btn_ping;
-    private javax.swing.JButton     btn_refresh;
-    private javax.swing.JButton     btn_remove;
-    private javax.swing.JButton     jButton1;
-    private javax.swing.JButton     jButton2;
-    private javax.swing.JButton     jButton3;
-    private javax.swing.JLabel      jLabel1;
-    private javax.swing.JLabel      jLabel10;
-    private javax.swing.JLabel      jLabel2;
-    private javax.swing.JLabel      jLabel3;
-    private javax.swing.JLabel      jLabel4;
-    private javax.swing.JLabel      jLabel5;
-    private javax.swing.JLabel      jLabel6;
-    private javax.swing.JLabel      jLabel7;
-    private javax.swing.JLabel      jLabel8;
-    private javax.swing.JLabel      jLabel9;
-    private javax.swing.JMenuBar    jMenuBar1;
-    private javax.swing.JPanel      jPanelRight;
+    private javax.swing.JButton btn_add;
+    private javax.swing.JButton btn_cleanup;
+    private javax.swing.JButton btn_kill;
+    private javax.swing.JButton btn_kill1;
+    private javax.swing.JButton btn_ping;
+    private javax.swing.JButton btn_refresh;
+    private javax.swing.JButton btn_remove;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanelRight;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSplitPane  jSplitPane1;
-    private javax.swing.JLabel      l_selectedjob;
-    private javax.swing.JMenu       menu_file;
-    private javax.swing.JMenuItem   menu_item_exit;
-    private javax.swing.JMenuItem   menu_item_newjob;
-    private javax.swing.JMenuItem   menu_item_options;
-    private javax.swing.JMenuItem   menu_item_stopserver;
-    private javax.swing.JPanel      panel_buttons;
-    private javax.swing.JPanel      panel_description;
-    private javax.swing.JPanel      panel_jobdetails;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JLabel l_selectedjob;
+    private javax.swing.JMenu menu_file;
+    private javax.swing.JMenuItem menu_item_exit;
+    private javax.swing.JMenuItem menu_item_newjob;
+    private javax.swing.JMenuItem menu_item_options;
+    private javax.swing.JMenuItem menu_item_stopserver;
+    private javax.swing.JPanel panel_buttons;
+    private javax.swing.JPanel panel_description;
+    private javax.swing.JPanel panel_jobdetails;
     private javax.swing.JScrollPane panel_table;
-    private javax.swing.JPanel      panel_top;
+    private javax.swing.JPanel panel_top;
     private javax.swing.JScrollPane sp_tree;
-    private javax.swing.JTextArea   ta_jobdetails_description;
-    private javax.swing.JTable      table_jobs;
-    private javax.swing.JTextField  tb_jobdetails_creationtime;
-    private javax.swing.JTextField  tb_jobdetails_donetime;
-    private javax.swing.JTextField  tb_jobdetails_executable;
-    private javax.swing.JTextField  tb_jobdetails_jobuid;
-    private javax.swing.JTextField  tb_jobdetails_output;
-    private javax.swing.JTextField  tb_jobdetails_siteid;
-    private javax.swing.JTextField  tb_jobdetails_startedtime;
-    private javax.swing.JTextField  tb_jobdetails_state;
-    private javax.swing.JTextField  tb_jobdetails_workerID;
-    private javax.swing.JToolBar    toolbar_main;
-    private javax.swing.JTree       tree_jobs;
+    private javax.swing.JTextArea ta_jobdetails_description;
+    private javax.swing.JTable table_jobs;
+    private javax.swing.JTextField tb_jobdetails_creationtime;
+    private javax.swing.JTextField tb_jobdetails_donetime;
+    private javax.swing.JTextField tb_jobdetails_executable;
+    private javax.swing.JTextField tb_jobdetails_jobuid;
+    private javax.swing.JTextField tb_jobdetails_output;
+    private javax.swing.JTextField tb_jobdetails_siteid;
+    private javax.swing.JTextField tb_jobdetails_startedtime;
+    private javax.swing.JTextField tb_jobdetails_state;
+    private javax.swing.JTextField tb_jobdetails_workerID;
+    private javax.swing.JToolBar toolbar_main;
+    private javax.swing.JTree tree_jobs;
 
     // End of variables declaration//GEN-END:variables
 
@@ -1145,8 +1180,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 this.tree_jobs.expandRow(row);
             }
 
-        }
-        else { // offline Demo Mode
+        } else { // offline Demo Mode
 
             DefaultMutableTreeNode node1 = new DefaultMutableTreeNode("Fake");
 

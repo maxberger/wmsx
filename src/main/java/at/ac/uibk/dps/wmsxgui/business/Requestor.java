@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 public class Requestor {
     private static final long serialVersionUID = -8474571551490820022L;
 
-    private Wmsx              wmsx_service;
+    private Wmsx wmsx_service;
 
     /* Singleton Pattern */
     private Requestor() {
@@ -27,8 +27,7 @@ public class Requestor {
             this.wmsx_service = (Wmsx) in.readObject();
             in.close();
 
-        }
-        catch (final IOException io) {
+        } catch (final IOException io) {
             System.out.println("IOException: " + io.getMessage());
 
             final int result = JOptionPane
@@ -42,8 +41,7 @@ public class Requestor {
                 System.exit(0);
             }
 
-        }
-        catch (final ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             System.out.println("ClassNotFound: " + e.getMessage());
             JOptionPane.showMessageDialog(null, e.getMessage(),
                                           "WMSX GUI - ClassNotFound",
@@ -60,7 +58,7 @@ public class Requestor {
     }
 
     /**
-     * Gibt immer die gleiche Instanz zurück
+     * Gibt immer die gleiche Instanz zurück.
      * 
      * @return Instance der Game Klasse
      */

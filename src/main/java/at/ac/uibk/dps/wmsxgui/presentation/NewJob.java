@@ -37,10 +37,10 @@ public class NewJob extends javax.swing.JFrame {
     /**
      * 
      */
-    private static final long     serialVersionUID = 8499517436924693339L;
+    private static final long serialVersionUID = 8499517436924693339L;
     private final BusinessManager businessman;
-    private final MainWindow      mainWindow;
-    private final Wmsx            wmsx_service;
+    private final MainWindow mainWindow;
+    private final Wmsx wmsx_service;
 
     /** Creates new form NewJob. */
     public NewJob(final MainWindow mainWindow) {
@@ -430,8 +430,7 @@ public class NewJob extends javax.swing.JFrame {
                                                : outputFile, resultDir);
                     System.out.println("SubmissionResult: " + s);
 
-                }
-                catch (final IOException e) {
+                } catch (final IOException e) {
                     System.out
                             .println(e.getMessage() + " " + e.getStackTrace());
                 }
@@ -440,8 +439,7 @@ public class NewJob extends javax.swing.JFrame {
                 // businessman.refreshData();
                 this.mainWindow.updateBusinessManager();
 
-            }
-            else {
+            } else {
                 JOptionPane
                         .showMessageDialog(
                                            this,
@@ -450,8 +448,7 @@ public class NewJob extends javax.swing.JFrame {
                                            JOptionPane.ERROR_MESSAGE);
             }
 
-        }
-        else // type is worker
+        } else // type is worker
         {
             try {
                 final int workercnt = Integer
@@ -466,8 +463,7 @@ public class NewJob extends javax.swing.JFrame {
                     // businessman.refreshData();
                     this.mainWindow.updateBusinessManager();
 
-                }
-                else {
+                } else {
                     JOptionPane
                             .showMessageDialog(
                                                this,
@@ -476,8 +472,7 @@ public class NewJob extends javax.swing.JFrame {
                                                JOptionPane.ERROR_MESSAGE);
                 }
 
-            }
-            catch (final NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 JOptionPane
                         .showMessageDialog(this,
                                            "JobCount isn't an valid Integer!",
@@ -507,8 +502,7 @@ public class NewJob extends javax.swing.JFrame {
             this.l_jobdesc.setText("JobDescriptionFile");
             this.tb_jobdescriptionfile.setText("");
 
-        }
-        else // type is worker
+        } else // type is worker
         {
             this.contentPanel.setBorder(javax.swing.BorderFactory
                     .createTitledBorder("Create a new Worker"));
@@ -570,19 +564,19 @@ public class NewJob extends javax.swing.JFrame {
     }// GEN-LAST:event_btn_select_resultdirActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton    btn_cancel;
-    private javax.swing.JButton    btn_ok;
-    private javax.swing.JButton    btn_select_jobdesc;
-    private javax.swing.JButton    btn_select_outputfile;
-    private javax.swing.JButton    btn_select_resultdir;
-    private javax.swing.JComboBox  cb_backend;
-    private javax.swing.JComboBox  cb_type;
-    private javax.swing.JPanel     contentPanel;
-    private javax.swing.JLabel     l_backend;
-    private javax.swing.JLabel     l_creationtype;
-    private javax.swing.JLabel     l_jobdesc;
-    private javax.swing.JLabel     l_outputfile;
-    private javax.swing.JLabel     l_resultdir;
+    private javax.swing.JButton btn_cancel;
+    private javax.swing.JButton btn_ok;
+    private javax.swing.JButton btn_select_jobdesc;
+    private javax.swing.JButton btn_select_outputfile;
+    private javax.swing.JButton btn_select_resultdir;
+    private javax.swing.JComboBox cb_backend;
+    private javax.swing.JComboBox cb_type;
+    private javax.swing.JPanel contentPanel;
+    private javax.swing.JLabel l_backend;
+    private javax.swing.JLabel l_creationtype;
+    private javax.swing.JLabel l_jobdesc;
+    private javax.swing.JLabel l_outputfile;
+    private javax.swing.JLabel l_resultdir;
     private javax.swing.JTextField tb_jobdescriptionfile;
     private javax.swing.JTextField tb_outputfile;
     private javax.swing.JTextField tb_resultdir;

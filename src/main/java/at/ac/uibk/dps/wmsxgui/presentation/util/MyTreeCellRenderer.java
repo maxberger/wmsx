@@ -26,10 +26,10 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
      * 
      */
     private static final long serialVersionUID = 6155147853626136087L;
-    private final Icon        greenCircle;
-    private final Icon        orangeCircle;
-    private final Icon        redCircle;
-    private final Icon        grid;
+    private final Icon greenCircle;
+    private final Icon orangeCircle;
+    private final Icon redCircle;
+    private final Icon grid;
 
     public MyTreeCellRenderer() {
         this.greenCircle = new ImageIcon(this.getClass()
@@ -56,21 +56,16 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
             final JobState state = job.getJobinfo().getStatus();
             if (state.equals(JobState.RUNNING)) {
                 this.setIcon(this.greenCircle);
+            } else if (state.equals(JobState.STARTUP)) {
+                this.setIcon(this.orangeCircle);
+            } else if (state.equals(JobState.SUCCESS)) {
+                this.setIcon(this.redCircle);
             }
-            else
-                if (state.equals(JobState.STARTUP)) {
-                    this.setIcon(this.orangeCircle);
-                }
-                else
-                    if (state.equals(JobState.SUCCESS)) {
-                        this.setIcon(this.redCircle);
-                    }
 
             this.setToolTipText(job.getJobinfo().getDescription());
             this.setText(job.getTransportJobUID().toString());
 
-        }
-        else {
+        } else {
             this.setIcon(this.grid);
             this.setToolTipText(null); // no tool tip
         }

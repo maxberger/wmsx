@@ -26,8 +26,7 @@ public class JobDescriptionFileFilter extends FileFilter {
         if (extension != null) {
             if (extension.equals("jdl")) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }
