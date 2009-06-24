@@ -12,8 +12,9 @@ import java.util.Observer;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * 
- * @author bafu
+ *
+ * @author WmsxGUI Team
+ * @version 1.0
  */
 public class JobTableModel extends AbstractTableModel implements Observer {
     /**
@@ -27,12 +28,20 @@ public class JobTableModel extends AbstractTableModel implements Observer {
 
     private List<JobData> data;
 
+    /**
+     *
+     */
     public JobTableModel() {
         this.businessman = BusinessManager.getInstance();
         this.businessman.addObserver(this);
         this.updateData();
     }
 
+    /**
+     *
+     * @param o
+     * @param obj
+     */
     public void update(final Observable o, final Object obj) {
         System.out.println("JobTableModel: updateObserver...");
         this.updateData();
@@ -44,19 +53,38 @@ public class JobTableModel extends AbstractTableModel implements Observer {
         this.fireTableDataChanged();
     }
 
+    /**
+     *
+     * @return
+     */
     public int getColumnCount() {
         return this.columnNames.length;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getRowCount() {
         return this.data.size();
     }
 
+    /**
+     *
+     * @param col
+     * @return
+     */
     @Override
     public String getColumnName(final int col) {
         return this.columnNames[col];
     }
 
+    /**
+     *
+     * @param row
+     * @param col
+     * @return
+     */
     public Object getValueAt(final int row, final int col) {
         if ((this.data.size() > 0) && (this.data.get(row) != null)) {
             switch (col) {
@@ -100,6 +128,11 @@ public class JobTableModel extends AbstractTableModel implements Observer {
      * each cell. If we didn't implement this method, then the last column would
      * contain text ("true"/"false"), rather than a check box.
      */
+    /**
+     *
+     * @param c
+     * @return
+     */
     @Override
     public Class getColumnClass(final int c) {
         final Object val = this.getValueAt(0, c);
@@ -113,6 +146,12 @@ public class JobTableModel extends AbstractTableModel implements Observer {
 
     /*
      * Don't need to implement this method unless your table's editable.
+     */
+    /**
+     *
+     * @param row
+     * @param col
+     * @return
      */
     @Override
     public boolean isCellEditable(final int row, final int col) {

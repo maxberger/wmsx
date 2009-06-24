@@ -35,8 +35,9 @@ import at.ac.uibk.dps.wmsxgui.business.JobTableModel;
 import at.ac.uibk.dps.wmsxgui.presentation.util.MyTreeCellRenderer;
 
 /**
- * 
- * @author bafu
+ *
+ * @author WmsxGUI Team
+ * @version 1.0
  */
 public class MainWindow extends javax.swing.JFrame implements Observer {
 
@@ -47,6 +48,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private DefaultTreeModel treeModel;
 
     /* Creates new form MainWindow */
+    /**
+     *
+     */
     public MainWindow() {
         this.businessman = BusinessManager.getInstance();
         this.wmsxService = this.businessman.getWmsxService();
@@ -66,11 +70,17 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             this.menu_item_stopserver.setEnabled(false);
 
             this.shortcutAdd.setEnabled(false);
-            this.shortcutRemove.setEnabled(false);
+            this.shortcutRemoveHard.setEnabled(false);
             this.shortcutPing.setEnabled(false);
+            this.shortcutCleanup.setEnabled(false);
+            this.shortcutRefresh.setEnabled(false);
+            this.shortcutRemoveHard.setEnabled(false);
+            this.shortcutRemoveSoft.setEnabled(false);
 
             this.btnKill.setEnabled(false);
             this.btnRefresh.setEnabled(false);
+            this.btnCleanup.setEnabled(false);
+            this.btnStop.setEnabled(false);
         }
 
         // verstecke tabelle
@@ -78,7 +88,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.panel_jobdetails.setVisible(false);
 
         // disable remove buttons
-        this.shortcutRemove.setEnabled(false);
+        this.shortcutRemoveHard.setEnabled(false);
         this.btnKill.setEnabled(false);
 
         this.treeJobs.setCellRenderer(new MyTreeCellRenderer());
@@ -151,8 +161,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         treeJobs = new javax.swing.JTree();
         toolbar_main = new javax.swing.JToolBar();
         shortcutAdd = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        shortcutRemove = new javax.swing.JButton();
+        shortcutRemoveSoft = new javax.swing.JButton();
+        shortcutRemoveHard = new javax.swing.JButton();
         shortcutPing = new javax.swing.JButton();
         shortcutRefresh = new javax.swing.JButton();
         shortcutCleanup = new javax.swing.JButton();
@@ -458,24 +468,24 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         });
         toolbar_main.add(shortcutAdd);
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/window-close.png"))); // NOI18N
-        jButton3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButton3.setFocusable(false);
-        jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        toolbar_main.add(jButton3);
+        shortcutRemoveSoft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/window-close.png"))); // NOI18N
+        shortcutRemoveSoft.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        shortcutRemoveSoft.setFocusable(false);
+        shortcutRemoveSoft.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        shortcutRemoveSoft.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolbar_main.add(shortcutRemoveSoft);
 
-        shortcutRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stop.png"))); // NOI18N
-        shortcutRemove.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        shortcutRemove.setFocusable(false);
-        shortcutRemove.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        shortcutRemove.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        shortcutRemove.addActionListener(new java.awt.event.ActionListener() {
+        shortcutRemoveHard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stop.png"))); // NOI18N
+        shortcutRemoveHard.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        shortcutRemoveHard.setFocusable(false);
+        shortcutRemoveHard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        shortcutRemoveHard.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        shortcutRemoveHard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemove(evt);
             }
         });
-        toolbar_main.add(shortcutRemove);
+        toolbar_main.add(shortcutRemoveHard);
 
         shortcutPing.setText("Ping");
         shortcutPing.addActionListener(new java.awt.event.ActionListener() {
@@ -705,7 +715,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
                 if (this.businessman.isOnline()) {
                     // enable remove buttons
-                    this.shortcutRemove.setEnabled(true);
+                    this.shortcutRemoveHard.setEnabled(true);
                     this.btnKill.setEnabled(true);
                 }
             } else {
@@ -716,7 +726,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 this.panel_jobdetails.setVisible(false);
 
                 // disable remove buttons
-                this.shortcutRemove.setEnabled(false);
+                this.shortcutRemoveHard.setEnabled(false);
                 this.btnKill.setEnabled(false);
             }
 
@@ -774,7 +784,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton btnKill;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnStop;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -804,7 +813,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton shortcutCleanup;
     private javax.swing.JButton shortcutPing;
     private javax.swing.JButton shortcutRefresh;
-    private javax.swing.JButton shortcutRemove;
+    private javax.swing.JButton shortcutRemoveHard;
+    private javax.swing.JButton shortcutRemoveSoft;
     private javax.swing.JScrollPane sp_tree;
     private javax.swing.JTextArea ta_jobdetails_description;
     private javax.swing.JTable table_jobs;
@@ -865,11 +875,18 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             this.treeModel = new DefaultTreeModel(this.rootNode);
             this.treeJobs.setModel(this.treeModel);
 
+            this.treeJobs.setEnabled(false);
+
         }
 
         // tree_jobs.updateUI();
     }
 
+    /**
+     *
+     * @param o
+     * @param obj
+     */
     public void update(final Observable o, final Object obj) {
         if ((obj == null) || (!obj.getClass().getSimpleName().equals("String"))) {
             System.out.println("MainWindow: updateObserver...");
@@ -888,6 +905,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         }
     }
 
+    /**
+     *
+     * @param keepOldData
+     */
     public void updateBusinessManager(boolean keepOldData) {
         if (keepOldData)
             this.businessman.refreshBusinessData();

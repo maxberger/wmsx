@@ -5,17 +5,23 @@
 
 package at.ac.uibk.dps.wmsxgui.presentation.util;
 
-/**
- *
- * @author bafu
- */
 import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
+/**
+ *
+ * @author WmsxGUI Team
+ * @version 1.0
+ */
 public class JobDescriptionFileFilter extends FileFilter {
 
     // Accept all directories and jdl files.
+    /**
+     *
+     * @param f
+     * @return
+     */
     @Override
     public boolean accept(final File f) {
         if (f.isDirectory()) {
@@ -35,6 +41,10 @@ public class JobDescriptionFileFilter extends FileFilter {
     }
 
     // The description of this filter
+    /**
+     *
+     * @return
+     */
     @Override
     public String getDescription() {
         return "Job Description Files";

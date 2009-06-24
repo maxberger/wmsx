@@ -28,9 +28,9 @@ import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
 import at.ac.uibk.dps.wmsxgui.presentation.util.JobDescriptionFileFilter;
 
 /**
- * 
- * @author lancelot
- * @version 20.4.2009
+ *
+ * @author WmsxGUI Team
+ * @version 1.0
  */
 public class NewJob extends javax.swing.JFrame {
 
@@ -42,7 +42,9 @@ public class NewJob extends javax.swing.JFrame {
     private final MainWindow mainWindow;
     private final Wmsx wmsxService;
 
-    /** Creates new form NewJob. */
+    /** Creates new form NewJob.
+     * @param mainWindow
+     */
     public NewJob(final MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.businessman = BusinessManager.getInstance();
