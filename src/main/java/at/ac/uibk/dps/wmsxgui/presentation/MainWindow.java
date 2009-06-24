@@ -181,17 +181,18 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("WMSX GUI");
-        setMinimumSize(new java.awt.Dimension(362, 424));
+        setMinimumSize(new java.awt.Dimension(500, 424));
 
         jSplitPane1.setDividerSize(5);
 
-        jPanelRight.setMinimumSize(new java.awt.Dimension(200, 268));
+        jPanelRight.setMinimumSize(new java.awt.Dimension(360, 0));
         jPanelRight.setPreferredSize(new java.awt.Dimension(200, 200));
 
-        panel_top.setMinimumSize(new java.awt.Dimension(200, 250));
+        panel_top.setMinimumSize(new java.awt.Dimension(360, 250));
         panel_top.setPreferredSize(new java.awt.Dimension(596, 250));
 
         panel_table.setAutoscrolls(true);
+        panel_table.setMinimumSize(new java.awt.Dimension(300, 25));
 
         table_jobs.setAutoCreateRowSorter(true);
         table_jobs.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -203,7 +204,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         panel_table.setViewportView(table_jobs);
 
         panel_jobdetails.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Details"));
-        panel_jobdetails.setMinimumSize(new java.awt.Dimension(188, 241));
+        panel_jobdetails.setMinimumSize(new java.awt.Dimension(300, 241));
 
         jLabel1.setText("JobUID");
 
@@ -262,7 +263,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         panel_descriptionLayout.setVerticalGroup(
             panel_descriptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_descriptionLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(20, 20, 20)
                 .addGroup(panel_descriptionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tb_jobdetails_executable, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
@@ -277,7 +278,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                         .addContainerGap())
                     .addGroup(panel_descriptionLayout.createSequentialGroup()
                         .addGap(1, 1, 1)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE))))
         );
 
         jLabel8.setText("Worker?");
@@ -304,9 +305,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                         .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(tb_jobdetails_jobuid, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
-                                    .addComponent(tb_jobdetails_state, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
-                                    .addComponent(tb_jobdetails_siteid, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+                                    .addComponent(tb_jobdetails_jobuid, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_state, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_siteid, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))
                                 .addGap(13, 13, 13)
                                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -314,10 +315,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(tb_jobdetails_creationtime, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-                                    .addComponent(tb_jobdetails_startedtime, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-                                    .addComponent(tb_jobdetails_donetime, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)))
-                            .addComponent(tb_jobdetails_workerID, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))))
+                                    .addComponent(tb_jobdetails_creationtime, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_startedtime, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_donetime, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)))
+                            .addComponent(tb_jobdetails_workerID, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         panel_jobdetailsLayout.setVerticalGroup(
@@ -352,18 +353,19 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         panel_top.setLayout(panel_topLayout);
         panel_topLayout.setHorizontalGroup(
             panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
             .addGroup(panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(panel_jobdetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel_topLayout.setVerticalGroup(
             panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
             .addGroup(panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(panel_jobdetails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panel_buttons.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        panel_buttons.setMinimumSize(new java.awt.Dimension(360, 68));
 
         l_selectedjob.setText("job/worker");
 
@@ -413,7 +415,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                         .addComponent(btnRefresh)
                         .addGap(6, 6, 6)
                         .addComponent(btnCleanup)))
-                .addContainerGap(229, Short.MAX_VALUE))
+                .addContainerGap(297, Short.MAX_VALUE))
         );
 
         panel_buttonsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCleanup, btnRefresh});
@@ -435,13 +437,13 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jPanelRight.setLayout(jPanelRightLayout);
         jPanelRightLayout.setHorizontalGroup(
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_top, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+            .addComponent(panel_top, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
             .addComponent(panel_buttons, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanelRightLayout.setVerticalGroup(
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRightLayout.createSequentialGroup()
-                .addComponent(panel_top, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                .addComponent(panel_top, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel_buttons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
