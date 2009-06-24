@@ -487,16 +487,16 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="l_selectedjob" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="btnStop" linkSize="1" min="-2" pref="61" max="-2" attributes="0"/>
+                                  <Component id="btnStop" min="-2" pref="97" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btnKill" linkSize="1" min="-2" pref="61" max="-2" attributes="0"/>
+                                  <Component id="btnKill" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="btnRefresh" linkSize="1" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                                   <Component id="btnCleanup" linkSize="1" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="216" max="32767" attributes="0"/>
+                          <EmptySpace pref="229" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -525,7 +525,7 @@
                 <Component class="javax.swing.JButton" name="btnKill">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="kill"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Remove Worker (hard)"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Kill Worker (hard)"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnKillActionPerformed"/>
@@ -549,8 +549,8 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="btnStop">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="stop"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Remove Job or Worker (soft)"/>
+                    <Property name="text" type="java.lang.String" value="shutdown"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Cancel Job or shutdown Worker (soft)"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnStopActionPerformed"/>
@@ -626,23 +626,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/removesoft.png"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Remove Job or Worker (soft)"/>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
-                <BevelBorder/>
-              </Border>
-            </Property>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="verticalTextPosition" type="int" value="3"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="shortcutRemoveHard">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/removehard.png"/>
-            </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Remove Worker (hard)"/>
+            <Property name="toolTipText" type="java.lang.String" value="Cancel Job or shutdown Worker (soft)"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
                 <BevelBorder/>
@@ -653,7 +637,26 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemove"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnStopActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="shortcutRemoveHard">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/removehard.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Kill Worker (hard)"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
+                <BevelBorder/>
+              </Border>
+            </Property>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnKillActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="shortcutPing">
