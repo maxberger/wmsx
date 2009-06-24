@@ -119,24 +119,24 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
     
     /**
-     *
-     * @return
+     * getWmsxService is  Getter which returns the WmsxService.
+     * @return WmsxService to the provider
      */
     public Wmsx getWmsxService() {
         return this.wmsxService;
     }
 
     /**
-     *
-     * @return
+     * getCurrentBackend is a Getter for the current backend.
+     * @return reutrns the current backend
      */
     public String getCurrentBackend() {
         return this.currentBackend;
     }
 
     /**
-     *
-     * @param currentBackend
+     * setCurrentBackend is a Setter for the current backend.
+     * @param currentBackend Backend which should be active now
      */
     public void setCurrentBackend(final String currentBackend) {
         this.currentBackend = currentBackend;
@@ -144,8 +144,8 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     }
 
     /**
-     *
-     * @return
+     * isOnline checks if there is a connection to the provider.
+     * @return true if ther is a connection to the provider, otherwise false
      */
     public boolean isOnline() {
         if (this.wmsxService != null) {
@@ -156,8 +156,8 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     }
 
     /**
-     *
-     * @param treeJobs
+     * saveExpansionState saves the expanded state for the given tree.
+     * @param treeJobs JTreefo for which the expansion state should be saved
      */
     public void saveExpansionState(final JTree treeJobs) {
         // System.out.println("BusinessManager: saveExpansionState...");
@@ -173,27 +173,28 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     }
 
     /**
-     *
-     * @return
+     * getExpansionStateRows is a Getter for ExpansionState Rows, which keeps
+     * information about the expanded tree.
+     * @return List of Rows which should be expanded in the Tree
      */
     public List<Integer> getExpansionStateRows() {
         return this.expandedNodesRowIndex;
     }
 
     /**
-     *
-     * @return
+     * getBackends is a Getter for the Backends
+     * @return Backends from the BusinessData
      */
     public Iterable<String> getBackends() {
         return this.backends;
     }
 
     /**
-     *
-     * @param backend
-     * @return
+     * getJobs calculates all jobs for the given Backend.
+     * @param backend Backend for which you will get all Jobs
+     * @return List of JobData objects for the given Backend
      */
-    public List<JobData> getJobs(final String backend) {
+    public synchronized List<JobData> getJobs(final String backend) {
         if ((backend != null) && (!backend.equals("Backends"))) {
             return this.jobMap.get(backend);
         } else {
@@ -207,11 +208,11 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     }
 
     /**
-     *
-     * @param uid
-     * @return
+     * getJobData calculates the JobData for the given JobUID.
+     * @param uid TransportJobUID for which you will get the JobData
+     * @return JobData for the given JobUID, null if the JobUID is not found
      */
-    public JobData getJobData(final TransportJobUID uid) {
+    public synchronized JobData getJobData(final TransportJobUID uid) {
         for (final JobData jd : this.getJobs(uid.getBackend())) {
             if (jd.getTransportJobUID().equals(uid)) {
                 return jd;
@@ -221,17 +222,18 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     }
 
     /**
-     *
-     * @return
+     * getJobsTable calculates all jobs for the current Backend.
+     * @return List of JobData objects for the current Backend
      */
-    public List<JobData> getJobsTable() {
+    public synchronized List<JobData> getJobsTable() {
         return this.getJobs(this.getCurrentBackend());
     }
 
     /**
-     *
+     * cleanupBusinessData clears all BusinessData and updates manually
+     * the BusinessData by requesting all backends and jobs from the provider.
      */
-    public void cleanupBusinessData() {
+    public synchronized void cleanupBusinessData() {
         System.out.println("BusinessManager: cleanupBusinessData...");
         if (this.isOnline()) {
 
@@ -259,9 +261,10 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     }
 
     /**
-     *
+     * refreshBusinessData updates manually the BusinessData by requesting
+     * all backends and jobs from the provider but it keeps all old jobs.
      */
-    public void refreshBusinessData() {
+    public synchronized void refreshBusinessData() {
         System.out.println("BusinessManager: refreshBusinessData...");
         if (this.isOnline()) {
 
@@ -295,46 +298,30 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     }
 
     /**
-     *
-     * @param re
-     * @throws net.jini.core.event.UnknownEventException
-     * @throws java.rmi.RemoteException
+     * notify is executed when some JobInfo changed by the provider
+     * and updates the Businesslayer and GUI.
+     * @param re RemoteEvent, which includes the modified JobData
+     * @throws net.jini.core.event.UnknownEventException if some unknown event occurs
+     * @throws java.rmi.RemoteException if some network error occurs
      */
     @Override
-    public void notify(final RemoteEvent re) throws UnknownEventException,
+    public synchronized void notify(final RemoteEvent re) throws UnknownEventException,
             RemoteException {
 
         final JobChangeEvent e = (JobChangeEvent) re;
         System.out.println("BusinessManager: notified by provider..."
                 + e.getJobUid() + " State: " + e.getState());
 
-        new BusinessThread(this,e).start();
-
-    }
-
-    private class BusinessThread extends Thread {
-        private BusinessManager businessManger;
-        private JobChangeEvent jobChangeEvent;
-        public BusinessThread(BusinessManager businessManager, JobChangeEvent jobChangeEvent)
-        {
-            super();
-            this.businessManger = businessManager;
-            this.jobChangeEvent = jobChangeEvent;
-        }
-
-        @Override
-        public void run()
-        {
-            // Achtung: Fake vs. fake --> darum toLowerCase
-            if (businessManger.jobMap != null) {
-                for (final JobData job : businessManger.jobMap.get(jobChangeEvent.getJobUid().getBackend()
-                        .toLowerCase(Locale.getDefault()))) {
-                    if (job.getTransportJobUID().equals(jobChangeEvent.getJobUid())) {
-                        job.setJobinfo(businessManger.wmsxService.getJobInfo(jobChangeEvent.getJobUid()));
-                        businessManger.updateObservers(job);
-                    }
+        // Achtung: Fake vs. fake --> darum toLowerCase
+        if (this.jobMap != null) {
+            for (final JobData job : this.jobMap.get(e.getJobUid().getBackend()
+                    .toLowerCase(Locale.getDefault()))) {
+                if (job.getTransportJobUID().equals(e.getJobUid())) {
+                    job.setJobinfo(this.wmsxService.getJobInfo(e.getJobUid()));
+                    this.updateObservers(job);
                 }
             }
         }
+
     }
 }
