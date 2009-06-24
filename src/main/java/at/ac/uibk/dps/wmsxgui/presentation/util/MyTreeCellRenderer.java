@@ -27,22 +27,25 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
      * 
      */
     private static final long serialVersionUID = 6155147853626136087L;
-    private final Icon greenCircle;
-    private final Icon orangeCircle;
-    private final Icon redCircle;
-    private final Icon grid;
+    private final Icon runningIcon;
+    private final Icon startupIcon;
+    private final Icon successIcon;
+    private final Icon failedIcon;
+    private final Icon gridIcon;
 
     /**
      *
      */
     public MyTreeCellRenderer() {
-        this.greenCircle = new ImageIcon(this.getClass()
-                .getResource("/greenCircle.png"));
-        this.orangeCircle = new ImageIcon(this.getClass()
-                .getResource("/orangeCircle.png"));
-        this.redCircle = new ImageIcon(this.getClass()
-                .getResource("/redCircle.png"));
-        this.grid = new ImageIcon(this.getClass().getResource("/grid.png"));
+        this.runningIcon = new ImageIcon(this.getClass()
+                .getResource("/jobstate_running.png"));
+        this.startupIcon = new ImageIcon(this.getClass()
+                .getResource("/jobstate_startup.png"));
+        this.successIcon = new ImageIcon(this.getClass()
+                .getResource("/jobstate_success.png"));
+        this.failedIcon = new ImageIcon(this.getClass()
+                .getResource("/jobstate_failed.png"));
+        this.gridIcon = new ImageIcon(this.getClass().getResource("/grid.png"));
     }
 
     /**
@@ -70,18 +73,20 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
 
             final JobState state = job.getJobinfo().getStatus();
             if (state.equals(JobState.RUNNING)) {
-                this.setIcon(this.greenCircle);
+                this.setIcon(this.runningIcon);
             } else if (state.equals(JobState.STARTUP)) {
-                this.setIcon(this.orangeCircle);
+                this.setIcon(this.startupIcon);
             } else if (state.equals(JobState.SUCCESS)) {
-                this.setIcon(this.redCircle);
+                this.setIcon(this.successIcon);
+            } else if (state.equals(JobState.FAILED)) {
+                this.setIcon(this.failedIcon);
             }
 
-            this.setToolTipText(job.getJobinfo().getDescription());
+            this.setToolTipText(job.getTransportJobUID().toString()+" "+state+"...");
             this.setText(job.getTransportJobUID().toString());
 
         } else {
-            this.setIcon(this.grid);
+            this.setIcon(this.gridIcon);
             this.setToolTipText(null); // no tool tip
         }
 
