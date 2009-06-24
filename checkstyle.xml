@@ -12,7 +12,6 @@
         <module name="JavadocType">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
-            <property name="versionFormat" value="\$Date.*\$$"/>
         </module>
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>

@@ -9,8 +9,9 @@ import java.io.ObjectInputStream;
 import javax.swing.JOptionPane;
 
 /**
- * 
- * @author bafu
+ *
+ * @author WmsxGUI Team
+ * @version 1.0
  */
 public class Requestor {
     private static final long serialVersionUID = -8474571551490820022L;
@@ -68,6 +69,10 @@ public class Requestor {
 
     /* Singleton */
 
+    /**
+     *
+     * @return
+     */
     public Wmsx getWmsxService() {
         return this.wmsx_service;
     }

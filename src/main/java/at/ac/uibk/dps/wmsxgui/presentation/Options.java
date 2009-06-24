@@ -23,9 +23,9 @@ import javax.swing.JOptionPane;
 import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
 
 /**
- * 
- * @author lancelot
- * @version 20.4.2009
+ *
+ * @author WmsxGUI Team
+ * @version 1.0
  */
 public class Options extends javax.swing.JFrame {
 

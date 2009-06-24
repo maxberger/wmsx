@@ -9,7 +9,8 @@ import at.ac.uibk.dps.wmsxgui.presentation.MainWindow;
 
 /**
  * 
- * @author bafu
+ * @author WmsxGUI Team
+ * @version 1.0
  */
 public class App {
 
