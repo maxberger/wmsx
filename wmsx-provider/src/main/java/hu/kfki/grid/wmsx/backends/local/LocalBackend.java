@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Local backend.
@@ -42,6 +43,9 @@ public final class LocalBackend implements Backend {
 
     /** Id of the local backend. */
     public static final String LOCAL = "local";
+
+    private static final Logger LOGGER = Logger.getLogger(LocalBackend.class
+            .toString());
 
     private int count;
 
@@ -124,7 +128,9 @@ public final class LocalBackend implements Backend {
     /** {@inheritDoc} */
     public void cancelJob(final JobUid id) {
         final LocalProcess p = this.processes.get(id);
-        if (p != null) {
+        if (p == null) {
+            LocalBackend.LOGGER.warning("Could not cancel unknown Job " + id);
+        } else {
             p.tryToDestroy();
         }
     }
