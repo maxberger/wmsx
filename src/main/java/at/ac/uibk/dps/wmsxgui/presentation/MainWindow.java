@@ -40,6 +40,7 @@ import at.ac.uibk.dps.wmsxgui.presentation.util.MyTreeCellRenderer;
  * @version 1.0
  */
 public class MainWindow extends javax.swing.JFrame implements Observer {
+    private static final long serialVersionUID = -1929304607781335690L;
 
     private final BusinessManager businessman;
     private final Wmsx wmsxService;
@@ -468,14 +469,14 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         });
         toolbar_main.add(shortcutAdd);
 
-        shortcutRemoveSoft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/window-close.png"))); // NOI18N
+        shortcutRemoveSoft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/removesoft.png"))); // NOI18N
         shortcutRemoveSoft.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         shortcutRemoveSoft.setFocusable(false);
         shortcutRemoveSoft.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         shortcutRemoveSoft.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         toolbar_main.add(shortcutRemoveSoft);
 
-        shortcutRemoveHard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stop.png"))); // NOI18N
+        shortcutRemoveHard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/removehard.png"))); // NOI18N
         shortcutRemoveHard.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         shortcutRemoveHard.setFocusable(false);
         shortcutRemoveHard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -887,6 +888,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
      * @param o
      * @param obj
      */
+    @Override
     public void update(final Observable o, final Object obj) {
         if ((obj == null) || (!obj.getClass().getSimpleName().equals("String"))) {
             System.out.println("MainWindow: updateObserver...");
