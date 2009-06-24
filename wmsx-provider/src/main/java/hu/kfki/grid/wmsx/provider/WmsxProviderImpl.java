@@ -591,7 +591,11 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
                     + jobId);
         } else {
             WmsxProviderImpl.LOGGER.info("Cancelling " + juid);
-            juid.getBackend().cancelJob(juid);
+            new Thread(new Runnable() {
+                public void run() {
+                    juid.getBackend().cancelJob(juid);
+                }
+            }).start();
         }
     }
 
