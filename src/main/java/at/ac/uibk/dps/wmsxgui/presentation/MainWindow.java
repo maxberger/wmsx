@@ -48,9 +48,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private DefaultMutableTreeNode rootNode;
     private DefaultTreeModel treeModel;
 
-    /* Creates new form MainWindow */
     /**
-     *
+     * MainWindow creates a new main frame window.
      */
     public MainWindow() {
         this.businessman = BusinessManager.getInstance();

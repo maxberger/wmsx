@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 
@@ -85,12 +86,16 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     }
 
     private static class DebugListener implements LeaseListener {
+        @Override
         public void notify(final LeaseRenewalEvent anEvent) {
-            System.err.println("BusinessManager: Got lease renewal problem!");
+            if (anEvent.getException()!=null)
+            {
+                System.err.println("BusinessManager: Got lease renewal problem!");
 
-            System.err.println(anEvent.getException());
-            System.err.println(anEvent.getExpiration());
-            System.err.println(anEvent.getLease());
+                System.err.println(anEvent.getException());
+                System.err.println(anEvent.getExpiration());
+                System.err.println(anEvent.getLease());
+            }
         }
     }
 
@@ -244,7 +249,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
                     .listJobs()) {
                 // System.out.println("BusinessManager: refreshData... add new job - backend: "+transJobUID.getBackend().toLowerCase());
                 // Achtung: fake vs. Fake
-                this.jobMap.get(transJobUID.getBackend().toLowerCase())
+                this.jobMap.get(transJobUID.getBackend().toLowerCase(Locale.getDefault()))
                         .add(
                              new JobData(transJobUID, this.wmsxService
                                      .getJobInfo(transJobUID)));
@@ -272,7 +277,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
                     .listJobs()) {
                 // System.out.println("BusinessManager: refreshData... add new job - backend: "+transJobUID.getBackend().toLowerCase());
                 // Achtung: fake vs. Fake
-                String backend = transJobUID.getBackend().toLowerCase();
+                String backend = transJobUID.getBackend().toLowerCase(Locale.getDefault());
                 List<JobData> jobs = this.jobMap.get(backend);
                 JobData jobData = new JobData(transJobUID, this.wmsxService
                                      .getJobInfo(transJobUID));
@@ -295,18 +300,39 @@ public class BusinessManager extends Observable implements RemoteEventListener {
      * @throws net.jini.core.event.UnknownEventException
      * @throws java.rmi.RemoteException
      */
+    @Override
     public void notify(final RemoteEvent re) throws UnknownEventException,
             RemoteException {
+
         final JobChangeEvent e = (JobChangeEvent) re;
         System.out.println("BusinessManager: notified by provider..."
                 + e.getJobUid() + " State: " + e.getState());
-        // Achtung: Fake vs. fake --> darum toLowerCase
-        if (this.jobMap != null) {
-            for (final JobData job : this.jobMap.get(e.getJobUid().getBackend()
-                    .toLowerCase())) {
-                if (job.getTransportJobUID().equals(e.getJobUid())) {
-                    job.setJobinfo(this.wmsxService.getJobInfo(e.getJobUid()));
-                    this.updateObservers(job);
+
+        new BusinessThread(this,e).start();
+
+    }
+
+    private class BusinessThread extends Thread {
+        private BusinessManager businessManger;
+        private JobChangeEvent jobChangeEvent;
+        public BusinessThread(BusinessManager businessManager, JobChangeEvent jobChangeEvent)
+        {
+            super();
+            this.businessManger = businessManager;
+            this.jobChangeEvent = jobChangeEvent;
+        }
+
+        @Override
+        public void run()
+        {
+            // Achtung: Fake vs. fake --> darum toLowerCase
+            if (businessManger.jobMap != null) {
+                for (final JobData job : businessManger.jobMap.get(jobChangeEvent.getJobUid().getBackend()
+                        .toLowerCase(Locale.getDefault()))) {
+                    if (job.getTransportJobUID().equals(jobChangeEvent.getJobUid())) {
+                        job.setJobinfo(businessManger.wmsxService.getJobInfo(jobChangeEvent.getJobUid()));
+                        businessManger.updateObservers(job);
+                    }
                 }
             }
         }

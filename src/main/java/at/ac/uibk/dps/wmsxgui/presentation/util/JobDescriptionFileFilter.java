@@ -7,6 +7,7 @@ package at.ac.uibk.dps.wmsxgui.presentation.util;
 
 import java.io.File;
 
+import java.util.Locale;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -56,7 +57,7 @@ public class JobDescriptionFileFilter extends FileFilter {
         final int i = s.lastIndexOf('.');
 
         if ((i > 0) && (i < s.length() - 1)) {
-            ext = s.substring(i + 1).toLowerCase();
+            ext = s.substring(i + 1).toLowerCase(Locale.getDefault());
         }
         return ext;
     }
