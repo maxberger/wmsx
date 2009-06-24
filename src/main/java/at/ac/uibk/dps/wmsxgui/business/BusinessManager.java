@@ -182,7 +182,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     }
 
     /**
-     * getBackends is a Getter for the Backends
+     * getBackends is a Getter for the Backends.
      * @return Backends from the BusinessData
      */
     public Iterable<String> getBackends() {

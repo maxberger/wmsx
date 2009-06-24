@@ -19,9 +19,9 @@ public class JobDescriptionFileFilter extends FileFilter {
 
     // Accept all directories and jdl files.
     /**
-     *
-     * @param f
-     * @return
+     * accept checks the given File, if it's a directory or a jdl file.
+     * @param f File which should be checked
+     * @return true if the given file is a directoriy or jdl file, otherwise false
      */
     @Override
     public boolean accept(final File f) {
@@ -41,10 +41,9 @@ public class JobDescriptionFileFilter extends FileFilter {
         return false;
     }
 
-    // The description of this filter
     /**
-     *
-     * @return
+     * getDescription returns the description of this filter.
+     * @return description of this filter
      */
     @Override
     public String getDescription() {

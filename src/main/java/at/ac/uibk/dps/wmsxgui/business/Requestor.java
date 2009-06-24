@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 public class Requestor {
     private static final long serialVersionUID = -8474571551490820022L;
 
-    private Wmsx wmsx_service;
+    private Wmsx wmsxService;
 
     /* Singleton Pattern */
     private Requestor() {
@@ -25,7 +25,7 @@ public class Requestor {
                     + System.getProperty("user.name"));
             final ObjectInputStream in = new ObjectInputStream(fis);
 
-            this.wmsx_service = (Wmsx) in.readObject();
+            this.wmsxService = (Wmsx) in.readObject();
             in.close();
 
         } catch (final IOException io) {
@@ -59,7 +59,7 @@ public class Requestor {
     }
 
     /**
-     * Gibt immer die gleiche Instanz zurück.
+     * getInstance returns always the same instance of the requestor.
      * 
      * @return Instance der Game Klasse
      */
@@ -70,10 +70,10 @@ public class Requestor {
     /* Singleton */
 
     /**
-     *
-     * @return
+     * getWmsxService is  Getter which returns the WmsxService.
+     * @return WmsxService to the provider
      */
     public Wmsx getWmsxService() {
-        return this.wmsx_service;
+        return this.wmsxService;
     }
 }
