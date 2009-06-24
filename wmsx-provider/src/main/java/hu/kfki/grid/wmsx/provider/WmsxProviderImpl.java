@@ -585,7 +585,23 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     /** {@inheritDoc} */
     public void cancelJob(final TransportJobUID jobId) throws RemoteException {
-        // TODO Auto-generated method stub
+        final JobUid juid = this.getJobUidForTransportUid(jobId);
+        if (juid == null) {
+            WmsxProviderImpl.LOGGER.info("Could not identify job to cancel: "
+                    + jobId);
+        } else {
+            WmsxProviderImpl.LOGGER.info("Cancelling " + juid);
+            juid.getBackend().cancelJob(juid);
+        }
+    }
+
+    private JobUid getJobUidForTransportUid(final TransportJobUID jobId) {
+        JobUid retVal = null;
+        final Backend b = Backends.getInstance().get(jobId.getBackend());
+        if (b != null) {
+            retVal = b.getJobUidForBackendId(jobId.getLocalId());
+        }
+        return retVal;
     }
 
     /** {@inheritDoc} */

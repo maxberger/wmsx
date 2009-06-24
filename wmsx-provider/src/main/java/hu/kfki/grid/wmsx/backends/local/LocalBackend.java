@@ -128,4 +128,9 @@ public final class LocalBackend implements Backend {
             p.tryToDestroy();
         }
     }
+
+    /** {@inheritDoc} */
+    public JobUid getJobUidForBackendId(final String backendIdString) {
+        return BackendWithCounterUtils.getIntegerJobUid(this, backendIdString);
+    }
 }

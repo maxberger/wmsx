@@ -123,4 +123,18 @@ public interface Backend {
      *            Id of the job to cancel.
      */
     void cancelJob(final JobUid id);
+
+    /**
+     * Retrieve the JobUid for the given backend dependent id.
+     * <p>
+     * Please note: If called with the wrong backend, this method may return a
+     * correct, but invalid JobUid.
+     * 
+     * @param backendIdString
+     *            A String representing the backend dependent id, created using
+     *            toString on {@link JobUid#getBackendId()}.
+     * @return a correct (but not necessary valid) JobUid or null if the String
+     *         cannot be parsed.
+     */
+    JobUid getJobUidForBackendId(String backendIdString);
 }

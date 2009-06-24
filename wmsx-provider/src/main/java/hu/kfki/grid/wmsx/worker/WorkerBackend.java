@@ -25,6 +25,7 @@ import hu.kfki.grid.wmsx.backends.Backend;
 import hu.kfki.grid.wmsx.backends.DelayedExecution;
 import hu.kfki.grid.wmsx.backends.JobUid;
 import hu.kfki.grid.wmsx.backends.SubmissionResults;
+import hu.kfki.grid.wmsx.backends.local.BackendWithCounterUtils;
 import hu.kfki.grid.wmsx.job.JobState;
 import hu.kfki.grid.wmsx.job.description.JobDescription;
 
@@ -117,4 +118,8 @@ public final class WorkerBackend implements Backend {
         this.controllerImpl.cancelJob(id.getBackendId());
     }
 
+    /** {@inheritDoc} */
+    public JobUid getJobUidForBackendId(final String backendIdString) {
+        return BackendWithCounterUtils.getIntegerJobUid(this, backendIdString);
+    }
 }
