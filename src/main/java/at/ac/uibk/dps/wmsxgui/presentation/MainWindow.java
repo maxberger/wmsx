@@ -47,6 +47,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private JFrame optionen;
     private DefaultMutableTreeNode rootNode;
     private DefaultTreeModel treeModel;
+    private JobData currentJobData;
 
     /**
      * MainWindow creates a new main frame window.
@@ -364,7 +365,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         l_selectedjob.setText("job/worker");
 
         btnKill.setText("kill");
-        btnKill.setToolTipText("Remove Worker (hard)");
+        btnKill.setToolTipText("Kill Worker (hard)");
         btnKill.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKillActionPerformed(evt);
@@ -385,8 +386,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             }
         });
 
-        btnStop.setText("stop");
-        btnStop.setToolTipText("Remove Job or Worker (soft)");
+        btnStop.setText("shutdown");
+        btnStop.setToolTipText("Cancel Job or shutdown Worker (soft)");
         btnStop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnStopActionPerformed(evt);
@@ -402,17 +403,17 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 .addGroup(panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(l_selectedjob)
                     .addGroup(panel_buttonsLayout.createSequentialGroup()
-                        .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnKill, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnKill)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRefresh)
                         .addGap(6, 6, 6)
                         .addComponent(btnCleanup)))
-                .addContainerGap(216, Short.MAX_VALUE))
+                .addContainerGap(229, Short.MAX_VALUE))
         );
 
-        panel_buttonsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCleanup, btnKill, btnRefresh, btnStop});
+        panel_buttonsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCleanup, btnRefresh});
 
         panel_buttonsLayout.setVerticalGroup(
             panel_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -474,22 +475,27 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         toolbar_main.add(shortcutAdd);
 
         shortcutRemoveSoft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/removesoft.png"))); // NOI18N
-        shortcutRemoveSoft.setToolTipText("Remove Job or Worker (soft)");
+        shortcutRemoveSoft.setToolTipText("Cancel Job or shutdown Worker (soft)");
         shortcutRemoveSoft.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         shortcutRemoveSoft.setFocusable(false);
         shortcutRemoveSoft.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         shortcutRemoveSoft.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        shortcutRemoveSoft.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStopActionPerformed(evt);
+            }
+        });
         toolbar_main.add(shortcutRemoveSoft);
 
         shortcutRemoveHard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/removehard.png"))); // NOI18N
-        shortcutRemoveHard.setToolTipText("Remove Worker (hard)");
+        shortcutRemoveHard.setToolTipText("Kill Worker (hard)");
         shortcutRemoveHard.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         shortcutRemoveHard.setFocusable(false);
         shortcutRemoveHard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         shortcutRemoveHard.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         shortcutRemoveHard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRemove(evt);
+                btnKillActionPerformed(evt);
             }
         });
         toolbar_main.add(shortcutRemoveHard);
@@ -634,16 +640,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             System.out.println("Show NewJobDialog...");
             newjob.setVisible(true);
         }
-    }// GEN-LAST:event_btn_add
-
-    // GEN-FIRST:event_btn_remove
-    private void btnRemove(final java.awt.event.ActionEvent evt) {
-        if (this.businessman.isOnline()) {
-            System.out.println("btn_remove...");
-        }
     }
+    // GEN-LAST:event_btn_add
 
-    // GEN-LAST:event_btn_remove
 
     // GEN-FIRST:event_menu_item_optionsActionPerformed
     private void menuItemOptionsActionPerformed(
@@ -691,13 +690,23 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     // GEN-FIRST:eventStopActionPerformed
     private void btnStopActionPerformed(final java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        //remove Job or Worker  (soft)
+        if (currentJobData!=null)
+        {
+            if (currentJobData.getJobinfo().isWorker())
+                this.businessman.getWmsxService().shutdownWorker(currentJobData.getJobinfo().getWorkerId());
+            else
+                this.businessman.getWmsxService().cancelJob(currentJobData.getTransportJobUID());
+
+        }
     }
     // GEN-LAST:eventStopActionPerformed
 
     // GEN-FIRST:event_btn_killActionPerformed
     private void btnKillActionPerformed(final java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        //remove Worker (hard)
+        if (currentJobData!=null && currentJobData.getJobinfo().isWorker())
+            this.businessman.getWmsxService().cancelJob(currentJobData.getTransportJobUID());
     }
 
     // GEN-LAST:event_btn_killActionPerformed
@@ -726,22 +735,24 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             if (node.getUserObject().getClass().getSimpleName()
                     .equals("JobData")) {
 
-                JobData jobData = (JobData) node.getUserObject();
-                this.setJobDetails(jobData);
+                this.currentJobData = (JobData) node.getUserObject();
+                this.setJobDetails();
 
                 // change top panel
                 this.panel_table.setVisible(false);
                 this.panel_jobdetails.setVisible(true);
 
                 // enable remove buttons
-                if (jobData.getJobinfo().isWorker())
+                if (currentJobData.getJobinfo().isWorker())
                 {
                     this.shortcutRemoveHard.setEnabled(true);
                     this.btnKill.setEnabled(true);
+                    this.btnStop.setText("shutdown");
                 }else
                 {
                     this.shortcutRemoveHard.setEnabled(false);
                     this.btnKill.setEnabled(false);
+                    this.btnStop.setText("cancel");
                 }
 
                 this.shortcutRemoveSoft.setEnabled(true);
@@ -776,17 +787,19 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 .getValueAt(row, 0);
         this.l_selectedjob.setText(jobUid.toString());
 
-        JobData selectedJobData = this.businessman.getJobData(jobUid);
+        currentJobData = this.businessman.getJobData(jobUid);
 
         // enable remove buttons
-        if (selectedJobData.getJobinfo().isWorker())
+        if (currentJobData.getJobinfo().isWorker())
         {
             this.shortcutRemoveHard.setEnabled(true);
             this.btnKill.setEnabled(true);
+            this.btnStop.setText("shutdown");
         }else
         {
             this.shortcutRemoveHard.setEnabled(false);
             this.btnKill.setEnabled(false);
+            this.btnStop.setText("cancel");
         }
         this.shortcutRemoveSoft.setEnabled(true);
         this.btnStop.setEnabled(true);
@@ -946,7 +959,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 if ((this.panel_jobdetails.isVisible())
                         && (this.tb_jobdetails_jobuid.getText().equals(job
                                 .getTransportJobUID().toString()))) {
-                    this.setJobDetails(job);
+                    currentJobData = job;
+                    this.setJobDetails();
                 }
             }
         }
@@ -963,37 +977,38 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             this.businessman.cleanupBusinessData();
     }
 
-    private void setJobDetails(final JobData job) {
-        if (job != null) {
-            System.out.println("MainWindow: setJobDetails.. job: " + job);
-            this.tb_jobdetails_jobuid.setText(job.getTransportJobUID()
+    private void setJobDetails() {
+        if (currentJobData != null) {
+            System.out.println("MainWindow: setJobDetails.. job: " + currentJobData);
+            this.tb_jobdetails_jobuid.setText(currentJobData.getTransportJobUID()
                     .toString());
-            this.tb_jobdetails_state.setText(job.getJobinfo().getStatus()
+            this.tb_jobdetails_state.setText(currentJobData.getJobinfo().getStatus()
                     .toString());
-            this.tb_jobdetails_siteid.setText(job.getJobinfo().getSiteId());
+            this.tb_jobdetails_siteid.setText(currentJobData.getJobinfo().getSiteId());
 
-            this.tb_jobdetails_creationtime.setText((job.getJobinfo()
-                    .getCreationTime() != null) ? job.getJobinfo()
+            this.tb_jobdetails_creationtime.setText((currentJobData.getJobinfo()
+                    .getCreationTime() != null) ? currentJobData.getJobinfo()
                     .getCreationTime().toString() : "");
-            this.tb_jobdetails_startedtime.setText((job.getJobinfo()
-                    .getStartRunningTime() != null) ? job.getJobinfo()
+            this.tb_jobdetails_startedtime.setText((currentJobData.getJobinfo()
+                    .getStartRunningTime() != null) ? currentJobData.getJobinfo()
                     .getStartRunningTime().toString() : "");
-            this.tb_jobdetails_donetime.setText((job.getJobinfo()
-                    .getDoneRunningTime() != null) ? job.getJobinfo()
+            this.tb_jobdetails_donetime.setText((currentJobData.getJobinfo()
+                    .getDoneRunningTime() != null) ? currentJobData.getJobinfo()
                     .getDoneRunningTime().toString() : "");
 
-            this.tb_jobdetails_executable.setText(job.getJobinfo()
+            this.tb_jobdetails_executable.setText(currentJobData.getJobinfo()
                     .getExecutable());
-            this.tb_jobdetails_output.setText(job.getJobinfo().getOutput());
-            this.ta_jobdetails_description.setText(job.getJobinfo()
+            this.tb_jobdetails_output.setText(currentJobData.getJobinfo().getOutput());
+            this.ta_jobdetails_description.setText(currentJobData.getJobinfo()
                     .getDescription());
 
-            final boolean isworker = job.getJobinfo().isWorker();
-            final Uuid workerID = job.getJobinfo().getWorkerId();
+            final boolean isworker = currentJobData.getJobinfo().isWorker();
+            final Uuid workerID = currentJobData.getJobinfo().getWorkerId();
 
             final String jobtxt = "I am a job executed without a worker";
             final String workertxt = "I am a worker my workerID is ";
             final String workerjob = "I am job executed by workerID ";
+            
             String workerinfo = new String();
             if (!isworker && (workerID == null)) { // normaler job
                 workerinfo = jobtxt;
