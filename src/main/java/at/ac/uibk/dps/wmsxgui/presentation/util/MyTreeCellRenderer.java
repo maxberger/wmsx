@@ -18,7 +18,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import at.ac.uibk.dps.wmsxgui.business.JobData;
 
 /**
- *
+ * 
  * @author WmsxGUI Team
  * @version 1.0
  */
@@ -61,7 +61,7 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     /**
-     *
+     * 
      * @param tree
      * @param value
      * @param sel
@@ -84,18 +84,27 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
                     .getUserObject();
 
             final JobState state = job.getJobinfo().getStatus();
-            
+
             if (state.equals(JobState.RUNNING)) {
-                this.setIcon((job.getJobinfo().isWorker())?this.runningWorkerIcon:this.runningIcon);
+                this
+                        .setIcon((job.getJobinfo().isWorker()) ? this.runningWorkerIcon
+                                : this.runningIcon);
             } else if (state.equals(JobState.STARTUP)) {
-                this.setIcon((job.getJobinfo().isWorker())?this.startupWorkerIcon:this.startupIcon);
+                this
+                        .setIcon((job.getJobinfo().isWorker()) ? this.startupWorkerIcon
+                                : this.startupIcon);
             } else if (state.equals(JobState.SUCCESS)) {
-                this.setIcon((job.getJobinfo().isWorker())?this.successWorkerIcon:this.successIcon);
+                this
+                        .setIcon((job.getJobinfo().isWorker()) ? this.successWorkerIcon
+                                : this.successIcon);
             } else if (state.equals(JobState.FAILED)) {
-                this.setIcon((job.getJobinfo().isWorker())?this.failedWorkerIcon:this.failedIcon);
+                this
+                        .setIcon((job.getJobinfo().isWorker()) ? this.failedWorkerIcon
+                                : this.failedIcon);
             }
 
-            this.setToolTipText(job.getTransportJobUID().toString()+" "+state+"...");
+            this.setToolTipText(job.getTransportJobUID().toString() + " "
+                    + state + "...");
             this.setText(job.getTransportJobUID().toString());
 
         } else {
@@ -107,7 +116,7 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     /**
-     *
+     * 
      * @param value
      * @return
      */

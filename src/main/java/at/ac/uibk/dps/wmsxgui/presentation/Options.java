@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
 
 /**
- *
+ * 
  * @author WmsxGUI Team
  * @version 1.0
  */

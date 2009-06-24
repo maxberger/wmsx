@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * 
  * @author WmsxGUI Team
  * @version 1.0
  */
@@ -70,7 +70,8 @@ public class Requestor {
     /* Singleton */
 
     /**
-     * getWmsxService is  Getter which returns the WmsxService.
+     * getWmsxService is Getter which returns the WmsxService.
+     * 
      * @return WmsxService to the provider
      */
     public Wmsx getWmsxService() {

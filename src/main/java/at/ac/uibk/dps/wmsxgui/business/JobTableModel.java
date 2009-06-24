@@ -14,7 +14,7 @@ import java.util.Observer;
 import javax.swing.table.AbstractTableModel;
 
 /**
- *
+ * 
  * @author WmsxGUI Team
  * @version 1.0
  */
@@ -29,7 +29,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
             "Created", "Started", "Finished", "State", "Type", "WorkerID" };
 
     private List<JobData> data;
-    private String dateFormatStr = "HH:mm:ss dd.MM.yyyy";
+    private final String dateFormatStr = "HH:mm:ss dd.MM.yyyy";
 
     /**
      *
@@ -41,7 +41,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     }
 
     /**
-     *
+     * 
      * @param o
      * @param obj
      */
@@ -58,7 +58,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     }
 
     /**
-     *
+     * 
      * @return
      */
     @Override
@@ -67,7 +67,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     }
 
     /**
-     *
+     * 
      * @return
      */
     @Override
@@ -76,7 +76,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     }
 
     /**
-     *
+     * 
      * @param col
      * @return
      */
@@ -86,7 +86,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     }
 
     /**
-     *
+     * 
      * @param row
      * @param col
      * @return
@@ -94,7 +94,8 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     @Override
     public Object getValueAt(final int row, final int col) {
         if ((this.data.size() > 0) && (this.data.get(row) != null)) {
-            DateFormat dateFormat = new SimpleDateFormat(dateFormatStr);
+            final DateFormat dateFormat = new SimpleDateFormat(
+                    this.dateFormatStr);
 
             switch (col) {
                 case 0:
@@ -104,16 +105,20 @@ public class JobTableModel extends AbstractTableModel implements Observer {
                 case 2:
                     return this.data.get(row).getJobinfo().getSiteId();
                 case 3:
-                    return (this.data.get(row).getJobinfo().getCreationTime() != null) ? dateFormat.format(this.data
-                            .get(row).getJobinfo().getCreationTime()) : "";
+                    return (this.data.get(row).getJobinfo().getCreationTime() != null) ? dateFormat
+                            .format(this.data.get(row).getJobinfo()
+                                    .getCreationTime())
+                            : "";
                 case 4:
                     return (this.data.get(row).getJobinfo()
-                            .getStartRunningTime() != null) ? dateFormat.format(this.data
-                            .get(row).getJobinfo().getStartRunningTime()) : "";
+                            .getStartRunningTime() != null) ? dateFormat
+                            .format(this.data.get(row).getJobinfo()
+                                    .getStartRunningTime()) : "";
                 case 5:
                     return (this.data.get(row).getJobinfo()
-                            .getDoneRunningTime() != null) ? dateFormat.format(this.data.get(row)
-                            .getJobinfo().getDoneRunningTime()) : "";
+                            .getDoneRunningTime() != null) ? dateFormat
+                            .format(this.data.get(row).getJobinfo()
+                                    .getDoneRunningTime()) : "";
                 case 6:
                     return this.data.get(row).getJobinfo().getStatus()
                             .toString();
@@ -136,7 +141,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
      * contain text ("true"/"false"), rather than a check box.
      */
     /**
-     *
+     * 
      * @param c
      * @return
      */
@@ -155,7 +160,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
      * Don't need to implement this method unless your table's editable.
      */
     /**
-     *
+     * 
      * @param row
      * @param col
      * @return

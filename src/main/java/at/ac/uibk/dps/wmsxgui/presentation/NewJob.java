@@ -28,7 +28,7 @@ import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
 import at.ac.uibk.dps.wmsxgui.presentation.util.JobDescriptionFileFilter;
 
 /**
- *
+ * 
  * @author WmsxGUI Team
  * @version 1.0
  */
@@ -42,7 +42,9 @@ public class NewJob extends javax.swing.JFrame {
     private final MainWindow mainWindow;
     private final Wmsx wmsxService;
 
-    /** Creates new form NewJob.
+    /**
+     * Creates new form NewJob.
+     * 
      * @param mainWindow
      */
     public NewJob(final MainWindow mainWindow) {
@@ -409,12 +411,11 @@ public class NewJob extends javax.swing.JFrame {
         this.pack();
     }// </editor-fold>//GEN-END:initComponents
 
-
     private void btn_cancel(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cancel
 
         this.setVisible(false);
     }// GEN-LAST:event_btn_cancel
-    
+
     private void btn_ok(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_ok
         if (this.cb_type.getSelectedIndex() == 0) // type is job
         {
