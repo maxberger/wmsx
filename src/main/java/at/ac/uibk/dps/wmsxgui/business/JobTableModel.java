@@ -42,6 +42,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
      * @param o
      * @param obj
      */
+    @Override
     public void update(final Observable o, final Object obj) {
         System.out.println("JobTableModel: updateObserver...");
         this.updateData();
@@ -57,6 +58,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
      *
      * @return
      */
+    @Override
     public int getColumnCount() {
         return this.columnNames.length;
     }
@@ -65,6 +67,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
      *
      * @return
      */
+    @Override
     public int getRowCount() {
         return this.data.size();
     }
@@ -85,6 +88,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
      * @param col
      * @return
      */
+    @Override
     public Object getValueAt(final int row, final int col) {
         if ((this.data.size() > 0) && (this.data.get(row) != null)) {
             switch (col) {
