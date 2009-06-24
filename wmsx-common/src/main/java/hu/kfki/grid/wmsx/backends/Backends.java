@@ -68,7 +68,7 @@ public final class Backends {
      * 
      * @param name
      *            name of backend (must be lower case!)
-     * @return the backend.
+     * @return the backend or null if none can be found.
      */
     public Backend get(final String name) {
         return this.backends.get(name.toLowerCase(Locale.ENGLISH));
