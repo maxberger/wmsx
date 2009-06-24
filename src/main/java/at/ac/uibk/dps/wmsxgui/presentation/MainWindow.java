@@ -65,9 +65,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         if (!this.businessman.isOnline()) {
             this.setTitle("WMSX GUI - Offline Demo Mode");
 
-            this.menu_item_newjob.setEnabled(false);
-            this.menu_item_options.setEnabled(false);
-            this.menu_item_stopserver.setEnabled(false);
+            this.menuItemNewjob.setEnabled(false);
+            this.menuItemOptions.setEnabled(false);
+            this.menuItemStopWorkers.setEnabled(false);
 
             this.shortcutAdd.setEnabled(false);
             this.shortcutRemoveHard.setEnabled(false);
@@ -89,7 +89,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         // disable remove buttons
         this.shortcutRemoveHard.setEnabled(false);
+        this.shortcutRemoveSoft.setEnabled(false);
         this.btnKill.setEnabled(false);
+        this.btnStop.setEnabled(false);
 
         this.treeJobs.setCellRenderer(new MyTreeCellRenderer());
 
@@ -167,11 +169,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         shortcutRefresh = new javax.swing.JButton();
         shortcutCleanup = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
-        menu_file = new javax.swing.JMenu();
-        menu_item_newjob = new javax.swing.JMenuItem();
-        menu_item_stopserver = new javax.swing.JMenuItem();
-        menu_item_options = new javax.swing.JMenuItem();
-        menu_item_exit = new javax.swing.JMenuItem();
+        menuFile = new javax.swing.JMenu();
+        menuItemNewjob = new javax.swing.JMenuItem();
+        menuItemStopWorkers = new javax.swing.JMenuItem();
+        menuItemOptions = new javax.swing.JMenuItem();
+        menuItemExit = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("WMSX GUI");
@@ -362,6 +364,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         l_selectedjob.setText("job/worker");
 
         btnKill.setText("kill");
+        btnKill.setToolTipText("Remove Worker (hard)");
         btnKill.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKillActionPerformed(evt);
@@ -383,6 +386,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         });
 
         btnStop.setText("stop");
+        btnStop.setToolTipText("Remove Job or Worker (soft)");
         btnStop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnStopActionPerformed(evt);
@@ -457,6 +461,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         toolbar_main.setRollover(true);
 
         shortcutAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/add.png"))); // NOI18N
+        shortcutAdd.setToolTipText("Add a new Job or Worker");
         shortcutAdd.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         shortcutAdd.setFocusable(false);
         shortcutAdd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -469,6 +474,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         toolbar_main.add(shortcutAdd);
 
         shortcutRemoveSoft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/removesoft.png"))); // NOI18N
+        shortcutRemoveSoft.setToolTipText("Remove Job or Worker (soft)");
         shortcutRemoveSoft.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         shortcutRemoveSoft.setFocusable(false);
         shortcutRemoveSoft.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -476,6 +482,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         toolbar_main.add(shortcutRemoveSoft);
 
         shortcutRemoveHard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/removehard.png"))); // NOI18N
+        shortcutRemoveHard.setToolTipText("Remove Worker (hard)");
         shortcutRemoveHard.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         shortcutRemoveHard.setFocusable(false);
         shortcutRemoveHard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -488,6 +495,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         toolbar_main.add(shortcutRemoveHard);
 
         shortcutPing.setText("Ping");
+        shortcutPing.setToolTipText("Test Connection to Provider");
         shortcutPing.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPing(evt);
@@ -496,6 +504,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         toolbar_main.add(shortcutPing);
 
         shortcutRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view-refresh.png"))); // NOI18N
+        shortcutRefresh.setToolTipText("Refresh");
         shortcutRefresh.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         shortcutRefresh.setFocusable(false);
         shortcutRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -508,6 +517,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         toolbar_main.add(shortcutRefresh);
 
         shortcutCleanup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/edit-clear.png"))); // NOI18N
+        shortcutCleanup.setToolTipText("Cleanup");
         shortcutCleanup.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         shortcutCleanup.setFocusable(false);
         shortcutCleanup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -519,41 +529,49 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         });
         toolbar_main.add(shortcutCleanup);
 
-        menu_file.setText("File");
+        menuFile.setText("File");
 
-        menu_item_newjob.setText("New Job");
-        menu_item_newjob.addActionListener(new java.awt.event.ActionListener() {
+        menuItemNewjob.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemNewjob.setIcon(new javax.swing.ImageIcon(getClass().getResource("/addsmall.png"))); // NOI18N
+        menuItemNewjob.setText("New Job");
+        menuItemNewjob.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menu_item_newjobActionPerformed(evt);
+                menuItemNewjobActionPerformed(evt);
             }
         });
-        menu_file.add(menu_item_newjob);
+        menuFile.add(menuItemNewjob);
 
-        menu_item_stopserver.setText("Stop Server");
-        menu_item_stopserver.addActionListener(new java.awt.event.ActionListener() {
+        menuItemStopWorkers.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_K, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemStopWorkers.setIcon(new javax.swing.ImageIcon(getClass().getResource("/removesmall.png"))); // NOI18N
+        menuItemStopWorkers.setText("Stop all Workers");
+        menuItemStopWorkers.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menu_item_stopserverActionPerformed(evt);
+                menuItemStopWorkersActionPerformed(evt);
             }
         });
-        menu_file.add(menu_item_stopserver);
+        menuFile.add(menuItemStopWorkers);
 
-        menu_item_options.setText("Options");
-        menu_item_options.addActionListener(new java.awt.event.ActionListener() {
+        menuItemOptions.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemOptions.setIcon(new javax.swing.ImageIcon(getClass().getResource("/optionssmall.png"))); // NOI18N
+        menuItemOptions.setText("Options");
+        menuItemOptions.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menu_item_optionsActionPerformed(evt);
+                menuItemOptionsActionPerformed(evt);
             }
         });
-        menu_file.add(menu_item_options);
+        menuFile.add(menuItemOptions);
 
-        menu_item_exit.setText("Exit");
-        menu_item_exit.addActionListener(new java.awt.event.ActionListener() {
+        menuItemExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/exit.png"))); // NOI18N
+        menuItemExit.setText("Exit");
+        menuItemExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menu_item_exitActionPerformed(evt);
+                menuItemExitActionPerformed(evt);
             }
         });
-        menu_file.add(menu_item_exit);
+        menuFile.add(menuItemExit);
 
-        jMenuBar1.add(menu_file);
+        jMenuBar1.add(menuFile);
 
         setJMenuBar(jMenuBar1);
 
@@ -628,7 +646,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // GEN-LAST:event_btn_remove
 
     // GEN-FIRST:event_menu_item_optionsActionPerformed
-    private void menu_item_optionsActionPerformed(
+    private void menuItemOptionsActionPerformed(
             final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             if (this.optionen == null) {
@@ -642,7 +660,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // GEN-LAST:event_menu_item_optionsActionPerformed
 
     // GEN-FIRST:event_menu_item_stopserverActionPerformed
-    private void menu_item_stopserverActionPerformed(
+    private void menuItemStopWorkersActionPerformed(
             final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             this.wmsxService.shutdownWorkers();
@@ -652,7 +670,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // GEN-LAST:event_menu_item_stopserverActionPerformed
 
     // GEN-FIRST:event_menu_item_exitActionPerformed
-    private void menu_item_exitActionPerformed(
+    private void menuItemExitActionPerformed(
             final java.awt.event.ActionEvent evt) {
         System.exit(0);
     }
@@ -660,7 +678,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // GEN-LAST:event_menu_item_exitActionPerformed
 
     // GEN-FIRST:event_menu_item_newjobActionPerformed
-    private void menu_item_newjobActionPerformed(
+    private void menuItemNewjobActionPerformed(
             final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             final NewJob newjob = new NewJob(this);
@@ -707,17 +725,28 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         if (node != null) {
             if (node.getUserObject().getClass().getSimpleName()
                     .equals("JobData")) {
-                this.setJobDetails((JobData) node.getUserObject());
+
+                JobData jobData = (JobData) node.getUserObject();
+                this.setJobDetails(jobData);
 
                 // change top panel
                 this.panel_table.setVisible(false);
                 this.panel_jobdetails.setVisible(true);
 
-                if (this.businessman.isOnline()) {
-                    // enable remove buttons
+                // enable remove buttons
+                if (jobData.getJobinfo().isWorker())
+                {
                     this.shortcutRemoveHard.setEnabled(true);
                     this.btnKill.setEnabled(true);
+                }else
+                {
+                    this.shortcutRemoveHard.setEnabled(false);
+                    this.btnKill.setEnabled(false);
                 }
+
+                this.shortcutRemoveSoft.setEnabled(true);
+                this.btnStop.setEnabled(true);
+                
             } else {
                 this.businessman.setCurrentBackend(node.getUserObject()
                         .toString());
@@ -727,7 +756,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
                 // disable remove buttons
                 this.shortcutRemoveHard.setEnabled(false);
+                this.shortcutRemoveSoft.setEnabled(false);
                 this.btnKill.setEnabled(false);
+                this.btnStop.setEnabled(false);
             }
 
             this.l_selectedjob.setText(node.getUserObject().toString());
@@ -744,6 +775,21 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         final TransportJobUID jobUid = (TransportJobUID) this.table_jobs
                 .getValueAt(row, 0);
         this.l_selectedjob.setText(jobUid.toString());
+
+        JobData selectedJobData = this.businessman.getJobData(jobUid);
+
+        // enable remove buttons
+        if (selectedJobData.getJobinfo().isWorker())
+        {
+            this.shortcutRemoveHard.setEnabled(true);
+            this.btnKill.setEnabled(true);
+        }else
+        {
+            this.shortcutRemoveHard.setEnabled(false);
+            this.btnKill.setEnabled(false);
+        }
+        this.shortcutRemoveSoft.setEnabled(true);
+        this.btnStop.setEnabled(true);
 
         if (evt.getClickCount() > 1) {
             // System.out.println("doubleclick");
@@ -799,11 +845,11 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel l_selectedjob;
-    private javax.swing.JMenu menu_file;
-    private javax.swing.JMenuItem menu_item_exit;
-    private javax.swing.JMenuItem menu_item_newjob;
-    private javax.swing.JMenuItem menu_item_options;
-    private javax.swing.JMenuItem menu_item_stopserver;
+    private javax.swing.JMenu menuFile;
+    private javax.swing.JMenuItem menuItemExit;
+    private javax.swing.JMenuItem menuItemNewjob;
+    private javax.swing.JMenuItem menuItemOptions;
+    private javax.swing.JMenuItem menuItemStopWorkers;
     private javax.swing.JPanel panel_buttons;
     private javax.swing.JPanel panel_description;
     private javax.swing.JPanel panel_jobdetails;
