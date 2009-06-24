@@ -5,6 +5,8 @@
 
 package at.ac.uibk.dps.wmsxgui.business;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -27,6 +29,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
             "Created", "Started", "Finished", "State", "Type", "WorkerID" };
 
     private List<JobData> data;
+    private String dateFormatStr = "HH:mm:ss dd.MM.yyyy";
 
     /**
      *
@@ -91,6 +94,8 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     @Override
     public Object getValueAt(final int row, final int col) {
         if ((this.data.size() > 0) && (this.data.get(row) != null)) {
+            DateFormat dateFormat = new SimpleDateFormat(dateFormatStr);
+
             switch (col) {
                 case 0:
                     return this.data.get(row).getTransportJobUID();
@@ -99,18 +104,16 @@ public class JobTableModel extends AbstractTableModel implements Observer {
                 case 2:
                     return this.data.get(row).getJobinfo().getSiteId();
                 case 3:
-                    return (this.data.get(row).getJobinfo().getCreationTime() != null) ? this.data
-                            .get(row).getJobinfo().getCreationTime().toString()
-                            : "";
+                    return (this.data.get(row).getJobinfo().getCreationTime() != null) ? dateFormat.format(this.data
+                            .get(row).getJobinfo().getCreationTime()) : "";
                 case 4:
                     return (this.data.get(row).getJobinfo()
-                            .getStartRunningTime() != null) ? this.data
-                            .get(row).getJobinfo().getStartRunningTime()
-                            .toString() : "";
+                            .getStartRunningTime() != null) ? dateFormat.format(this.data
+                            .get(row).getJobinfo().getStartRunningTime()) : "";
                 case 5:
                     return (this.data.get(row).getJobinfo()
-                            .getDoneRunningTime() != null) ? this.data.get(row)
-                            .getJobinfo().getDoneRunningTime().toString() : "";
+                            .getDoneRunningTime() != null) ? dateFormat.format(this.data.get(row)
+                            .getJobinfo().getDoneRunningTime()) : "";
                 case 6:
                     return this.data.get(row).getJobinfo().getStatus()
                             .toString();

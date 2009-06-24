@@ -33,6 +33,8 @@ import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
 import at.ac.uibk.dps.wmsxgui.business.JobData;
 import at.ac.uibk.dps.wmsxgui.business.JobTableModel;
 import at.ac.uibk.dps.wmsxgui.presentation.util.MyTreeCellRenderer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -48,6 +50,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private DefaultMutableTreeNode rootNode;
     private DefaultTreeModel treeModel;
     private JobData currentJobData;
+    private String dateFormatStr = "HH:mm:ss - EEE d. MMM yyyy";
 
     /**
      * MainWindow creates a new main frame window.
@@ -980,6 +983,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void setJobDetails() {
         if (currentJobData != null) {
             System.out.println("MainWindow: setJobDetails.. job: " + currentJobData);
+
+            DateFormat dateFormat = new SimpleDateFormat(dateFormatStr);
+
             this.tb_jobdetails_jobuid.setText(currentJobData.getTransportJobUID()
                     .toString());
             this.tb_jobdetails_state.setText(currentJobData.getJobinfo().getStatus()
@@ -987,14 +993,14 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             this.tb_jobdetails_siteid.setText(currentJobData.getJobinfo().getSiteId());
 
             this.tb_jobdetails_creationtime.setText((currentJobData.getJobinfo()
-                    .getCreationTime() != null) ? currentJobData.getJobinfo()
-                    .getCreationTime().toString() : "");
+                    .getCreationTime() != null) ? dateFormat.format(currentJobData.getJobinfo()
+                    .getCreationTime()) : "");
             this.tb_jobdetails_startedtime.setText((currentJobData.getJobinfo()
-                    .getStartRunningTime() != null) ? currentJobData.getJobinfo()
-                    .getStartRunningTime().toString() : "");
+                    .getStartRunningTime() != null) ? dateFormat.format(currentJobData.getJobinfo()
+                    .getStartRunningTime()) : "");
             this.tb_jobdetails_donetime.setText((currentJobData.getJobinfo()
-                    .getDoneRunningTime() != null) ? currentJobData.getJobinfo()
-                    .getDoneRunningTime().toString() : "");
+                    .getDoneRunningTime() != null) ? dateFormat.format(currentJobData.getJobinfo()
+                    .getDoneRunningTime()) : "");
 
             this.tb_jobdetails_executable.setText(currentJobData.getJobinfo()
                     .getExecutable());
@@ -1006,8 +1012,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             final Uuid workerID = currentJobData.getJobinfo().getWorkerId();
 
             final String jobtxt = "I am a job executed without a worker";
-            final String workertxt = "I am a worker my workerID is ";
-            final String workerjob = "I am job executed by workerID ";
+            final String workertxt = "I am a worker my workerID is: ";
+            final String workerjob = "I am job executed by workerID: ";
             
             String workerinfo = new String();
             if (!isworker && (workerID == null)) { // normaler job
