@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -116,8 +116,14 @@ public class JobUid {
         return true;
     }
 
+    /**
+     * Converts a JobUid into a TransportJobUid.
+     * 
+     * @return A {@link TransportJobUID} for this Job.
+     */
     public TransportJobUID toTransportJobUid() {
-        return new TransportJobUID(backend.toString(), realId.toString());
+        return new TransportJobUID(this.backend.toString(), this.realId
+                .toString());
     }
 
 }

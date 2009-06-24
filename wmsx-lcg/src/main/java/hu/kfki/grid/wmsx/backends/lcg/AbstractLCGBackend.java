@@ -255,4 +255,10 @@ public abstract class AbstractLCGBackend implements Backend {
         final List<String> submitCmds = this.submitJdlCommand("", "");
         return LcgCommon.isAvailable(submitCmds.get(1));
     }
+
+    /** {@inheritDoc} */
+    public JobUid getJobUidForBackendId(final String backendIdString) {
+        return new JobUid(this, backendIdString);
+    }
+
 }

@@ -363,4 +363,11 @@ public class GatBackend implements Backend, MetricListener {
             GatBackend.LOGGER.warning(LogUtil.logException(e));
         }
     }
+
+    /** {@inheritDoc} */
+    public JobUid getJobUidForBackendId(final String backendIdString) {
+        // TODO: Implement!
+        return null;
+    }
+
 }

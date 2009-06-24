@@ -125,4 +125,9 @@ public final class FakeBackend implements Backend {
     public void cancelJob(final JobUid id) {
         this.state.put(id, JobState.FAILED);
     }
+
+    /** {@inheritDoc} */
+    public JobUid getJobUidForBackendId(final String backendIdString) {
+        return BackendWithCounterUtils.getIntegerJobUid(this, backendIdString);
+    }
 }
