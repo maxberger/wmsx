@@ -33,15 +33,8 @@ public class JobDescriptionFileFilter extends FileFilter {
         }
 
         final String extension = this.getExtension(f);
-        if (extension != null) {
-            if (extension.equals("jdl")) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        return false;
+        
+        return "jdl".equals(extension);
     }
 
     /**
