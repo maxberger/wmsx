@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -77,7 +77,7 @@ public class LocalProcess implements Runnable, ScriptProcessListener {
     }
 
     /** runs the job. */
-    public synchronized void run() {
+    public void run() {
         this.stateMap.put(this.uid, JobState.STARTUP);
         JobWatcher.getInstance().checkWithState(this.uid, JobState.STARTUP);
         try {
@@ -107,39 +107,46 @@ public class LocalProcess implements Runnable, ScriptProcessListener {
     }
 
     private void startup() throws IOException {
-        this.workdir = FileUtil.createTempDir();
-        LocalProcess.LOGGER.info(this.workdir.toString());
+        synchronized (this) {
+            this.workdir = FileUtil.createTempDir();
+            LocalProcess.LOGGER.info(this.workdir.toString());
 
-        final List<String> inputList = this.job
-                .getListEntry(JobDescription.INPUTSANDBOX);
-        FileUtil.copyList(inputList, this.job.getBaseDir(), this.workdir);
+            final List<String> inputList = this.job
+                    .getListEntry(JobDescription.INPUTSANDBOX);
+            FileUtil.copyList(inputList, this.job.getBaseDir(), this.workdir);
+        }
     }
 
     private void running() throws IOException {
-        final String commande = this.job
-                .getStringEntry(JobDescription.EXECUTABLE);
-        if (commande == null) {
-            return;
-        }
-        final String command = FileUtil.resolveFile(this.workdir, commande)
-                .getCanonicalPath();
-        FileUtil.makeExecutable(new File(command));
+        final StringBuilder commandline;
+        String stdout;
+        String stderr;
+        synchronized (this) {
+            final String commande = this.job
+                    .getStringEntry(JobDescription.EXECUTABLE);
+            if (commande == null) {
+                return;
+            }
+            final String command = FileUtil.resolveFile(this.workdir, commande)
+                    .getCanonicalPath();
+            FileUtil.makeExecutable(new File(command));
 
-        final String arguments = this.job
-                .getStringEntry(JobDescription.ARGUMENTS);
+            final String arguments = this.job
+                    .getStringEntry(JobDescription.ARGUMENTS);
 
-        final StringBuilder commandline = new StringBuilder(command);
-        if (arguments != null) {
-            commandline.append(' ');
-            commandline.append(arguments);
-        }
-        String stdout = this.job.getStringEntry(JobDescription.STDOUTPUT);
-        if (stdout != null) {
-            stdout = new File(this.workdir, stdout).getCanonicalPath();
-        }
-        String stderr = this.job.getStringEntry(JobDescription.STDERROR);
-        if (stderr != null) {
-            stderr = new File(this.workdir, stderr).getCanonicalPath();
+            commandline = new StringBuilder(command);
+            if (arguments != null) {
+                commandline.append(' ');
+                commandline.append(arguments);
+            }
+            stdout = this.job.getStringEntry(JobDescription.STDOUTPUT);
+            if (stdout != null) {
+                stdout = new File(this.workdir, stdout).getCanonicalPath();
+            }
+            stderr = this.job.getStringEntry(JobDescription.STDERROR);
+            if (stderr != null) {
+                stderr = new File(this.workdir, stderr).getCanonicalPath();
+            }
         }
         ScriptLauncher.getInstance().launchScript(commandline.toString(),
                 this.workdir, stdout, stderr, this);
@@ -151,29 +158,34 @@ public class LocalProcess implements Runnable, ScriptProcessListener {
      * @param dir
      *            directory to store into.
      */
-    public synchronized void retrieveOutput(final File dir) {
-        if (this.workdir == null) {
-            return;
-        }
-        final File realTarget = new File(dir, "sub" + this.uid.getBackendId());
-        if (!realTarget.mkdirs()) {
-            LocalProcess.LOGGER.warning("Failed to create " + realTarget);
-        }
-        final List<String> list = this.job
-                .getListEntry(JobDescription.OUTPUTSANDBOX);
-        try {
-            FileUtil.copyList(list, this.workdir, realTarget);
-        } catch (final IOException e) {
-            LocalProcess.LOGGER.warning(e.getMessage());
-        }
+    public void retrieveOutput(final File dir) {
+        synchronized (this) {
+            if (this.workdir == null) {
+                return;
+            }
+            final File realTarget = new File(dir, "sub"
+                    + this.uid.getBackendId());
+            if (!realTarget.mkdirs()) {
+                LocalProcess.LOGGER.warning("Failed to create " + realTarget);
+            }
+            final List<String> list = this.job
+                    .getListEntry(JobDescription.OUTPUTSANDBOX);
+            try {
+                FileUtil.copyList(list, this.workdir, realTarget);
+            } catch (final IOException e) {
+                LocalProcess.LOGGER.warning(e.getMessage());
+            }
 
-        this.cleanup();
-        this.workdir = null;
+            this.cleanup();
+            this.workdir = null;
+        }
     }
 
     private void cleanup() {
-        if (this.workdir != null) {
-            FileUtil.cleanDir(this.workdir, false);
+        synchronized (this) {
+            if (this.workdir != null) {
+                FileUtil.cleanDir(this.workdir, false);
+            }
         }
     }
 
@@ -194,6 +206,9 @@ public class LocalProcess implements Runnable, ScriptProcessListener {
     public void gotProcess(final Process p) {
         synchronized (this) {
             this.process = p;
+            if (this.failed) {
+                p.destroy();
+            }
         }
     }
 

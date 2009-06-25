@@ -78,22 +78,28 @@ public final class LocalBackend implements Backend {
 
     /** {@inheritDoc} */
     public DelayedExecution retrieveResult(final JobUid id, final File dir) {
-        final LocalProcess lp = this.processes.get(id);
-        if (lp != null) {
-            lp.retrieveOutput(dir);
+        synchronized (this) {
+            final LocalProcess lp = this.processes.get(id);
+            if (lp != null) {
+                lp.retrieveOutput(dir);
+            }
+            return null;
         }
-        return null;
     }
 
     /** {@inheritDoc} */
     public SubmissionResults submitJob(final JobDescription job, final String vo)
             throws IOException {
-        this.count++;
-        final Object id = Integer.valueOf(this.count);
-        final JobUid juid = new JobUid(this, id);
-        final JobDescription desc = job;
-        final LocalProcess p = new LocalProcess(this.state, juid, desc);
-        this.processes.put(juid, p);
+        final JobUid juid;
+        final LocalProcess p;
+        synchronized (this) {
+            this.count++;
+            final Object id = Integer.valueOf(this.count);
+            juid = new JobUid(this, id);
+            final JobDescription desc = job;
+            p = new LocalProcess(this.state, juid, desc);
+            this.processes.put(juid, p);
+        }
         new Thread(p).start();
         return new SubmissionResults(juid);
     }
@@ -127,11 +133,14 @@ public final class LocalBackend implements Backend {
 
     /** {@inheritDoc} */
     public void cancelJob(final JobUid id) {
-        final LocalProcess p = this.processes.get(id);
-        if (p == null) {
-            LocalBackend.LOGGER.warning("Could not cancel unknown Job " + id);
-        } else {
-            p.tryToDestroy();
+        synchronized (this) {
+            final LocalProcess p = this.processes.get(id);
+            if (p == null) {
+                LocalBackend.LOGGER.warning("Could not cancel unknown Job "
+                        + id);
+            } else {
+                p.tryToDestroy();
+            }
         }
     }
 
