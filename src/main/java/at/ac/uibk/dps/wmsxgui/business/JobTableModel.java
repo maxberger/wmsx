@@ -152,7 +152,7 @@ public class JobTableModel extends AbstractTableModel implements Observer {
         if (val != null) {
             return val.getClass();
         } else {
-            return new String().getClass();
+            return String.class;
         }
     }
 
