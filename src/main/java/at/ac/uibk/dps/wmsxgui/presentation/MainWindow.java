@@ -619,11 +619,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAboutActionPerformed
-        if (this.businessman.isOnline()) {
             final About dialog = new About(this, rootPaneCheckingEnabled);
             // System.out.println("MainWindow: Show NewJobDialog...");
             dialog.setVisible(true);
-        }
     }//GEN-LAST:event_menuItemAboutActionPerformed
 
     private void shortcutRefreshActionPerformed(
@@ -659,9 +657,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // GEN-FIRST:event_btn_add
     private void btnAdd(final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
-            // System.out.println("btn_add...");
 
-            final NewJob newjob = new NewJob(this);
+            final NewJob newjob = new NewJob(this, rootPaneCheckingEnabled);
             System.out.println("Show NewJobDialog...");
             newjob.setVisible(true);
         }
@@ -705,7 +702,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void menuItemNewjobActionPerformed(
             final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
-            final NewJob newjob = new NewJob(this);
+            final NewJob newjob = new NewJob(this, rootPaneCheckingEnabled);
             // System.out.println("MainWindow: Show NewJobDialog...");
             newjob.setVisible(true);
         }
