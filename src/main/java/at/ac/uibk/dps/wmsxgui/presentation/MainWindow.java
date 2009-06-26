@@ -178,6 +178,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         menuItemStopWorkers = new javax.swing.JMenuItem();
         menuItemOptions = new javax.swing.JMenuItem();
         menuItemExit = new javax.swing.JMenuItem();
+        menuHelp = new javax.swing.JMenu();
+        menuItemAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("WMSX GUI");
@@ -578,6 +580,20 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         jMenuBar1.add(menuFile);
 
+        menuHelp.setText("Help");
+
+        menuItemAbout.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemAbout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/help-browser.png"))); // NOI18N
+        menuItemAbout.setText("About");
+        menuItemAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemAboutActionPerformed(evt);
+            }
+        });
+        menuHelp.add(menuItemAbout);
+
+        jMenuBar1.add(menuHelp);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -601,6 +617,14 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void menuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAboutActionPerformed
+        if (this.businessman.isOnline()) {
+            final About dialog = new About(this, rootPaneCheckingEnabled);
+            // System.out.println("MainWindow: Show NewJobDialog...");
+            dialog.setVisible(true);
+        }
+    }//GEN-LAST:event_menuItemAboutActionPerformed
 
     private void shortcutRefreshActionPerformed(
             final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_shortcutRefreshActionPerformed
@@ -863,6 +887,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel l_selectedjob;
     private javax.swing.JMenu menuFile;
+    private javax.swing.JMenu menuHelp;
+    private javax.swing.JMenuItem menuItemAbout;
     private javax.swing.JMenuItem menuItemExit;
     private javax.swing.JMenuItem menuItemNewjob;
     private javax.swing.JMenuItem menuItemOptions;
