@@ -46,7 +46,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     private final BusinessManager businessman;
     private final Wmsx wmsxService;
-    private JFrame optionen;
     private DefaultMutableTreeNode rootNode;
     private DefaultTreeModel treeModel;
     private JobData currentJobData;
@@ -670,11 +669,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void menuItemOptionsActionPerformed(
             final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
-            if (this.optionen == null) {
-                this.optionen = new Options();
-            }
-            // System.out.println("Show OptionsDialog...");
-            this.optionen.setVisible(true);
+            final Options optionen = new Options(this, rootPaneCheckingEnabled);
+            optionen.setVisible(true);
         }
     }
 
