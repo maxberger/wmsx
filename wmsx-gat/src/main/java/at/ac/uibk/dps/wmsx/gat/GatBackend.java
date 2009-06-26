@@ -337,15 +337,21 @@ public class GatBackend implements Backend, MetricListener {
 
     /** {@inheritDoc} */
     public boolean provideCredentials(final String pass, final String vo) {
-        this.gatCommon.setPassword(pass);
-        this.gatCommon.setVo(vo);
-        try {
-            this.ensureBroker();
-        } catch (final IOException r) {
-            GatBackend.LOGGER.warning(LogUtil.logException(r));
-            return false;
+        boolean success = false;
+        if (vo == null) {
+            GatBackend.LOGGER
+                    .warning("Please set VO on GAT backend before setting a password!");
+        } else {
+            this.gatCommon.setPassword(pass);
+            this.gatCommon.setVo(vo);
+            try {
+                this.ensureBroker();
+                success = true;
+            } catch (final IOException r) {
+                GatBackend.LOGGER.warning(LogUtil.logException(r));
+            }
         }
-        return true;
+        return success;
     }
 
     /** {@inheritDoc} */
