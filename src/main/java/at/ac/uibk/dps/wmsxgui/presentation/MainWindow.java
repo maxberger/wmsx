@@ -672,7 +672,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         if (!this.businessman.isOnline())
         {
             System.out.println("MainWindow try reconnect...");
-            this.businessman.reConnect();
+            this.businessman.reConnect(false);
 
             if (!this.businessman.isOnline())
                 setGUIOfflineMode();
