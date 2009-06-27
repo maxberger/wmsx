@@ -132,12 +132,6 @@ public class Options extends javax.swing.JDialog {
 
         pf_afspassword.setText("jPasswordField1");
 
-        tfVo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfVoActionPerformed(evt);
-            }
-        });
-
         btn_setafspassword.setText("set");
         btn_setafspassword.setEnabled(false);
         btn_setafspassword.addActionListener(new java.awt.event.ActionListener() {
@@ -281,10 +275,6 @@ public class Options extends javax.swing.JDialog {
         wmsx_service.setVo(tfVo.getText());
 }//GEN-LAST:event_btn_setVoActionPerformed
 
-    private void tfVoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfVoActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_tfVoActionPerformed
-
     private void cb_backendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_backendActionPerformed
         // TODO add your handling code here:
         if(cb_backend.getSelectedItem()!=null){
@@ -299,19 +289,26 @@ public class Options extends javax.swing.JDialog {
 
     private void btn_setafspasswordActionPerformed(
             final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setafspasswordActionPerformed
-        this.wmsx_service.rememberAfs(new String(this.pf_afspassword
+        this.wmsx_service.setBackend(cb_backend.getSelectedItem().toString());
+        boolean suc = this.wmsx_service.rememberAfs(new String(this.pf_afspassword
                 .getPassword()));
+        if(!suc){
+            JOptionPane.showConfirmDialog(this, "Password is incorrect!", "Wrong password", JOptionPane.DEFAULT_OPTION,JOptionPane.ERROR_MESSAGE);
+        }
     }// GEN-LAST:event_btn_setafspasswordActionPerformed
 
     private void btn_setgridpasswordActionPerformed(
             final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setgridpasswordActionPerformed
-        this.wmsx_service.rememberGrid(new String(this.pf_gridpassword
-                .getPassword())); // fehler??
+        this.wmsx_service.setBackend(cb_backend.getSelectedItem().toString());
+        boolean suc = this.wmsx_service.rememberGrid(new String(this.pf_gridpassword.getPassword()));
+        if(!suc){
+            JOptionPane.showConfirmDialog(this, "Password is incorrect!", "Wrong password", JOptionPane.DEFAULT_OPTION,JOptionPane.ERROR_MESSAGE);
+        }
     }// GEN-LAST:event_btn_setgridpasswordActionPerformed
 
     private void btn_forgetafspasswordActionPerformed(
             final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_forgetafspasswordActionPerformed
-
+        this.wmsx_service.setBackend(cb_backend.getSelectedItem().toString());
         this.wmsx_service.forgetAfs();
     }// GEN-LAST:event_btn_forgetafspasswordActionPerformed
 
