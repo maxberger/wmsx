@@ -45,7 +45,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private static final long serialVersionUID = -1929304607781335690L;
 
     private final BusinessManager businessman;
-    private final Wmsx wmsxService;
+    private Wmsx wmsxService;
     private DefaultMutableTreeNode rootNode;
     private DefaultTreeModel treeModel;
     private JobData currentJobData;
@@ -66,7 +66,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.updateTreeModel();
 
         if (!this.businessman.isOnline())
-            setGUIOfflineMode();
+            setGUIOfflineMode(false);
         else
             setGUIOnlineMode();
 
@@ -92,7 +92,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
     private void setGUIOnlineMode()
     {
-        this.setTitle("WMSX GU");
+        this.setTitle("WMSX GUI");
 
         panel_table.setVisible(true);
         this.panel_jobdetails.setVisible(false);
@@ -118,8 +118,13 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.treeJobs.setEnabled(true);
     }
 
-    private void setGUIOfflineMode()
+    private void setGUIOfflineMode(boolean showMessage)
     {
+        if (showMessage)
+            JOptionPane.showMessageDialog(this, "Connection to provider lost!\nSwitch to offline mode.",
+                                              "WMSX GUI - Connection lost",
+                                              JOptionPane.ERROR_MESSAGE);
+
         this.setTitle("WMSX GUI - Offline Mode");
 
         this.menuItemNewjob.setEnabled(false);
@@ -676,10 +681,13 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             //System.out.println("MainWindow try reconnect...");
             this.businessman.reConnect(true);
 
-            if (!this.businessman.isOnline())
-                setGUIOfflineMode();
-            else
+            if (this.businessman.isOnline())
+            {
+                this.wmsxService = this.businessman.getWmsxService();
                 setGUIOnlineMode();
+                
+            }else
+                setGUIOfflineMode(false);
         }
     }//GEN-LAST:event_menuItemReconnectActionPerformed
 
@@ -704,12 +712,15 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                                               "WMSX GUI - Ping",
                                               JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Ping to provider failed!",
+                JOptionPane.showMessageDialog(this, "Ping to provider failed!\nSwitch to offline mode.",
                                               "WMSX GUI - Ping",
                                               JOptionPane.ERROR_MESSAGE);
 
-                setGUIOfflineMode();
+                setGUIOfflineMode(false);
             }
+        } else
+        {
+                setGUIOfflineMode(true);
         }
     }
 
@@ -723,7 +734,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             System.out.println("Show NewJobDialog...");
             newjob.setVisible(true);
         }else
-            setGUIOfflineMode();
+            setGUIOfflineMode(true);
     }
 
     // GEN-LAST:event_btn_add
@@ -735,7 +746,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             final Options optionen = new Options(this, rootPaneCheckingEnabled);
             optionen.setVisible(true);
         }else
-            setGUIOfflineMode();
+            setGUIOfflineMode(true);
     }
 
     // GEN-LAST:event_menu_item_optionsActionPerformed
@@ -746,7 +757,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         if (this.businessman.isOnline()) {
             this.wmsxService.shutdownWorkers();
         }else
-            setGUIOfflineMode();
+            setGUIOfflineMode(true);
     }
 
     // GEN-LAST:event_menu_item_stopserverActionPerformed
@@ -767,7 +778,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             // System.out.println("MainWindow: Show NewJobDialog...");
             newjob.setVisible(true);
         }else
-            setGUIOfflineMode();
+            setGUIOfflineMode(true);
     }
 
     // GEN-LAST:event_menu_item_newjobActionPerformed
@@ -789,7 +800,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
             }
         }else
-            setGUIOfflineMode();
+            setGUIOfflineMode(true);
     }
 
     // GEN-LAST:eventStopActionPerformed
@@ -804,7 +815,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                         .cancelJob(this.currentJobData.getTransportJobUID());
             }
         }else
-            setGUIOfflineMode();
+            setGUIOfflineMode(true);
     }
 
     // GEN-LAST:event_btn_killActionPerformed
@@ -1073,7 +1084,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 this.businessman.cleanupBusinessData();
             }
         } else {
-            this.setGUIOfflineMode();
+            this.setGUIOfflineMode(true);
         }
     }
 
