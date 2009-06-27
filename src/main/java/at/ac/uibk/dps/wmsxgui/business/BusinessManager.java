@@ -42,9 +42,9 @@ import net.jini.lease.LeaseRenewalManager;
 public class BusinessManager extends Observable implements RemoteEventListener {
     private static final long serialVersionUID = 4569728891303483934L;
 
-    private final Requestor requestor;
-    private final Wmsx wmsxService;
-    private final Map<String, List<JobData>> jobMap = new HashMap<String, List<JobData>>();
+    private Requestor requestor;
+    private Wmsx wmsxService;
+    private Map<String, List<JobData>> jobMap = new HashMap<String, List<JobData>>();
     private Iterable<String> backends;
 
     private RemoteEventListener stub;
@@ -56,33 +56,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
     /* Singleton Pattern */
     private BusinessManager() {
-
-        this.requestor = Requestor.getInstance();
-        this.wmsxService = this.requestor.getWmsxService();
-
-        if (this.isOnline()) {
-            try {
-
-                final Exporter myDefaultExporter = new BasicJeriExporter(
-                        TcpServerEndpoint.getInstance(0), new BasicILFactory(),
-                        false, true);
-
-                this.stub = (RemoteEventListener) myDefaultExporter
-                        .export(this);
-
-                this.lease = this.wmsxService.registerEventListener(this.stub);
-
-                this.manager = new LeaseRenewalManager();
-                this.manager.renewFor(this.lease, Lease.FOREVER, 30000,
-                                      new DebugListener());
-
-            } catch (final Exception re) {
-                re.printStackTrace();
-            }
-
-            // fill BusinessData from wmsxService
-            this.cleanupBusinessData();
-        }
+        this.reConnect();
     }
 
     private static class DebugListener implements LeaseListener {
@@ -157,6 +131,38 @@ public class BusinessManager extends Observable implements RemoteEventListener {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public void reConnect()
+    {
+        this.requestor = Requestor.getInstance();
+        this.wmsxService = this.requestor.getWmsxService();
+
+        System.out.println("BusinessManager do reConnect: isOnline: "+isOnline());
+        
+        if (this.isOnline()) {
+            try {
+
+                final Exporter myDefaultExporter = new BasicJeriExporter(
+                        TcpServerEndpoint.getInstance(0), new BasicILFactory(),
+                        false, true);
+
+                this.stub = (RemoteEventListener) myDefaultExporter
+                        .export(this);
+
+                this.lease = this.wmsxService.registerEventListener(this.stub);
+
+                this.manager = new LeaseRenewalManager();
+                this.manager.renewFor(this.lease, Lease.FOREVER, 30000,
+                                      new DebugListener());
+
+            } catch (final Exception re) {
+                re.printStackTrace();
+            }
+
+            // fill BusinessData from wmsxService
+            this.cleanupBusinessData();
         }
     }
 
