@@ -20,34 +20,7 @@ public class Requestor {
 
     /* Singleton Pattern */
     private Requestor() {
-        try {
-            final FileInputStream fis = new FileInputStream("/tmp/wmsx-"
-                    + System.getProperty("user.name"));
-            final ObjectInputStream in = new ObjectInputStream(fis);
-
-            this.wmsxService = (Wmsx) in.readObject();
-            in.close();
-
-        } catch (final IOException io) {
-            System.out.println("IOException: " + io.getMessage());
-
-            final int result = JOptionPane
-                    .showConfirmDialog(
-                                       null,
-                                       io.getMessage()
-                                               + "\nFailed to connect to provider. Please check if its running.\nWould you like to start in offline Demo Mode?",
-                                       "WMSX GUI - IOException",
-                                       JOptionPane.ERROR_MESSAGE);
-            if (result != 0) {
-                System.exit(0);
-            }
-
-        } catch (final ClassNotFoundException e) {
-            System.out.println("ClassNotFound: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage(),
-                                          "WMSX GUI - ClassNotFound",
-                                          JOptionPane.ERROR_MESSAGE);
-        }
+        reConnect(true);
     }
 
     /**
@@ -69,12 +42,51 @@ public class Requestor {
 
     /* Singleton */
 
+    private void reConnect(boolean infoMessage)
+    {
+        try {
+            final FileInputStream fis = new FileInputStream("/tmp/wmsx-"
+                    + System.getProperty("user.name"));
+            final ObjectInputStream in = new ObjectInputStream(fis);
+
+            this.wmsxService = (Wmsx) in.readObject();
+            in.close();
+
+        } catch (final IOException io) {
+            System.out.println("IOException: " + io.getMessage());
+
+            if (infoMessage)
+            {
+                final int result = JOptionPane
+                        .showConfirmDialog(
+                                           null,
+                                           io.getMessage()
+                                                   + "\nFailed to connect to provider. Please check if its running.\nWould you like to start in offline Demo Mode?",
+                                           "WMSX GUI - IOException",
+                                           JOptionPane.ERROR_MESSAGE);
+                if (result != 0) {
+                    System.exit(0);
+                }
+            }
+
+        } catch (final ClassNotFoundException e) {
+            System.out.println("ClassNotFound: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage(),
+                                          "WMSX GUI - ClassNotFound",
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+    }
     /**
      * getWmsxService is Getter which returns the WmsxService.
      * 
      * @return WmsxService to the provider
      */
-    public Wmsx getWmsxService() {
+    public Wmsx getWmsxService(boolean reconnect) {
+        if (reconnect)
+        {
+            reConnect(false);
+        }
+
         return this.wmsxService;
     }
 }

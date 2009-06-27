@@ -56,7 +56,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
 
     /* Singleton Pattern */
     private BusinessManager() {
-        this.reConnect();
+        this.reConnect(true);
     }
 
     private static class DebugListener implements LeaseListener {
@@ -134,10 +134,10 @@ public class BusinessManager extends Observable implements RemoteEventListener {
         }
     }
 
-    public void reConnect()
+    public void reConnect(boolean showMessage)
     {
         this.requestor = Requestor.getInstance();
-        this.wmsxService = this.requestor.getWmsxService();
+        this.wmsxService = this.requestor.getWmsxService(showMessage);
 
         System.out.println("BusinessManager do reConnect: isOnline: "+isOnline());
         
