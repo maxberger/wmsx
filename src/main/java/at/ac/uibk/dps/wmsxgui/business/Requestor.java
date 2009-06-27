@@ -61,7 +61,7 @@ public class Requestor {
                         .showConfirmDialog(
                                            null,
                                            io.getMessage()
-                                                   + "\nFailed to connect to provider. Please check if its running.\nWould you like to start in offline Demo Mode?",
+                                                   + "\nFailed to connect to provider. Please check if its running.\nWould you like to start in offline mode?",
                                            "WMSX GUI - IOException",
                                            JOptionPane.ERROR_MESSAGE);
                 if (result != 0) {

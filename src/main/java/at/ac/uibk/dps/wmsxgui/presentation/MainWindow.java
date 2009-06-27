@@ -115,6 +115,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
         this.menuItemReconnect.setEnabled(false);
         updateTreeModel();
+        this.treeJobs.setEnabled(true);
     }
 
     private void setGUIOfflineMode()
@@ -138,6 +139,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.btnStop.setEnabled(false);
 
         this.menuItemReconnect.setEnabled(true);
+        this.treeJobs.setEnabled(false);
     }
 
     /**
@@ -671,8 +673,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private void menuItemReconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReconnectActionPerformed
         if (!this.businessman.isOnline())
         {
-            System.out.println("MainWindow try reconnect...");
-            this.businessman.reConnect(false);
+            //System.out.println("MainWindow try reconnect...");
+            this.businessman.reConnect(true);
 
             if (!this.businessman.isOnline())
                 setGUIOfflineMode();
@@ -705,6 +707,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 JOptionPane.showMessageDialog(this, "Ping to provider failed!",
                                               "WMSX GUI - Ping",
                                               JOptionPane.ERROR_MESSAGE);
+
+                setGUIOfflineMode();
             }
         }
     }
@@ -718,7 +722,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             final NewJob newjob = new NewJob(this, rootPaneCheckingEnabled);
             System.out.println("Show NewJobDialog...");
             newjob.setVisible(true);
-        }
+        }else
+            setGUIOfflineMode();
     }
 
     // GEN-LAST:event_btn_add
@@ -729,7 +734,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         if (this.businessman.isOnline()) {
             final Options optionen = new Options(this, rootPaneCheckingEnabled);
             optionen.setVisible(true);
-        }
+        }else
+            setGUIOfflineMode();
     }
 
     // GEN-LAST:event_menu_item_optionsActionPerformed
@@ -739,7 +745,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             final java.awt.event.ActionEvent evt) {
         if (this.businessman.isOnline()) {
             this.wmsxService.shutdownWorkers();
-        }
+        }else
+            setGUIOfflineMode();
     }
 
     // GEN-LAST:event_menu_item_stopserverActionPerformed
@@ -759,7 +766,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             final NewJob newjob = new NewJob(this, rootPaneCheckingEnabled);
             // System.out.println("MainWindow: Show NewJobDialog...");
             newjob.setVisible(true);
-        }
+        }else
+            setGUIOfflineMode();
     }
 
     // GEN-LAST:event_menu_item_newjobActionPerformed
@@ -767,18 +775,21 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // GEN-FIRST:eventStopActionPerformed
     private void btnStopActionPerformed(final java.awt.event.ActionEvent evt) {
         // remove Job or Worker (soft)
-        if (this.currentJobData != null) {
-            if (this.currentJobData.getJobinfo().isWorker()) {
-                this.businessman.getWmsxService()
-                        .shutdownWorker(
-                                        this.currentJobData.getJobinfo()
-                                                .getWorkerId());
-            } else {
-                this.businessman.getWmsxService()
-                        .cancelJob(this.currentJobData.getTransportJobUID());
-            }
+        if (this.businessman.isOnline()) {
+            if (this.currentJobData != null) {
+                if (this.currentJobData.getJobinfo().isWorker()) {
+                    this.businessman.getWmsxService()
+                            .shutdownWorker(
+                                            this.currentJobData.getJobinfo()
+                                                    .getWorkerId());
+                } else {
+                    this.businessman.getWmsxService()
+                            .cancelJob(this.currentJobData.getTransportJobUID());
+                }
 
-        }
+            }
+        }else
+            setGUIOfflineMode();
     }
 
     // GEN-LAST:eventStopActionPerformed
@@ -786,11 +797,14 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // GEN-FIRST:event_btn_killActionPerformed
     private void btnKillActionPerformed(final java.awt.event.ActionEvent evt) {
         // remove Worker (hard)
-        if ((this.currentJobData != null)
-                && this.currentJobData.getJobinfo().isWorker()) {
-            this.businessman.getWmsxService()
-                    .cancelJob(this.currentJobData.getTransportJobUID());
-        }
+        if (this.businessman.isOnline()) {
+            if ((this.currentJobData != null)
+                    && this.currentJobData.getJobinfo().isWorker()) {
+                this.businessman.getWmsxService()
+                        .cancelJob(this.currentJobData.getTransportJobUID());
+            }
+        }else
+            setGUIOfflineMode();
     }
 
     // GEN-LAST:event_btn_killActionPerformed
@@ -1016,8 +1030,6 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             this.treeModel = new DefaultTreeModel(this.rootNode);
             this.treeJobs.setModel(this.treeModel);
 
-            this.treeJobs.setEnabled(false);
-
         }
 
         // tree_jobs.updateUI();
@@ -1053,10 +1065,15 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
      * @param keepOldData
      */
     public void updateBusinessManager(final boolean keepOldData) {
-        if (keepOldData) {
-            this.businessman.refreshBusinessData();
+        if (this.businessman.isOnline())
+        {
+            if (keepOldData) {
+                this.businessman.refreshBusinessData();
+            } else {
+                this.businessman.cleanupBusinessData();
+            }
         } else {
-            this.businessman.cleanupBusinessData();
+            this.setGUIOfflineMode();
         }
     }
 
