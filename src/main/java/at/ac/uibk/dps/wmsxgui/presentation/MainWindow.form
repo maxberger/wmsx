@@ -51,6 +51,20 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemOptionsActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuItemReconnect">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+R"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/reconnect.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Reconnect"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemReconnectActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemExit">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
@@ -162,16 +176,16 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="panel_top" alignment="1" pref="580" max="32767" attributes="1"/>
+                  <Component id="panel_top" alignment="1" pref="578" max="32767" attributes="1"/>
                   <Component id="panel_buttons" alignment="1" max="32767" attributes="1"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="panel_top" pref="293" max="32767" attributes="0"/>
+                      <Component id="panel_top" pref="297" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="panel_buttons" min="-2" max="-2" attributes="0"/>
+                      <Component id="panel_buttons" min="-2" pref="62" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -190,7 +204,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="panel_table" alignment="1" pref="580" max="32767" attributes="0"/>
+                      <Component id="panel_table" alignment="1" pref="578" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Component id="panel_jobdetails" alignment="0" max="32767" attributes="0"/>
                       </Group>
@@ -198,7 +212,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="panel_table" alignment="1" pref="293" max="32767" attributes="0"/>
+                      <Component id="panel_table" alignment="1" pref="297" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Component id="panel_jobdetails" alignment="1" max="32767" attributes="0"/>
                       </Group>
@@ -268,9 +282,9 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" attributes="0">
                                               <Group type="103" groupAlignment="1" attributes="0">
-                                                  <Component id="tb_jobdetails_jobuid" alignment="1" pref="201" max="32767" attributes="0"/>
-                                                  <Component id="tb_jobdetails_state" alignment="1" pref="201" max="32767" attributes="2"/>
-                                                  <Component id="tb_jobdetails_siteid" alignment="1" pref="201" max="32767" attributes="2"/>
+                                                  <Component id="tb_jobdetails_jobuid" alignment="1" pref="202" max="32767" attributes="0"/>
+                                                  <Component id="tb_jobdetails_state" alignment="1" pref="202" max="32767" attributes="2"/>
+                                                  <Component id="tb_jobdetails_siteid" alignment="1" pref="202" max="32767" attributes="2"/>
                                               </Group>
                                               <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
@@ -280,12 +294,12 @@
                                               </Group>
                                               <EmptySpace min="-2" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="tb_jobdetails_creationtime" alignment="0" pref="200" max="32767" attributes="0"/>
-                                                  <Component id="tb_jobdetails_startedtime" alignment="0" pref="200" max="32767" attributes="0"/>
-                                                  <Component id="tb_jobdetails_donetime" alignment="0" pref="200" max="32767" attributes="0"/>
+                                                  <Component id="tb_jobdetails_creationtime" alignment="0" pref="201" max="32767" attributes="0"/>
+                                                  <Component id="tb_jobdetails_startedtime" alignment="0" pref="201" max="32767" attributes="0"/>
+                                                  <Component id="tb_jobdetails_donetime" alignment="0" pref="201" max="32767" attributes="0"/>
                                               </Group>
                                           </Group>
-                                          <Component id="tb_jobdetails_workerID" pref="478" max="32767" attributes="2"/>
+                                          <Component id="tb_jobdetails_workerID" pref="481" max="32767" attributes="2"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -322,7 +336,7 @@
                                   <Component id="tb_jobdetails_workerID" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="panel_description" pref="132" max="32767" attributes="0"/>
+                              <Component id="panel_description" pref="173" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -507,7 +521,7 @@
                                   <Component id="btnCleanup" linkSize="1" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="297" max="32767" attributes="0"/>
+                          <EmptySpace pref="229" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
