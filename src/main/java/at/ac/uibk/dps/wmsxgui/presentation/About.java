@@ -73,11 +73,11 @@ public class About extends javax.swing.JDialog {
         jTextArea1.setColumns(20);
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
-        jTextArea1.setText("Thanks to tango.freedesktop.org for using there icons.");
+        jTextArea1.setText("Thanks to tango.freedesktop.org and sweetie.sublink.ca for using their icons.");
         jTextArea1.setWrapStyleWord(true);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jLabel1.setFont(new java.awt.Font("DejaVu Sans", 0, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("DejaVu Sans", 0, 18));
         jLabel1.setText("WMSX Gui");
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon.png"))); // NOI18N
@@ -121,7 +121,7 @@ public class About extends javax.swing.JDialog {
                     .addComponent(versionLabel)
                     .addComponent(appVersionLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnClose)
                 .addContainerGap())

@@ -65,26 +65,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.table_jobs.setModel(new JobTableModel());
         this.updateTreeModel();
 
-        if (!this.businessman.isOnline()) {
-            this.setTitle("WMSX GUI - Offline Demo Mode");
-
-            this.menuItemNewjob.setEnabled(false);
-            this.menuItemOptions.setEnabled(false);
-            this.menuItemStopWorkers.setEnabled(false);
-
-            this.shortcutAdd.setEnabled(false);
-            this.shortcutRemoveHard.setEnabled(false);
-            this.shortcutPing.setEnabled(false);
-            this.shortcutCleanup.setEnabled(false);
-            this.shortcutRefresh.setEnabled(false);
-            this.shortcutRemoveHard.setEnabled(false);
-            this.shortcutRemoveSoft.setEnabled(false);
-
-            this.btnKill.setEnabled(false);
-            this.btnRefresh.setEnabled(false);
-            this.btnCleanup.setEnabled(false);
-            this.btnStop.setEnabled(false);
-        }
+        if (!this.businessman.isOnline())
+            setGUIOfflineMode();
+        else
+            setGUIOnlineMode();
 
         // verstecke tabelle
         // panel_table.setVisible(false);
@@ -104,6 +88,56 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.setIconImage(icon);
 
         this.centerScreen();
+    }
+
+    private void setGUIOnlineMode()
+    {
+        this.setTitle("WMSX GU");
+
+        panel_table.setVisible(true);
+        this.panel_jobdetails.setVisible(false);
+
+        this.menuItemNewjob.setEnabled(true);
+        this.menuItemOptions.setEnabled(true);
+        this.menuItemStopWorkers.setEnabled(true);
+
+        this.shortcutAdd.setEnabled(true);
+        this.shortcutPing.setEnabled(true);
+        this.shortcutCleanup.setEnabled(true);
+        this.shortcutRefresh.setEnabled(true);
+        this.shortcutRemoveHard.setEnabled(false);
+        this.shortcutRemoveSoft.setEnabled(false);
+
+        this.btnKill.setEnabled(false);
+        this.btnRefresh.setEnabled(true);
+        this.btnCleanup.setEnabled(true);
+        this.btnStop.setEnabled(false);
+
+        this.menuItemReconnect.setEnabled(false);
+        updateTreeModel();
+    }
+
+    private void setGUIOfflineMode()
+    {
+        this.setTitle("WMSX GUI - Offline Mode");
+
+        this.menuItemNewjob.setEnabled(false);
+        this.menuItemOptions.setEnabled(false);
+        this.menuItemStopWorkers.setEnabled(false);
+
+        this.shortcutAdd.setEnabled(false);
+        this.shortcutPing.setEnabled(false);
+        this.shortcutCleanup.setEnabled(false);
+        this.shortcutRefresh.setEnabled(false);
+        this.shortcutRemoveHard.setEnabled(false);
+        this.shortcutRemoveSoft.setEnabled(false);
+
+        this.btnKill.setEnabled(false);
+        this.btnRefresh.setEnabled(false);
+        this.btnCleanup.setEnabled(false);
+        this.btnStop.setEnabled(false);
+
+        this.menuItemReconnect.setEnabled(true);
     }
 
     /**
@@ -176,6 +210,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         menuItemNewjob = new javax.swing.JMenuItem();
         menuItemStopWorkers = new javax.swing.JMenuItem();
         menuItemOptions = new javax.swing.JMenuItem();
+        menuItemReconnect = new javax.swing.JMenuItem();
         menuItemExit = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemAbout = new javax.swing.JMenuItem();
@@ -300,9 +335,9 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                         .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panel_jobdetailsLayout.createSequentialGroup()
                                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(tb_jobdetails_jobuid, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-                                    .addComponent(tb_jobdetails_state, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-                                    .addComponent(tb_jobdetails_siteid, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))
+                                    .addComponent(tb_jobdetails_jobuid, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_state, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_siteid, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
                                 .addGap(13, 13, 13)
                                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -310,10 +345,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(panel_jobdetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(tb_jobdetails_creationtime, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                    .addComponent(tb_jobdetails_startedtime, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                    .addComponent(tb_jobdetails_donetime, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)))
-                            .addComponent(tb_jobdetails_workerID, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE))))
+                                    .addComponent(tb_jobdetails_creationtime, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_startedtime, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                                    .addComponent(tb_jobdetails_donetime, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)))
+                            .addComponent(tb_jobdetails_workerID, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         panel_jobdetailsLayout.setVerticalGroup(
@@ -341,20 +376,20 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                     .addComponent(jLabel8)
                     .addComponent(tb_jobdetails_workerID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panel_description, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
+                .addComponent(panel_description, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout panel_topLayout = new javax.swing.GroupLayout(panel_top);
         panel_top.setLayout(panel_topLayout);
         panel_topLayout.setHorizontalGroup(
             panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
             .addGroup(panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(panel_jobdetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel_topLayout.setVerticalGroup(
             panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+            .addComponent(panel_table, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
             .addGroup(panel_topLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(panel_jobdetails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -410,7 +445,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                         .addComponent(btnRefresh)
                         .addGap(6, 6, 6)
                         .addComponent(btnCleanup)))
-                .addContainerGap(297, Short.MAX_VALUE))
+                .addContainerGap(229, Short.MAX_VALUE))
         );
 
         panel_buttonsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCleanup, btnRefresh});
@@ -432,15 +467,15 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         jPanelRight.setLayout(jPanelRightLayout);
         jPanelRightLayout.setHorizontalGroup(
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_top, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
+            .addComponent(panel_top, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
             .addComponent(panel_buttons, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanelRightLayout.setVerticalGroup(
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRightLayout.createSequentialGroup()
-                .addComponent(panel_top, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+                .addComponent(panel_top, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panel_buttons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(panel_buttons, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jSplitPane1.setRightComponent(jPanelRight);
@@ -567,6 +602,16 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         });
         menuFile.add(menuItemOptions);
 
+        menuItemReconnect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        menuItemReconnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/reconnect.png"))); // NOI18N
+        menuItemReconnect.setText("Reconnect");
+        menuItemReconnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemReconnectActionPerformed(evt);
+            }
+        });
+        menuFile.add(menuItemReconnect);
+
         menuItemExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         menuItemExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/exit.png"))); // NOI18N
         menuItemExit.setText("Exit");
@@ -622,6 +667,19 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
             // System.out.println("MainWindow: Show NewJobDialog...");
             dialog.setVisible(true);
     }//GEN-LAST:event_menuItemAboutActionPerformed
+
+    private void menuItemReconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemReconnectActionPerformed
+        if (!this.businessman.isOnline())
+        {
+            System.out.println("MainWindow try reconnect...");
+            this.businessman.reConnect();
+
+            if (!this.businessman.isOnline())
+                setGUIOfflineMode();
+            else
+                setGUIOnlineMode();
+        }
+    }//GEN-LAST:event_menuItemReconnectActionPerformed
 
     private void shortcutRefreshActionPerformed(
             final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_shortcutRefreshActionPerformed
@@ -885,6 +943,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem menuItemExit;
     private javax.swing.JMenuItem menuItemNewjob;
     private javax.swing.JMenuItem menuItemOptions;
+    private javax.swing.JMenuItem menuItemReconnect;
     private javax.swing.JMenuItem menuItemStopWorkers;
     private javax.swing.JPanel panel_buttons;
     private javax.swing.JPanel panel_description;
