@@ -1,0 +1,8 @@
+syntax: regexp
+
+target/
+^keystore
+^.classpath$
+^.project$
+^.settings
+nbproject

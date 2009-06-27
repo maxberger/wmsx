@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp
+    spec="1.0+"
+    codebase="http://goedis.dps.uibk.ac.at/~dps002"
+    href="$outputFile">
+  <information>
+    <title>WMSX GUI</title>
+    <vendor>WMSX GUI developers<vendor/>
+    <homepage>$project.url<homepage/>
+    <description kind="short">$informationDescription</description>
+    <icon href="wmsx_gui_logo.gif" />
+    <offline-allowed/>
+    <association mime-type="application/jnlp+xml" extensions="jnlp" />
+    <shortcut online="false">
+      <desktop/>
+      <menu submenu="wmsx-gui"/>
+    </shortcut>
+  </information>
+  <security>
+     <all-permissions/>
+  </security>
+  <resources>
+    <j2se version="1.6+"/>
+     $dependencies
+  </resources>
+  <application-desc main-class="$mainClass" />
+</jnlp>
+
