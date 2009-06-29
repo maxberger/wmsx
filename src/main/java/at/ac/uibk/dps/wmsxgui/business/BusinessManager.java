@@ -358,13 +358,13 @@ public class BusinessManager extends Observable implements RemoteEventListener {
             if (!found) {
                 System.out.println("BusinessManager - notify: add new Job: "
                         + e.getJobUid());
-
+                final JobData newJob = new JobData(e.getJobUid(), this.wmsxService
+                        .getJobInfo(e.getJobUid())); 
                 this.jobMap.get(
                                 e.getJobUid().getBackend()
                                         .toLowerCase(Locale.getDefault()))
-                        .add(
-                             new JobData(e.getJobUid(), this.wmsxService
-                                     .getJobInfo(e.getJobUid())));
+                        .add(newJob);
+                this.updateObservers(newJob);
             }
         }
 
