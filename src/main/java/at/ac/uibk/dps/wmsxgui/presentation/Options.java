@@ -279,7 +279,7 @@ public class Options extends javax.swing.JDialog {
         // TODO add your handling code here:
         if(cb_backend.getSelectedItem()!=null){
             btn_forgetafspassword.setEnabled(true);
-            btn_forgetgridpassword.setEnabled(true);
+            //btn_forgetgridpassword.setEnabled(true);
             btn_setVo.setEnabled(true);
             btn_setafspassword.setEnabled(true);
             btn_setgridpassword.setEnabled(true);

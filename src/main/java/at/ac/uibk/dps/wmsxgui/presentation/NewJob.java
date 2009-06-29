@@ -61,10 +61,17 @@ public class NewJob extends javax.swing.JDialog {
                 .getResource("/icon.png"))).getImage();
         this.setIconImage(icon);
 
+        updateBackendCombo();
+    }
+
+
+    private void updateBackendCombo(){
+        cb_backend.removeAllItems();
         for (final String backend : this.businessman.getBackends()) {
             this.cb_backend.addItem(backend);
         }
     }
+
 
     /**
      * Positioniert das Fenster genau in der Mitte des Bildschirmes...
@@ -266,7 +273,7 @@ public class NewJob extends javax.swing.JDialog {
             final String resultDir = this.tb_resultdir.getText();
             final String outputFile = this.tb_outputfile.getText();
 
-            if ((new File(jdlFile)).exists() && (new File(resultDir)).exists()) {
+            if ((new File(jdlFile)).exists()) {
                 this.wmsxService.setBackend(this.cb_backend.getSelectedItem()
                         .toString());
 
@@ -290,7 +297,7 @@ public class NewJob extends javax.swing.JDialog {
                 JOptionPane
                         .showMessageDialog(
                                            this,
-                                           "JobDescriptionFile or ResultDirectory doesn't exist!",
+                                           "JobDescriptionFile doesn't exist!",
                                            "WMSX GUI - NewJob",
                                            JOptionPane.ERROR_MESSAGE);
             }
@@ -334,8 +341,7 @@ public class NewJob extends javax.swing.JDialog {
         {
             this.contentPanel.setBorder(javax.swing.BorderFactory
                     .createTitledBorder("Create a new Job"));
-            this.cb_backend.addItem(new String("worker"));
-
+            updateBackendCombo();
             this.btn_select_jobdesc.setVisible(true);
             this.btn_select_outputfile.setVisible(true);
             this.btn_select_resultdir.setVisible(true);
