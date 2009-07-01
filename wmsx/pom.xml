@@ -51,7 +51,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>appassembler-maven-plugin</artifactId>
-        <version>1.0-beta-2</version>
+        <version>1.0</version>
         <configuration>
           <extraJvmArguments>-Xmx1024m -Dgat.adaptor.path=$BASEDIR/adaptors</extraJvmArguments>
           <programs>
