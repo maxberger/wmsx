@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -55,6 +55,9 @@ public interface JobDescription extends Cloneable {
 
     /** Directory for results (string). */
     String RESULTDIR = "ResultDir";
+
+    /** Filename to store JobId to in ResultDir (string). */
+    String JOBIDFILENAMEINRESULTDIR = "JobIdInResultDir";
 
     /** post exec script (string). */
     String POSTEXEC = "PostExec";

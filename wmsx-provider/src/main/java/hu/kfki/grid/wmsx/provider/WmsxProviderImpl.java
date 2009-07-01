@@ -275,17 +275,51 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             throws FileNotFoundException {
         final JobUid id;
         id = result.getJobId();
+        this.logAndStoreInfo(job, id);
+        this.startResultListener(job, id);
+        this.startShadowListener(output, result, id);
+        this.prepareJobURIFiles(id);
+        this.prepareJobURIFileInResultDir(job, id);
+        return id;
+    }
 
-        WmsxProviderImpl.LOGGER.info("Job id is: " + id);
-
-        this.fillInInfo(id, job);
-
-        JobWatcher.getInstance().addWatch(id, LogListener.getInstance());
-        JobWatcher.getInstance().addWatch(id, this);
-
-        if (ResultListener.getInstance().setJob(id, job)) {
-            JobWatcher.getInstance().addWatch(id, ResultListener.getInstance());
+    /**
+     * @param job
+     * @param id
+     */
+    private void prepareJobURIFileInResultDir(final JdlJob job, final JobUid id) {
+        final String fileName = job.getJobIdFilenameInResultDir();
+        final String resultDir = job.getResultDir();
+        if (resultDir != null && fileName != null) {
+            final File rd = new File(resultDir);
+            rd.mkdirs();
+            final File jf = new File(rd, fileName);
+            this.appendURILine(id, jf);
         }
+    }
+
+    /**
+     * @param id
+     */
+    private void prepareJobURIFiles(final JobUid id) {
+        JobWatcher.getInstance().addWatch(id, this);
+        synchronized (this.workDir) {
+            this.appendURILine(id, new File(this.workDir,
+                    WmsxProviderImpl.JOBIDS_ALL));
+            this.appendURILine(id, new File(this.workDir,
+                    WmsxProviderImpl.JOBIDS_RUNNING));
+        }
+    }
+
+    /**
+     * @param output
+     * @param result
+     * @param id
+     * @throws FileNotFoundException
+     */
+    private void startShadowListener(final String output,
+            final SubmissionResults result, final JobUid id)
+            throws FileNotFoundException {
         final WritableByteChannel oChannel;
         if (output != null && result.getOStream() != null) {
             new File(output).getParentFile().mkdirs();
@@ -295,13 +329,26 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         }
         JobWatcher.getInstance().addWatch(id,
                 ShadowListener.listen(result, oChannel));
-        synchronized (this.workDir) {
-            this.appendURILine(id, new File(this.workDir,
-                    WmsxProviderImpl.JOBIDS_ALL));
-            this.appendURILine(id, new File(this.workDir,
-                    WmsxProviderImpl.JOBIDS_RUNNING));
+    }
+
+    /**
+     * @param job
+     * @param id
+     */
+    private void startResultListener(final JdlJob job, final JobUid id) {
+        if (ResultListener.getInstance().setJob(id, job)) {
+            JobWatcher.getInstance().addWatch(id, ResultListener.getInstance());
         }
-        return id;
+    }
+
+    /**
+     * @param job
+     * @param id
+     */
+    private void logAndStoreInfo(final JdlJob job, final JobUid id) {
+        WmsxProviderImpl.LOGGER.info("Job id is: " + id);
+        this.fillInInfo(id, job);
+        JobWatcher.getInstance().addWatch(id, LogListener.getInstance());
     }
 
     /**

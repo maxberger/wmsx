@@ -30,7 +30,7 @@ import java.io.File;
 import java.util.logging.Logger;
 
 /**
- * Describes a singe Job based on a JDL job description.
+ * Describes a single Job based on a JDL job description.
  * 
  * @version $Date$
  */
@@ -44,6 +44,8 @@ public class JdlJob {
     private String output;
 
     private String result;
+
+    private String jobIdFilenameInResultDir;
 
     private String preexec;
 
@@ -171,29 +173,36 @@ public class JdlJob {
     }
 
     private void filterResultDir(final JobDescription job, final File jdlFileDir) {
-        final String resultDir = this.filterJob(jdlFileDir, job,
-                JobDescription.RESULTDIR);
+        final String resultDir = this.filterJobAndMakePathAbsolute(jdlFileDir,
+                job, JobDescription.RESULTDIR);
         if (resultDir != null) {
             this.result = resultDir;
+        }
+
+        final String jobIdInResultDir = job
+                .getStringEntry(JobDescription.JOBIDFILENAMEINRESULTDIR);
+        job.removeEntry(JobDescription.JOBIDFILENAMEINRESULTDIR);
+        if (jobIdInResultDir != null) {
+            this.jobIdFilenameInResultDir = jobIdInResultDir;
         }
     }
 
     private void filterChainCommands(final JobDescription job,
             final File jdlFileDir) {
-        final String postExec = this.filterJob(jdlFileDir, job,
-                JobDescription.POSTEXEC);
+        final String postExec = this.filterJobAndMakePathAbsolute(jdlFileDir,
+                job, JobDescription.POSTEXEC);
         if (postExec != null) {
             this.postexec = postExec;
         }
 
-        final String preExec = this.filterJob(jdlFileDir, job,
-                JobDescription.PREEXEC);
+        final String preExec = this.filterJobAndMakePathAbsolute(jdlFileDir,
+                job, JobDescription.PREEXEC);
         if (preExec != null) {
             this.preexec = preExec;
         }
 
-        final String chainn = this.filterJob(jdlFileDir, job,
-                JobDescription.CHAIN);
+        final String chainn = this.filterJobAndMakePathAbsolute(jdlFileDir,
+                job, JobDescription.CHAIN);
         if (chainn != null) {
             this.chain = chainn;
         }
@@ -222,8 +231,8 @@ public class JdlJob {
         this.output = new File(parent, outp).getAbsolutePath();
     }
 
-    private String filterJob(final File jdlFileDir, final JobDescription job,
-            final String which) {
+    private String filterJobAndMakePathAbsolute(final File jdlFileDir,
+            final JobDescription job, final String which) {
         final String res;
         final String resDir = job.getStringEntry(which);
         if (resDir != null) {
@@ -280,6 +289,13 @@ public class JdlJob {
      */
     public String getResultDir() {
         return this.result;
+    }
+
+    /**
+     * @return The filename for the JobID in the result directory.
+     */
+    public String getJobIdFilenameInResultDir() {
+        return this.jobIdFilenameInResultDir;
     }
 
     /**
@@ -341,6 +357,14 @@ public class JdlJob {
      */
     public final void setName(final String newName) {
         this.name = newName;
+    }
+
+    /**
+     * @param fileName
+     *            the filename where to store the jobId in the result directory.
+     */
+    public final void setJobIdFilenameInResultDir(final String fileName) {
+        this.jobIdFilenameInResultDir = fileName;
     }
 
     /**
