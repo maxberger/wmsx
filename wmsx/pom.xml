@@ -84,12 +84,13 @@
             <descriptor>src/assemble/distribution.xml</descriptor>
           </descriptors>
           <attach>false</attach>
+          <outputDirectory>${project.build.directory}/site/download</outputDirectory>
         </configuration>
         <executions>
           <execution>
-            <phase>package</phase>
+            <phase>site</phase>
             <goals>
-              <goal>attached</goal>
+              <goal>single</goal>
             </goals>
           </execution>
         </executions>
