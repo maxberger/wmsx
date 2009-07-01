@@ -79,6 +79,7 @@ public class Requestor {
     /**
      * getWmsxService is Getter which returns the WmsxService.
      * 
+     * @param reconnect if true, try reconnect, otherwise give current service object back
      * @return WmsxService to the provider
      */
     public Wmsx getWmsxService(boolean reconnect) {

@@ -29,10 +29,20 @@ public class JobTableModel extends AbstractTableModel implements Observer {
             "Created", "Started", "Finished", "State", "Type", "WorkerID" };
 
     private List<JobData> data;
-    private final String dateFormatStr = "HH:mm:ss dd.MM.yyyy";
+    private static final String DATEFORMATSTR = "HH:mm:ss dd.MM.yyyy";
+
+    private static final int COLUMN0 = 0;
+    private static final int COLUMN1 = 1;
+    private static final int COLUMN2 = 2;
+    private static final int COLUMN3 = 3;
+    private static final int COLUMN4 = 4;
+    private static final int COLUMN5 = 5;
+    private static final int COLUMN6 = 6;
+    private static final int COLUMN7 = 7;
+    private static final int COLUMN8 = 8;
 
     /**
-     *
+     * Constructor for a JobTableModel object.
      */
     public JobTableModel() {
         this.businessman = BusinessManager.getInstance();
@@ -41,9 +51,10 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     }
 
     /**
-     * 
-     * @param o
-     * @param obj
+     * update will be executed, when an observable sends this event, so the
+     * tableModel has to be updated.
+     * @param o Observable, which sends the event
+     * @param obj Some object, which has changed
      */
     @Override
     public void update(final Observable o, final Object obj) {
@@ -58,8 +69,8 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     }
 
     /**
-     * 
-     * @return
+     * getColumnCount returns the current column count.
+     * @return column count of the current table
      */
     @Override
     public int getColumnCount() {
@@ -67,8 +78,8 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     }
 
     /**
-     * 
-     * @return
+     * getRowCount returns the current row count.
+     * @return row count of the current table
      */
     @Override
     public int getRowCount() {
@@ -76,9 +87,9 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     }
 
     /**
-     * 
-     * @param col
-     * @return
+     * getColumnName returns the column name for the given column.
+     * @param col column index, for the column name
+     * @return column name for the given column index
      */
     @Override
     public String getColumnName(final int col) {
@@ -86,46 +97,46 @@ public class JobTableModel extends AbstractTableModel implements Observer {
     }
 
     /**
-     * 
-     * @param row
-     * @param col
-     * @return
+     * getValueAt returns the specific value at the given position in the table.
+     * @param row row index for the value
+     * @param col column index for the value
+     * @return value at the given position (row,col)
      */
     @Override
     public Object getValueAt(final int row, final int col) {
         if ((this.data.size() > 0) && (this.data.get(row) != null)) {
             final DateFormat dateFormat = new SimpleDateFormat(
-                    this.dateFormatStr);
+                    this.DATEFORMATSTR);
 
             switch (col) {
-                case 0:
+                case COLUMN0:
                     return this.data.get(row).getTransportJobUID();
-                case 1:
+                case COLUMN1:
                     return this.data.get(row).getJobinfo().getExecutable();
-                case 2:
+                case COLUMN2:
                     return this.data.get(row).getJobinfo().getSiteId();
-                case 3:
+                case COLUMN3:
                     return (this.data.get(row).getJobinfo().getCreationTime() != null) ? dateFormat
                             .format(this.data.get(row).getJobinfo()
                                     .getCreationTime())
                             : "";
-                case 4:
+                case COLUMN4:
                     return (this.data.get(row).getJobinfo()
                             .getStartRunningTime() != null) ? dateFormat
                             .format(this.data.get(row).getJobinfo()
                                     .getStartRunningTime()) : "";
-                case 5:
+                case COLUMN5:
                     return (this.data.get(row).getJobinfo()
                             .getDoneRunningTime() != null) ? dateFormat
                             .format(this.data.get(row).getJobinfo()
                                     .getDoneRunningTime()) : "";
-                case 6:
+                case COLUMN6:
                     return this.data.get(row).getJobinfo().getStatus()
                             .toString();
-                case 7:
+                case COLUMN7:
                     return (this.data.get(row).getJobinfo().isWorker() == true) ? "Worker"
                             : "Job";
-                case 8:
+                case COLUMN8:
                     return this.data.get(row).getJobinfo().getWorkerId();
                 default:
                     return this.data.get(row).getTransportJobUID().toString();
@@ -141,9 +152,9 @@ public class JobTableModel extends AbstractTableModel implements Observer {
      * contain text ("true"/"false"), rather than a check box.
      */
     /**
-     * 
-     * @param c
-     * @return
+     * getColumnClass returns the class type of the given column.
+     * @param c column index
+     * @return class type for the given column index
      */
     @Override
     public Class getColumnClass(final int c) {
@@ -160,10 +171,10 @@ public class JobTableModel extends AbstractTableModel implements Observer {
      * Don't need to implement this method unless your table's editable.
      */
     /**
-     * 
-     * @param row
-     * @param col
-     * @return
+     * isCellEditable returns true or false, if the cell is editable.
+     * @param row row index
+     * @param col column index
+     * @return true, if cell is editable, otherwise false
      */
     @Override
     public boolean isCellEditable(final int row, final int col) {

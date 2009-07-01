@@ -38,7 +38,7 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
     private final Icon gridIcon;
 
     /**
-     *
+     * Creates a new TreeCellrenderer object.
      */
     public MyTreeCellRenderer() {
         this.runningIcon = new ImageIcon(this.getClass()
@@ -61,15 +61,16 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     /**
-     * 
-     * @param tree
-     * @param value
-     * @param sel
-     * @param expanded
-     * @param leaf
-     * @param row
-     * @param hasFocus
-     * @return
+     * getTreeCellRendererComponent returns the cell content for the given
+     * cell value.
+     * @param tree JTree, which contains the cell
+     * @param value cell value (JobData)
+     * @param sel is the cell selected?
+     * @param expanded is the cell expanded?
+     * @param leaf is the cell a leaf?
+     * @param row row count of the cell
+     * @param hasFocus has the cell a focus?
+     * @return cell component object with content for the given cell value
      */
     @Override
     public Component getTreeCellRendererComponent(final JTree tree,
@@ -116,9 +117,9 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     /**
-     * 
-     * @param value
-     * @return
+     * isJob checks if the given object is an instance of JobData.
+     * @param value object, which should be checked
+     * @return true, if the given object is an instance of JobData, otherwise false
      */
     protected boolean isJob(final Object value) {
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;

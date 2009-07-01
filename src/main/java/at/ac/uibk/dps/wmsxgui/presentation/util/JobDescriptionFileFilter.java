@@ -18,6 +18,12 @@ import javax.swing.filechooser.FileFilter;
 public class JobDescriptionFileFilter extends FileFilter {
 
     // Accept all directories and jdl files.
+
+    /**
+     * Constructor for the JobDescriptionFileFilter.
+     */
+    public JobDescriptionFileFilter(){}
+
     /**
      * accept checks the given File, if it's a directory or a jdl file.
      * 

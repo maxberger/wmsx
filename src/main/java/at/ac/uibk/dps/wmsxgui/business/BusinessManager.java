@@ -39,7 +39,7 @@ import net.jini.lease.LeaseRenewalManager;
  * @author WmsxGUI Team
  * @version 1.0
  */
-public class BusinessManager extends Observable implements RemoteEventListener {
+public final class BusinessManager extends Observable implements RemoteEventListener {
     private static final long serialVersionUID = 4569728891303483934L;
 
     private Requestor requestor;
@@ -79,6 +79,8 @@ public class BusinessManager extends Observable implements RemoteEventListener {
      */
     private static class SingletonHolder {
         private static BusinessManager INSTANCE = new BusinessManager();
+
+        private SingletonHolder(){}
     }
 
     /**
@@ -113,12 +115,12 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     /**
      * setCurrentBackend is a Setter for the current backend.
      * 
-     * @param currentBackend
+     * @param pcurrentBackend
      *            Backend which should be active now
      */
-    public void setCurrentBackend(final String currentBackend) {
-        this.currentBackend = currentBackend;
-        this.updateObservers(currentBackend);
+    public void setCurrentBackend(final String pcurrentBackend) {
+        this.currentBackend = pcurrentBackend;
+        this.updateObservers(pcurrentBackend);
     }
 
     /**
@@ -134,12 +136,17 @@ public class BusinessManager extends Observable implements RemoteEventListener {
         }
     }
 
+    /**
+     * reConnect tries to reconnect to the provider, if the program is in offline
+     * modus.
+     * @param reconnectRequestor if true, try reconnect, otherwise give current service object back
+     */
     public void reConnect(boolean reconnectRequestor)
     {
         this.requestor = Requestor.getInstance();
         this.wmsxService = this.requestor.getWmsxService(reconnectRequestor);
 
-        System.out.println("BusinessManager do reConnect: isOnline: "+isOnline());
+        System.out.println("BusinessManager do reConnect: isOnline: " + isOnline());
         
         if (this.isOnline()) {
             try {
@@ -154,7 +161,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
                 this.lease = this.wmsxService.registerEventListener(this.stub);
 
                 this.manager = new LeaseRenewalManager();
-                this.manager.renewFor(this.lease, Lease.FOREVER, 30000,
+                this.manager.renewFor(this.lease, Lease.FOREVER, Lease.DURATION,
                                       new DebugListener());
 
             } catch (final Exception re) {
@@ -200,7 +207,7 @@ public class BusinessManager extends Observable implements RemoteEventListener {
      * 
      * @return Backends from the BusinessData
      */
-    public Iterable<String> getBackends() {
+    public synchronized Iterable<String> getBackends() {
         return this.backends;
     }
 
@@ -337,34 +344,37 @@ public class BusinessManager extends Observable implements RemoteEventListener {
     public synchronized void notify(final RemoteEvent re)
             throws UnknownEventException, RemoteException {
 
-        final JobChangeEvent e = (JobChangeEvent) re;
-        System.out.println("BusinessManager: notified by provider..."
-                + e.getJobUid() + " State: " + e.getState());
+        if (re instanceof JobChangeEvent)
+        {
+            final JobChangeEvent e = (JobChangeEvent) re;
+            System.out.println("BusinessManager: notified by provider..."
+                    + e.getJobUid() + " State: " + e.getState());
 
-        // Achtung: Fake vs. fake --> darum toLowerCase
-        if (this.jobMap != null) {
-            boolean found = false;
+            // Achtung: Fake vs. fake --> darum toLowerCase
+            if (this.jobMap != null) {
+                boolean found = false;
 
-            for (final JobData job : this.jobMap.get(e.getJobUid().getBackend()
-                    .toLowerCase(Locale.getDefault()))) {
-                if (job.getTransportJobUID().equals(e.getJobUid())) {
-                    found = true;
-                    job.setJobinfo(this.wmsxService.getJobInfo(e.getJobUid()));
-                    this.updateObservers(job);
-                    break;
+                for (final JobData job : this.jobMap.get(e.getJobUid().getBackend()
+                        .toLowerCase(Locale.getDefault()))) {
+                    if (job.getTransportJobUID().equals(e.getJobUid())) {
+                        found = true;
+                        job.setJobinfo(this.wmsxService.getJobInfo(e.getJobUid()));
+                        this.updateObservers(job);
+                        break;
+                    }
                 }
-            }
-            // falls noch nicht vorhanden add job
-            if (!found) {
-                System.out.println("BusinessManager - notify: add new Job: "
-                        + e.getJobUid());
-                final JobData newJob = new JobData(e.getJobUid(), this.wmsxService
-                        .getJobInfo(e.getJobUid())); 
-                this.jobMap.get(
-                                e.getJobUid().getBackend()
-                                        .toLowerCase(Locale.getDefault()))
-                        .add(newJob);
-                this.updateObservers(newJob);
+                // falls noch nicht vorhanden add job
+                if (!found) {
+                    System.out.println("BusinessManager - notify: add new Job: "
+                            + e.getJobUid());
+                    final JobData newJob = new JobData(e.getJobUid(), this.wmsxService
+                            .getJobInfo(e.getJobUid()));
+                    this.jobMap.get(
+                                    e.getJobUid().getBackend()
+                                            .toLowerCase(Locale.getDefault()))
+                            .add(newJob);
+                    this.updateObservers(newJob);
+                }
             }
         }
 
