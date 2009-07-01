@@ -25,6 +25,7 @@ import hu.kfki.grid.wmsx.util.LogUtil;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import org.gridlab.gat.AdaptorInfo;
@@ -149,7 +150,8 @@ public final class GatCommon {
      *            new VO
      */
     public void setVo(final String vo) {
-        VoData.getInstance().addToContext(vo, this.context);
+        final String vol = vo.toLowerCase(Locale.ENGLISH);
+        this.context.addPreference("VirtualOrganisation", vol);
     }
 
 }
