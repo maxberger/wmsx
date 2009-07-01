@@ -143,7 +143,8 @@ public class VirtualFileTest {
         oos.writeObject(f);
         oos.close();
         Assert.assertTrue(serial.length() > VirtualFileTest.BUF_COUNT
-                * VirtualFileTest.BUF_SIZE);
+                * VirtualFileTest.BUF_SIZE, serial.length() + " > "
+                + VirtualFileTest.BUF_COUNT * VirtualFileTest.BUF_SIZE);
     }
 
     /**
