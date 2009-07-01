@@ -22,7 +22,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -49,7 +48,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     private DefaultMutableTreeNode rootNode;
     private DefaultTreeModel treeModel;
     private JobData currentJobData;
-    private final String dateFormatStr = "HH:mm:ss - EEE d. MMM yyyy";
+    private static final String DATEFORMATSTR = "HH:mm:ss - EEE d. MMM yyyy";
 
     /**
      * MainWindow creates a new main frame window.
@@ -1047,9 +1046,10 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     }
 
     /**
-     * 
-     * @param o
-     * @param obj
+     * update will be executed, when an observable sends this event, so the
+     * treeModel has to be updated.
+     * @param o Observable, which sends the event
+     * @param obj Some object, which has changed
      */
     @Override
     public void update(final Observable o, final Object obj) {
@@ -1072,8 +1072,8 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     }
 
     /**
-     * 
-     * @param keepOldData
+     * updateBusinessManager tries to update the BusinessManager.
+     * @param keepOldData if true keep old data and refresh, otherwise do cleanup
      */
     public void updateBusinessManager(final boolean keepOldData) {
         if (this.businessman.isOnline())
@@ -1094,7 +1094,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                     + this.currentJobData);
 
             final DateFormat dateFormat = new SimpleDateFormat(
-                    this.dateFormatStr);
+                    this.DATEFORMATSTR);
 
             this.tb_jobdetails_jobuid.setText(this.currentJobData
                     .getTransportJobUID().toString());

@@ -36,7 +36,11 @@ public class Options extends javax.swing.JDialog {
     private final BusinessManager businessman;
     private final Wmsx wmsx_service;
 
-    /** Creates new form Optionen. */
+    /** Creates new form Optionen.
+     * 
+     * @param parent parent window
+     * @param modal true, if this Dialog should be modal, otherwise false
+     */
     public Options(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         this.businessman = BusinessManager.getInstance();
@@ -56,7 +60,7 @@ public class Options extends javax.swing.JDialog {
     }
 
     /**
-     * Positioniert das Fenster genau in der Mitte des Bildschirmes...
+     * Positioniert das Fenster genau in der Mitte des Bildschirmes.
      * 
      */
     private void centerScreen() {
@@ -111,6 +115,11 @@ public class Options extends javax.swing.JDialog {
         tb_maxjobcount.setText("5");
 
         btn_setmaxjobcount.setText("set");
+        btn_setmaxjobcount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_setmaxjobcountActionPerformed(evt);
+            }
+        });
 
         cb_backend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -237,10 +246,10 @@ public class Options extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(tb_maxjobcount, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
+                                .addComponent(tb_maxjobcount, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btn_setmaxjobcount))
-                            .addComponent(cb_backend, 0, 347, Short.MAX_VALUE)))
+                            .addComponent(cb_backend, 0, 387, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
@@ -287,6 +296,33 @@ public class Options extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_cb_backendActionPerformed
 
+    private void btn_setmaxjobcountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_setmaxjobcountActionPerformed
+        try {
+            final int maxjobcnt = Integer.parseInt(this.tb_maxjobcount
+                    .getText());
+
+            if (maxjobcnt > 0) {
+
+                this.wmsx_service.setMaxJobs(maxjobcnt);
+
+            } else {
+                JOptionPane
+                        .showMessageDialog(
+                                           this,
+                                           "MaxJobCount has to be greater than zero!",
+                                           "WMSX GUI - Options",
+                                           JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (final NumberFormatException e) {
+            JOptionPane
+                    .showMessageDialog(this,
+                                       "MaxJobCount isn't an valid Integer!",
+                                       "WMSX GUI - Options",
+                                       JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btn_setmaxjobcountActionPerformed
+
     private void btn_setafspasswordActionPerformed(
             final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setafspasswordActionPerformed
         this.wmsx_service.setBackend(cb_backend.getSelectedItem().toString());
@@ -317,34 +353,6 @@ public class Options extends javax.swing.JDialog {
             
         // die funktion gibts nicht :-(
     }// GEN-LAST:event_btn_forgetgridpasswordActionPerformed
-
-    private void btn_setmaxjobcountActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setmaxjobcountActionPerformed
-        try {
-            final int maxjobcnt = Integer.parseInt(this.tb_maxjobcount
-                    .getText());
-
-            if (maxjobcnt > 0) {
-
-                this.wmsx_service.setMaxJobs(maxjobcnt);
-
-            } else {
-                JOptionPane
-                        .showMessageDialog(
-                                           this,
-                                           "MaxJobCount has to be greater than zero!",
-                                           "WMSX GUI - Options",
-                                           JOptionPane.ERROR_MESSAGE);
-            }
-
-        } catch (final NumberFormatException e) {
-            JOptionPane
-                    .showMessageDialog(this,
-                                       "MaxJobCount isn't an valid Integer!",
-                                       "WMSX GUI - Options",
-                                       JOptionPane.ERROR_MESSAGE);
-        }
-    }// GEN-LAST:event_btn_setmaxjobcountActionPerformed
 
     private void btn_closeActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_closeActionPerformed
         this.dispose();

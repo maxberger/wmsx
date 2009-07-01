@@ -20,8 +20,13 @@ import java.awt.Rectangle;
  * @version 1.0
  */
 public class About extends javax.swing.JDialog {
+    private static final long serialVersionUID = 249262904881341511L;
 
-    /** Creates new form NewJDialog */
+    /**
+     * Creates new form About.
+     * @param parent parent window
+     * @param modal true, if this Dialog should be modal, otherwise false
+     */
     public About(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -29,7 +34,7 @@ public class About extends javax.swing.JDialog {
     }
 
      /**
-     * Positioniert das Fenster genau in der Mitte des Bildschirmes...
+     * Positioniert das Fenster genau in der Mitte des Bildschirmes.
      *
      */
     private void centerScreen() {

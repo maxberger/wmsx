@@ -12,14 +12,15 @@ import at.ac.uibk.dps.wmsxgui.presentation.MainWindow;
  * @author WmsxGUI Team
  * @version 1.0
  */
-public class App {
+public final class App {
 
+    private App(){}
     /**
-     * @param args
-     *            the command line arguments
+     * @param args the command line arguments
      */
     public static void main(final String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
 
                 System.out.println("wmsx-gui is starting...");

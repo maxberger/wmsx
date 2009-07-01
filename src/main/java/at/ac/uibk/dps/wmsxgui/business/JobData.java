@@ -19,28 +19,31 @@ public class JobData {
     private final TransportJobUID transportJobUID;
     private JobInfo jobinfo;
 
+    private static final int HASHINT = 97;
+    private static final int HASHINTINIT = 5;
+
     /**
      * JobData is the constructor, which creates an JobData object.
      * 
-     * @param transportJobUID
+     * @param ptransportJobUID
      *            TransportJobUID object, which will be set to the JobData
      *            object
-     * @param jobinfo
+     * @param pjobinfo
      *            JobInfo object, which will be set to the JobData object
      */
-    public JobData(final TransportJobUID transportJobUID, final JobInfo jobinfo) {
-        this.transportJobUID = transportJobUID;
-        this.jobinfo = jobinfo;
+    public JobData(final TransportJobUID ptransportJobUID, final JobInfo pjobinfo) {
+        this.transportJobUID = ptransportJobUID;
+        this.jobinfo = pjobinfo;
     }
 
     /**
      * setJobinfo is a Setter for the Jobinfo Object wrapped by JobData.
      * 
-     * @param jobinfo
+     * @param pjobinfo
      *            JobInfo object, which will be set to the JobData object
      */
-    public void setJobinfo(final JobInfo jobinfo) {
-        this.jobinfo = jobinfo;
+    public void setJobinfo(final JobInfo pjobinfo) {
+        this.jobinfo = pjobinfo;
     }
 
     /**
@@ -103,12 +106,12 @@ public class JobData {
      */
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97
+        int hash = HASHINTINIT;
+        hash = HASHINT
                 * hash
                 + (this.transportJobUID != null ? this.transportJobUID
                         .hashCode() : 0);
-        hash = 97 * hash + (this.jobinfo != null ? this.jobinfo.hashCode() : 0);
+        hash = HASHINT * hash + (this.jobinfo != null ? this.jobinfo.hashCode() : 0);
         return hash;
     }
 

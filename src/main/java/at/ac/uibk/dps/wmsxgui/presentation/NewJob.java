@@ -45,7 +45,8 @@ public class NewJob extends javax.swing.JDialog {
     /**
      * Creates new form NewJob.
      * 
-     * @param mainWindow
+     * @param parent parent window
+     * @param modal true, if this Dialog should be modal, otherwise false
      */
     public NewJob(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -74,7 +75,7 @@ public class NewJob extends javax.swing.JDialog {
 
 
     /**
-     * Positioniert das Fenster genau in der Mitte des Bildschirmes...
+     * Positioniert das Fenster genau in der Mitte des Bildschirmes.
      * 
      */
     private void centerScreen() {
