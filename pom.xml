@@ -13,8 +13,8 @@
   </issueManagement>
   <scm>
     <connection>scm:hg:http://wmsx.max.berger.name/hg/wmsx</connection>
-    <developerConnection>scm:hg:https://wmsx.max.berger.name/hg/wmsx</developerConnection>
-    <url>http://wmsx.max.berger.name/hg/wmsx</url>
+    <developerConnection>scm:hg:ssh://wmsx.max.berger.name//home/wmsx/hg/repos/wmsx</developerConnection>
+    <url>http://wmsx.max.berger.name/hg/wmsx/file</url>
   </scm>
   <licenses>
     <license>
