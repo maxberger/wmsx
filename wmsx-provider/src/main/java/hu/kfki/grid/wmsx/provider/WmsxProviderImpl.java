@@ -46,6 +46,7 @@ import hu.kfki.grid.wmsx.worker.ControllerServer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -237,52 +238,70 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
 
     private JobUid reallySubmitJdl(final JdlJob job, final Backend backend) {
         final String output = job.getOutput();
-        this.runPreexec(job, output);
-        WmsxProviderImpl.LOGGER.info("Submitting " + job);
-        SubmissionResults result;
-        try {
-            final JobUid id;
-            result = backend.submitJob(job.getJobDescription(), this.vo);
-            if (result != null) {
-                id = result.getJobId();
-
-                WmsxProviderImpl.LOGGER.info("Job id is: " + id);
-
-                this.fillInInfo(id, job);
-
-                JobWatcher.getInstance()
-                        .addWatch(id, LogListener.getInstance());
-                JobWatcher.getInstance().addWatch(id, this);
-
-                if (ResultListener.getInstance().setJob(id, job)) {
-                    JobWatcher.getInstance().addWatch(id,
-                            ResultListener.getInstance());
-                }
-                final WritableByteChannel oChannel;
-                if (output != null && result.getOStream() != null) {
-                    new File(output).getParentFile().mkdirs();
-                    oChannel = new FileOutputStream(output).getChannel();
+        final boolean shouldSubmit = this.runPreexec(job, output);
+        if (shouldSubmit) {
+            WmsxProviderImpl.LOGGER.info("Submitting " + job);
+            SubmissionResults result;
+            try {
+                final JobUid id;
+                result = backend.submitJob(job.getJobDescription(), this.vo);
+                if (result == null) {
+                    id = null;
                 } else {
-                    oChannel = null;
+                    id = this.postProcessSubmittedJob(job, output, result);
                 }
-                JobWatcher.getInstance().addWatch(id,
-                        ShadowListener.listen(result, oChannel));
-                synchronized (this.workDir) {
-                    this.appendURILine(id, new File(this.workDir,
-                            WmsxProviderImpl.JOBIDS_ALL));
-                    this.appendURILine(id, new File(this.workDir,
-                            WmsxProviderImpl.JOBIDS_RUNNING));
-                }
-            } else {
-                id = null;
+                return id;
+            } catch (final IOException e) {
+                WmsxProviderImpl.LOGGER.warning(LogUtil.logException(e));
+            } catch (final NullPointerException e) {
+                WmsxProviderImpl.LOGGER.warning(LogUtil.logException(e));
             }
-            return id;
-        } catch (final IOException e) {
-            WmsxProviderImpl.LOGGER.warning(LogUtil.logException(e));
-        } catch (final NullPointerException e) {
-            WmsxProviderImpl.LOGGER.warning(LogUtil.logException(e));
+        } else {
+            WmsxProviderImpl.LOGGER
+                    .info("Preexec script returned a value != 0, not submitting job!");
         }
         return null;
+    }
+
+    /**
+     * @param job
+     * @param output
+     * @param result
+     * @return
+     * @throws FileNotFoundException
+     */
+    private JobUid postProcessSubmittedJob(final JdlJob job,
+            final String output, final SubmissionResults result)
+            throws FileNotFoundException {
+        final JobUid id;
+        id = result.getJobId();
+
+        WmsxProviderImpl.LOGGER.info("Job id is: " + id);
+
+        this.fillInInfo(id, job);
+
+        JobWatcher.getInstance().addWatch(id, LogListener.getInstance());
+        JobWatcher.getInstance().addWatch(id, this);
+
+        if (ResultListener.getInstance().setJob(id, job)) {
+            JobWatcher.getInstance().addWatch(id, ResultListener.getInstance());
+        }
+        final WritableByteChannel oChannel;
+        if (output != null && result.getOStream() != null) {
+            new File(output).getParentFile().mkdirs();
+            oChannel = new FileOutputStream(output).getChannel();
+        } else {
+            oChannel = null;
+        }
+        JobWatcher.getInstance().addWatch(id,
+                ShadowListener.listen(result, oChannel));
+        synchronized (this.workDir) {
+            this.appendURILine(id, new File(this.workDir,
+                    WmsxProviderImpl.JOBIDS_ALL));
+            this.appendURILine(id, new File(this.workDir,
+                    WmsxProviderImpl.JOBIDS_RUNNING));
+        }
+        return id;
     }
 
     /**
@@ -298,22 +317,24 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
         info.setDescription(job.getJobDescription().getName());
     }
 
-    private void runPreexec(final JdlJob job, final String output) {
+    private boolean runPreexec(final JdlJob job, final String output) {
         final String preexec = job.getPreexec();
-        if (preexec != null) {
+        if (preexec == null) {
+            return true;
+        } else {
             WmsxProviderImpl.LOGGER.info("Running " + preexec);
-
             final List<String> cmdVec = new Vector<String>();
             cmdVec.add(preexec);
             cmdVec.add(job.getCommand());
             cmdVec.add(job.getResultDir());
             cmdVec.addAll(Arrays.asList(job.getArgs()));
 
-            ScriptLauncher.getInstance().launchScript(
+            final int preRetVal = ScriptLauncher.getInstance().launchScript(
                     cmdVec.toArray(new String[0]),
                     output + WmsxProviderImpl.PREEXEC_SUFFIX,
                     output + WmsxProviderImpl.PREEXEC_SUFFIX,
                     new File(job.getResultDir()));
+            return preRetVal == 0;
         }
     }
 
