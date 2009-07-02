@@ -33,17 +33,7 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-3</version>
-        <configuration>
-          <descriptors>
-            <descriptor>src/assemble/src.xml</descriptor>
-          </descriptors>
-          <attach>false</attach>
-        </configuration>
-      </plugin>
-    </plugins>
+   </plugins>
   </build>
   <modules>
     <module>wmsx-api</module>
@@ -85,4 +75,36 @@
       <url>http://wmsx.max.berger.name/m2</url>
     </repository>
   </repositories>
+  <profiles>
+    <profile>
+      <id>inparent</id>
+      <activation>
+        <file>
+            <exists>src/assemble/src.xml</exists>
+</file>
+      </activation>
+<build>
+<plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-3</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assemble/src.xml</descriptor>
+          </descriptors>
+ <outputDirectory>${basedir}/wmsx/target/site/download</outputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>site</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+</build>
+    </profile>
+  </profiles>
 </project>
