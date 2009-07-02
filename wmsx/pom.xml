@@ -31,6 +31,8 @@
       <artifactId>gat-adaptors</artifactId>
       <type>zip</type>
       <version>0.2</version>
+      <!-- It is not needed for test, but for expansion -->
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <pluginRepositories>
