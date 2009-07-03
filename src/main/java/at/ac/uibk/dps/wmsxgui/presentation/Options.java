@@ -36,12 +36,15 @@ public class Options extends javax.swing.JDialog {
     private final BusinessManager businessman;
     private final Wmsx wmsx_service;
 
-    /** Creates new form Optionen.
+    /**
+     * Creates new form Optionen.
      * 
-     * @param parent parent window
-     * @param modal true, if this Dialog should be modal, otherwise false
+     * @param parent
+     *            parent window
+     * @param modal
+     *            true, if this Dialog should be modal, otherwise false
      */
-    public Options(java.awt.Frame parent, boolean modal) {
+    public Options(final java.awt.Frame parent, final boolean modal) {
         super(parent, modal);
         this.businessman = BusinessManager.getInstance();
         this.wmsx_service = this.businessman.getWmsxService();
@@ -78,225 +81,400 @@ public class Options extends javax.swing.JDialog {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed"
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed"
+    // desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btn_close = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        tb_maxjobcount = new javax.swing.JTextField();
-        btn_setmaxjobcount = new javax.swing.JButton();
-        cb_backend = new javax.swing.JComboBox();
-        l_backend = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        pf_gridpassword = new javax.swing.JPasswordField();
-        pf_afspassword = new javax.swing.JPasswordField();
-        tfVo = new javax.swing.JTextField();
-        btn_setafspassword = new javax.swing.JButton();
-        btn_setgridpassword = new javax.swing.JButton();
-        btn_forgetgridpassword = new javax.swing.JButton();
-        btn_forgetafspassword = new javax.swing.JButton();
-        btn_setVo = new javax.swing.JButton();
+        this.btn_close = new javax.swing.JButton();
+        this.jLabel1 = new javax.swing.JLabel();
+        this.tb_maxjobcount = new javax.swing.JTextField();
+        this.btn_setmaxjobcount = new javax.swing.JButton();
+        this.cb_backend = new javax.swing.JComboBox();
+        this.l_backend = new javax.swing.JLabel();
+        this.jPanel1 = new javax.swing.JPanel();
+        this.jLabel3 = new javax.swing.JLabel();
+        this.jLabel2 = new javax.swing.JLabel();
+        this.jLabel4 = new javax.swing.JLabel();
+        this.pf_gridpassword = new javax.swing.JPasswordField();
+        this.pf_afspassword = new javax.swing.JPasswordField();
+        this.tfVo = new javax.swing.JTextField();
+        this.btn_setafspassword = new javax.swing.JButton();
+        this.btn_setgridpassword = new javax.swing.JButton();
+        this.btn_forgetgridpassword = new javax.swing.JButton();
+        this.btn_forgetafspassword = new javax.swing.JButton();
+        this.btn_setVo = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setResizable(false);
+        this
+                .setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        this.setResizable(false);
 
-        btn_close.setText("Close");
-        btn_close.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_closeActionPerformed(evt);
+        this.btn_close.setText("Close");
+        this.btn_close.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(final java.awt.event.ActionEvent evt) {
+                Options.this.btn_closeActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("Max JobCount");
+        this.jLabel1.setText("Max JobCount");
 
-        tb_maxjobcount.setText("5");
+        this.tb_maxjobcount.setText("5");
 
-        btn_setmaxjobcount.setText("set");
-        btn_setmaxjobcount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_setmaxjobcountActionPerformed(evt);
+        this.btn_setmaxjobcount.setText("set");
+        this.btn_setmaxjobcount
+                .addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(
+                            final java.awt.event.ActionEvent evt) {
+                        Options.this.btn_setmaxjobcountActionPerformed(evt);
+                    }
+                });
+
+        this.cb_backend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(final java.awt.event.ActionEvent evt) {
+                Options.this.cb_backendActionPerformed(evt);
             }
         });
 
-        cb_backend.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cb_backendActionPerformed(evt);
+        this.l_backend.setText("Backend");
+
+        this.jPanel1
+                .setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+
+        this.jLabel3.setText("Grid Password");
+
+        this.jLabel2.setText("Afs Password");
+
+        this.jLabel4.setText("VO");
+
+        this.pf_gridpassword.setText("jPasswordField1");
+
+        this.pf_afspassword.setText("jPasswordField1");
+
+        this.btn_setafspassword.setText("set");
+        this.btn_setafspassword.setEnabled(false);
+        this.btn_setafspassword
+                .addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(
+                            final java.awt.event.ActionEvent evt) {
+                        Options.this.btn_setafspasswordActionPerformed(evt);
+                    }
+                });
+
+        this.btn_setgridpassword.setText("set");
+        this.btn_setgridpassword.setEnabled(false);
+        this.btn_setgridpassword
+                .addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(
+                            final java.awt.event.ActionEvent evt) {
+                        Options.this.btn_setgridpasswordActionPerformed(evt);
+                    }
+                });
+
+        this.btn_forgetgridpassword.setText("forget");
+        this.btn_forgetgridpassword.setEnabled(false);
+        this.btn_forgetgridpassword
+                .addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(
+                            final java.awt.event.ActionEvent evt) {
+                        Options.this.btn_forgetgridpasswordActionPerformed(evt);
+                    }
+                });
+
+        this.btn_forgetafspassword.setText("forget");
+        this.btn_forgetafspassword.setEnabled(false);
+        this.btn_forgetafspassword
+                .addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(
+                            final java.awt.event.ActionEvent evt) {
+                        Options.this.btn_forgetafspasswordActionPerformed(evt);
+                    }
+                });
+
+        this.btn_setVo.setText("set");
+        this.btn_setVo.setEnabled(false);
+        this.btn_setVo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(final java.awt.event.ActionEvent evt) {
+                Options.this.btn_setVoActionPerformed(evt);
             }
         });
 
-        l_backend.setText("Backend");
+        final javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(
+                this.jPanel1);
+        this.jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout
+                .setHorizontalGroup(jPanel1Layout
+                        .createParallelGroup(
+                                             javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                  jPanel1Layout
+                                          .createSequentialGroup()
+                                          .addGroup(
+                                                    jPanel1Layout
+                                                            .createParallelGroup(
+                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
+                                                            .addComponent(
+                                                                          this.jLabel3)
+                                                            .addComponent(
+                                                                          this.jLabel2)
+                                                            .addComponent(
+                                                                          this.jLabel4))
+                                          .addPreferredGap(
+                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                          .addGroup(
+                                                    jPanel1Layout
+                                                            .createParallelGroup(
+                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
+                                                            .addComponent(
+                                                                          this.pf_gridpassword,
+                                                                          javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                          214,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                            .addComponent(
+                                                                          this.pf_afspassword,
+                                                                          javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                          214,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                            .addComponent(
+                                                                          this.tfVo,
+                                                                          javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                          226,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))
+                                          .addPreferredGap(
+                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                          .addGroup(
+                                                    jPanel1Layout
+                                                            .createParallelGroup(
+                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
+                                                            .addGroup(
+                                                                      jPanel1Layout
+                                                                              .createSequentialGroup()
+                                                                              .addGroup(
+                                                                                        jPanel1Layout
+                                                                                                .createParallelGroup(
+                                                                                                                     javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                .addComponent(
+                                                                                                              this.btn_setafspassword)
+                                                                                                .addComponent(
+                                                                                                              this.btn_setgridpassword))
+                                                                              .addPreferredGap(
+                                                                                               javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                              .addGroup(
+                                                                                        jPanel1Layout
+                                                                                                .createParallelGroup(
+                                                                                                                     javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                .addComponent(
+                                                                                                              this.btn_forgetgridpassword)
+                                                                                                .addComponent(
+                                                                                                              this.btn_forgetafspassword)))
+                                                            .addComponent(
+                                                                          this.btn_setVo))
+                                          .addContainerGap(
+                                                           javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                           Short.MAX_VALUE)));
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL,
+                               new java.awt.Component[] { this.pf_afspassword,
+                                       this.pf_gridpassword, this.tfVo });
 
-        jLabel3.setText("Grid Password");
+        jPanel1Layout
+                .setVerticalGroup(jPanel1Layout
+                        .createParallelGroup(
+                                             javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                  jPanel1Layout
+                                          .createSequentialGroup()
+                                          .addGroup(
+                                                    jPanel1Layout
+                                                            .createParallelGroup(
+                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
+                                                            .addComponent(
+                                                                          this.jLabel2)
+                                                            .addComponent(
+                                                                          this.btn_setafspassword)
+                                                            .addComponent(
+                                                                          this.btn_forgetafspassword)
+                                                            .addComponent(
+                                                                          this.pf_afspassword,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))
+                                          .addPreferredGap(
+                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                          .addGroup(
+                                                    jPanel1Layout
+                                                            .createParallelGroup(
+                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
+                                                            .addComponent(
+                                                                          this.jLabel3)
+                                                            .addComponent(
+                                                                          this.btn_setgridpassword)
+                                                            .addComponent(
+                                                                          this.btn_forgetgridpassword)
+                                                            .addComponent(
+                                                                          this.pf_gridpassword,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))
+                                          .addPreferredGap(
+                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                          .addGroup(
+                                                    jPanel1Layout
+                                                            .createParallelGroup(
+                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
+                                                            .addComponent(
+                                                                          this.jLabel4)
+                                                            .addComponent(
+                                                                          this.btn_setVo)
+                                                            .addComponent(
+                                                                          this.tfVo,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))));
 
-        jLabel2.setText("Afs Password");
+        final javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this
+                .getContentPane());
+        this.getContentPane().setLayout(layout);
+        layout
+                .setHorizontalGroup(layout
+                        .createParallelGroup(
+                                             javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                  layout
+                                          .createSequentialGroup()
+                                          .addGroup(
+                                                    layout
+                                                            .createParallelGroup(
+                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
+                                                            .addGroup(
+                                                                      layout
+                                                                              .createSequentialGroup()
+                                                                              .addGap(
+                                                                                      12,
+                                                                                      12,
+                                                                                      12)
+                                                                              .addGroup(
+                                                                                        layout
+                                                                                                .createParallelGroup(
+                                                                                                                     javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                .addComponent(
+                                                                                                              this.jLabel1)
+                                                                                                .addComponent(
+                                                                                                              this.l_backend))
+                                                                              .addPreferredGap(
+                                                                                               javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                              .addGroup(
+                                                                                        layout
+                                                                                                .createParallelGroup(
+                                                                                                                     javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                .addGroup(
+                                                                                                          layout
+                                                                                                                  .createSequentialGroup()
+                                                                                                                  .addComponent(
+                                                                                                                                this.tb_maxjobcount,
+                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                328,
+                                                                                                                                Short.MAX_VALUE)
+                                                                                                                  .addPreferredGap(
+                                                                                                                                   javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                                  .addComponent(
+                                                                                                                                this.btn_setmaxjobcount))
+                                                                                                .addComponent(
+                                                                                                              this.cb_backend,
+                                                                                                              0,
+                                                                                                              387,
+                                                                                                              Short.MAX_VALUE)))
+                                                            .addGroup(
+                                                                      layout
+                                                                              .createSequentialGroup()
+                                                                              .addContainerGap()
+                                                                              .addGroup(
+                                                                                        layout
+                                                                                                .createParallelGroup(
+                                                                                                                     javax.swing.GroupLayout.Alignment.CENTER)
+                                                                                                .addComponent(
+                                                                                                              this.btn_close,
+                                                                                                              javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                              84,
+                                                                                                              javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                .addComponent(
+                                                                                                              this.jPanel1,
+                                                                                                              javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                              javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                              javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                          .addContainerGap()));
+        layout
+                .setVerticalGroup(layout
+                        .createParallelGroup(
+                                             javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                  layout
+                                          .createSequentialGroup()
+                                          .addContainerGap()
+                                          .addGroup(
+                                                    layout
+                                                            .createParallelGroup(
+                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
+                                                            .addComponent(
+                                                                          this.jLabel1)
+                                                            .addComponent(
+                                                                          this.btn_setmaxjobcount)
+                                                            .addComponent(
+                                                                          this.tb_maxjobcount,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))
+                                          .addPreferredGap(
+                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                          .addGroup(
+                                                    layout
+                                                            .createParallelGroup(
+                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
+                                                            .addComponent(
+                                                                          this.l_backend)
+                                                            .addComponent(
+                                                                          this.cb_backend,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                          javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                          javax.swing.GroupLayout.PREFERRED_SIZE))
+                                          .addPreferredGap(
+                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                          .addComponent(
+                                                        this.jPanel1,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                          .addPreferredGap(
+                                                           javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                           javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                           Short.MAX_VALUE)
+                                          .addComponent(this.btn_close)
+                                          .addContainerGap()));
 
-        jLabel4.setText("VO");
-
-        pf_gridpassword.setText("jPasswordField1");
-
-        pf_afspassword.setText("jPasswordField1");
-
-        btn_setafspassword.setText("set");
-        btn_setafspassword.setEnabled(false);
-        btn_setafspassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_setafspasswordActionPerformed(evt);
-            }
-        });
-
-        btn_setgridpassword.setText("set");
-        btn_setgridpassword.setEnabled(false);
-        btn_setgridpassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_setgridpasswordActionPerformed(evt);
-            }
-        });
-
-        btn_forgetgridpassword.setText("forget");
-        btn_forgetgridpassword.setEnabled(false);
-        btn_forgetgridpassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_forgetgridpasswordActionPerformed(evt);
-            }
-        });
-
-        btn_forgetafspassword.setText("forget");
-        btn_forgetafspassword.setEnabled(false);
-        btn_forgetafspassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_forgetafspasswordActionPerformed(evt);
-            }
-        });
-
-        btn_setVo.setText("set");
-        btn_setVo.setEnabled(false);
-        btn_setVo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_setVoActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pf_gridpassword, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pf_afspassword, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tfVo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_setafspassword)
-                            .addComponent(btn_setgridpassword))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_forgetgridpassword)
-                            .addComponent(btn_forgetafspassword)))
-                    .addComponent(btn_setVo))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {pf_afspassword, pf_gridpassword, tfVo});
-
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(btn_setafspassword)
-                    .addComponent(btn_forgetafspassword)
-                    .addComponent(pf_afspassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(btn_setgridpassword)
-                    .addComponent(btn_forgetgridpassword)
-                    .addComponent(pf_gridpassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(btn_setVo)
-                    .addComponent(tfVo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(l_backend))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(tb_maxjobcount, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_setmaxjobcount))
-                            .addComponent(cb_backend, 0, 387, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(btn_close, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(btn_setmaxjobcount)
-                    .addComponent(tb_maxjobcount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(l_backend)
-                    .addComponent(cb_backend, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btn_close)
-                .addContainerGap())
-        );
-
-        pack();
+        this.pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_setVoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_setVoActionPerformed
-        wmsx_service.setBackend(cb_backend.getSelectedItem().toString());
-        wmsx_service.setVo(tfVo.getText());
-}//GEN-LAST:event_btn_setVoActionPerformed
+    private void btn_setVoActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setVoActionPerformed
+        this.wmsx_service.setBackend(this.cb_backend.getSelectedItem()
+                .toString());
+        this.wmsx_service.setVo(this.tfVo.getText());
+    }// GEN-LAST:event_btn_setVoActionPerformed
 
-    private void cb_backendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_backendActionPerformed
+    private void cb_backendActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cb_backendActionPerformed
         // TODO add your handling code here:
-        if(cb_backend.getSelectedItem()!=null){
-            btn_forgetafspassword.setEnabled(true);
-            //btn_forgetgridpassword.setEnabled(true);
-            btn_setVo.setEnabled(true);
-            btn_setafspassword.setEnabled(true);
-            btn_setgridpassword.setEnabled(true);
-            btn_setmaxjobcount.setEnabled(true);
+        if (this.cb_backend.getSelectedItem() != null) {
+            this.btn_forgetafspassword.setEnabled(true);
+            // btn_forgetgridpassword.setEnabled(true);
+            this.btn_setVo.setEnabled(true);
+            this.btn_setafspassword.setEnabled(true);
+            this.btn_setgridpassword.setEnabled(true);
+            this.btn_setmaxjobcount.setEnabled(true);
         }
-    }//GEN-LAST:event_cb_backendActionPerformed
+    }// GEN-LAST:event_cb_backendActionPerformed
 
-    private void btn_setmaxjobcountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_setmaxjobcountActionPerformed
+    private void btn_setmaxjobcountActionPerformed(
+            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setmaxjobcountActionPerformed
         try {
             final int maxjobcnt = Integer.parseInt(this.tb_maxjobcount
                     .getText());
@@ -321,36 +499,46 @@ public class Options extends javax.swing.JDialog {
                                        "WMSX GUI - Options",
                                        JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btn_setmaxjobcountActionPerformed
+    }// GEN-LAST:event_btn_setmaxjobcountActionPerformed
 
     private void btn_setafspasswordActionPerformed(
             final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setafspasswordActionPerformed
-        this.wmsx_service.setBackend(cb_backend.getSelectedItem().toString());
-        boolean suc = this.wmsx_service.rememberAfs(new String(this.pf_afspassword
-                .getPassword()));
-        if(!suc){
-            JOptionPane.showConfirmDialog(this, "Password is incorrect!", "Wrong password", JOptionPane.DEFAULT_OPTION,JOptionPane.ERROR_MESSAGE);
+        this.wmsx_service.setBackend(this.cb_backend.getSelectedItem()
+                .toString());
+        final boolean suc = this.wmsx_service.rememberAfs(new String(
+                this.pf_afspassword.getPassword()));
+        if (!suc) {
+            JOptionPane.showConfirmDialog(this, "Password is incorrect!",
+                                          "Wrong password",
+                                          JOptionPane.DEFAULT_OPTION,
+                                          JOptionPane.ERROR_MESSAGE);
         }
     }// GEN-LAST:event_btn_setafspasswordActionPerformed
 
     private void btn_setgridpasswordActionPerformed(
             final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setgridpasswordActionPerformed
-        this.wmsx_service.setBackend(cb_backend.getSelectedItem().toString());
-        boolean suc = this.wmsx_service.rememberGrid(new String(this.pf_gridpassword.getPassword()));
-        if(!suc){
-            JOptionPane.showConfirmDialog(this, "Password is incorrect!", "Wrong password", JOptionPane.DEFAULT_OPTION,JOptionPane.ERROR_MESSAGE);
+        this.wmsx_service.setBackend(this.cb_backend.getSelectedItem()
+                .toString());
+        final boolean suc = this.wmsx_service.rememberGrid(new String(
+                this.pf_gridpassword.getPassword()));
+        if (!suc) {
+            JOptionPane.showConfirmDialog(this, "Password is incorrect!",
+                                          "Wrong password",
+                                          JOptionPane.DEFAULT_OPTION,
+                                          JOptionPane.ERROR_MESSAGE);
         }
     }// GEN-LAST:event_btn_setgridpasswordActionPerformed
 
     private void btn_forgetafspasswordActionPerformed(
             final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_forgetafspasswordActionPerformed
-        this.wmsx_service.setBackend(cb_backend.getSelectedItem().toString());
+        this.wmsx_service.setBackend(this.cb_backend.getSelectedItem()
+                .toString());
         this.wmsx_service.forgetAfs();
     }// GEN-LAST:event_btn_forgetafspasswordActionPerformed
 
     private void btn_forgetgridpasswordActionPerformed(
             final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_forgetgridpasswordActionPerformed
-            
+
         // die funktion gibts nicht :-(
     }// GEN-LAST:event_btn_forgetgridpasswordActionPerformed
 

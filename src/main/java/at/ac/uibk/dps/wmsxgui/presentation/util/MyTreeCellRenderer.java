@@ -61,15 +61,23 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     /**
-     * getTreeCellRendererComponent returns the cell content for the given
-     * cell value.
-     * @param tree JTree, which contains the cell
-     * @param value cell value (JobData)
-     * @param sel is the cell selected?
-     * @param expanded is the cell expanded?
-     * @param leaf is the cell a leaf?
-     * @param row row count of the cell
-     * @param hasFocus has the cell a focus?
+     * getTreeCellRendererComponent returns the cell content for the given cell
+     * value.
+     * 
+     * @param tree
+     *            JTree, which contains the cell
+     * @param value
+     *            cell value (JobData)
+     * @param sel
+     *            is the cell selected?
+     * @param expanded
+     *            is the cell expanded?
+     * @param leaf
+     *            is the cell a leaf?
+     * @param row
+     *            row count of the cell
+     * @param hasFocus
+     *            has the cell a focus?
      * @return cell component object with content for the given cell value
      */
     @Override
@@ -110,7 +118,7 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
 
         } else {
             this.setIcon(this.gridIcon);
-            this.setToolTipText(null); // no tool tip
+            this.setToolTipText(null);
         }
 
         return this;
@@ -118,8 +126,11 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
 
     /**
      * isJob checks if the given object is an instance of JobData.
-     * @param value object, which should be checked
-     * @return true, if the given object is an instance of JobData, otherwise false
+     * 
+     * @param value
+     *            object, which should be checked
+     * @return true, if the given object is an instance of JobData, otherwise
+     *         false
      */
     protected boolean isJob(final Object value) {
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
