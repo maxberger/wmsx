@@ -10,6 +10,7 @@ import hu.kfki.grid.wmsx.TransportJobUID;
 import hu.kfki.grid.wmsx.Wmsx;
 
 import java.rmi.RemoteException;
+import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -39,12 +40,13 @@ import net.jini.lease.LeaseRenewalManager;
  * @author WmsxGUI Team
  * @version 1.0
  */
-public final class BusinessManager extends Observable implements RemoteEventListener {
+public final class BusinessManager extends Observable implements
+        RemoteEventListener {
     private static final long serialVersionUID = 4569728891303483934L;
 
     private Requestor requestor;
     private Wmsx wmsxService;
-    private Map<String, List<JobData>> jobMap = new HashMap<String, List<JobData>>();
+    private final Map<String, List<JobData>> jobMap = new HashMap<String, List<JobData>>();
     private Iterable<String> backends;
 
     private RemoteEventListener stub;
@@ -77,10 +79,11 @@ public final class BusinessManager extends Observable implements RemoteEventList
      * Private innere statische Klasse, realisiert Singleton Pattern
      * 
      */
-    private static class SingletonHolder {
-        private static BusinessManager INSTANCE = new BusinessManager();
+    private static final class SingletonHolder {
+        private static BusinessManager instance = new BusinessManager();
 
-        private SingletonHolder(){}
+        private SingletonHolder() {
+        }
     }
 
     /**
@@ -89,7 +92,7 @@ public final class BusinessManager extends Observable implements RemoteEventList
      * @return Instance der Game Klasse
      */
     public static BusinessManager getInstance() {
-        return SingletonHolder.INSTANCE;
+        return SingletonHolder.instance;
     }
 
     /* Singleton */
@@ -129,44 +132,42 @@ public final class BusinessManager extends Observable implements RemoteEventList
      * @return true if ther is a connection to the provider, otherwise false
      */
     public boolean isOnline() {
-        if ((this.wmsxService != null) && (this.wmsxService.ping(true)) ) {
-            return true;
-        } else {
-            return false;
-        }
+        return (this.wmsxService != null) && (this.wmsxService.ping(true));
     }
 
     /**
-     * reConnect tries to reconnect to the provider, if the program is in offline
-     * modus.
-     * @param reconnectRequestor if true, try reconnect, otherwise give current service object back
+     * reConnect tries to reconnect to the provider, if the program is in
+     * offline modus.
+     * 
+     * @param reconnectRequestor
+     *            if true, try reconnect, otherwise give current service object
+     *            back
      */
-    public void reConnect(boolean reconnectRequestor)
-    {
+    public void reConnect(final boolean reconnectRequestor) {
         this.requestor = Requestor.getInstance();
         this.wmsxService = this.requestor.getWmsxService(reconnectRequestor);
 
-        System.out.println("BusinessManager do reConnect: isOnline: " + isOnline());
-        
+        System.out.println("BusinessManager do reConnect: isOnline: "
+                + this.isOnline());
+
         if (this.isOnline()) {
+
+            final Exporter myDefaultExporter = new BasicJeriExporter(
+                    TcpServerEndpoint.getInstance(0), new BasicILFactory(),
+                    false, true);
+
             try {
-
-                final Exporter myDefaultExporter = new BasicJeriExporter(
-                        TcpServerEndpoint.getInstance(0), new BasicILFactory(),
-                        false, true);
-
                 this.stub = (RemoteEventListener) myDefaultExporter
                         .export(this);
-
-                this.lease = this.wmsxService.registerEventListener(this.stub);
-
-                this.manager = new LeaseRenewalManager();
-                this.manager.renewFor(this.lease, Lease.FOREVER, Lease.DURATION,
-                                      new DebugListener());
-
-            } catch (final Exception re) {
-                re.printStackTrace();
+            } catch (final ExportException e) {
+                e.printStackTrace();
             }
+
+            this.lease = this.wmsxService.registerEventListener(this.stub);
+
+            this.manager = new LeaseRenewalManager();
+            this.manager.renewFor(this.lease, Lease.FOREVER, Lease.DURATION,
+                                  new DebugListener());
 
             // fill BusinessData from wmsxService
             this.cleanupBusinessData();
@@ -344,8 +345,7 @@ public final class BusinessManager extends Observable implements RemoteEventList
     public synchronized void notify(final RemoteEvent re)
             throws UnknownEventException, RemoteException {
 
-        if (re instanceof JobChangeEvent)
-        {
+        if (re instanceof JobChangeEvent) {
             final JobChangeEvent e = (JobChangeEvent) re;
             System.out.println("BusinessManager: notified by provider..."
                     + e.getJobUid() + " State: " + e.getState());
@@ -354,21 +354,23 @@ public final class BusinessManager extends Observable implements RemoteEventList
             if (this.jobMap != null) {
                 boolean found = false;
 
-                for (final JobData job : this.jobMap.get(e.getJobUid().getBackend()
-                        .toLowerCase(Locale.getDefault()))) {
+                for (final JobData job : this.jobMap.get(e.getJobUid()
+                        .getBackend().toLowerCase(Locale.getDefault()))) {
                     if (job.getTransportJobUID().equals(e.getJobUid())) {
                         found = true;
-                        job.setJobinfo(this.wmsxService.getJobInfo(e.getJobUid()));
+                        job.setJobinfo(this.wmsxService.getJobInfo(e
+                                .getJobUid()));
                         this.updateObservers(job);
                         break;
                     }
                 }
                 // falls noch nicht vorhanden add job
                 if (!found) {
-                    System.out.println("BusinessManager - notify: add new Job: "
-                            + e.getJobUid());
-                    final JobData newJob = new JobData(e.getJobUid(), this.wmsxService
-                            .getJobInfo(e.getJobUid()));
+                    System.out
+                            .println("BusinessManager - notify: add new Job: "
+                                    + e.getJobUid());
+                    final JobData newJob = new JobData(e.getJobUid(),
+                            this.wmsxService.getJobInfo(e.getJobUid()));
                     this.jobMap.get(
                                     e.getJobUid().getBackend()
                                             .toLowerCase(Locale.getDefault()))

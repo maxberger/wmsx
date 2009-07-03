@@ -14,11 +14,14 @@ import at.ac.uibk.dps.wmsxgui.presentation.MainWindow;
  */
 public final class App {
 
-    private App(){}
+    private App() {
+    }
+
     /**
-     * @param args the command line arguments
+     * @param args
+     *            the command line arguments
      */
-    public static void main(final String args[]) {
+    public static void main(final String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {

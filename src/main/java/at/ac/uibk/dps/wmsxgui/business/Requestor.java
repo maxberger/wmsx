@@ -13,14 +13,14 @@ import javax.swing.JOptionPane;
  * @author WmsxGUI Team
  * @version 1.0
  */
-public class Requestor {
+public final class Requestor {
     private static final long serialVersionUID = -8474571551490820022L;
 
     private Wmsx wmsxService;
 
     /* Singleton Pattern */
     private Requestor() {
-        reConnect(true);
+        this.reConnect(true);
     }
 
     /**
@@ -28,7 +28,7 @@ public class Requestor {
      * 
      */
     private static class SingletonHolder {
-        private final static Requestor INSTANCE = new Requestor();
+        private static final Requestor INSTANCE = new Requestor();
     }
 
     /**
@@ -42,8 +42,7 @@ public class Requestor {
 
     /* Singleton */
 
-    private void reConnect(boolean infoMessage)
-    {
+    private void reConnect(final boolean infoMessage) {
         try {
             final FileInputStream fis = new FileInputStream("/tmp/wmsx-"
                     + System.getProperty("user.name"));
@@ -55,8 +54,7 @@ public class Requestor {
         } catch (final IOException io) {
             System.out.println("IOException: " + io.getMessage());
 
-            if (infoMessage)
-            {
+            if (infoMessage) {
                 final int result = JOptionPane
                         .showConfirmDialog(
                                            null,
@@ -76,16 +74,18 @@ public class Requestor {
                                           JOptionPane.ERROR_MESSAGE);
         }
     }
+
     /**
      * getWmsxService is Getter which returns the WmsxService.
      * 
-     * @param reconnect if true, try reconnect, otherwise give current service object back
+     * @param reconnect
+     *            if true, try reconnect, otherwise give current service object
+     *            back
      * @return WmsxService to the provider
      */
-    public Wmsx getWmsxService(boolean reconnect) {
-        if (reconnect)
-        {
-            reConnect(false);
+    public Wmsx getWmsxService(final boolean reconnect) {
+        if (reconnect) {
+            this.reConnect(false);
         }
 
         return this.wmsxService;

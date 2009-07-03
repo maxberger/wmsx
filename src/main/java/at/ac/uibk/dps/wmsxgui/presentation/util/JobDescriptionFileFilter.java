@@ -22,7 +22,8 @@ public class JobDescriptionFileFilter extends FileFilter {
     /**
      * Constructor for the JobDescriptionFileFilter.
      */
-    public JobDescriptionFileFilter(){}
+    public JobDescriptionFileFilter() {
+    }
 
     /**
      * accept checks the given File, if it's a directory or a jdl file.
@@ -39,7 +40,7 @@ public class JobDescriptionFileFilter extends FileFilter {
         }
 
         final String extension = this.getExtension(f);
-        
+
         return "jdl".equals(extension);
     }
 

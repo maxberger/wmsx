@@ -16,11 +16,11 @@ import hu.kfki.grid.wmsx.TransportJobUID;
 public class JobData {
     private static final long serialVersionUID = -1595944205656281484L;
 
-    private final TransportJobUID transportJobUID;
-    private JobInfo jobinfo;
-
     private static final int HASHINT = 97;
     private static final int HASHINTINIT = 5;
+
+    private final TransportJobUID transportJobUID;
+    private JobInfo jobinfo;
 
     /**
      * JobData is the constructor, which creates an JobData object.
@@ -31,7 +31,8 @@ public class JobData {
      * @param pjobinfo
      *            JobInfo object, which will be set to the JobData object
      */
-    public JobData(final TransportJobUID ptransportJobUID, final JobInfo pjobinfo) {
+    public JobData(final TransportJobUID ptransportJobUID,
+            final JobInfo pjobinfo) {
         this.transportJobUID = ptransportJobUID;
         this.jobinfo = pjobinfo;
     }
@@ -106,12 +107,16 @@ public class JobData {
      */
     @Override
     public int hashCode() {
-        int hash = HASHINTINIT;
-        hash = HASHINT
-                * hash
-                + (this.transportJobUID != null ? this.transportJobUID
-                        .hashCode() : 0);
-        hash = HASHINT * hash + (this.jobinfo != null ? this.jobinfo.hashCode() : 0);
+        int hash = JobData.HASHINTINIT;
+        hash = JobData.HASHINT * hash;
+        if (this.transportJobUID != null) {
+            hash = hash + this.transportJobUID.hashCode();
+        }
+        hash = JobData.HASHINT * hash;
+        if (this.jobinfo != null) {
+            hash = hash + this.jobinfo.hashCode();
+        }
+
         return hash;
     }
 
