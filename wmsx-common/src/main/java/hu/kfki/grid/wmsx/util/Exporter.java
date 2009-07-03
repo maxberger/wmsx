@@ -99,7 +99,7 @@ public final class Exporter {
      *            the actual implementation.
      * @return a remote proxy.
      */
-    public Object export(final Remote impl) {
+    public Remote export(final Remote impl) {
         String hostname;
         try {
             hostname = Exporter.getLocalHost().getHostAddress();
@@ -107,7 +107,7 @@ public final class Exporter {
             return null;
         }
 
-        Object stub = null;
+        Remote stub = null;
         int port = GlobusTcp.getInstance().getMinTcp();
         final int max = GlobusTcp.getInstance().getMaxTcp();
         synchronized (this.exporters) {
