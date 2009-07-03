@@ -103,7 +103,9 @@
         <module name="ModifiedControlVariable"/>
         <module name="MultipleStringLiterals"/>
         <module name="MultipleVariableDeclarations"/>
-        <module name="NestedIfDepth"/>
+        <module name="NestedIfDepth">
+            <property name="max" value="2"/>
+        </module>
         <module name="NestedTryDepth">
             <property name="max" value="2"/>
         </module>

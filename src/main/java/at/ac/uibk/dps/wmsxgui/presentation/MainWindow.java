@@ -248,7 +248,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
                 .setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         this.table_jobs.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(final java.awt.event.MouseEvent evt) {
-                MainWindow.this.table_jobsMouseClicked(evt);
+                MainWindow.this.tableJobsMouseClicked(evt);
             }
         });
         this.panel_table.setViewportView(this.table_jobs);
@@ -1043,15 +1043,17 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         this.pack();
     } // </editor-fold>//GEN-END:initComponents
 
+    // GEN-FIRST:event_menuItemAboutActionPerformed
     private void menuItemAboutActionPerformed(
-            final java.awt.event.ActionEvent evt) { // GEN-FIRST:event_menuItemAboutActionPerformed
+            final java.awt.event.ActionEvent evt) {
         final About dialog = new About(this, this.rootPaneCheckingEnabled);
         // System.out.println("MainWindow: Show NewJobDialog...");
         dialog.setVisible(true);
     } // GEN-LAST:event_menuItemAboutActionPerformed
 
+    // GEN-FIRST:event_menuItemReconnectActionPerformed
     private void menuItemReconnectActionPerformed(
-            final java.awt.event.ActionEvent evt) { // GEN-FIRST:event_menuItemReconnectActionPerformed
+            final java.awt.event.ActionEvent evt) {
         if (!this.businessman.isOnline()) {
             // System.out.println("MainWindow try reconnect...");
             this.businessman.reConnect(true);
@@ -1066,13 +1068,15 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         }
     } // GEN-LAST:event_menuItemReconnectActionPerformed
 
+    // GEN-FIRST:event_shortcutRefreshActionPerformed
     private void shortcutRefreshActionPerformed(
-            final java.awt.event.ActionEvent evt) { // GEN-FIRST:event_shortcutRefreshActionPerformed
+            final java.awt.event.ActionEvent evt) {
         this.updateBusinessManager(true);
     } // GEN-LAST:event_shortcutRefreshActionPerformed
 
+    // GEN-FIRST:event_shortcutCleanupActionPerformed
     private void shortcutCleanupActionPerformed(
-            final java.awt.event.ActionEvent evt) { // GEN-FIRST:event_shortcutCleanupActionPerformed
+            final java.awt.event.ActionEvent evt) {
         this.updateBusinessManager(false);
     } // GEN-LAST:event_shortcutCleanupActionPerformed
 
@@ -1161,9 +1165,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
         } else {
             this.setGUIOfflineMode(true);
         }
-    }
-
-    // GEN-LAST:event_menu_item_newjobActionPerformed
+    } // GEN-LAST:event_menu_item_newjobActionPerformed
 
     // GEN-FIRST:eventStopActionPerformed
     private void btnStopActionPerformed(final java.awt.event.ActionEvent evt) {
@@ -1271,7 +1273,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
     // GEN-LAST:event_tree_jobsValueChanged
 
     // GEN-FIRST:event_table_jobsMouseClicked
-    private void table_jobsMouseClicked(final java.awt.event.MouseEvent evt) {
+    private void tableJobsMouseClicked(final java.awt.event.MouseEvent evt) {
 
         final int row = this.table_jobs.getSelectedRow();
         final TransportJobUID jobUid = (TransportJobUID) this.table_jobs
@@ -1524,7 +1526,7 @@ public class MainWindow extends javax.swing.JFrame implements Observer {
 
             String workerinfo = new String();
             // normaler job
-            if (!isworker && (workerID == null)) { 
+            if (!isworker && (workerID == null)) {
                 workerinfo = jobtxt;
             }
             // job mit worker

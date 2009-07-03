@@ -223,11 +223,16 @@ public class About extends javax.swing.JDialog {
                                           .addContainerGap()));
 
         this.pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    private void btnCloseActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCloseActionPerformed
+    // </editor-fold>//GEN-END:initComponents
+
+    // GEN-FIRST:event_btnCloseActionPerformed
+    private void btnCloseActionPerformed(final java.awt.event.ActionEvent evt) {
         this.dispose();
-    }// GEN-LAST:event_btnCloseActionPerformed
+    }
+
+    // GEN-LAST:event_btnCloseActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;

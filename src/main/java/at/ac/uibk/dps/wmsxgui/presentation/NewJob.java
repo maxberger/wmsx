@@ -34,6 +34,7 @@ import at.ac.uibk.dps.wmsxgui.presentation.util.JobDescriptionFileFilter;
  */
 public class NewJob extends javax.swing.JDialog {
 
+    private static final String WMSX_GUI_NEW_JOB = "WMSX GUI - NewJob";
     /**
      * 
      */
@@ -94,11 +95,12 @@ public class NewJob extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed"
     // <editor-fold defaultstate="collapsed"
+    // <editor-fold defaultstate="collapsed"
     // desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        this.btn_cancel = new javax.swing.JButton();
-        this.btn_ok = new javax.swing.JButton();
+        this.btnCancel = new javax.swing.JButton();
+        this.btnOk = new javax.swing.JButton();
         this.cb_type = new javax.swing.JComboBox();
         this.l_creationtype = new javax.swing.JLabel();
         this.contentPanel = new javax.swing.JPanel();
@@ -114,29 +116,28 @@ public class NewJob extends javax.swing.JDialog {
         this.l_outputfile = new javax.swing.JLabel();
         this.l_resultdir = new javax.swing.JLabel();
 
-        this
-                .setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         this.setResizable(false);
 
-        this.btn_cancel.setText("Cancel");
-        this.btn_cancel.addActionListener(new java.awt.event.ActionListener() {
+        this.btnCancel.setText("Cancel");
+        this.btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                NewJob.this.btn_cancel(evt);
+                NewJob.this.btnCancel(evt);
             }
         });
 
-        this.btn_ok.setText("OK");
-        this.btn_ok.addActionListener(new java.awt.event.ActionListener() {
+        this.btnOk.setText("OK");
+        this.btnOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                NewJob.this.btn_ok(evt);
+                NewJob.this.btnOk(evt);
             }
         });
 
-        this.cb_type.setModel(new javax.swing.DefaultComboBoxModel(
-                new String[] { "Job", "Worker" }));
+        this.cb_type.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
+                "Job", "Worker" }));
         this.cb_type.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                NewJob.this.cb_typeActionPerformed(evt);
+                NewJob.this.cbTypeActionPerformed(evt);
             }
         });
 
@@ -152,27 +153,24 @@ public class NewJob extends javax.swing.JDialog {
         this.btn_select_jobdesc.setText("Select");
         this.btn_select_jobdesc
                 .addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(
-                            final java.awt.event.ActionEvent evt) {
-                        NewJob.this.btn_select_jobdescActionPerformed(evt);
+                    public void actionPerformed(final java.awt.event.ActionEvent evt) {
+                        NewJob.this.btnSelectJobdescActionPerformed(evt);
                     }
                 });
 
         this.btn_select_resultdir.setText("Select");
         this.btn_select_resultdir
                 .addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(
-                            final java.awt.event.ActionEvent evt) {
-                        NewJob.this.btn_select_resultdirActionPerformed(evt);
+                    public void actionPerformed(final java.awt.event.ActionEvent evt) {
+                        NewJob.this.btnSelectResultdirActionPerformed(evt);
                     }
                 });
 
         this.btn_select_outputfile.setText("Select");
         this.btn_select_outputfile
                 .addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(
-                            final java.awt.event.ActionEvent evt) {
-                        NewJob.this.btn_select_outputfileActionPerformed(evt);
+                    public void actionPerformed(final java.awt.event.ActionEvent evt) {
+                        NewJob.this.btnSelectOutputfileActionPerformed(evt);
                     }
                 });
 
@@ -320,8 +318,8 @@ public class NewJob extends javax.swing.JDialog {
                                                                           this.l_resultdir))
                                           .addContainerGap()));
 
-        final javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this
-                .getContentPane());
+        final javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
+                this.getContentPane());
         this.getContentPane().setLayout(layout);
         layout
                 .setHorizontalGroup(layout
@@ -369,14 +367,14 @@ public class NewJob extends javax.swing.JDialog {
                                                                                       166,
                                                                                       166)
                                                                               .addComponent(
-                                                                                            this.btn_ok,
+                                                                                            this.btnOk,
                                                                                             javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                             84,
                                                                                             javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                               .addPreferredGap(
                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                               .addComponent(
-                                                                                            this.btn_cancel,
+                                                                                            this.btnCancel,
                                                                                             javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                             84,
                                                                                             javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -412,21 +410,24 @@ public class NewJob extends javax.swing.JDialog {
                                                             .createParallelGroup(
                                                                                  javax.swing.GroupLayout.Alignment.BASELINE)
                                                             .addComponent(
-                                                                          this.btn_cancel)
-                                                            .addComponent(
-                                                                          this.btn_ok))
-                                          .addContainerGap(14, Short.MAX_VALUE)));
+                                                                          this.btnCancel)
+                                                            .addComponent(this.btnOk))
+                                          .addContainerGap(
+                                                           javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                           Short.MAX_VALUE)));
 
         this.pack();
-    }// </editor-fold>//GEN-END:initComponents
+    } // </editor-fold>//GEN-END:initComponents
 
-    private void btn_cancel(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cancel
+    // GEN-FIRST:event_btn_cancel
+    private void btnCancel(final java.awt.event.ActionEvent evt) {
         this.dispose();
-    }// GEN-LAST:event_btn_cancel
+    } // GEN-LAST:event_btn_cancel
 
-    private void btn_ok(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_ok
-        if (this.cb_type.getSelectedIndex() == 0) // type is job
-        {
+    // GEN-FIRST:event_btn_ok
+    private void btnOk(final java.awt.event.ActionEvent evt) {
+        // type is job
+        if (this.cb_type.getSelectedIndex() == 0) {
             final String jdlFile = this.tb_jobdescriptionfile.getText();
             final String resultDir = this.tb_resultdir.getText();
             final String outputFile = this.tb_outputfile.getText();
@@ -455,12 +456,12 @@ public class NewJob extends javax.swing.JDialog {
                 JOptionPane
                         .showMessageDialog(this,
                                            "JobDescriptionFile doesn't exist!",
-                                           "WMSX GUI - NewJob",
+                                           NewJob.WMSX_GUI_NEW_JOB,
                                            JOptionPane.ERROR_MESSAGE);
             }
 
-        } else // type is worker
-        {
+        } else {
+            // type is worker
             try {
                 final int workercnt = Integer
                         .parseInt(this.tb_jobdescriptionfile.getText());
@@ -479,7 +480,7 @@ public class NewJob extends javax.swing.JDialog {
                             .showMessageDialog(
                                                this,
                                                "JobCount has to be greater than zero!",
-                                               "WMSX GUI - NewJob",
+                                               NewJob.WMSX_GUI_NEW_JOB,
                                                JOptionPane.ERROR_MESSAGE);
                 }
 
@@ -487,15 +488,15 @@ public class NewJob extends javax.swing.JDialog {
                 JOptionPane
                         .showMessageDialog(this,
                                            "JobCount isn't an valid Integer!",
-                                           "WMSX GUI - NewJob",
+                                           NewJob.WMSX_GUI_NEW_JOB,
                                            JOptionPane.ERROR_MESSAGE);
             }
         }
-    }// GEN-LAST:event_btn_ok
+    } // GEN-LAST:event_btn_ok
 
-    private void cb_typeActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cb_typeActionPerformed
-        if (this.cb_type.getSelectedIndex() == 0) // type is job
-        {
+    private void cbTypeActionPerformed(final java.awt.event.ActionEvent evt) {
+        if (this.cb_type.getSelectedIndex() == 0) {
+            // type is job
             this.contentPanel.setBorder(javax.swing.BorderFactory
                     .createTitledBorder("Create a new Job"));
             this.updateBackendCombo();
@@ -512,8 +513,8 @@ public class NewJob extends javax.swing.JDialog {
             this.l_jobdesc.setText("JobDescriptionFile");
             this.tb_jobdescriptionfile.setText("");
 
-        } else // type is worker
-        {
+        } else {
+            // type is worker
             this.contentPanel.setBorder(javax.swing.BorderFactory
                     .createTitledBorder("Create a new Worker"));
             this.cb_backend.removeItem(new String("worker"));
@@ -532,10 +533,10 @@ public class NewJob extends javax.swing.JDialog {
             this.tb_jobdescriptionfile.setText("1");
         }
         this.pack();
-    }// GEN-LAST:event_cb_typeActionPerformed
+    }
 
-    private void btn_select_jobdescActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_select_jobdescActionPerformed
+    private void btnSelectJobdescActionPerformed(
+            final java.awt.event.ActionEvent evt) {
         final JFileChooser fc = new JFileChooser();
         // fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         // Add a custom file filter and disable the default
@@ -550,20 +551,20 @@ public class NewJob extends javax.swing.JDialog {
             this.tb_resultdir.setText(fc.getSelectedFile().getParentFile()
                     .getAbsolutePath());
         }
-    }// GEN-LAST:event_btn_select_jobdescActionPerformed
+    }
 
-    private void btn_select_outputfileActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_select_outputfileActionPerformed
+    private void btnSelectOutputfileActionPerformed(
+            final java.awt.event.ActionEvent evt) {
         final JFileChooser fc = new JFileChooser();
 
         final int returnVal = fc.showSaveDialog(this);
         if (returnVal == 0) {
             this.tb_outputfile.setText(fc.getSelectedFile().getAbsolutePath());
         }
-    }// GEN-LAST:event_btn_select_outputfileActionPerformed
+    }
 
-    private void btn_select_resultdirActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_select_resultdirActionPerformed
+    private void btnSelectResultdirActionPerformed(
+            final java.awt.event.ActionEvent evt) {
         final JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -571,11 +572,11 @@ public class NewJob extends javax.swing.JDialog {
         if (returnVal == 0) {
             this.tb_resultdir.setText(fc.getSelectedFile().getAbsolutePath());
         }
-    }// GEN-LAST:event_btn_select_resultdirActionPerformed
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_cancel;
-    private javax.swing.JButton btn_ok;
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnOk;
     private javax.swing.JButton btn_select_jobdesc;
     private javax.swing.JButton btn_select_outputfile;
     private javax.swing.JButton btn_select_resultdir;

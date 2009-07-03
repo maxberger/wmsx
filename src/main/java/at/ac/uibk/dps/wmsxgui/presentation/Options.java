@@ -29,12 +29,15 @@ import at.ac.uibk.dps.wmsxgui.business.BusinessManager;
  */
 public class Options extends javax.swing.JDialog {
 
+    private static final String WRONG_PASSWORD = "Wrong password";
+    private static final String PASSWORD_IS_INCORRECT = "Password is incorrect!";
+    private static final String WMSX_GUI_OPTIONS = "WMSX GUI - Options";
     /**
      * 
      */
     private static final long serialVersionUID = 5689473181735526756L;
     private final BusinessManager businessman;
-    private final Wmsx wmsx_service;
+    private final Wmsx wmsxService;
 
     /**
      * Creates new form Optionen.
@@ -47,7 +50,7 @@ public class Options extends javax.swing.JDialog {
     public Options(final java.awt.Frame parent, final boolean modal) {
         super(parent, modal);
         this.businessman = BusinessManager.getInstance();
-        this.wmsx_service = this.businessman.getWmsxService();
+        this.wmsxService = this.businessman.getWmsxService();
 
         this.initComponents();
         this.centerScreen();
@@ -111,7 +114,7 @@ public class Options extends javax.swing.JDialog {
         this.btn_close.setText("Close");
         this.btn_close.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                Options.this.btn_closeActionPerformed(evt);
+                Options.this.btnCloseActionPerformed(evt);
             }
         });
 
@@ -124,13 +127,13 @@ public class Options extends javax.swing.JDialog {
                 .addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(
                             final java.awt.event.ActionEvent evt) {
-                        Options.this.btn_setmaxjobcountActionPerformed(evt);
+                        Options.this.btnSetmaxjobcountActionPerformed(evt);
                     }
                 });
 
         this.cb_backend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                Options.this.cb_backendActionPerformed(evt);
+                Options.this.cbBackendActionPerformed(evt);
             }
         });
 
@@ -155,7 +158,7 @@ public class Options extends javax.swing.JDialog {
                 .addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(
                             final java.awt.event.ActionEvent evt) {
-                        Options.this.btn_setafspasswordActionPerformed(evt);
+                        Options.this.btnSetafspasswordActionPerformed(evt);
                     }
                 });
 
@@ -165,7 +168,7 @@ public class Options extends javax.swing.JDialog {
                 .addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(
                             final java.awt.event.ActionEvent evt) {
-                        Options.this.btn_setgridpasswordActionPerformed(evt);
+                        Options.this.btnSetgridpasswordActionPerformed(evt);
                     }
                 });
 
@@ -175,7 +178,7 @@ public class Options extends javax.swing.JDialog {
                 .addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(
                             final java.awt.event.ActionEvent evt) {
-                        Options.this.btn_forgetgridpasswordActionPerformed(evt);
+                        Options.this.btnForgetgridpasswordActionPerformed(evt);
                     }
                 });
 
@@ -185,7 +188,7 @@ public class Options extends javax.swing.JDialog {
                 .addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(
                             final java.awt.event.ActionEvent evt) {
-                        Options.this.btn_forgetafspasswordActionPerformed(evt);
+                        Options.this.btnForgetafspasswordActionPerformed(evt);
                     }
                 });
 
@@ -193,7 +196,7 @@ public class Options extends javax.swing.JDialog {
         this.btn_setVo.setEnabled(false);
         this.btn_setVo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                Options.this.btn_setVoActionPerformed(evt);
+                Options.this.btnSetVoActionPerformed(evt);
             }
         });
 
@@ -453,16 +456,15 @@ public class Options extends javax.swing.JDialog {
                                           .addContainerGap()));
 
         this.pack();
-    }// </editor-fold>//GEN-END:initComponents
+    } // </editor-fold>//GEN-END:initComponents
 
-    private void btn_setVoActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setVoActionPerformed
-        this.wmsx_service.setBackend(this.cb_backend.getSelectedItem()
+    private void btnSetVoActionPerformed(final java.awt.event.ActionEvent evt) {
+        this.wmsxService.setBackend(this.cb_backend.getSelectedItem()
                 .toString());
-        this.wmsx_service.setVo(this.tfVo.getText());
-    }// GEN-LAST:event_btn_setVoActionPerformed
+        this.wmsxService.setVo(this.tfVo.getText());
+    }
 
-    private void cb_backendActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cb_backendActionPerformed
-        // TODO add your handling code here:
+    private void cbBackendActionPerformed(final java.awt.event.ActionEvent evt) {
         if (this.cb_backend.getSelectedItem() != null) {
             this.btn_forgetafspassword.setEnabled(true);
             // btn_forgetgridpassword.setEnabled(true);
@@ -471,24 +473,24 @@ public class Options extends javax.swing.JDialog {
             this.btn_setgridpassword.setEnabled(true);
             this.btn_setmaxjobcount.setEnabled(true);
         }
-    }// GEN-LAST:event_cb_backendActionPerformed
+    }
 
-    private void btn_setmaxjobcountActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setmaxjobcountActionPerformed
+    private void btnSetmaxjobcountActionPerformed(
+            final java.awt.event.ActionEvent evt) {
         try {
             final int maxjobcnt = Integer.parseInt(this.tb_maxjobcount
                     .getText());
 
             if (maxjobcnt > 0) {
 
-                this.wmsx_service.setMaxJobs(maxjobcnt);
+                this.wmsxService.setMaxJobs(maxjobcnt);
 
             } else {
                 JOptionPane
                         .showMessageDialog(
                                            this,
                                            "MaxJobCount has to be greater than zero!",
-                                           "WMSX GUI - Options",
+                                           Options.WMSX_GUI_OPTIONS,
                                            JOptionPane.ERROR_MESSAGE);
             }
 
@@ -496,55 +498,55 @@ public class Options extends javax.swing.JDialog {
             JOptionPane
                     .showMessageDialog(this,
                                        "MaxJobCount isn't an valid Integer!",
-                                       "WMSX GUI - Options",
+                                       Options.WMSX_GUI_OPTIONS,
                                        JOptionPane.ERROR_MESSAGE);
         }
-    }// GEN-LAST:event_btn_setmaxjobcountActionPerformed
+    }
 
-    private void btn_setafspasswordActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setafspasswordActionPerformed
-        this.wmsx_service.setBackend(this.cb_backend.getSelectedItem()
+    private void btnSetafspasswordActionPerformed(
+            final java.awt.event.ActionEvent evt) {
+        this.wmsxService.setBackend(this.cb_backend.getSelectedItem()
                 .toString());
-        final boolean suc = this.wmsx_service.rememberAfs(new String(
+        final boolean suc = this.wmsxService.rememberAfs(new String(
                 this.pf_afspassword.getPassword()));
         if (!suc) {
-            JOptionPane.showConfirmDialog(this, "Password is incorrect!",
-                                          "Wrong password",
+            JOptionPane.showConfirmDialog(this, Options.PASSWORD_IS_INCORRECT,
+                                          Options.WRONG_PASSWORD,
                                           JOptionPane.DEFAULT_OPTION,
                                           JOptionPane.ERROR_MESSAGE);
         }
-    }// GEN-LAST:event_btn_setafspasswordActionPerformed
+    }
 
-    private void btn_setgridpasswordActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_setgridpasswordActionPerformed
-        this.wmsx_service.setBackend(this.cb_backend.getSelectedItem()
+    private void btnSetgridpasswordActionPerformed(
+            final java.awt.event.ActionEvent evt) {
+        this.wmsxService.setBackend(this.cb_backend.getSelectedItem()
                 .toString());
-        final boolean suc = this.wmsx_service.rememberGrid(new String(
+        final boolean suc = this.wmsxService.rememberGrid(new String(
                 this.pf_gridpassword.getPassword()));
         if (!suc) {
-            JOptionPane.showConfirmDialog(this, "Password is incorrect!",
-                                          "Wrong password",
+            JOptionPane.showConfirmDialog(this, Options.PASSWORD_IS_INCORRECT,
+                                          Options.WRONG_PASSWORD,
                                           JOptionPane.DEFAULT_OPTION,
                                           JOptionPane.ERROR_MESSAGE);
         }
-    }// GEN-LAST:event_btn_setgridpasswordActionPerformed
+    }
 
-    private void btn_forgetafspasswordActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_forgetafspasswordActionPerformed
-        this.wmsx_service.setBackend(this.cb_backend.getSelectedItem()
+    private void btnForgetafspasswordActionPerformed(
+            final java.awt.event.ActionEvent evt) {
+        this.wmsxService.setBackend(this.cb_backend.getSelectedItem()
                 .toString());
-        this.wmsx_service.forgetAfs();
-    }// GEN-LAST:event_btn_forgetafspasswordActionPerformed
+        this.wmsxService.forgetAfs();
+    }
 
-    private void btn_forgetgridpasswordActionPerformed(
-            final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_forgetgridpasswordActionPerformed
+    private void btnForgetgridpasswordActionPerformed(
+            final java.awt.event.ActionEvent evt) {
 
         // die funktion gibts nicht :-(
-    }// GEN-LAST:event_btn_forgetgridpasswordActionPerformed
+    }
 
-    private void btn_closeActionPerformed(final java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_closeActionPerformed
+    private void btnCloseActionPerformed(final java.awt.event.ActionEvent evt) {
         this.dispose();
-    }// GEN-LAST:event_btn_closeActionPerformed
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_close;
