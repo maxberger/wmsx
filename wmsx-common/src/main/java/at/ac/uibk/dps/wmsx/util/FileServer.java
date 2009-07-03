@@ -42,4 +42,11 @@ public interface FileServer extends Remote {
      */
     byte[] retrieveFile(String name) throws RemoteException;
 
+    /**
+     * Dummy ping for connection test.
+     * 
+     * @throws RemoteException
+     *             if the connection fails.
+     */
+    void ping() throws RemoteException;
 }

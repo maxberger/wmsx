@@ -23,6 +23,7 @@ package at.ac.uibk.dps.wmsx.util;
 
 import hu.kfki.grid.wmsx.util.Exporter;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -65,7 +66,15 @@ public final class FileServerImpl implements FileServer {
     public void start() {
         synchronized (this) {
             if (this.myProxy == null) {
-                this.myProxy = (FileServer) Exporter.getInstance().export(this);
+                FileServer proxy = (FileServer) Exporter.getInstance().export(
+                        this);
+                try {
+                    proxy.ping();
+                    this.myProxy = proxy;
+                } catch (RemoteException e) {
+                    LOGGER.warning("Failed to start exporter: "
+                            + e.getMessage());
+                }
             }
         }
     }
@@ -110,6 +119,11 @@ public final class FileServerImpl implements FileServer {
             FileServerImpl.LOGGER.info("Transferring file: " + name);
             return vFile.getFileContent();
         }
+    }
+
+    /** {@inheritDoc} */
+    public void ping() throws RemoteException {
+        // Do nothing.
     }
 
 }
