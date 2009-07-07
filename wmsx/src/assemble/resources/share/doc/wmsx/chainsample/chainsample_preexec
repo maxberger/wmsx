@@ -1,0 +1,13 @@
+#!/bin/sh
+
+### First argument: absolute path to the jdl or tarball file base name.
+ABSCOMMAND=$1
+### Remaining arguments: command line arguments of the job executable.
+shift 1
+ARGS=$*
+NARGS=$#
+
+### Debug text:
+echo "Hello, preexec!"
+echo "Absolute command: $ABSCOMMAND"
+echo "Job executable arguments: $ARGS"

@@ -1,0 +1,5 @@
+[
+Executable = "helloworld";
+OutputDirectory = "out";
+Software = {"g++"};
+]
