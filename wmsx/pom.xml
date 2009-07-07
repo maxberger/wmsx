@@ -49,6 +49,7 @@
     </pluginRepository>
   </pluginRepositories>
   <build>
+    <defaultGoal>site</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -70,7 +71,7 @@
         </configuration>
         <executions>
           <execution>
-            <phase>package</phase>
+            <phase>pre-site</phase>
             <goals>
               <goal>create-repository</goal>
               <goal>assemble</goal>
@@ -103,7 +104,7 @@
         <executions>
           <execution>
             <id>unpack-dependencies</id>
-            <phase>package</phase>
+            <phase>pre-site</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
