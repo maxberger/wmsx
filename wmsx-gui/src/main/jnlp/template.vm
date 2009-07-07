@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp
     spec="1.0+"
-    codebase="http://goedis.dps.uibk.ac.at/~dps002"
+    codebase="http://wmsx.max.berger.name/wmsx-gui"
     href="$outputFile">
   <information>
     <title>WMSX GUI</title>
