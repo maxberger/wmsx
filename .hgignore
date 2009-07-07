@@ -13,3 +13,4 @@ target/
 \.settings/
 \.checkstyle$
 \.fbprefs$
+^wmsx-gui/keystore$
