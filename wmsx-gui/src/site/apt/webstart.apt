@@ -1,0 +1,21 @@
+  ---
+  WMS-X Gui Webstart
+  ---
+
+WMS-X GUI Webstart
+
+ If you have a working Java Webstart (1.6 or newer) set up, you may
+ start the WMSX GUI directly from this page:
+
+ {{{./wmsx-gui.jnlp}Webstartable WMSX GUI application}}
+
+ You will need a current WMS-X provider running locally.
+
+ Please note: This is a current snapshot. It is updated along with
+ the deployment of the site.
+
+ Also note: The Webstart application is not trusted by a valid
+ signature, and never will be. Webstart will complain about this fact. This
+ application will run on your local computer and it will have access to
+ your file system. USE AT YOUR OWN RISK! (However, the risks are the same
+ as downloading it and running it locally).
