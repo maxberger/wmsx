@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -115,20 +115,6 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
         // Create the service
         this.impl = new WmsxProviderImpl(this, workDir);
 
-        // Try to load the service ID from file.
-        // It isn't an error if we can't load it, because
-        // maybe this is the first time this service has run
-        // DataInputStream din = null;
-        //
-        // try {
-        // din = new DataInputStream(new FileInputStream(this.getClass()
-        // .getName()
-        // + ".id"));
-        // this.serviceID = new ServiceID(din);
-        // } catch (final Exception e) {
-        // // ignore
-        // }
-
         try {
 
             final InvocationLayerFactory invocationLayerFactory = new BasicILFactory();
@@ -162,7 +148,7 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
      * @param args
      *            Command line arguments.
      */
-    public static void main(final String args[]) {
+    public static void main(final String[] args) {
 
         final Options options = new Options();
         final CommandLineParser parser = new PosixParser();
@@ -214,6 +200,8 @@ public class WmsxProviderServer implements DiscoveryListener, LeaseListener,
             }
         }
         WmsxProviderServer.LOGGER.info("Terminated.");
+        // Since there may be lingering threads just kill them all!
+        System.exit(0);
     }
 
     private static void setupLogging(final File workdir, final boolean stdout) {
