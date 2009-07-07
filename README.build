@@ -1,0 +1,15 @@
+To build from source you need the following prerequesites:
+
+JDK 1.5 or newer - http://www.java.com/
+Maven 2.0.8 or newer  http://maven.apache.org/
+JAVA_HOME environment must be set correctly
+
+install 3rd party jars to maven by running the install script in the extra/ directory
+
+---
+
+For compilation type:
+
+mvn package install
+
+and find the distribution in the wmsx/target/ directory as wmsx-xxx-distribution.tar.gz

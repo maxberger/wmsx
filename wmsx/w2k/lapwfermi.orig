@@ -1,0 +1,14 @@
+[
+JobType = "Workflow";
+Executable = "lapwfermi-g.sh"; Arguments="CASENAME";
+Deploy = "basesetup.sh";
+StdOutput = "StdOut-lapwfermi";
+StdError = "StdOut-lapwfermi";
+InputSandbox = {"scripts/lapwfermi-g.sh","scripts/basesetup.sh","CASENAME/CASENAME.klist","CASENAME/CASENAME.kgen","CASENAME/CASENAME.vsp","CASENAME/CASENAME.in2","CASENAME/CASENAME.nsh","CASENAME/CASENAME.struct",VECEN};
+OutputSandbox = {"StdOut-lapwfermi","CASENAME/CASENAME.recprlist","CASENAME/CASENAME.scf2","CASENAME/lapw2.error",WEIGH};
+ResultDir = "CASENAME";
+Prev = {LAPW1};
+Next = {LAPW2};
+Local = "false";
+RetryCount = 10;
+]

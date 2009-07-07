@@ -1,0 +1,14 @@
+[
+JobType = "Workflow";
+Executable = "lapw1-g.sh";
+Deploy = "basesetup.sh";
+Arguments = "CASENAME IDX";
+StdOutput = "StdOut-lapw1_IDX";
+StdError = "StdOut-lapw1_IDX";
+InputSandbox = {"scripts/lapw1-g.sh","scripts/basesetup.sh","CASENAME/CASENAME.vsp","CASENAME/CASENAME.vns","CASENAME/CASENAME.struct","CASENAME/CASENAME.in1","CASENAME/CASENAME.klist"};
+OutputSandbox = {"StdOut-lapw1_IDX","CASENAME/CASENAME.energy_IDX","CASENAME/CASENAME.scf1_IDX","CASENAME/CASENAME.vector_IDX","CASENAME/lapw1_IDX.error","CASENAME/CASENAME.nsh"};
+ResultDir = "CASENAME";
+Next = {"lapwfermi.jdl"};
+Local = "false";
+RetryCount = 10;
+]

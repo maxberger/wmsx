@@ -1,0 +1,12 @@
+[
+    JobType = "Normal";
+    Archive = "chainsample2.tar.gz";
+    ProgramDirectory = "programdirectory";
+    Executable = "executable";
+    OutputDirectory = "outputdirectory";
+    Software = {"AFS", "g++"};
+    Requirements = (
+			other.GlueCEPolicyMaxWallClockTime>=2160 &&
+			other.GlueHostMainMemoryRAMSize>=512
+		   );
+]

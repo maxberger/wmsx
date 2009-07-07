@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <includeSubModules>true</includeSubModules>
+      <sources>
+        <fileSets>
+          <fileSet>
+            <excludes>
+              <exclude>target/**</exclude>
+              <exclude>w2k/**</exclude>
+            </excludes>
+          </fileSet>
+        </fileSets>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>pom.xml</include>
+        <include>LICENSE</include>
+        <include>README.build</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>extra</directory>
+    </fileSet>
+  </fileSets>
+</assembly>
