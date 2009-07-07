@@ -4,11 +4,11 @@
   <formats>
     <format>zip</format>
   </formats>
-  <baseDirectory>wmsx</baseDirectory>
+  <includeBaseDirectory/>
   <fileSets>
     <fileSet>
       <directory>target/appassembler</directory>
-      <outputDirectory>wmsx</outputDirectory>
+      <outputDirectory>libexec/wmsx</outputDirectory>
       <includes>
         <include>bin/wmsx-provider</include>
         <include>bin/wmsx-requestor</include>
@@ -17,7 +17,7 @@
     </fileSet>
     <fileSet>
       <directory>target/appassembler</directory>
-      <outputDirectory>wmsx</outputDirectory>
+      <outputDirectory>libexec/wmsx</outputDirectory>
       <excludes>
         <exclude>bin/wmsx-provider</exclude>
         <exclude>bin/wmsx-requestor</exclude>
@@ -28,26 +28,25 @@
       <directory>src/assemble/resources</directory>
       <outputDirectory/>
       <includes>
-        <include>wmsx/wmsx-provider.sh</include>
-        <include>wmsx/wmsx-requestor.sh</include>
-        <include>wmsx/doc/sample/helloworld_postexec</include>
-        <include>wmsx/doc/sample/helloworld_preexec</include>
-        <include>wmsx/doc/chainsample/chainsample_postexec</include>
-        <include>wmsx/doc/chainsample/chainsample_chain</include>
-        <include>wmsx/doc/simplejdl/interactive.sh</include>
-        <include>chainsample/chainsample2_chain</include>
-        <include>chainsample/chainsample2_postexec</include>
-        <include>chainsample/chainsample2_preexec</include>
-        <include>chainsample/chainsample_preexec</include>
-        <include>chainsample_old/chainsample_chain</include>
-        <include>chainsample_old/chainsample_postexec</include>
-        <include>interactive/interactive.sh</include>
-        <include>sample/helloworld2_postexec</include>
-        <include>sample/helloworld2_preexec</include>
-        <include>sample_old/helloworld_postexec</include>
-        <include>sample_old/helloworld_preexec</include>
-        <include>simplejob/simplejob.sh</include>
-        <include>configure</include>
+        <include>bin/wmsx-provider.sh</include>
+        <include>bin/wmsx-requestor.sh</include>
+        <include>share/doc/wmsx/sample/helloworld_postexec</include>
+        <include>share/doc/wmsx/sample/helloworld_preexec</include>
+        <include>share/doc/wmsx/chainsample/chainsample_postexec</include>
+        <include>share/doc/wmsx/chainsample/chainsample_chain</include>
+        <include>share/doc/wmsx/simplejdl/interactive.sh</include>
+        <include>share/doc/wmsx/chainsample/chainsample2_chain</include>
+        <include>share/doc/wmsx/chainsample/chainsample2_postexec</include>
+        <include>share/doc/wmsx/chainsample/chainsample2_preexec</include>
+        <include>share/doc/wmsx/chainsample/chainsample_preexec</include>
+        <include>share/doc/wmsx/chainsample_old/chainsample_chain</include>
+        <include>share/doc/wmsx/chainsample_old/chainsample_postexec</include>
+        <include>share/doc/wmsx/interactive/interactive.sh</include>
+        <include>share/doc/wmsx/sample/helloworld2_postexec</include>
+        <include>share/doc/wmsx/sample/helloworld2_preexec</include>
+        <include>share/doc/wmsx/sample_old/helloworld_postexec</include>
+        <include>share/doc/wmsx/sample_old/helloworld_preexec</include>
+        <include>share/doc/wmsx/simplejob/simplejob.sh</include>
       </includes>
       <fileMode>0755</fileMode>
     </fileSet>
@@ -55,27 +54,25 @@
       <directory>src/assemble/resources</directory>
       <outputDirectory/>
       <excludes>
-        <exclude>wmsx/wmsx-provider.sh</exclude>
-        <exclude>wmsx/wmsx-requestor.sh</exclude>
-        <exclude>wmsx/doc/sample/helloworld_postexec</exclude>
-        <exclude>wmsx/doc/sample/helloworld_preexec</exclude>
-        <exclude>wmsx/doc/chainsample/chainsample_postexec</exclude>
-        <exclude>wmsx/doc/chainsample/chainsample_chain</exclude>
-        <exclude>wmsx/doc/simplejdl/interactive.sh</exclude>
-        <exclude>chainsample/chainsample2_chain</exclude>
-        <exclude>chainsample/chainsample2_postexec</exclude>
-        <exclude>chainsample/chainsample2_preexec</exclude>
-        <exclude>chainsample/chainsample_preexec</exclude>
-        <exclude>chainsample_old/chainsample_chain</exclude>
-        <exclude>chainsample_old/chainsample_postexec</exclude>
-        <exclude>interactive/interactive.sh</exclude>
-        <exclude>sample/helloworld2_postexec</exclude>
-        <exclude>sample/helloworld2_preexec</exclude>
-        <exclude>sample_old/helloworld_postexec</exclude>
-        <exclude>sample_old/helloworld_preexec</exclude>
-        <exclude>simplejob/simplejob.sh</exclude>
-        <exclude>configure</exclude>
-        <exclude>bootstrap.sh</exclude>
+        <exclude>bin/wmsx-provider.sh</exclude>
+        <exclude>bin/wmsx-requestor.sh</exclude>
+        <exclude>share/doc/wmsx/sample/helloworld_postexec</exclude>
+        <exclude>share/doc/wmsx/sample/helloworld_preexec</exclude>
+        <exclude>share/doc/wmsx/chainsample/chainsample_postexec</exclude>
+        <exclude>share/doc/wmsx/chainsample/chainsample_chain</exclude>
+        <exclude>share/doc/wmsx/simplejdl/interactive.sh</exclude>
+        <exclude>share/doc/wmsx/chainsample/chainsample2_chain</exclude>
+        <exclude>share/doc/wmsx/chainsample/chainsample2_postexec</exclude>
+        <exclude>share/doc/wmsx/chainsample/chainsample2_preexec</exclude>
+        <exclude>share/doc/wmsx/chainsample/chainsample_preexec</exclude>
+        <exclude>share/doc/wmsx/chainsample_old/chainsample_chain</exclude>
+        <exclude>share/doc/wmsx/chainsample_old/chainsample_postexec</exclude>
+        <exclude>share/doc/wmsx/interactive/interactive.sh</exclude>
+        <exclude>share/doc/wmsx/sample/helloworld2_postexec</exclude>
+        <exclude>share/doc/wmsx/sample/helloworld2_preexec</exclude>
+        <exclude>share/doc/wmsx/sample_old/helloworld_postexec</exclude>
+        <exclude>share/doc/wmsx/sample_old/helloworld_preexec</exclude>
+        <exclude>share/doc/wmsx/simplejob/simplejob.sh</exclude>
       </excludes>
       <fileMode>0644</fileMode>
     </fileSet>
