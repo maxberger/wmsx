@@ -12,6 +12,7 @@
       <includes>
         <include>bin/wmsx-provider</include>
         <include>bin/wmsx-requestor</include>
+        <include>bin/wmsx-gui</include>
       </includes>
       <fileMode>0755</fileMode>
     </fileSet>
@@ -21,6 +22,7 @@
       <excludes>
         <exclude>bin/wmsx-provider</exclude>
         <exclude>bin/wmsx-requestor</exclude>
+        <exclude>bin/wmsx-gui</exclude>
       </excludes>
       <fileMode>0644</fileMode>
     </fileSet>
@@ -30,6 +32,7 @@
       <includes>
         <include>bin/wmsx-provider.sh</include>
         <include>bin/wmsx-requestor.sh</include>
+        <include>bin/wmsx-gui.sh</include>
         <include>share/doc/wmsx/sample/helloworld_postexec</include>
         <include>share/doc/wmsx/sample/helloworld_preexec</include>
         <include>share/doc/wmsx/chainsample/chainsample_postexec</include>
@@ -56,6 +59,7 @@
       <excludes>
         <exclude>bin/wmsx-provider.sh</exclude>
         <exclude>bin/wmsx-requestor.sh</exclude>
+        <exclude>bin/wmsx-gui.sh</exclude>
         <exclude>share/doc/wmsx/sample/helloworld_postexec</exclude>
         <exclude>share/doc/wmsx/sample/helloworld_preexec</exclude>
         <exclude>share/doc/wmsx/chainsample/chainsample_postexec</exclude>
