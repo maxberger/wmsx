@@ -39,6 +39,7 @@ import hu.kfki.grid.wmsx.provider.arglist.LaszloJobFactory;
 import hu.kfki.grid.wmsx.renewer.AFS;
 import hu.kfki.grid.wmsx.renewer.Renewer;
 import hu.kfki.grid.wmsx.renewer.RenewerUtil;
+import hu.kfki.grid.wmsx.util.Exporter;
 import hu.kfki.grid.wmsx.util.LogUtil;
 import hu.kfki.grid.wmsx.util.ScriptLauncher;
 import hu.kfki.grid.wmsx.worker.ControllerServer;
@@ -437,6 +438,7 @@ public class WmsxProviderImpl implements IRemoteWmsxProvider, RemoteDestroy,
             public void run() {
                 try {
                     JobWatcher.getInstance().shutdown();
+                    Exporter.getInstance().unexportAll();
                     Thread.sleep(WmsxProviderImpl.WAIT_TIME_BEFORE_SHUTDOWN);
                     WmsxProviderImpl.this.destroyAdmin.destroy();
                 } catch (final RemoteException e) {
