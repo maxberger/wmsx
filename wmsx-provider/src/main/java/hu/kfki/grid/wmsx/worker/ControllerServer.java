@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
 import net.jini.id.Uuid;
@@ -72,9 +73,17 @@ public final class ControllerServer {
     private int workerCount;
 
     private ControllerServer() {
-        this.controller = new ControllerImpl();
-        this.controllerStub = (Controller) Exporter.getInstance().export(
+        ControllerImpl ci = new ControllerImpl();
+        Controller cs = (Controller) Exporter.getInstance().export(
                 this.controller);
+        try {
+            this.controllerStub.ping(null);
+        } catch (final RemoteException re) {
+            ci = null;
+            cs = null;
+        }
+        this.controller = ci;
+        this.controllerStub = cs;
     }
 
     /**
@@ -211,7 +220,7 @@ public final class ControllerServer {
     /**
      * Terminate the given worker.
      * 
-     * @param Uuid
+     * @param id
      *            uuid of the worker.
      */
     public void shutdownWorker(final Uuid id) {

@@ -110,7 +110,7 @@ public final class WorkerBackend implements Backend {
 
     /** {@inheritDoc} */
     public boolean isAvailable() {
-        return true;
+        return this.controllerImpl != null;
     }
 
     /** {@inheritDoc} */
