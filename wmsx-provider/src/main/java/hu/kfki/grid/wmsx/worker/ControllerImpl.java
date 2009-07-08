@@ -343,9 +343,11 @@ public class ControllerImpl implements Controller, Runnable {
 
     /** {@inheritDoc} */
     public void ping(final Uuid uuid) {
-        synchronized (this.workerInfo) {
-            final WorkerInfo info = this.getWorkerInfo(uuid);
-            info.updateLastSeen();
+        if (uuid != null) {
+            synchronized (this.workerInfo) {
+                final WorkerInfo info = this.getWorkerInfo(uuid);
+                info.updateLastSeen();
+            }
         }
     }
 
@@ -510,7 +512,7 @@ public class ControllerImpl implements Controller, Runnable {
     /**
      * Cancels the given job.
      * 
-     * @param internal
+     * @param id
      *            Id.
      */
     public void cancelJob(final Object id) {
