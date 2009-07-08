@@ -1,41 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>wmsx-parent</artifactId>
+    <groupId>hu.kfki.grid</groupId>
+    <version>2.0.1-SNAPSHOT</version>
+    <relativePath>wmsx-parent/pom.xml</relativePath>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>hu.kfki.grid</groupId>
-  <artifactId>wmsx-parent</artifactId>
+  <artifactId>wmsx-aggregator</artifactId>
   <packaging>pom</packaging>
   <name>WMS-X</name>
   <version>2.0.1-SNAPSHOT</version>
-  <url>http://wmsx.max.berger.name</url>
-  <issueManagement>
-    <system>trac</system>
-    <url>http://wmsx.max.berger.name/trac</url>
-  </issueManagement>
-  <scm>
-    <connection>scm:hg:http://wmsx.max.berger.name/hg/wmsx</connection>
-    <developerConnection>scm:hg:ssh://wmsx.max.berger.name//home/wmsx/hg/repos/wmsx</developerConnection>
-    <url>http://wmsx.max.berger.name/hg/wmsx/file</url>
-  </scm>
-  <licenses>
-    <license>
-      <name>GNU General Public License, Version 3.0</name>
-      <url>http://www.gnu.org/licenses/gpl-3.0-standalone.html</url>
-      <distribution>manual</distribution>
-    </license>
-  </licenses>
-  <build>
-    <defaultGoal>install</defaultGoal>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <modules>
+    <module>wmsx-parent</module>
     <module>wmsx-api</module>
     <module>wmsx-backend-api</module>
     <module>wmsx-common</module>
@@ -48,125 +26,26 @@
     <module>wmsx-gui</module>
     <module>wmsx</module>
   </modules>
-  <reporting>
+  <build>
     <plugins>
       <plugin>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-3</version>
         <configuration>
-          <linksource>true</linksource>
-          <keywords>true</keywords>
-          <links>
-            <link>http://java.sun.com/j2se/1.6.0/docs/api/</link>
-            <link>http://testng.org/javadocs/</link>
-            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
-            <link>http://jcip.net/annotations/doc/</link>
-          </links>
-          <tags>
-            <tag>
-              <name>todo</name>
-              <placement>a</placement>
-              <head>This needs to be done:</head>
-            </tag>
-          </tags>
+          <descriptors>
+            <descriptor>src/assemble/src.xml</descriptor>
+          </descriptors>
+          <outputDirectory>${basedir}/wmsx/target/site/download</outputDirectory>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <linkXref>true</linkXref>
-          <targetJdk>1.5</targetJdk>
-          <sourceEncoding>utf-8</sourceEncoding>
-          <rulesets>
-            <ruleset>/rulesets/basic.xml</ruleset>
-            <ruleset>/rulesets/braces.xml</ruleset>
-            <ruleset>/rulesets/codesize.xml</ruleset>
-            <ruleset>/rulesets/clone.xml</ruleset>
-            <ruleset>/rulesets/design.xml</ruleset>
-            <ruleset>/rulesets/finalizers.xml</ruleset>
-            <ruleset>/rulesets/imports.xml</ruleset>
-            <ruleset>/rulesets/strings.xml</ruleset>
-            <ruleset>/rulesets/migrating_to_15.xml</ruleset>
-            <ruleset>/rulesets/optimizations.xml</ruleset>
-            <ruleset>/rulesets/sunsecure.xml</ruleset>
-            <ruleset>/rulesets/unusedcode.xml</ruleset>
-          </rulesets>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.1</version>
-        <configuration>
-          <threshold>Low</threshold>
-          <effort>Max</effort>
-          <omitVisitors>FindDeadLocalStores</omitVisitors>
-          <xmlOutput>true</xmlOutput>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javancss-maven-plugin</artifactId>
-        <version>2.0-beta-2</version>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>taglist-maven-plugin</artifactId>
-        <version>2.3</version>
+        <executions>
+          <execution>
+            <phase>site</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
-  </reporting>
-  <distributionManagement>
-    <site>
-      <id>wmsx</id>
-      <name>Website for WMSX</name>
-      <url>sftp://wmsx.max.berger.name/home/wmsx/www</url>
-    </site>
-  </distributionManagement>
-  <repositories>
-    <repository>
-      <id>wmsx-deps</id>
-      <name>WMSX additional dependencies</name>
-      <url>http://wmsx.max.berger.name/m2</url>
-    </repository>
-  </repositories>
-  <profiles>
-    <profile>
-      <id>inparent</id>
-      <activation>
-        <file>
-          <exists>src/assemble/src.xml</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.2-beta-3</version>
-            <configuration>
-              <descriptors>
-                <descriptor>src/assemble/src.xml</descriptor>
-              </descriptors>
-              <outputDirectory>${basedir}/wmsx/target/site/download</outputDirectory>
-            </configuration>
-            <executions>
-              <execution>
-                <phase>site</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+  </build>
 </project>
