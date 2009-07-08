@@ -5,7 +5,7 @@
   <artifactId>wmsx-parent</artifactId>
   <packaging>pom</packaging>
   <name>WMS-X</name>
-  <version>2.0.0</version>
+  <version>2.0.1-SNAPSHOT</version>
   <url>http://wmsx.max.berger.name</url>
   <issueManagement>
     <system>trac</system>
@@ -50,16 +50,77 @@
   </modules>
   <reporting>
     <plugins>
-      <!--      <plugin>
+      <plugin>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.1</version>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changes-plugin</artifactId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <linksource>true</linksource>
+          <keywords>true</keywords>
+          <links>
+            <link>http://java.sun.com/j2se/1.6.0/docs/api/</link>
+            <link>http://testng.org/javadocs/</link>
+            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+            <link>http://jcip.net/annotations/doc/</link>
+          </links>
+          <tags>
+            <tag>
+              <name>todo</name>
+              <placement>a</placement>
+              <head>This needs to be done:</head>
+            </tag>
+          </tags>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <linkXref>true</linkXref>
+          <targetJdk>1.5</targetJdk>
+          <sourceEncoding>utf-8</sourceEncoding>
+          <rulesets>
+            <ruleset>/rulesets/basic.xml</ruleset>
+            <ruleset>/rulesets/braces.xml</ruleset>
+            <ruleset>/rulesets/codesize.xml</ruleset>
+            <ruleset>/rulesets/clone.xml</ruleset>
+            <ruleset>/rulesets/design.xml</ruleset>
+            <ruleset>/rulesets/finalizers.xml</ruleset>
+            <ruleset>/rulesets/imports.xml</ruleset>
+            <ruleset>/rulesets/strings.xml</ruleset>
+            <ruleset>/rulesets/migrating_to_15.xml</ruleset>
+            <ruleset>/rulesets/optimizations.xml</ruleset>
+            <ruleset>/rulesets/sunsecure.xml</ruleset>
+            <ruleset>/rulesets/unusedcode.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
         <version>2.1</version>
         <configuration>
-          <tracUser>maven</tracUser>
-          <tracPassword>maven</tracPassword>
-          <query>status!=closed</query>
+          <threshold>Low</threshold>
+          <effort>Max</effort>
+          <omitVisitors>FindDeadLocalStores</omitVisitors>
+          <xmlOutput>true</xmlOutput>
         </configuration>
-      </plugin> -->
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javancss-maven-plugin</artifactId>
+        <version>2.0-beta-2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
     </plugins>
   </reporting>
   <distributionManagement>
