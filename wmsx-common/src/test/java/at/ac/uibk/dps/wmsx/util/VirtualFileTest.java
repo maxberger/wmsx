@@ -229,7 +229,7 @@ public class VirtualFileTest {
             f.deleteTemp();
             f2.deleteTemp();
             Exporter.getInstance().unexportAll();
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             VirtualFileTest.LOGGER.warning("Server test failed: "
                     + e.getMessage());
         }
