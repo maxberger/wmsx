@@ -40,6 +40,8 @@ public final class FileServerImpl implements FileServer {
 
     private FileServer myProxy;
 
+    private boolean failed;
+
     private final Map<String, VirtualFile> serverMap = new HashMap<String, VirtualFile>();
 
     private static final class SingletonHolder {
@@ -65,15 +67,16 @@ public final class FileServerImpl implements FileServer {
      */
     public void start() {
         synchronized (this) {
-            if (this.myProxy == null) {
-                FileServer proxy = (FileServer) Exporter.getInstance().export(
-                        this);
+            if (this.myProxy == null && !this.failed) {
+                final FileServer proxy = (FileServer) Exporter.getInstance()
+                        .export(this);
                 try {
                     proxy.ping();
                     this.myProxy = proxy;
-                } catch (RemoteException e) {
-                    LOGGER.warning("Failed to start exporter: "
+                } catch (final RemoteException e) {
+                    FileServerImpl.LOGGER.warning("Failed to start exporter: "
                             + e.getMessage());
+                    this.failed = true;
                 }
             }
         }
