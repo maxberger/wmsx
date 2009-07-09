@@ -75,9 +75,9 @@ public final class ControllerServer {
     private ControllerServer() {
         ControllerImpl ci = new ControllerImpl();
         Controller cs = (Controller) Exporter.getInstance().export(
-                this.controller);
+                ci);
         try {
-            this.controllerStub.ping(null);
+            cs.ping(null);
         } catch (final RemoteException re) {
             ci = null;
             cs = null;
