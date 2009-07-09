@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -100,9 +100,16 @@ public class ResultMoverAndPostexec implements Runnable {
                 final File[] toMoves = subdir.listFiles();
                 for (int j = 0; j < toMoves.length; j++) {
                     final File toMove = toMoves[j];
-                    toMove.renameTo(new File(this.dir, toMove.getName()));
+                    final File toWhere = new File(this.dir, toMove.getName());
+                    if (!toMove.renameTo(toWhere)) {
+                        ResultMoverAndPostexec.LOGGER.warning("Failed to move "
+                                + toMove + " to " + toWhere);
+                    }
                 }
-                subdir.delete();
+                if (!subdir.delete()) {
+                    ResultMoverAndPostexec.LOGGER
+                            .warning("Failed to delete directory " + subdir);
+                }
             }
         }
     }
