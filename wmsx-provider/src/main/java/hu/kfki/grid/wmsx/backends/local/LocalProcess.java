@@ -121,6 +121,7 @@ public class LocalProcess implements Runnable, ScriptProcessListener {
         final StringBuilder commandline;
         String stdout;
         String stderr;
+        final File wd;
         synchronized (this) {
             final String commande = this.job
                     .getStringEntry(JobDescription.EXECUTABLE);
@@ -147,9 +148,10 @@ public class LocalProcess implements Runnable, ScriptProcessListener {
             if (stderr != null) {
                 stderr = new File(this.workdir, stderr).getCanonicalPath();
             }
+            wd = this.workdir;
         }
-        ScriptLauncher.getInstance().launchScript(commandline.toString(),
-                this.workdir, stdout, stderr, this);
+        ScriptLauncher.getInstance().launchScript(commandline.toString(), wd,
+                stdout, stderr, this);
     }
 
     /**
