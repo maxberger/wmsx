@@ -9,7 +9,7 @@
   <groupId>at.ac.uibk.dps</groupId>
   <artifactId>wmsx-gat</artifactId>
   <packaging>jar</packaging>
-  <version>2.0.1</version>
+  <version>2.0.2-SNAPSHOT</version>
   <name>WMS-X Glite GAT adaptor</name>
   <build>
     <plugins>
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>hu.kfki.grid</groupId>
       <artifactId>wmsx-common</artifactId>
-      <version>2.0.1</version>
+      <version>2.0.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
