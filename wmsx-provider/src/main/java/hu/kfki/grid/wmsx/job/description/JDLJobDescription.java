@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -118,10 +118,16 @@ public class JDLJobDescription extends AbstractJobDescription {
     public File toJdl() throws IOException {
         final File jdl;
         if (this.changed) {
-            jdl = File.createTempFile("jdl", null, this.baseDir);
-            final Writer w = new FileWriter(jdl);
-            w.write(this.toString());
-            w.close();
+            Writer w = null;
+            try {
+                jdl = File.createTempFile("jdl", null, this.baseDir);
+                w = new FileWriter(jdl);
+                w.write(this.toString());
+            } finally {
+                if (w != null) {
+                    w.close();
+                }
+            }
             jdl.deleteOnExit();
             this.changed = false;
             this.origin = jdl;
