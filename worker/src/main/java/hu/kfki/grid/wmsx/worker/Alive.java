@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -98,18 +98,21 @@ public class Alive implements Runnable {
     /**
      * Start alive notice.
      */
-    public synchronized void start() {
-        if (!this.started) {
-            new Thread(this).start();
-            this.started = true;
+    public void start() {
+        synchronized (this) {
+            if (!this.started) {
+                new Thread(this).start();
+                this.started = true;
+            }
         }
-
     }
 
     /**
      * Shutdown alive notice.
      */
     public synchronized void stop() {
-        this.shutdown = true;
+        synchronized (this) {
+            this.shutdown = true;
+        }
     }
 }
