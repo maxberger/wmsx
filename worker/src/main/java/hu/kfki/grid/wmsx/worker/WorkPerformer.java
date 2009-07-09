@@ -27,10 +27,10 @@ import hu.kfki.grid.wmsx.util.ScriptLauncher;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import net.jini.id.Uuid;
@@ -57,6 +57,7 @@ public final class WorkPerformer {
     }
 
     private WorkPerformer() {
+        // empty on purpose.
     }
 
     /**
@@ -167,18 +168,22 @@ public final class WorkPerformer {
 
     private int launchExec(final WorkDescription todo, final File workDir) {
         final List<String> arguments = todo.getArguments();
-        final List<String> cmdArray = new Vector<String>(1 + arguments.size());
+        final List<String> cmdArray = new ArrayList<String>(1 + arguments
+                .size());
         cmdArray.add(new File(workDir, todo.getExecutable()).getAbsolutePath());
         cmdArray.addAll(arguments);
 
         this.logWithTime("Launching");
         return ScriptLauncher.getInstance().launchScript(
-                cmdArray.toArray(new String[0]), todo.getStdout(),
-                todo.getStderr(), workDir);
+                cmdArray.toArray(new String[cmdArray.size()]),
+                todo.getStdout(), todo.getStderr(), workDir);
     }
 
     /**
+     * Cancel a running job.
+     * 
      * @param id
+     *            Id of the job to be cancelled.
      */
     public void cancelJob(final Object id) {
         // TODO Auto-generated method stub
