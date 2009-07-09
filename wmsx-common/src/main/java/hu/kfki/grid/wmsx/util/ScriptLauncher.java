@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -100,6 +100,8 @@ public final class ScriptLauncher {
      *            name of file for stderr, relative to dir
      * @param dir
      *            directory to work in
+     * @param listener
+     *            Listener to be notified when the process is started.
      * @return return value of the execution.
      */
     public int launchScript(final String cmdString, final File dir,
