@@ -27,7 +27,7 @@ import java.io.Serializable;
 /**
  * Represents possible states of a job.
  * 
- * @version $Date: 1/1/2000$
+ * @version $Date$
  */
 public final class JobState implements Serializable {
 
@@ -58,15 +58,15 @@ public final class JobState implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final static String STR_STARTUP = "STARTUP";
+    private static final String STR_STARTUP = "STARTUP";
 
-    private final static String STR_RUNNING = "RUNNING";
+    private static final String STR_RUNNING = "RUNNING";
 
-    private final static String STR_SUCCESS = "SUCCESS";
+    private static final String STR_SUCCESS = "SUCCESS";
 
-    private final static String STR_FAILED = "FAILED";
+    private static final String STR_FAILED = "FAILED";
 
-    private final static String STR_NONE = "NONE";
+    private static final String STR_NONE = "NONE";
 
     private final String value;
 
