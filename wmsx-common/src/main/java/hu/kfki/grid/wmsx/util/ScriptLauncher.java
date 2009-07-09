@@ -139,12 +139,33 @@ public final class ScriptLauncher {
      */
     public int launchScript(final String[] cmdarray, final String stdout,
             final String stderr, final File workdir) {
+        return this.launchScript(cmdarray, stdout, stderr, workdir, null);
+    }
+
+    /**
+     * Launch a script.
+     * 
+     * @param cmdarray
+     *            array of executable and arguments
+     * @param stdout
+     *            name of file for stdout, relative to workdir
+     * @param stderr
+     *            name of file for stderr, relative to workdir
+     * @param workdir
+     *            directory to work in
+     * @param listener
+     *            Listener to be notified when the process is started.
+     * @return return value of the execution.
+     */
+    public int launchScript(final String[] cmdarray, final String stdout,
+            final String stderr, final File workdir,
+            final ScriptProcessListener listener) {
         int retVal = 0;
         if (new File(cmdarray[0]).exists()) {
             try {
                 final OutputStream o = this.prepareOutput(stdout, workdir);
                 final OutputStream e = this.prepareOutput(stderr, workdir);
-                retVal = this.launchScript(cmdarray, o, e, workdir);
+                retVal = this.launchScript(cmdarray, o, e, workdir, listener);
             } catch (final IOException e) {
                 ScriptLauncher.LOGGER
                         .warning(ScriptLauncher.IOEXCEPTION_LAUNCHING_SCRIPT
@@ -163,7 +184,6 @@ public final class ScriptLauncher {
      *            OutputStream to listen to
      * @param err
      *            ErrorStream to listen to
-     * @param listener
      * @return return value of the process' execution.
      */
     public int wrapProcess(final Process p, final OutputStream out,
@@ -213,11 +233,35 @@ public final class ScriptLauncher {
      */
     public int launchScript(final String[] cmdarray, final OutputStream out,
             final OutputStream err, final File workdir) {
+        return this.launchScript(cmdarray, out, err, workdir, null);
+    }
+
+    /**
+     * Launch a script.
+     * 
+     * @param cmdarray
+     *            array of executable and arguments
+     * @param out
+     *            OutputStream for StdOut
+     * @param err
+     *            OutputStream for StdErr
+     * @param workdir
+     *            directory to work in
+     * @param listener
+     *            Listener to be notified when the process is started.
+     * @return return value of the execution.
+     */
+    public int launchScript(final String[] cmdarray, final OutputStream out,
+            final OutputStream err, final File workdir,
+            final ScriptProcessListener listener) {
         int retVal = 0;
         if (new File(cmdarray[0]).exists()) {
             try {
                 final Process p = Runtime.getRuntime().exec(cmdarray, null,
                         workdir);
+                if (listener != null) {
+                    listener.gotProcess(p);
+                }
                 retVal = this.wrapProcess(p, out, err);
             } catch (final IOException e) {
                 ScriptLauncher.LOGGER
