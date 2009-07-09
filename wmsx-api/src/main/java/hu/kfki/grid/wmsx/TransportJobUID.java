@@ -66,7 +66,7 @@ public class TransportJobUID implements Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder b = new StringBuilder(this.backend.toString());
+        final StringBuilder b = new StringBuilder(this.backend);
         b.append('/');
         b.append(this.localId);
         return b.toString();
