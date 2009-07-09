@@ -111,6 +111,11 @@
     </plugins>
   </reporting>
   <distributionManagement>
+    <repository>
+      <id>wmsx</id>
+      <name>WMS-X Repository</name>
+      <url>sftp://wmsx.max.berger.name/home/wmsx/www/m2</url>
+    </repository>
     <site>
       <id>wmsx</id>
       <name>Website for WMSX</name>
