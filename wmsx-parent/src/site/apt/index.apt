@@ -10,3 +10,5 @@ WMS-X
  Information and documentation is available at {{http://www.grid.kfki.hu/twiki/bin/view/RmkiGrid/WmsxSoftware}}
 
  Download is available at {{/wmsx/download}}
+
+ The GUI can be found at {{/wmsx-gui/webstart.html}} (WMS-X must be running)
