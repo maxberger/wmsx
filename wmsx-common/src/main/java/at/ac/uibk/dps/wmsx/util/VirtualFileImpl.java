@@ -72,9 +72,11 @@ public final class VirtualFileImpl implements Serializable, VirtualFile {
 
     private transient FileServer fileServer;
 
-    private final GuidBackends guidBackends = GuidBackends.getInstance();
+    private final transient GuidBackends guidBackends = GuidBackends
+            .getInstance();
 
-    private final FileServerImpl fileServerImpl = FileServerImpl.getInstance();
+    private final transient FileServerImpl fileServerImpl = FileServerImpl
+            .getInstance();
 
     /**
      * Create a Virtual file based on an existing local file.
