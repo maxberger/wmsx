@@ -23,11 +23,13 @@ package hu.kfki.grid.wmsx.worker;
 
 import hu.kfki.grid.wmsx.util.FileUtil;
 import hu.kfki.grid.wmsx.util.ScriptLauncher;
+import hu.kfki.grid.wmsx.util.ScriptProcessListener;
 
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -40,7 +42,7 @@ import net.jini.id.Uuid;
  * 
  * @version $Date$
  */
-public final class WorkPerformer {
+public final class WorkPerformer implements ScriptProcessListener {
 
     private static final Logger LOGGER = Logger.getLogger(WorkPerformer.class
             .toString());
@@ -48,6 +50,10 @@ public final class WorkPerformer {
     private final Set<String> deployedWfs = new TreeSet<String>();
 
     private final FileUtil fileUtil = FileUtil.getInstance();
+
+    private Process currentRunningProcess;
+
+    private final Set<Object> canceledJobs = new HashSet<Object>();
 
     private static final class SingletonHolder {
         private static final WorkPerformer INSTANCE = new WorkPerformer();
@@ -173,21 +179,42 @@ public final class WorkPerformer {
         cmdArray.add(new File(workDir, todo.getExecutable()).getAbsolutePath());
         cmdArray.addAll(arguments);
 
+        synchronized (this) {
+            if (this.canceledJobs.contains(todo.getId())) {
+                return -1;
+            }
+        }
         this.logWithTime("Launching");
-        return ScriptLauncher.getInstance().launchScript(
+        final int retVal = ScriptLauncher.getInstance().launchScript(
                 cmdArray.toArray(new String[cmdArray.size()]),
-                todo.getStdout(), todo.getStderr(), workDir);
+                todo.getStdout(), todo.getStderr(), workDir, this);
+        synchronized (this) {
+            this.currentRunningProcess = null;
+        }
+        return retVal;
     }
 
     /**
      * Cancel a running job.
      * 
      * @param id
-     *            Id of the job to be cancelled.
+     *            Id of the job to be canceled.
      */
     public void cancelJob(final Object id) {
-        // TODO Auto-generated method stub
+        synchronized (this) {
+            this.canceledJobs.add(id);
+            if (this.currentRunningProcess != null) {
+                this.currentRunningProcess.destroy();
+            }
+        }
+    }
 
+    /** {@inheritDoc} */
+    public void gotProcess(final Process p) {
+        synchronized (this) {
+            this.currentRunningProcess = p;
+            // TODO: Here we should check if we where just canceled.
+        }
     }
 
 }
