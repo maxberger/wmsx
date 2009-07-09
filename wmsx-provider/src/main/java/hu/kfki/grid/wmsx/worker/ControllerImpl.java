@@ -529,6 +529,7 @@ public class ControllerImpl implements Controller, Runnable {
                         ControllerImpl.this.sendCancelNotification(uuid, id);
                     }
                 }).start();
+                this.running.remove(id);
                 didcancel = true;
             } else {
                 final Iterator<ControllerWorkDescription> cwdid = this.pending
