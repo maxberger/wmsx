@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -23,8 +23,8 @@ package hu.kfki.grid.wmsx.job.description;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Represents an empty job, for cases where a job description is needed to avoid
@@ -43,7 +43,7 @@ public class EmptyJobDescription extends AbstractJobDescription {
 
     /** {@inheritDoc} */
     public List<String> getListEntry(final String key) {
-        return new Vector<String>();
+        return Collections.emptyList();
     }
 
     /** {@inheritDoc} */
@@ -58,10 +58,12 @@ public class EmptyJobDescription extends AbstractJobDescription {
 
     /** {@inheritDoc} */
     public void removeEntry(final String entry) {
+        // Do nothing
     }
 
     /** {@inheritDoc} */
     public void replaceEntry(final String entry, final String value) {
+        // Do nothing
     }
 
     /** {@inheritDoc} */
