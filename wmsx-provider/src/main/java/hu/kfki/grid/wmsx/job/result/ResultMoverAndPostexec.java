@@ -36,9 +36,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 /**
@@ -121,14 +121,14 @@ public class ResultMoverAndPostexec implements Runnable {
             ResultMoverAndPostexec.LOGGER.info(ResultMoverAndPostexec.RUNNING
                     + postexec);
 
-            final List<String> cmdVec = new Vector<String>();
+            final List<String> cmdVec = new ArrayList<String>();
             cmdVec.add(postexec);
             cmdVec.add(this.job.getCommand());
             cmdVec.add(this.dir.getAbsolutePath());
             cmdVec.addAll(Arrays.asList(this.job.getArgs()));
 
             final int postRetVal = ScriptLauncher.getInstance().launchScript(
-                    cmdVec.toArray(new String[0]),
+                    cmdVec.toArray(new String[cmdVec.size()]),
                     output + ResultMoverAndPostexec.POSTEXEC_SUFFIX,
                     output + ResultMoverAndPostexec.POSTEXEC_SUFFIX, this.dir);
             if (postRetVal == 1) {
@@ -148,11 +148,11 @@ public class ResultMoverAndPostexec implements Runnable {
     private void runchain(final List<String> cmdVec) {
         final OutputStream o = new ByteArrayOutputStream();
         ScriptLauncher.getInstance().launchScript(
-                cmdVec.toArray(new String[0]), o, null, this.dir);
+                cmdVec.toArray(new String[cmdVec.size()]), o, null, this.dir);
         final BufferedReader r = new BufferedReader(new StringReader(o
                 .toString()));
-        final List<IRemoteWmsxProvider.LaszloCommand> l = new Vector<IRemoteWmsxProvider.LaszloCommand>();
-        final List<String> j = new Vector<String>();
+        final List<IRemoteWmsxProvider.LaszloCommand> l = new ArrayList<IRemoteWmsxProvider.LaszloCommand>();
+        final List<String> j = new ArrayList<String>();
 
         final String output = this.job.getOutput();
 
@@ -169,20 +169,22 @@ public class ResultMoverAndPostexec implements Runnable {
 
     private boolean createLaszloJobs(
             final List<IRemoteWmsxProvider.LaszloCommand> l) {
-        if (!l.isEmpty()) {
+        if (l.isEmpty()) {
+            return false;
+        } else {
             ResultMoverAndPostexec.LOGGER
                     .info(ResultMoverAndPostexec.CHAIN_RETURNED + l.size()
                             + " new Laszlo job(s).");
             WmsxProviderImpl.getInstance().submitLaszlo(l, false,
                     this.job.getPrefix(), this.job.getName());
             return true;
-        } else {
-            return false;
         }
     }
 
     private boolean createNewJdlJobs(final List<String> j) {
-        if (!j.isEmpty()) {
+        if (j.isEmpty()) {
+            return false;
+        } else {
             ResultMoverAndPostexec.LOGGER
                     .info(ResultMoverAndPostexec.CHAIN_RETURNED + j.size()
                             + " new JDL job(s).");
@@ -195,26 +197,24 @@ public class ResultMoverAndPostexec implements Runnable {
                 }
                 final int id;
                 final Workflow wf = this.job.getWorkflow();
-                if (wf != null) {
-                    id = wf.getApplicationId();
-                } else {
+                if (wf == null) {
                     id = 0;
+                } else {
+                    id = wf.getApplicationId();
                 }
                 WmsxProviderImpl.getInstance().submitJdl(nextJdl, null, null,
                         id);
             }
             return true;
-        } else {
-            return false;
         }
     }
 
     private void runChainAndCollectOutput(final BufferedReader r,
             final List<IRemoteWmsxProvider.LaszloCommand> l,
             final List<String> j, final String output) {
+        BufferedWriter debugWriter = null;
         try {
-            final BufferedWriter debugWriter = new BufferedWriter(
-                    new FileWriter(output + "_chain"));
+            debugWriter = new BufferedWriter(new FileWriter(output + "_chain"));
             String line = r.readLine();
             while (line != null) {
                 debugWriter.write(line);
@@ -232,10 +232,17 @@ public class ResultMoverAndPostexec implements Runnable {
                 }
                 line = r.readLine();
             }
-            debugWriter.close();
+
         } catch (final IOException e) {
-            ResultMoverAndPostexec.LOGGER
-                    .fine("IOException: " + e.getMessage());
+            ResultMoverAndPostexec.LOGGER.fine(e.getMessage());
+        } finally {
+            if (debugWriter != null) {
+                try {
+                    debugWriter.close();
+                } catch (final IOException e) {
+                    ResultMoverAndPostexec.LOGGER.fine(e.getMessage());
+                }
+            }
         }
     }
 }
