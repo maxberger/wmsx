@@ -47,7 +47,7 @@ public final class LogListener implements JobListener {
     /**
      * @return the singleton instance.
      */
-    public static synchronized LogListener getInstance() {
+    public static LogListener getInstance() {
         return LogListener.SingletonHolder.INSTANCE;
     }
 
