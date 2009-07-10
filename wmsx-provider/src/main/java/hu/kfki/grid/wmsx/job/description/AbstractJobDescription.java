@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,8 @@ package hu.kfki.grid.wmsx.job.description;
  * 
  * @version $Date$
  */
-public abstract class AbstractJobDescription implements JobDescription {
+public abstract class AbstractJobDescription implements JobDescription,
+        Cloneable {
 
     /** {@inheritDoc} */
     public String getStringEntry(final String key, final String defaultValue) {
