@@ -30,6 +30,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import condor.classad.ClassAdParser;
 import condor.classad.Constant;
@@ -42,7 +43,11 @@ import condor.classad.RecordExpr;
  * 
  * @version $Date$
  */
-public class JDLJobDescription extends AbstractJobDescription {
+public class JDLJobDescription extends AbstractJobDescription implements
+        Cloneable {
+
+    private static final Logger LOGGER = Logger
+            .getLogger(JDLJobDescription.class.toString());
 
     private RecordExpr erecord;
 
@@ -86,10 +91,10 @@ public class JDLJobDescription extends AbstractJobDescription {
             } catch (final ArithmeticException ae) {
                 retVal = econst.toString();
             }
-        } else if (eval != null) {
-            retVal = eval.toString();
-        } else {
+        } else if (eval == null) {
             retVal = null;
+        } else {
+            retVal = eval.toString();
         }
         return retVal;
     }
@@ -149,7 +154,7 @@ public class JDLJobDescription extends AbstractJobDescription {
         try {
             this.erecord.removeAttribute(entry);
         } catch (final IllegalArgumentException e) {
-            // ignore
+            JDLJobDescription.LOGGER.fine(e.getMessage());
         }
     }
 
