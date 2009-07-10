@@ -1,3 +1,0 @@
-dest=$1
-[ -z "$dest" ] && dest=unipg
-mvn -o package install && scp wmsx/target/wmsx-1.1-SNAPSHOT-distribution.tar.gz $dest:tmp && ssh $dest cd tmp \; tar -xzf wmsx-1.1-SNAPSHOT-distribution.tar.gz 
