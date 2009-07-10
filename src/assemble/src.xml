@@ -4,32 +4,18 @@
   <formats>
     <format>zip</format>
   </formats>
-  <includeBaseDirectory>false</includeBaseDirectory>
-  <moduleSets>
-    <moduleSet>
-      <includeSubModules>true</includeSubModules>
-      <sources>
-        <fileSets>
-          <fileSet>
-            <excludes>
-              <exclude>target/**</exclude>
-              <exclude>w2k/**</exclude>
-            </excludes>
-          </fileSet>
-        </fileSets>
-      </sources>
-    </moduleSet>
-  </moduleSets>
+  <includeBaseDirectory>true</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <includes>
-        <include>pom.xml</include>
-        <include>LICENSE</include>
-        <include>README.build</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>extra</directory>
+      <directory>.</directory>
+      <excludes>
+        <exclude>**/target/**</exclude>
+        <exclude>**/w2k/**</exclude>
+        <exclude>**/.*</exclude>
+        <exclude>**/.*/**</exclude>
+        <exclude>wmsx-gui/keystore</exclude>
+        <exclude>wmsx-provider/src/main/resources/worker/worker.tar.gz</exclude>
+      </excludes>
     </fileSet>
   </fileSets>
 </assembly>
