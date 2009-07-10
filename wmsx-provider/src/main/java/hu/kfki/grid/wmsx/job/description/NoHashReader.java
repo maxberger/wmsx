@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -24,8 +24,17 @@ package hu.kfki.grid.wmsx.job.description;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.logging.Logger;
 
+/**
+ * Reads a file and ignores lines starting with hash (#).
+ * 
+ * @version $Date$
+ */
 public class NoHashReader extends Reader {
+
+    private static final Logger LOGGER = Logger.getLogger(NoHashReader.class
+            .toString());
 
     private final BufferedReader in;
 
@@ -33,15 +42,23 @@ public class NoHashReader extends Reader {
 
     private int bufpos;
 
+    /**
+     * Create a Reader based on an original Reader.
+     * 
+     * @param orig
+     *            Reader to filter.
+     */
     public NoHashReader(final Reader orig) {
         this.in = new BufferedReader(orig);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void close() throws IOException {
         this.in.close();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int read(final char[] cbuf, final int off, final int len)
             throws IOException {
@@ -77,7 +94,7 @@ public class NoHashReader extends Reader {
         try {
             this.close();
         } catch (final IOException e) {
-            // Ignore
+            NoHashReader.LOGGER.fine(e.getMessage());
         }
         super.finalize();
     }
