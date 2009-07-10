@@ -1,7 +1,7 @@
 /*
  * WMSX - Workload Management Extensions for gLite
  * 
- * Copyright (C) 2007-2008 Max Berger
+ * Copyright (C) 2007-2009 Max Berger
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -41,7 +41,12 @@ import java.util.logging.Logger;
  */
 public final class ResultListener implements JobListener {
 
-    private static ResultListener resultListener;
+    private static final class SingletonHolder {
+        private static final ResultListener INSTANCE = new ResultListener();
+
+        private SingletonHolder() {
+        }
+    }
 
     private static final Logger LOGGER = Logger.getLogger(ResultListener.class
             .toString());
@@ -54,11 +59,8 @@ public final class ResultListener implements JobListener {
     /**
      * @return The Singleton Instance
      */
-    public static synchronized ResultListener getInstance() {
-        if (ResultListener.resultListener == null) {
-            ResultListener.resultListener = new ResultListener();
-        }
-        return ResultListener.resultListener;
+    public static ResultListener getInstance() {
+        return ResultListener.SingletonHolder.INSTANCE;
     }
 
     /**
